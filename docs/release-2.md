@@ -29,3 +29,7 @@ Use Node 24 (`.nvmrc`). Run `npm ci`, `npm test`, and `npm run build`. The PR va
 ## Verification on 2026-10-19
 
 Production Google provider is enabled. Real Google sign-in from the local preview succeeded and correctly showed the denied-access screen for an account without the administrator claim. Unit tests, both isolated browser tests, production build, and GitHub CI passed. The owner confirmed niuniupetsitting@gmail.com as administrator. Its role was granted through trusted tooling and the production administrator dashboard was verified in the local Chrome preview. Cloud billing remains disabled, blocking hosted customer-management work.
+
+## Delivery
+
+PR #2 merged as `cac35ec` and Firebase Hosting deployment succeeded on 2026-10-19. Live portal: https://niu-niu-family-paws.web.app/#/admin. Hosted HTML exactly matches the production build. Real Google sign-in as the owner-approved administrator opened the live Chinese dashboard in Chrome.
