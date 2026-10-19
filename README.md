@@ -4,7 +4,25 @@ A responsive English and Simplified Chinese company website and pet service usag
 
 ## Status
 
-Planning only. This repository contains project documentation, not an implemented application. No cloud resources have been deployed.
+The public website is hosted at https://niu-niu-family-paws.web.app on Google Firebase Hosting, project `niu-niu-family-paws` (number `775511787236`). The responsive English/Simplified Chinese site uses React, TypeScript, Vite, and react-i18next, with prerendered public content. HTTPS, language switching, and FAQs have been verified on the hosted site. Business contact details, rates, and photos still await owner input.
+
+## Run and deploy
+
+```sh
+npm ci
+npm run dev
+npm run build
+npx firebase login
+npm run deploy
+```
+
+Deployment requires access to the Google Cloud/Firebase project `niu-niu-family-paws`. Only Firebase Hosting is deployed; this release does not create a database, API, or authentication service.
+
+The language switch remembers the selected language when browser storage is available. FAQs use accessible native disclosure controls. The dog artwork is an original SVG illustration, not a business photo.
+
+Before public launch, confirm contact details, location, offered services, prices, packages, and business photos. Missing contact details and prices are explicitly identified on the page. No bookings are collected.
+
+Deliver one feature at a time. Each release must have a verified hosted URL, usable mobile and desktop workflows, both languages, and working prior features. Do not begin the next feature before the current release is delivered.
 
 ## Scope
 
