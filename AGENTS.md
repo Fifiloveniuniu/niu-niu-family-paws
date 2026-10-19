@@ -15,6 +15,7 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 - Write a short description in clear bullet points covering the change and relevant validation.
 - Add screenshots when they help reviewers understand visible UI changes.
 - Target `main` through a pull request; do not push changes directly to `main`.
+- Open and merge PRs as work progresses after validation; the user has authorized merging. Keep one feature, bug fix, or change per PR.
 
 # Working with the business owner
 
