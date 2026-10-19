@@ -2,6 +2,8 @@
 
 ## User intent and working preferences
 
+The user's partner is the business owner and does not know how to code. Read `docs/business-owner-guide.md`; accept plain-language requests in English or Simplified Chinese and handle the technical delivery. On 2026-10-19 the user explicitly authorized a sequence of feature PRs, automatic merge after validation, and continuation without repeated merge permission. Preview changes locally and walk the owner through them in the browser. Deploy and verify every feature on Google Cloud before calling it delivered. Ask only for necessary missing facts or required authorization; preserve all prior guidance.
+
 Build Niu Niu Family Paws Sitting LLC's English/Simplified Chinese public website and pet service usage tracker. Deliver **one complete feature at a time**, with a **hosted, usable web app after each delivery**. User explicitly chose **Google Cloud**, not OpenAI Sites. Preserve all working features as the app grows. Do not start several partially finished features.
 
 PR titles must be concise and clear. PR descriptions must use short, clear bullet points and include relevant validation. Add screenshots when useful for UI review. All changes must go through PRs into `main`.
