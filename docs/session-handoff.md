@@ -14,8 +14,8 @@ User prefers autonomous work without repetitive command approval prompts. At the
 - GitHub: https://github.com/Fifiloveniuniu/niu-niu-family-paws.
 - GitHub account: `Fifiloveniuniu`.
 - Remote now uses SSH: `git@github.com:Fifiloveniuniu/niu-niu-family-paws.git`.
-- Current branch: `feat/public-website`.
-- Release 1 is being committed and submitted through `feat/public-website` into `main`. Deployment already exists and its HTML was verified to exactly match the production build. Check the branch PR on GitHub for current review/merge status.
+- Current branch: `feat/admin-sign-in`.
+- Release 1 merged via PR #1 using squash (the repository disallows merge commits). `main` is protected. The user has authorized opening and merging PRs after validation, one feature/bug fix/change per PR.
 - Release 1 source, configuration, documentation, and review screenshots are included on the feature branch.
 - Do not commit to or push directly to `main`. Keep changes going through pull requests.
 - `dist/`, `node_modules/`, Firebase debug logs, environment files, and credentials are ignored.
@@ -29,7 +29,8 @@ User prefers autonomous work without repetitive command approval prompts. At the
 - Firebase CLI signed in as **`niuniupetsitting@gmail.com`**. Sign-in completed successfully; do not request the old one-time code again.
 - Firebase Terms were accepted with explicit user authorization using Chrome. Firebase was added to the existing correct Google Cloud project. Optional Google Analytics was disabled.
 - `npx firebase deploy --only hosting --project niu-niu-family-paws --non-interactive` succeeded and returned the live URL.
-- Hosting only: no app database, backend API, Firebase Authentication feature, or reminder infrastructure implemented/deployed in this session.
+- Live Hosting remains Release 1. Firebase Authentication is now initialized and the web app registered (`1:775511787236:web:99044ab39950f128250ef1`). Google provider is still disabled. No app database, backend API, or reminder infrastructure is deployed.
+- Billing was checked via Cloud Billing API: no billing account attached (`billingEnabled: false`). Cloud Run needs billing before the business API can be deployed. No billing changes were made.
 - Verify billing/regions before future services; no billing upgrade was performed as part of this work.
 
 Setup history: before the user supplied the original project's number, an unused Google Cloud project **`niu-niu-family-paws-web`** was created under this account. It is not the target and has no website deployed; do not delete it without authorization. An unused private OpenAI Sites project was also created with ID `appgprj_6ad6a33472188191b6473395ca7b4421`, slug `niu-niu-family-paws`; nothing was deployed there. Its local `.openai/hosting.json` was removed when the user selected Google Cloud. Do not resume the Sites workflow or assume its credentials are available.
@@ -118,7 +119,7 @@ Original scope/architecture remain in `docs/requirements.md` and `docs/architect
 
 Next priorities:
 
-1. Review the `feat/public-website` PR for the hosted public website; merge through GitHub when authorized. The implementation and screenshots are preserved on that branch.
+1. Finish administrator sign-in on `feat/admin-sign-in`; see `docs/release-2.md`. Google provider activation and the first administrator email are awaiting owner answers. Build and emulator tests pass; no release-2 deployment or merge yet.
 2. Complete missing public business content when the user supplies it. Do not invent rates or contact details.
 3. Next complete hosted feature: administrator sign-in and protected dashboard.
 4. Then customer management, pet management, service/package balances with audited allocations/adjustments, employee access, visit tracking, customer portal, and renewal reminders, one at a time.
