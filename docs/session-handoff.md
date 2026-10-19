@@ -121,7 +121,7 @@ Original scope/architecture remain in `docs/requirements.md` and `docs/architect
 
 Next priorities:
 
-1. Finish administrator sign-in on `feat/admin-sign-in`; see `docs/release-2.md`. PR #2 implements sign-in; production Google sign-in was verified from the local preview and correctly denied an account without an administrator claim. First administrator email confirmation is still pending. Build, unit test, both emulator browser tests, and GitHub CI pass. Merge/deployment status must be checked on GitHub/Firebase.
+1. Finish administrator sign-in on `feat/admin-sign-in`; see `docs/release-2.md`. PR #2 implements sign-in; production Google sign-in was verified from the local preview and correctly denied an account without an administrator claim. Owner confirmed niuniupetsitting@gmail.com as administrator; role granted through trusted tooling and the local production dashboard verified in Chrome. Build, unit test, both emulator browser tests, and GitHub CI pass. Merge/deployment status must be checked on GitHub/Firebase.
 2. Complete missing public business content when the user supplies it. Do not invent rates or contact details.
 3. Next complete hosted feature: administrator sign-in and protected dashboard.
 4. Then customer management, pet management, service/package balances with audited allocations/adjustments, employee access, visit tracking, customer portal, and renewal reminders, one at a time.

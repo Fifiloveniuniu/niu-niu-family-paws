@@ -28,4 +28,4 @@ Use Node 24 (`.nvmrc`). Run `npm ci`, `npm test`, and `npm run build`. The PR va
 
 ## Verification on 2026-10-19
 
-Production Google provider is enabled. Real Google sign-in from the local preview succeeded and correctly showed the denied-access screen for an account without the administrator claim. Unit tests, both isolated browser tests, production build, and GitHub CI passed. The first production administrator grant remains pending owner email confirmation; the administrator dashboard flow is verified with the emulator. Cloud billing remains disabled, blocking hosted customer-management work.
+Production Google provider is enabled. Real Google sign-in from the local preview succeeded and correctly showed the denied-access screen for an account without the administrator claim. Unit tests, both isolated browser tests, production build, and GitHub CI passed. The owner confirmed niuniupetsitting@gmail.com as administrator. Its role was granted through trusted tooling and the production administrator dashboard was verified in the local Chrome preview. Cloud billing remains disabled, blocking hosted customer-management work.
