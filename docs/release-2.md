@@ -25,3 +25,7 @@ Refresh access in the portal after changes. Existing ID tokens can remain valid 
 ## Validation
 
 Use Node 24 (`.nvmrc`). Run `npm ci`, `npm test`, and `npm run build`. The PR validation workflow runs tests and the production build. Browser verification must cover signed-out, denied, administrator, sign-out, language persistence, and mobile states before release is marked complete.
+
+## Verification on 2026-10-19
+
+Production Google provider is enabled. Real Google sign-in from the local preview succeeded and correctly showed the denied-access screen for an account without the administrator claim. Unit tests, both isolated browser tests, production build, and GitHub CI passed. The first production administrator grant remains pending owner email confirmation; the administrator dashboard flow is verified with the emulator. Cloud billing remains disabled, blocking hosted customer-management work.

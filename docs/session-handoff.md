@@ -31,7 +31,7 @@ User prefers autonomous work without repetitive command approval prompts. At the
 - Firebase CLI signed in as **`niuniupetsitting@gmail.com`**. Sign-in completed successfully; do not request the old one-time code again.
 - Firebase Terms were accepted with explicit user authorization using Chrome. Firebase was added to the existing correct Google Cloud project. Optional Google Analytics was disabled.
 - `npx firebase deploy --only hosting --project niu-niu-family-paws --non-interactive` succeeded and returned the live URL.
-- Live Hosting remains Release 1. Firebase Authentication is now initialized and the web app registered (`1:775511787236:web:99044ab39950f128250ef1`). Google provider is still disabled. No app database, backend API, or reminder infrastructure is deployed.
+- Live Hosting remains Release 1. Firebase Authentication is now initialized and the web app registered (`1:775511787236:web:99044ab39950f128250ef1`). Google provider is enabled (verified through the Firebase API and a real local Google sign-in). No app database, backend API, or reminder infrastructure is deployed.
 - Billing was checked via Cloud Billing API: no billing account attached (`billingEnabled: false`). Cloud Run needs billing before the business API can be deployed. No billing changes were made.
 - Verify billing/regions before future services; no billing upgrade was performed as part of this work.
 
@@ -121,7 +121,7 @@ Original scope/architecture remain in `docs/requirements.md` and `docs/architect
 
 Next priorities:
 
-1. Finish administrator sign-in on `feat/admin-sign-in`; see `docs/release-2.md`. Google provider activation and the first administrator email are awaiting owner answers. Build and emulator tests pass; no release-2 deployment or merge yet.
+1. Finish administrator sign-in on `feat/admin-sign-in`; see `docs/release-2.md`. PR #2 implements sign-in; production Google sign-in was verified from the local preview and correctly denied an account without an administrator claim. First administrator email confirmation is still pending. Build, unit test, both emulator browser tests, and GitHub CI pass. Merge/deployment status must be checked on GitHub/Firebase.
 2. Complete missing public business content when the user supplies it. Do not invent rates or contact details.
 3. Next complete hosted feature: administrator sign-in and protected dashboard.
 4. Then customer management, pet management, service/package balances with audited allocations/adjustments, employee access, visit tracking, customer portal, and renewal reminders, one at a time.
