@@ -16,7 +16,7 @@ User prefers autonomous work without repetitive command approval prompts. At the
 - GitHub: https://github.com/Fifiloveniuniu/niu-niu-family-paws.
 - GitHub account: `Fifiloveniuniu`.
 - Remote now uses SSH: `git@github.com:Fifiloveniuniu/niu-niu-family-paws.git`.
-- Current branch: `feat/admin-sign-in`.
+- Administrator sign-in delivered through merged PR #2 (commit `cac35ec`). Check the current branch with git before work.
 - Release 1 merged via PR #1 using squash (the repository disallows merge commits). `main` is protected. The user has authorized opening and merging PRs after validation, one feature/bug fix/change per PR.
 - Release 1 source, configuration, documentation, and review screenshots are included on the feature branch.
 - Do not commit to or push directly to `main`. Keep changes going through pull requests.
@@ -31,7 +31,7 @@ User prefers autonomous work without repetitive command approval prompts. At the
 - Firebase CLI signed in as **`niuniupetsitting@gmail.com`**. Sign-in completed successfully; do not request the old one-time code again.
 - Firebase Terms were accepted with explicit user authorization using Chrome. Firebase was added to the existing correct Google Cloud project. Optional Google Analytics was disabled.
 - `npx firebase deploy --only hosting --project niu-niu-family-paws --non-interactive` succeeded and returned the live URL.
-- Live Hosting remains Release 1. Firebase Authentication is now initialized and the web app registered (`1:775511787236:web:99044ab39950f128250ef1`). Google provider is enabled (verified through the Firebase API and a real local Google sign-in). No app database, backend API, or reminder infrastructure is deployed.
+- Live Hosting includes Release 2: administrator sign-in and protected dashboard at https://niu-niu-family-paws.web.app/#/admin. Firebase Authentication is now initialized and the web app registered (`1:775511787236:web:99044ab39950f128250ef1`). Google provider is enabled (verified through the Firebase API and a real local Google sign-in). No app database, backend API, or reminder infrastructure is deployed.
 - Billing was checked via Cloud Billing API: no billing account attached (`billingEnabled: false`). Cloud Run needs billing before the business API can be deployed. No billing changes were made.
 - Verify billing/regions before future services; no billing upgrade was performed as part of this work.
 
@@ -110,7 +110,7 @@ Repository is public and user has admin permissions. GitHub classic branch prote
 - Branch deletion blocked.
 - Required approving reviews: **0**, so the sole owner can merge their own PRs.
 - Stale reviews dismissed on new changes.
-- No required status checks configured yet; no CI workflow exists yet.
+- No required status checks configured yet; the Validate workflow added in PR #2 runs the build and unit test on PRs and main.
 - No rulesets were present when checked.
 
 User has already been told this protection is live. Verify if needed; do not recreate unnecessarily.
@@ -121,9 +121,9 @@ Original scope/architecture remain in `docs/requirements.md` and `docs/architect
 
 Next priorities:
 
-1. Finish administrator sign-in on `feat/admin-sign-in`; see `docs/release-2.md`. PR #2 implements sign-in; production Google sign-in was verified from the local preview and correctly denied an account without an administrator claim. Owner confirmed niuniupetsitting@gmail.com as administrator; role granted through trusted tooling and the local production dashboard verified in Chrome. Build, unit test, both emulator browser tests, and GitHub CI pass. Merge/deployment status must be checked on GitHub/Firebase.
+1. Administrator sign-in is complete; see `docs/release-2.md`. PR #2 implements sign-in; production Google sign-in was verified from the local preview and correctly denied an account without an administrator claim. Owner confirmed niuniupetsitting@gmail.com as administrator; role granted through trusted tooling and the local production dashboard verified in Chrome. Build, unit test, both emulator browser tests, and GitHub CI pass. PR #2 merged and Firebase Hosting deployment succeeded. Hosted HTML exactly matches the production build. Real live Google login as niuniupetsitting@gmail.com opens the Chinese administrator dashboard; English/Chinese dashboard and sign-out also verified locally.
 2. Complete missing public business content when the user supplies it. Do not invent rates or contact details.
-3. Next complete hosted feature: administrator sign-in and protected dashboard.
+3. Next hosted feature: customer management. Blocked on Google Cloud billing (still disabled) and database region approval. Asked whether us-west1 is acceptable; no answer yet. Do not enable billing or select the database region as though approved.
 4. Then customer management, pet management, service/package balances with audited allocations/adjustments, employee access, visit tracking, customer portal, and renewal reminders, one at a time.
 
 Visit tracking must handle atomic balance deductions, retries/idempotency, concurrent updates, corrections with audit history, and business timezone. Keep balances separate by service/unit. Customers can view only their own records. Account linking uses verified identity and administrator authorization, never a self-entered name.
