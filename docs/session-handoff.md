@@ -165,3 +165,12 @@ Before resuming customer-management PR #5, merge the latest main into its branch
 HTML freshness fix: native Chrome exposed a cached pre-release homepage after the shared-login deploy; Hosting's default HTML response was `max-age=3600`. Follow-up configuration sets `Cache-Control: no-cache` on `/` and `/index.html` so future page loads revalidate against the current release. Existing cached responses may still require a one-time hard refresh. Hashed assets keep their existing behavior. Verify the response headers after deploying this configuration; this change does not alter application code.
 
 Cache follow-up PR #8 (https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/8) merged as `eeaf830` and deployed to Firebase Hosting. Live `/` and `/index.html` now return `Cache-Control: no-cache`, exactly match the released HTML, and retain the security headers. The code delivery is PR #6; documentation PR #7 is also merged. The original customer-management draft remains unmerged; merge current main before implementing/deploying it.
+
+
+## Customer-management continuation — 2026-10-19
+
+Merged current `origin/main` (`eeaf830`) into the customer-management branch, resolving portal, stylesheet, browser-test, and handoff conflicts. Preserved shared customer/staff/admin sign-in, the single homepage sign-in entry, and HTML revalidation headers. The administrator dashboard includes the customer draft; customer/staff pending states remain intact. No production deployment or main merge was performed.
+
+Validation after integration: frontend build, API TypeScript check, five unit tests, Firestore emulator integration, and all four Chrome/Auth emulator browser tests passed. Browser customer operations mock the API; Firestore integration is tested separately. Running the two emulator suites concurrently caused a shared emulator hub conflict; sequential rerun passed. Node runtime was v26.12.0 (project declares Node 24); CI uses Node 24.
+
+Rechecked Cloud Billing API: `billingEnabled: false`. User said “continue” after discussing Cloud Run's free allowance; this does not resolve billing setup or region approval. Asked owner to link billing to `niu-niu-family-paws` and confirm `us-west1` (Oregon). Both remain pending. Continue only customer management; keep PR #5 draft until backend deployment and live validation are possible.
