@@ -1,4 +1,4 @@
-# Customer management — draft, not deployed
+# Customer management — release preparation
 
 Current scope: administrators add/edit customer name, optional contact email/phone, and preferred English/Simplified Chinese language. Search matches the start of a name or contact email, ignoring case, before pagination. Contact email is profile information, not a verified login or an account-linking mechanism. Pet search, photos, customer self-registration, and pet management follow in separate deliveries.
 
@@ -12,11 +12,15 @@ The frontend sends Firebase ID tokens to the same-origin `/api/customers` endpoi
 - Four Chrome/Auth emulator browser tests pass, including customer creation/edit/search, both languages, shared sign-in regression checks, and 400px mobile overflow checks. Customer API responses in the customer browser test are mocked; the Firestore store is tested separately against the database emulator.
 - Mobile screenshot uses synthetic demo identities only: `screenshots/customers-mobile-zh-draft.png`.
 
-## Before merging and deployment
+## Cloud preparation and remaining delivery
 
-1. Billing is now linked: Cloud Billing API confirms `billingEnabled: true` on 2026-10-19. Region approval remains pending. The required Firestore, Cloud Run, Cloud Build, Artifact Registry, and IAM APIs are enabled. Do not interpret replies about billing setup as selecting a database region.
-2. Provision Firestore, deploy deny-by-default rules, and deploy Cloud Run with a dedicated service identity and minimum necessary database/auth permissions. Ensure Firebase Hosting forwards `/api/**` to this service; no production rewrite exists yet.
-3. Verify the real Cloud Run authorization boundaries, Firestore search index availability, and recovery/retention decisions; no real production customer data has been used in these tests.
-4. Preview the visible change with the owner, finish the PR, merge after validation, deploy Firebase Hosting, and verify real live administrator create/edit/search and public-page regressions. Do not call this feature delivered until those checks pass.
+1. Billing is linked and the owner explicitly approved `us-west1` (Oregon). The required APIs are enabled. The default Firestore database is in Oregon with deletion protection and deny-by-default browser rules deployed.
+2. Cloud Run service `family-paws-api` is running in Oregon at `https://family-paws-api-2la63akoma-uw.a.run.app`, using a dedicated runtime identity. It scales from zero to two instances, with request-based CPU billing, 256 MiB memory, and a 30-second request timeout. The runtime has database access and a custom role containing only `firebaseauth.users.get` for current user checks. No service-account keys were created.
+3. A dedicated builder can read the private build-source bucket, write API images to the `family-paws` Artifact Registry repository, and write build logs. Source objects expire after one day. `cloudbuild.api.yaml` records the container build configuration. Build `517d4220-bf0b-49fa-902d-63d9ce58367b` produced digest `sha256:27abef25ab612a93c3baf22195b9f2c72a974531cc5ce23594a87cdf49da6014` from API source at `2b8bbdc`.
+4. Production API checks: health returns 200, unauthenticated customer reads return 401, and anonymous Firestore reads return 403. A local production preview using real Google administrator sign-in and the real Cloud Run backend successfully created, edited, searched, and reloaded a synthetic customer. Firestore confirmed version 2 and two edit-history records with the actual administrator UID. The Chinese layout has no horizontal overflow at 400px. No real customer details were used.
+5. Automatic Cloud Run request URL logs are excluded by `family-paws-api-request-privacy` because search URLs can contain customer information. Safe application and system logs remain available.
+6. The Hosting API rewrite is prepared in `firebase.json`, with the backend revision pinned to the Hosting release. Finish the PR, merge after validation, deploy Firebase Hosting, and verify the live administrator workflow and public-page regressions before calling this delivered. Remove only the synthetic verification record and its history after live checks.
+
+Customer records and audit history have no automatic deletion. Scheduled backups, exports, and a business recovery/retention policy remain undecided; do not claim these have been configured.
 
 Local prerequisites: Node 24; Java 21 for Firestore emulator. On this Mac, Java is installed at `/opt/homebrew/opt/openjdk@21/bin/java` but is not on the default PATH. Use that directory in PATH for `npm run test:store`.
