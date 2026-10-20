@@ -142,6 +142,8 @@ Explicitly excluded: purchasing/payment history, income reporting, care notes, a
 
 ## Customer management draft progress — 2026-10-19
 
+Draft PR: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/5 (branch `feat/customer-management`). Do not merge until the cloud prerequisites and live deployment path are ready. Local validation is recorded below; check GitHub CI status before proceeding.
+
 Continued the existing `feat/customer-management` work, preserving earlier changes. Administrator customer create/edit and name/contact-email prefix search are implemented locally, with a Fastify API, generated OpenAPI types, Firestore transactional version checks/idempotent retries and audited edits, and deny-by-default database rules. This is **not deployed** and production Hosting has no API rewrite yet. Pet management/photos/customer self-registration remain subsequent releases.
 
 Passed frontend build, API TypeScript check, 4 unit tests, Firestore emulator integration (concurrent updates, retry safety, audit history, bilingual search and pagination), and 3 Chrome/Auth emulator browser tests. Customer browser UI test mocks the API; database integration is separately exercised with the isolated demo Firestore emulator. Reviewed the 400px Chinese screenshot at `docs/screenshots/customers-mobile-zh-draft.png`. Java 21 is already installed under `/opt/homebrew/opt/openjdk@21/bin`; prefix PATH for database emulator tests. More detail: `docs/customer-management-draft.md`.
