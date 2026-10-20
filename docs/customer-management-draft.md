@@ -7,9 +7,9 @@ The frontend sends Firebase ID tokens to the same-origin `/api/customers` endpoi
 ## Validation
 
 - Production frontend build and API TypeScript checks pass.
-- Four unit tests cover administrator authorization, input validation, safe errors, and bounded normalized search.
+- Five unit tests cover administrator authorization, input validation, safe errors, and bounded normalized search.
 - Firestore emulator integration passes for duplicate retries, concurrent updates, audit records, search, Chinese names, and pagination without omissions/duplicates.
-- Three Chrome/Auth emulator browser tests pass, including customer creation/edit/search, both languages, and 400px mobile overflow checks. Customer API responses in the customer browser test are mocked; the Firestore store is tested separately against the database emulator.
+- Four Chrome/Auth emulator browser tests pass, including customer creation/edit/search, both languages, shared sign-in regression checks, and 400px mobile overflow checks. Customer API responses in the customer browser test are mocked; the Firestore store is tested separately against the database emulator.
 - Mobile screenshot uses synthetic demo identities only: `screenshots/customers-mobile-zh-draft.png`.
 
 ## Before merging and deployment
