@@ -174,3 +174,12 @@ Merged current `origin/main` (`eeaf830`) into the customer-management branch, re
 Validation after integration: frontend build, API TypeScript check, five unit tests, Firestore emulator integration, and all four Chrome/Auth emulator browser tests passed. Browser customer operations mock the API; Firestore integration is tested separately. Running the two emulator suites concurrently caused a shared emulator hub conflict; sequential rerun passed. Node runtime was v26.12.0 (project declares Node 24); CI uses Node 24.
 
 Rechecked Cloud Billing API: `billingEnabled: false`. User said “continue” after discussing Cloud Run's free allowance; this does not resolve billing setup or region approval. Asked owner to link billing to `niu-niu-family-paws` and confirm `us-west1` (Oregon). Both remain pending. Continue only customer management; keep PR #5 draft until backend deployment and live validation are possible.
+
+
+## Billing setup resolved — 2026-10-19
+
+Google Cloud console initially showed a permissions error because it was signed in as a different Google account. Switched the billing tab to the existing project owner `niuniupetsitting@gmail.com`; project access then worked. Owner completed billing setup in the browser. Cloud Billing API now confirms `billingEnabled: true` for `niu-niu-family-paws`. No payment details, payment profile, or credentials are recorded here. Do not continue to describe billing as disabled.
+
+Requested enablement of Firestore, Cloud Run, Cloud Build, Artifact Registry, and IAM APIs for the customer-management backend; verify completion before provisioning. No database, repository, Cloud Run service, customer data, or additional IAM grants were created in this step. Region approval is still pending; asked explicitly whether `us-west1` (Oregon) is approved. Do not treat the earlier “continue” replies about billing terms as a database-region selection.
+
+Customer-management PR #5 remains draft and is not deployed. Latest documentation-only commit before this note was `ec72a17`; GitHub validation passed. Continue only this feature, following the existing deployment and live-verification requirements.

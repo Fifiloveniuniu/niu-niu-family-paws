@@ -14,7 +14,7 @@ The frontend sends Firebase ID tokens to the same-origin `/api/customers` endpoi
 
 ## Before merging and deployment
 
-1. Owner must associate a billing account and confirm the database/backend region. Rechecked Cloud Billing API on 2026-10-19: `billingEnabled: false`. Firestore API is disabled. Do not interpret “continue” as selecting a region or enabling billing.
+1. Billing is now linked: Cloud Billing API confirms `billingEnabled: true` on 2026-10-19. Region approval remains pending. API enablement has been requested; verify completion before provisioning. Do not interpret replies about billing setup as selecting a database region.
 2. Provision Firestore, deploy deny-by-default rules, and deploy Cloud Run with a dedicated service identity and minimum necessary database/auth permissions. Ensure Firebase Hosting forwards `/api/**` to this service; no production rewrite exists yet.
 3. Verify the real Cloud Run authorization boundaries, Firestore search index availability, and recovery/retention decisions; no real production customer data has been used in these tests.
 4. Preview the visible change with the owner, finish the PR, merge after validation, deploy Firebase Hosting, and verify real live administrator create/edit/search and public-page regressions. Do not call this feature delivered until those checks pass.
