@@ -16,5 +16,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm run check:api
       - run: npm test
+      - run: npm run test:store
       - run: npm run build

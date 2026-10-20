@@ -163,3 +163,35 @@ Before resuming customer-management PR #5, merge the latest main into its branch
 
 
 HTML freshness fix: native Chrome exposed a cached pre-release homepage after the shared-login deploy; Hosting's default HTML response was `max-age=3600`. Follow-up configuration sets `Cache-Control: no-cache` on `/` and `/index.html` so future page loads revalidate against the current release. Existing cached responses may still require a one-time hard refresh. Hashed assets keep their existing behavior. Verify the response headers after deploying this configuration; this change does not alter application code.
+
+Cache follow-up PR #8 (https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/8) merged as `eeaf830` and deployed to Firebase Hosting. Live `/` and `/index.html` now return `Cache-Control: no-cache`, exactly match the released HTML, and retain the security headers. The code delivery is PR #6; documentation PR #7 is also merged. The original customer-management draft remains unmerged; merge current main before implementing/deploying it.
+
+
+## Customer-management continuation — 2026-10-19
+
+Merged current `origin/main` (`eeaf830`) into the customer-management branch, resolving portal, stylesheet, browser-test, and handoff conflicts. Preserved shared customer/staff/admin sign-in, the single homepage sign-in entry, and HTML revalidation headers. The administrator dashboard includes the customer draft; customer/staff pending states remain intact. No production deployment or main merge was performed.
+
+Validation after integration: frontend build, API TypeScript check, five unit tests, Firestore emulator integration, and all four Chrome/Auth emulator browser tests passed. Browser customer operations mock the API; Firestore integration is tested separately. Running the two emulator suites concurrently caused a shared emulator hub conflict; sequential rerun passed. Node runtime was v26.12.0 (project declares Node 24); CI uses Node 24.
+
+Rechecked Cloud Billing API: `billingEnabled: false`. User said “continue” after discussing Cloud Run's free allowance; this does not resolve billing setup or region approval. Asked owner to link billing to `niu-niu-family-paws` and confirm `us-west1` (Oregon). Both remain pending. Continue only customer management; keep PR #5 draft until backend deployment and live validation are possible.
+
+
+## Billing setup resolved — 2026-10-19
+
+Google Cloud console initially showed a permissions error because it was signed in as a different Google account. Switched the billing tab to the existing project owner `niuniupetsitting@gmail.com`; project access then worked. Owner completed billing setup in the browser. Cloud Billing API now confirms `billingEnabled: true` for `niu-niu-family-paws`. No payment details, payment profile, or credentials are recorded here. Do not continue to describe billing as disabled.
+
+Enabled Firestore, Cloud Run, Cloud Build, Artifact Registry, and IAM APIs for the customer-management backend; the enablement operation completed successfully. No database, repository, Cloud Run service, customer data, or additional IAM grants were created in this step. Region approval is still pending; asked explicitly whether `us-west1` (Oregon) is approved. Do not treat the earlier “continue” replies about billing terms as a database-region selection.
+
+Customer-management PR #5 remains draft and is not deployed. Latest documentation-only commit before this note was `ec72a17`; GitHub validation passed. Continue only this feature, following the existing deployment and live-verification requirements.
+
+## Customer-management cloud preparation — 2026-10-19
+
+Owner explicitly approved `us-west1` (Oregon) after billing setup. Created the default Firestore database in Oregon with deletion protection, deployed deny-by-default rules, and deployed Cloud Run `family-paws-api` using a dedicated runtime identity. The service is healthy at `https://family-paws-api-2la63akoma-uw.a.run.app`. No service-account keys were generated. Runtime permissions: `roles/datastore.user` and custom role `familyPawsAuthReader` containing only `firebaseauth.users.get`. Cloud Run permits network invocation; every customer operation still verifies a Firebase token, current account status, verified email, and current administrator claim in the application.
+
+Cloud Run scales from zero to two instances with request-based CPU, 256 MiB memory, concurrency 40, and a 30-second timeout. Private Artifact Registry repository `family-paws` and source bucket `niu-niu-family-paws-build-source` are in Oregon. Dedicated builder permissions are scoped to repository writes, bucket reads, and build logging. Source uploads expire after one day. Build `517d4220-bf0b-49fa-902d-63d9ce58367b` succeeded; deployed image digest is `sha256:27abef25ab612a93c3baf22195b9f2c72a974531cc5ce23594a87cdf49da6014` (API source `2b8bbdc`). See `cloudbuild.api.yaml` and the customer-management release-preparation document.
+
+Real API checks passed: health 200, unauthenticated customer API 401, anonymous Firestore 403. Native Chrome Google sign-in from a local production preview succeeded as the approved administrator. Adding, editing, prefix search, empty search results, and persistence after reload all worked against the real Cloud Run/Firestore backend. The Chinese page fits 400px with no horizontal overflow. Audit history contains both versions and the actual administrator UID. A synthetic customer named `Release check — sample customer 已更新` remains for live verification; remove only that sample and its history afterward. Its exact document paths are saved temporarily in `/tmp/family-paws-sample.json` (no credentials).
+
+Created Cloud Logging exclusion `family-paws-api-request-privacy` to avoid storing automatic request URLs containing customer search details. Safe application/system logs remain enabled. No automated backups or exports were configured; retention and recovery policy remain owner decisions, with no automatic deletion of customer/audit data.
+
+Next: commit Hosting rewrite and build configuration, finish PR #5, merge, deploy Hosting, verify the real live workflow, clean up the synthetic sample, and record final delivery. Preserve shared login, public-page behavior, both languages, and phone layouts. The frontend is still the earlier live release until this step is completed.

@@ -1,0 +1,15 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - apps/api/Dockerfile
+      - -t
+      - us-west1-docker.pkg.dev/niu-niu-family-paws/family-paws/api:${_REVISION}
+      - .
+images:
+  - us-west1-docker.pkg.dev/niu-niu-family-paws/family-paws/api:${_REVISION}
+serviceAccount: projects/niu-niu-family-paws/serviceAccounts/family-paws-build@niu-niu-family-paws.iam.gserviceaccount.com
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 600s

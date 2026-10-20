@@ -3,6 +3,7 @@ import { browserSessionPersistence, GoogleAuthProvider, onIdTokenChanged, setPer
 import { useTranslation } from 'react-i18next';
 import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
+import Customers from './customers';
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -82,11 +83,11 @@ export default function Portal({ toggle }: { toggle: () => void }) {
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
           <h2>{access === 'denied' ? t.denied : t.welcome}</h2>
           <p className="portal-account"><span>{t.account}</span><strong>{user?.email}</strong></p>
-          {access === 'denied' ? <p>{t.deniedBody}</p> : <><span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span><p>{access === 'admin' ? t.ready : access === 'employee' ? t.employeeNext : t.customerNext}</p>{access === 'admin' && <p>{t.next}</p>}</>}
+          {access === 'denied' ? <p>{t.deniedBody}</p> : <><span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span><p>{access === 'admin' ? t.ready : access === 'employee' ? t.employeeNext : t.customerNext}</p></>}
           <div className="portal-actions"><button className="button" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => void run(() => signOut(auth))}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
-      </div><p className="portal-session">{t.session}</p>
+      </div>{access === 'admin' && <Customers key={user?.uid}/>}<p className="portal-session">{t.session}</p>
     </main>
   </>;
 }
