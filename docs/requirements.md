@@ -8,6 +8,16 @@
 
 Customer records exist independently of login accounts. Account linking must use verified identity and administrator-controlled authorization, not a self-entered customer name.
 
+## Customer self-registration — owner requested 2026-10-19
+
+Customers sign in with their own Google account, then enter their name and their own pet information. A new self-registered profile belongs to the verified Firebase Authentication UID; the server derives ownership from the verified token, never a client-supplied owner identifier. A name is profile information, not proof of identity or permission to access an existing customer record. Linking an existing administrator-created record still requires administrator authorization. Customers must only access their own records and cannot change roles or service balances.
+
+Each customer can have multiple pets. Each pet has its own name and photo, entered/uploaded by the customer. Store each pet as a separate record linked to its owner, with its own stable identifier; names are not unique identifiers. Enforce ownership for photo upload and access as well as pet records. Do not expose customer-uploaded photos publicly by default. Whether a photo is mandatory remains unspecified.
+
+## Administrator customer and pet management — owner requested 2026-10-19
+
+Administrators can view, search, and edit customer information and the information for all pets belonging to each customer, including pet names and photos. Provide search by customer name, customer Google login email, and pet name. Search results must show the customer/pet relationship clearly, including customers with multiple pets. Enforce administrator authorization on the server for cross-customer reads, searches, and edits. Editing profile information must not silently change the verified login identity or record ownership. Balance adjustments remain a separate authorized workflow. Preserve an audit trail for administrator edits.
+
 ## Service usage
 
 Keep balances separate by service and unit (for example daycare days versus boarding nights). Each usage record identifies the customer, pet, service date, units consumed, and recording employee. Drop-off and pickup belong to the same visit. Corrections preserve an audit trail.

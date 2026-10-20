@@ -117,6 +117,12 @@ User has already been told this protection is live. Verify if needed; do not rec
 
 ## Product scope and sequence still ahead
 
+Additional owner requirement on 2026-10-19: administrators can view, search, and edit customer and pet information. Search planned by customer name, Google login email, and pet name; show each customer's multiple pets clearly. Preserve server-enforced administrator authorization, verified account ownership, and an edit audit trail. Recorded in requirements.md; not implemented or deployed.
+
+Additional owner requirement on 2026-10-19: each customer can have multiple pets, each with a name and photo. Recorded in requirements.md; not yet implemented or deployed. Pet records and uploaded photos must enforce owner access. Photo-required behavior has not been specified.
+
+Owner update on 2026-10-19: customers should sign in using their own Google account and fill in their name and pet information. Recorded in requirements.md. Treat this as requested customer self-registration; preserve verified UID ownership and administrator authorization for linking pre-existing records. This feature is not implemented or deployed. Asked whether us-west1 is approved and the owner will associate a billing account; response pending. Existing uncommitted customer-management work must be preserved.
+
 Original scope/architecture remain in `docs/requirements.md` and `docs/architecture.md`. Proposed backend: Node/TypeScript/Fastify REST API on Cloud Run, Firebase Authentication, Firestore, generated OpenAPI client. Business data accessed through the API with role/ownership enforcement; browser Firestore access denied by default. Deployment CI eventually uses Workload Identity Federation rather than long-lived service account keys.
 
 Next priorities:
@@ -133,3 +139,11 @@ Reminders need configurable thresholds, customer language, outbox/Cloud Tasks de
 Unresolved rules: drop-off/pickup meaning, consumption timing, partial days, overnight/cancellation rules, package expiry, shared pet balances, onboarding/linking, reminder defaults, backup/retention and cloud billing/regions. Resolve as needed before dependent features.
 
 Explicitly excluded: purchasing/payment history, income reporting, care notes, and a separate attendance page.
+
+## Customer management draft progress — 2026-10-19
+
+Continued the existing `feat/customer-management` work, preserving earlier changes. Administrator customer create/edit and name/contact-email prefix search are implemented locally, with a Fastify API, generated OpenAPI types, Firestore transactional version checks/idempotent retries and audited edits, and deny-by-default database rules. This is **not deployed** and production Hosting has no API rewrite yet. Pet management/photos/customer self-registration remain subsequent releases.
+
+Passed frontend build, API TypeScript check, 4 unit tests, Firestore emulator integration (concurrent updates, retry safety, audit history, bilingual search and pagination), and 3 Chrome/Auth emulator browser tests. Customer browser UI test mocks the API; database integration is separately exercised with the isolated demo Firestore emulator. Reviewed the 400px Chinese screenshot at `docs/screenshots/customers-mobile-zh-draft.png`. Java 21 is already installed under `/opt/homebrew/opt/openjdk@21/bin`; prefix PATH for database emulator tests. More detail: `docs/customer-management-draft.md`.
+
+Rechecked Cloud Billing API: billing remains disabled. Firestore API reports disabled/not yet used. Asked owner to link billing and approve us-west1; no answer at the time of this note. Do not merge/deploy a broken customer UI while its API is unavailable. Next: resolve cloud prerequisites, provision backend safely, preview, finish PR validation, merge, deploy, and verify live.
