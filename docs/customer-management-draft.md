@@ -1,4 +1,6 @@
-# Customer management — release preparation
+# Customer management — delivered
+
+Delivered through [PR #5](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/5), merged as `065b09d`, and deployed to Firebase Hosting. [Live administrator portal](https://niu-niu-family-paws.web.app/#/login). See [release notes](release-3.md).
 
 Current scope: administrators add/edit customer name, optional contact email/phone, and preferred English/Simplified Chinese language. Search matches the start of a name or contact email, ignoring case, before pagination. Contact email is profile information, not a verified login or an account-linking mechanism. Pet search, photos, customer self-registration, and pet management follow in separate deliveries.
 
@@ -19,7 +21,7 @@ The frontend sends Firebase ID tokens to the same-origin `/api/customers` endpoi
 3. A dedicated builder can read the private build-source bucket, write API images to the `family-paws` Artifact Registry repository, and write build logs. Source objects expire after one day. `cloudbuild.api.yaml` records the container build configuration. Build `517d4220-bf0b-49fa-902d-63d9ce58367b` produced digest `sha256:27abef25ab612a93c3baf22195b9f2c72a974531cc5ce23594a87cdf49da6014` from API source at `2b8bbdc`.
 4. Production API checks: health returns 200, unauthenticated customer reads return 401, and anonymous Firestore reads return 403. A local production preview using real Google administrator sign-in and the real Cloud Run backend successfully created, edited, searched, and reloaded a synthetic customer. Firestore confirmed version 2 and two edit-history records with the actual administrator UID. The Chinese layout has no horizontal overflow at 400px. No real customer details were used.
 5. Automatic Cloud Run request URL logs are excluded by `family-paws-api-request-privacy` because search URLs can contain customer information. Safe application and system logs remain available.
-6. The Hosting API rewrite is prepared in `firebase.json`, with the backend revision pinned to the Hosting release. Finish the PR, merge after validation, deploy Firebase Hosting, and verify the live administrator workflow and public-page regressions before calling this delivered. Remove only the synthetic verification record and its history after live checks.
+6. The Hosting API rewrite is deployed from `firebase.json`, with the backend revision pinned to the Hosting release. Real live administrator create/edit/search, reload persistence, Chinese language persistence, 400px layouts, public navigation, and FAQs passed after deployment. The live HTML matches the production build. Missing/invalid API tokens return 401 with `private, no-store`. Both synthetic customer records and their four synthetic audit entries were removed after verification; no real customer data was used or deleted.
 
 Customer records and audit history have no automatic deletion. Scheduled backups, exports, and a business recovery/retention policy remain undecided; do not claim these have been configured.
 

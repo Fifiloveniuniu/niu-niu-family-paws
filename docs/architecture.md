@@ -1,4 +1,4 @@
-# Proposed architecture
+# Architecture and planned workflows
 
 ## Request path
 
@@ -18,11 +18,13 @@ Persist reminder eligibility/outbox state with the balance transaction, enqueue 
 
 ## Deployment
 
-Use the target project `niu-niu-family-paws`; no resources are configured yet. Select compatible US regions after confirming requirements. Firebase Hosting is a global CDN, so US backend/database regions alone do not guarantee US-only processing.
+Use the target project `niu-niu-family-paws`. Firebase Hosting, Firebase Authentication, the default Firestore database, and Cloud Run customer API are deployed. The owner approved `us-west1` (Oregon) for the database and backend. Firebase Hosting is a global CDN, so US backend/database regions alone do not guarantee US-only processing.
 
-Keep frontend and backend in one repository, with a proposed future structure of `apps/web`, `apps/api`, and `packages/contracts`. Generate API client types from OpenAPI. Use GitHub Actions with Workload Identity Federation instead of long-lived Google service account keys. Cloud Run uses request-based billing and zero minimum instances initially.
+Frontend and backend share one repository under `apps/web`, `apps/api`, and `packages/contracts`. API types are generated from OpenAPI. Current deployments use the owner's existing authorized CLI session, with separate runtime and build identities and no service-account keys. Future deployment CI should use Workload Identity Federation. Cloud Run uses request-based billing, zero minimum instances, and two maximum instances.
 
-Keep secrets in Secret Manager. Production customer data, tokens, and credentials must never be committed. Define recovery and backup requirements before launch.
+The customer API checks the token and current Firebase account status/administrator claim on every request. Its dedicated identity has database access and only `firebaseauth.users.get` for current account checks. Automatic Cloud Run request URL logs are excluded because search terms can contain customer information; safe application/system logs remain available.
+
+Keep secrets in Secret Manager. Production customer data, tokens, and credentials must never be committed. The database has deletion protection. Customer records and audit history have no automatic deletion; scheduled backups/exports and a business recovery/retention policy remain undecided.
 
 ## Verification before launch
 
