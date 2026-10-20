@@ -1,5 +1,7 @@
 # Session handoff — 2026-10-19
 
+**Latest delivered state:** administrator customer contact management is live at https://niu-niu-family-paws.web.app/#/login. PR #5 merged as `065b09d` and Firebase Hosting deployment/live verification completed. Billing is enabled; owner approved Oregon (`us-west1`), and the Cloud Run API/Firestore database are deployed. Older draft/blocker notes below are historical. See `docs/release-3.md` and the final delivery note at the end.
+
 ## User intent and working preferences
 
 The user's partner is the business owner and does not know how to code. Read `docs/business-owner-guide.md`; accept plain-language requests in English or Simplified Chinese and handle the technical delivery. On 2026-10-19 the user explicitly authorized a sequence of feature PRs, automatic merge after validation, and continuation without repeated merge permission. Preview changes locally and walk the owner through them in the browser. Deploy and verify every feature on Google Cloud before calling it delivered. Ask only for necessary missing facts or required authorization; preserve all prior guidance.
@@ -195,3 +197,13 @@ Real API checks passed: health 200, unauthenticated customer API 401, anonymous 
 Created Cloud Logging exclusion `family-paws-api-request-privacy` to avoid storing automatic request URLs containing customer search details. Safe application/system logs remain enabled. No automated backups or exports were configured; retention and recovery policy remain owner decisions, with no automatic deletion of customer/audit data.
 
 Next: commit Hosting rewrite and build configuration, finish PR #5, merge, deploy Hosting, verify the real live workflow, clean up the synthetic sample, and record final delivery. Preserve shared login, public-page behavior, both languages, and phone layouts. The frontend is still the earlier live release until this step is completed.
+
+## Customer contact management delivered — 2026-10-20
+
+PR #5 passed GitHub validation, was marked ready, and merged as `065b09d06c059e63a2f68c660ceeb8796637f703`. Built from the merged main commit and successfully deployed Firebase Hosting with its Cloud Run rewrite and revision pin. Live URL: https://niu-niu-family-paws.web.app/#/login. Administrators can add/edit customer names, optional contact email/phone, preferred language, and search by name/contact-email prefix. Contact email is not a verified login identity; no account linking or email sending occurs.
+
+After deployment, verified real live create/edit/search and persistence, actual administrator audit history, Chinese persistence after reload, 400px overflow, one homepage sign-in entry, section navigation, and expanded FAQ. Live HTML exactly matches `dist/index.html`; homepage is HTTP 200 with `Cache-Control: no-cache` and security headers. Hosted API rejects missing and invalid tokens with 401 and `private, no-store`. Anonymous Firestore access returns 403. Browser error logs were empty. The two synthetic customers and their four synthetic history entries were removed with exact-target/version checks. The live directory is empty and ready for real records. No real customer records were used or deleted.
+
+Screenshot `docs/screenshots/customers-live-mobile-zh.png` shows only the live customer directory, without account details. The browser viewport was restored to desktop and the live page left in English, matching its original preference. Live browser tab `782393907` was marked as the deliverable. Local production preview on `localhost:4177` was used for the premerge walkthrough; stop the temporary preview when finishing. Earlier `127.0.0.1:4174` dev preview may also remain running.
+
+See `docs/release-3.md`, the updated owner guide, and `docs/customer-management-draft.md` for feature scope and infrastructure. Customer self-registration, pet names/photos, verified-login/pet search, balances, employee operations, impersonation, and reminders remain undelivered. Do not start another feature until this delivery has been handed back to the owner. Public contact/rates/photos and business rules remain unresolved. No automated backups/exports are configured; no customer/audit records expire automatically.
