@@ -1,29 +1,35 @@
 import React from 'react';
 import { browserSessionPersistence, GoogleAuthProvider, onIdTokenChanged, setPersistence, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
-import { hasAdminAccess } from './admin-access';
+import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
 const en = {
-  home: 'Back to website', label: 'ADMINISTRATOR PORTAL', title: 'A little care, behind the scenes.',
-  intro: 'Sign in with your authorized Google account to access the administrator dashboard.',
+  home: 'Back to website', label: 'ONE SIGN-IN FOR EVERYONE', title: 'Welcome to Family Paws.',
+  intro: 'Continue with your Google account. We’ll open the page for your account permissions.',
   login: 'Continue with Google', logout: 'Sign out', checking: 'Checking your access…', busy: 'Please wait…',
-  denied: 'Administrator access required', deniedBody: 'This account has not been granted administrator access. Sign out to choose another account, or refresh access after the project owner grants your role.',
+  denied: 'Verified account required', deniedBody: 'We could not verify access for this account. Refresh access or sign out and try your Google account again.',
   refresh: 'Refresh access', error: 'We couldn’t complete that request. Please try again.', popup: 'Allow the Google sign-in window, then try again.', network: 'Check your connection and try again.',
   dashboard: 'Administrator dashboard', welcome: 'Welcome back.', account: 'Your account', role: 'Administrator',
   ready: 'Your administrator sign-in is ready.', next: 'Customer and pet management will be added in upcoming releases. No customer records are stored or displayed in this release.',
+  customerTitle: 'Customer account', employeeTitle: 'Staff account', customerRole: 'Customer', employeeRole: 'Staff',
+  customerNext: 'You’re signed in. Customer profiles, pet photos, and service records are coming in a future release. You cannot enter or save pet details here yet.',
+  employeeNext: 'You’re signed in with staff access. Customer lookup and visit tracking are coming in a future release.',
   session: 'For shared devices, sign out when finished. Your session is limited to this browser session.',
 };
 const zh: typeof en = {
-  home: '返回网站', label: '管理员入口', title: '用心照护，从这里开始。',
-  intro: '请使用已获授权的 Google 账号登录管理员控制台。',
+  home: '返回网站', label: '客户 · 员工 · 管理员统一入口', title: '欢迎来到 Family Paws。',
+  intro: '使用您的 Google 账号继续，系统将根据账号权限进入对应页面。',
   login: '使用 Google 继续', logout: '退出登录', checking: '正在验证访问权限…', busy: '请稍候…',
-  denied: '需要管理员权限', deniedBody: '此账号尚未获得管理员权限。请退出后选择其他账号，或在项目所有者授予权限后刷新访问权限。',
+  denied: '需要验证账号', deniedBody: '未能验证此账号的访问权限。请刷新访问权限，或退出后重新使用 Google 账号登录。',
   refresh: '刷新访问权限', error: '未能完成此操作，请重试。', popup: '请允许 Google 登录窗口，然后重试。', network: '请检查网络连接后重试。',
   dashboard: '管理员控制台', welcome: '欢迎回来。', account: '您的账号', role: '管理员',
   ready: '管理员登录已就绪。', next: '客户与宠物管理将在后续版本中提供。此版本不存储或显示客户记录。',
+  customerTitle: '客户账号', employeeTitle: '员工账号', customerRole: '客户', employeeRole: '员工',
+  customerNext: '您已登录。客户资料、宠物照片和服务记录将在后续版本开放。目前还不能在这里填写或保存宠物资料。',
+  employeeNext: '您已使用员工权限登录。客户查询与服务记录将在后续版本开放。',
   session: '使用共用设备时，请在完成后退出登录。登录状态仅保留在当前浏览器会话中。',
 };
 
@@ -32,7 +38,7 @@ export default function Portal({ toggle }: { toggle: () => void }) {
   const chinese = i18n.language === 'zh';
   const t = chinese ? zh : en;
   const [user, setUser] = React.useState<User | null>(null);
-  const [access, setAccess] = React.useState<'checking' | 'signed-out' | 'denied' | 'admin'>('checking');
+  const [access, setAccess] = React.useState<'checking' | 'signed-out' | 'denied' | 'admin' | 'employee' | 'customer'>('checking');
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<keyof typeof en | null>(null);
   const generation = React.useRef(0);
@@ -42,7 +48,7 @@ export default function Portal({ toggle }: { toggle: () => void }) {
     if (!current) { setAccess('signed-out'); return; }
     try {
       const token = await current.getIdTokenResult(force);
-      if (request === generation.current) setAccess(hasAdminAccess(token.claims) ? 'admin' : 'denied');
+      if (request === generation.current) setAccess(getPortalAccess(token.claims));
     } catch {
       if (request === generation.current) { setAccess('denied'); setError('network'); }
     }
@@ -71,12 +77,12 @@ export default function Portal({ toggle }: { toggle: () => void }) {
   return <>
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><button className="language" onClick={toggle} lang={chinese ? 'en' : 'zh-Hans'}>{chinese ? 'English' : '简体中文'}</button></header>
     <main className="portal" id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
-      <h1>{access === 'admin' ? t.dashboard : t.title}</h1>
+      <h1>{access === 'admin' ? t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
       <div className="portal-card" aria-busy={busy || access === 'checking'}>
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
-          <h2>{access === 'admin' ? t.welcome : t.denied}</h2>
+          <h2>{access === 'denied' ? t.denied : t.welcome}</h2>
           <p className="portal-account"><span>{t.account}</span><strong>{user?.email}</strong></p>
-          {access === 'admin' ? <><span className="portal-role">{t.role}</span><p>{t.ready}</p><p>{t.next}</p></> : <p>{t.deniedBody}</p>}
+          {access === 'denied' ? <p>{t.deniedBody}</p> : <><span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span><p>{access === 'admin' ? t.ready : access === 'employee' ? t.employeeNext : t.customerNext}</p>{access === 'admin' && <p>{t.next}</p>}</>}
           <div className="portal-actions"><button className="button" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => void run(() => signOut(auth))}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
