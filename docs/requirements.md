@@ -41,3 +41,13 @@ Emails include pet/service details, remaining days, and renewal contact instruct
 - Data retention, backup policy, and available Google Cloud billing/credits.
 
 Do not treat these unresolved business rules as approved behavior.
+
+## Shared sign-in, multiple roles, and administrator impersonation — 2026-10-19
+
+Use one prominent bilingual sign-in entry for customers, employees, and administrators. A verified Google identity may have multiple authorized roles; do not force a person into mutually exclusive administrator/employee/customer accounts. An administrator can also own pets and use customer workflows for their own pets.
+
+Avoid duplicate information: one canonical person/profile per verified identity, with role assignments referencing it. Customer/employee views reuse profile information and pets rather than copying records. Each pet has one stable record. Do not automatically merge people on matching names or editable contact email; linking pre-existing records still requires administrator authorization and verified identity. Account linking must preserve history and references.
+
+Administrators may impersonate any customer or employee for their business workflows. Implement this only with server-authorized, scoped impersonation sessions; never grant the browser permission by selecting an account ID or modifying another account's claims. Every operation must retain the actual administrator actor and the effective customer/employee identity in its audit record. Display a persistent, prominent impersonation banner with the target identity and an exit action. Leaving impersonation returns to administrator context. Revoked administrator access must terminate impersonation authority. Impersonation must not expose passwords, allow changing another person's Google credentials, or silently grant roles. Switching to the administrator's own customer context uses that same person's existing profile and pets.
+
+The current shared-login release only provides authenticated landing pages. Customer/pet editing, employee workflows, multiple-role context switching, and impersonation remain subsequent backend features; do not present them as delivered.
