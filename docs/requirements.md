@@ -8,6 +8,16 @@
 
 Customer records exist independently of login accounts. Account linking must use verified identity and administrator-controlled authorization, not a self-entered customer name.
 
+## Customer self-registration — owner requested 2026-10-19
+
+Customers sign in with their own Google account, then enter their name and their own pet information. A new self-registered profile belongs to the verified Firebase Authentication UID; the server derives ownership from the verified token, never a client-supplied owner identifier. A name is profile information, not proof of identity or permission to access an existing customer record. Linking an existing administrator-created record still requires administrator authorization. Customers must only access their own records and cannot change roles or service balances.
+
+Each customer can have multiple pets. Each pet has its own name and photo, entered/uploaded by the customer. Store each pet as a separate record linked to its owner, with its own stable identifier; names are not unique identifiers. Enforce ownership for photo upload and access as well as pet records. Do not expose customer-uploaded photos publicly by default. Whether a photo is mandatory remains unspecified.
+
+## Administrator customer and pet management — owner requested 2026-10-19
+
+Administrators can view, search, and edit customer information and the information for all pets belonging to each customer, including pet names and photos. Provide search by customer name, customer Google login email, and pet name. Search results must show the customer/pet relationship clearly, including customers with multiple pets. Enforce administrator authorization on the server for cross-customer reads, searches, and edits. Editing profile information must not silently change the verified login identity or record ownership. Balance adjustments remain a separate authorized workflow. Preserve an audit trail for administrator edits.
+
 ## Service usage
 
 Keep balances separate by service and unit (for example daycare days versus boarding nights). Each usage record identifies the customer, pet, service date, units consumed, and recording employee. Drop-off and pickup belong to the same visit. Corrections preserve an audit trail.
@@ -31,3 +41,13 @@ Emails include pet/service details, remaining days, and renewal contact instruct
 - Data retention, backup policy, and available Google Cloud billing/credits.
 
 Do not treat these unresolved business rules as approved behavior.
+
+## Shared sign-in, multiple roles, and administrator impersonation — 2026-10-19
+
+Use one prominent bilingual sign-in entry for customers, employees, and administrators. A verified Google identity may have multiple authorized roles; do not force a person into mutually exclusive administrator/employee/customer accounts. An administrator can also own pets and use customer workflows for their own pets.
+
+Avoid duplicate information: one canonical person/profile per verified identity, with role assignments referencing it. Customer/employee views reuse profile information and pets rather than copying records. Each pet has one stable record. Do not automatically merge people on matching names or editable contact email; linking pre-existing records still requires administrator authorization and verified identity. Account linking must preserve history and references.
+
+Administrators may impersonate any customer or employee for their business workflows. Implement this only with server-authorized, scoped impersonation sessions; never grant the browser permission by selecting an account ID or modifying another account's claims. Every operation must retain the actual administrator actor and the effective customer/employee identity in its audit record. Display a persistent, prominent impersonation banner with the target identity and an exit action. Leaving impersonation returns to administrator context. Revoked administrator access must terminate impersonation authority. Impersonation must not expose passwords, allow changing another person's Google credentials, or silently grant roles. Switching to the administrator's own customer context uses that same person's existing profile and pets.
+
+The current shared-login release only provides authenticated landing pages. Customer/pet editing, employee workflows, multiple-role context switching, and impersonation remain subsequent backend features; do not present them as delivered.
