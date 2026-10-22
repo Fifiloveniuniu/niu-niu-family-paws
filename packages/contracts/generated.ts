@@ -4,6 +4,24 @@
  */
 
 export interface paths {
+    "/api/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Read only the profile belonging to the verified Google identity. No client-selected owner or account linking. */
+        get: operations["getOwnProfile"];
+        /** @description Create or edit the current identity's name and language, preserving canonical contact data and audit history. */
+        put: operations["saveOwnProfile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/customers": {
         parameters: {
             query?: never;
@@ -51,11 +69,19 @@ export interface components {
             version: number;
             createdAt: string;
             updatedAt: string;
+            /** @description Server-maintained verified Google email, or null for an unlinked record. */
+            readonly loginEmail: string | null;
         };
         CustomerWrite: {
             name: string;
             email: string;
             phone: string;
+            /** @enum {string} */
+            language: "en" | "zh";
+            version: number;
+        };
+        ProfileWrite: {
+            name: string;
             /** @enum {string} */
             language: "en" | "zh";
             version: number;
@@ -76,11 +102,104 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getOwnProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Own profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Customer"];
+                };
+            };
+            /** @description No profile has been created for this identity */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Active verified Google identity required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    saveOwnProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProfileWrite"];
+            };
+        };
+        responses: {
+            /** @description Saved own profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Customer"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Active verified Google identity required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Profile changed since it was loaded */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     listCustomers: {
         parameters: {
             query?: {
                 cursor?: string;
-                /** @description Case-insensitive prefix of customer name or contact email. Applied before pagination. */
+                /** @description Case-insensitive prefix of customer name, contact email, or server-maintained Google login email. Applied before pagination. */
                 search?: string;
             };
             header?: never;

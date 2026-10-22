@@ -16,7 +16,13 @@ const app = buildApp({
     const decoded = await auth.verifyIdToken(token, true);
     // Read the current role too: removing a claim must immediately block existing tokens.
     const user = await auth.getUser(decoded.uid);
-    return { uid: user.uid, admin: user.disabled ? false : user.customClaims?.admin, email_verified: user.emailVerified && decoded.email_verified === true };
+    if (user.disabled) throw new Error('Disabled account');
+    return {
+      uid: user.uid, admin: user.customClaims?.admin,
+      email_verified: user.emailVerified && decoded.email_verified === true,
+      google: decoded.firebase.sign_in_provider === 'google.com' && user.providerData.some(provider => provider.providerId === 'google.com'),
+      email: user.email,
+    };
   },
   store: firestoreStore(getFirestore()),
 });

@@ -23,7 +23,8 @@
           "language",
           "version",
           "createdAt",
-          "updatedAt"
+          "updatedAt",
+          "loginEmail"
         ],
         "properties": {
           "id": {
@@ -59,6 +60,12 @@
           },
           "updatedAt": {
             "type": "string"
+          },
+          "loginEmail": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true,
+            "description": "Server-maintained verified Google email, or null for an unlinked record."
           }
         }
       },
@@ -99,6 +106,16 @@
           }
         }
       },
+      "ProfileWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "language", "version"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "language": { "type": "string", "enum": ["en", "zh"] },
+          "version": { "type": "integer", "minimum": 0 }
+        }
+      },
       "CustomerPage": {
         "type": "object",
         "required": [
@@ -137,6 +154,30 @@
     }
   ],
   "paths": {
+    "/api/profile": {
+      "get": {
+        "operationId": "getOwnProfile",
+        "description": "Read only the profile belonging to the verified Google identity. No client-selected owner or account linking.",
+        "responses": {
+          "200": { "description": "Own profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Customer" } } } },
+          "204": { "description": "No profile has been created for this identity" },
+          "401": { "description": "Authentication required" },
+          "403": { "description": "Active verified Google identity required" }
+        }
+      },
+      "put": {
+        "operationId": "saveOwnProfile",
+        "description": "Create or edit the current identity's name and language, preserving canonical contact data and audit history.",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProfileWrite" } } } },
+        "responses": {
+          "200": { "description": "Saved own profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Customer" } } } },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Authentication required" },
+          "403": { "description": "Active verified Google identity required" },
+          "409": { "description": "Profile changed since it was loaded" }
+        }
+      }
+    },
     "/api/customers": {
       "get": {
         "operationId": "listCustomers",
@@ -152,7 +193,7 @@
           {
             "in": "query",
             "name": "search",
-            "description": "Case-insensitive prefix of customer name or contact email. Applied before pagination.",
+            "description": "Case-insensitive prefix of customer name, contact email, or server-maintained Google login email. Applied before pagination.",
             "schema": {
               "type": "string",
               "maxLength": 254
