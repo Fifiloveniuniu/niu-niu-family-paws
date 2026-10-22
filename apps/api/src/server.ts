@@ -1,6 +1,8 @@
 import { applicationDefault, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getStorage } from 'firebase-admin/storage';
+import { petStore } from './pets.ts';
 import { buildApp } from './app.ts';
 import { firestoreStore } from './store.ts';
 const emulated = process.env.FAMILY_PAWS_EMULATORS === 'true';
@@ -25,6 +27,14 @@ const app = buildApp({
     };
   },
   store: firestoreStore(getFirestore()),
+  pets: petStore(getFirestore(), {
+    async put(key, bytes) {
+      const file = getStorage().bucket('niu-niu-family-paws-pet-photos').file(key);
+      try { await file.save(bytes, { resumable: false, preconditionOpts: { ifGenerationMatch: 0 }, metadata: { contentType: 'image/webp', cacheControl: 'private, no-store' } }); }
+      catch (error) { if ((error as { code?: number }).code !== 412) throw error; }
+    },
+    async get(key) { return (await getStorage().bucket('niu-niu-family-paws-pet-photos').file(key).download())[0]; },
+  }),
 });
 await app.listen({ port: Number(process.env.PORT || 8080), host: emulated ? '127.0.0.1' : '0.0.0.0' });
 for (const signal of ['SIGTERM', 'SIGINT']) process.on(signal, () => { void app.close().then(() => process.exit(0)); });

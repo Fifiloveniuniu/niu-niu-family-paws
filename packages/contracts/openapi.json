@@ -12,6 +12,37 @@
       }
     },
     "schemas": {
+      "Pet": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "customerId", "name", "photo", "version", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "customerId": { "type": "string", "format": "uuid", "readOnly": true },
+          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "photo": { "type": "string", "nullable": true, "readOnly": true, "description": "Opaque image revision; photos require authenticated API access." },
+          "version": { "type": "integer", "minimum": 1 },
+          "createdAt": { "type": "string" }, "updatedAt": { "type": "string" }
+        }
+      },
+      "PetWrite": {
+        "type": "object", "additionalProperties": false, "required": ["name", "version"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "version": { "type": "integer", "minimum": 0 },
+          "photoData": { "type": "string", "minLength": 1, "maxLength": 4194304, "description": "Optional base64 JPEG, PNG or WebP, at most 3 MiB and 16 megapixels. Omit to preserve the saved photo." }
+        }
+      },
+      "PetPage": {
+        "type": "object", "required": ["items", "nextCursor"],
+        "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Pet" } }, "nextCursor": { "type": "string", "nullable": true } }
+      },
+      "PetSearchPage": {
+        "type": "object", "required": ["items", "nextCursor"],
+        "properties": { "items": { "type": "array", "items": { "type": "object", "required": ["pet", "customer"], "properties": {
+          "pet": { "$ref": "#/components/schemas/Pet" },
+          "customer": { "type": "object", "required": ["id", "name", "loginEmail"], "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "loginEmail": { "type": "string", "nullable": true } } }
+        } } }, "nextCursor": { "type": "string", "nullable": true } }
+      },
       "Customer": {
         "type": "object",
         "additionalProperties": false,
@@ -154,6 +185,30 @@
     }
   ],
   "paths": {
+    "/api/customers/{customerId}/pets": {
+      "parameters": [{ "name": "customerId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+      "get": { "operationId": "listPets", "description": "Owner or administrator only. 50 pets per page.",
+        "parameters": [{ "name": "cursor", "in": "query", "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "description": "Pets", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PetPage" } } } }, "403": { "description": "Not authorized" } }
+      }
+    },
+    "/api/customers/{customerId}/pets/{id}": {
+      "parameters": [{ "name": "customerId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+      "put": { "operationId": "savePet", "description": "Owner or administrator only. Customer relationship is immutable. Versioned, audited and safe to retry the identical request.",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PetWrite" } } } },
+        "responses": { "200": { "description": "Pet saved", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Pet" } } } }, "400": { "description": "Invalid name or image" }, "403": { "description": "Not authorized" }, "409": { "description": "Stale version" } }
+      }
+    },
+    "/api/customers/{customerId}/pets/{id}/photo": {
+      "parameters": [{ "name": "customerId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }, { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+      "get": { "operationId": "getPetPhoto", "description": "Owner or administrator only; private/no-store. Never a public download URL.", "responses": { "200": { "description": "Private processed photo", "content": { "image/webp": { "schema": { "type": "string", "format": "binary" } } } }, "403": { "description": "Not authorized" }, "404": { "description": "No photo" } } }
+    },
+    "/api/pet-search": {
+      "get": { "operationId": "searchPets", "description": "Administrator-only pet-name prefix search, joined to canonical customer information.",
+        "parameters": [{ "name": "search", "in": "query", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 120 } }, { "name": "cursor", "in": "query", "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Pet/customer results", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PetSearchPage" } } } }, "403": { "description": "Administrator required" } }
+      }
+    },
     "/api/profile": {
       "get": {
         "operationId": "getOwnProfile",

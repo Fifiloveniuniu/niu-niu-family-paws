@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
+import Pets from './pets';
 import type { components } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
@@ -101,7 +102,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
         <button className="button" disabled={saving || loading || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button>
       </form>
       {!profile && <p className="customer-intro">{t.existing}</p>}
-      <p className="customer-intro">{t.future}</p>
+      {profile && <Pets key={profile.id} customerId={profile.id}/>}
     </>}
     <button className="language" disabled={loading || saving || uncertain} onClick={() => void load()}>{t.reload}</button>
   </section>;

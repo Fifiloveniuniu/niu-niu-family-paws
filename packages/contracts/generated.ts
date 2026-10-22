@@ -4,6 +4,82 @@
  */
 
 export interface paths {
+    "/api/customers/{customerId}/pets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customerId: string;
+            };
+            cookie?: never;
+        };
+        /** @description Owner or administrator only. 50 pets per page. */
+        get: operations["listPets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/pets/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customerId: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        /** @description Owner or administrator only. Customer relationship is immutable. Versioned, audited and safe to retry the identical request. */
+        put: operations["savePet"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/pets/{id}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customerId: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description Owner or administrator only; private/no-store. Never a public download URL. */
+        get: operations["getPetPhoto"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pet-search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Administrator-only pet-name prefix search, joined to canonical customer information. */
+        get: operations["searchPets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/profile": {
         parameters: {
             query?: never;
@@ -58,6 +134,39 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        Pet: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            readonly customerId: string;
+            name: string;
+            /** @description Opaque image revision; photos require authenticated API access. */
+            readonly photo: string | null;
+            version: number;
+            createdAt: string;
+            updatedAt: string;
+        };
+        PetWrite: {
+            name: string;
+            version: number;
+            /** @description Optional base64 JPEG, PNG or WebP, at most 3 MiB and 16 megapixels. Omit to preserve the saved photo. */
+            photoData?: string;
+        };
+        PetPage: {
+            items: components["schemas"]["Pet"][];
+            nextCursor: string | null;
+        };
+        PetSearchPage: {
+            items: {
+                pet: components["schemas"]["Pet"];
+                customer: {
+                    id: string;
+                    name: string;
+                    loginEmail: string | null;
+                };
+            }[];
+            nextCursor: string | null;
+        };
         Customer: {
             /** Format: uuid */
             id: string;
@@ -102,6 +211,152 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listPets: {
+        parameters: {
+            query?: {
+                cursor?: string;
+            };
+            header?: never;
+            path: {
+                customerId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pets */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PetPage"];
+                };
+            };
+            /** @description Not authorized */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    savePet: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customerId: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PetWrite"];
+            };
+        };
+        responses: {
+            /** @description Pet saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Pet"];
+                };
+            };
+            /** @description Invalid name or image */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not authorized */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Stale version */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getPetPhoto: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                customerId: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Private processed photo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/webp": string;
+                };
+            };
+            /** @description Not authorized */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No photo */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    searchPets: {
+        parameters: {
+            query: {
+                search: string;
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pet/customer results */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PetSearchPage"];
+                };
+            };
+            /** @description Administrator required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getOwnProfile: {
         parameters: {
             query?: never;

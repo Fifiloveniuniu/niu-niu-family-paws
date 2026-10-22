@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
+import Pets, { PetSearch } from './pets';
 import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
@@ -51,6 +52,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const [uncertain, setUncertain] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const [activeSearch, setActiveSearch] = React.useState('');
+  const [petCustomer, setPetCustomer] = React.useState<{ id: string; name: string; loginEmail: string | null } | null>(null);
   const request = React.useRef(0);
   const alive = React.useRef(true);
   const heading = React.useRef<HTMLHeadingElement>(null);
@@ -115,6 +117,9 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     </form>}
     <div className="customer-heading"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : ''}</p><button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button></div>
     <ul className="customer-list">{items.map(customer => <li key={customer.id}><div><h3>{customer.name}</h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button></li>)}</ul>
+    {loaded && <div className="customer-pet-picker"><label>{chinese ? '选择客户管理宠物' : 'Choose a customer to manage pets'}<select value={petCustomer?.id ?? ''} onChange={event => setPetCustomer(items.find(item => item.id === event.target.value) ?? null)}><option value="">{chinese ? '请选择客户' : 'Select a customer'}</option>{items.map(item => <option key={item.id} value={item.id}>{item.name}{item.loginEmail ? ' · ' + item.loginEmail : ''}</option>)}</select></label></div>}
+    <PetSearch onChoose={setPetCustomer}/>
+    {petCustomer && <div className="admin-pets"><h3>{chinese ? '客户' : 'Customer'}: {petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}<Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></div>}
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
   </section>;

@@ -6,6 +6,7 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   const {localId}=await response.json();
   await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true}});
   let profile:any=null, writes:any[]=[];
+  await page.route('**/api/customers/*/pets',route=>route.fulfill({json:{items:[],nextCursor:null}}));
   let loseResponse=true;
   await page.route('**/api/profile',async route=>{
     const req=route.request();expect(req.headers().authorization).toMatch(/^Bearer /);

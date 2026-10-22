@@ -1,5 +1,9 @@
 # Session handoff — 2026-10-19
 
+## Pet feature in progress — 2026-10-22
+
+Current branch `feat/pet-profiles` implements multiple pets and private photos as one feature; not yet delivered. Owner answered “add photo later”: names can be saved without a photo. See `docs/pet-profiles.md` for canonical data, permissions, upload limits and deployment checklist. Created the private Oregon bucket `niu-niu-family-paws-pet-photos`, runtime bucket-scoped custom create/get role, and deployed the pet-name collection-group index. Existing production frontend/API are unchanged at this stage. Continue this feature through validation, PR merge, Hosting deployment, live checks and cleanup; do not start another feature.
+
 **Latest delivered state (2026-10-22):** Google customer profile registration and administrator customer contact management are live at https://niu-niu-family-paws.web.app/#/login. Profile PR #10 merged as `12df8c3`, and Firebase Hosting deployment/live verification completed. Users save their own name/language; administrators search the same canonical records by name/contact email/verified Google email. Billing is enabled, with the owner-approved Oregon (`us-west1`) backend/database. Older draft/blocker notes below are historical. See `docs/release-4.md` and the final delivery note at the end.
 
 ## User intent and working preferences
