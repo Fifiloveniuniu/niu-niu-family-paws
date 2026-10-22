@@ -1,0 +1,53 @@
+import {test,expect} from '@playwright/test';
+
+test('administrator switches to own profile and pets without losing drafts or bypassing revoked access',async({page,request})=>{
+  const email=`workspace-${Date.now()}@example.test`;
+  const response=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key',{data:{email,password:'emulator-only-password',returnSecureToken:true}});
+  const {localId}=await response.json();
+  const claims=async(admin:boolean)=>{
+    const updated=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true,customAttributes:JSON.stringify(admin?{admin:true}:{})}});
+    expect(updated.ok()).toBe(true);
+  };
+  await claims(true);
+  await page.route('**/api/profile',route=>route.fulfill({json:{id:'10000000-0000-4000-8000-000000000030',name:'Sample owner',language:'en',email:'',phone:'',loginEmail:email,version:1,createdAt:'2026-10-22',updatedAt:'2026-10-22'}}));
+  await page.route('**/api/customers?*',route=>route.fulfill({json:{items:[],nextCursor:null}}));
+  await page.route('**/api/customers/*/pets',route=>route.fulfill({json:{items:[],nextCursor:null}}));
+  await page.goto('/#/login');
+  await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
+  await page.evaluate(async({email})=>{
+    const {auth}=await import('/apps/web/src/auth-client.ts');
+    const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
+    await signInWithEmailAndPassword(auth,email,'emulator-only-password');
+  },{email});
+  await expect(page.getByRole('button',{name:'Customer management',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByRole('region',{name:'My profile',exact:true})).toHaveCount(0);
+  await page.getByRole('button',{name:'Add customer',exact:true}).click();
+  await page.getByRole('textbox',{name:'Customer name',exact:true}).fill('Unsaved directory draft');
+  await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'My customer account',exact:true})).toBeVisible();
+  await expect(page.getByRole('region',{name:'Customers',exact:true})).toHaveCount(0);
+  await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Unsaved personal draft');
+  await page.getByRole('button',{name:'Add pet',exact:true}).click();
+  await page.getByRole('textbox',{name:'Pet name',exact:true}).fill('Unsaved pet draft');
+  await page.getByRole('button',{name:'Customer management',exact:true}).click();
+  await expect(page.getByRole('textbox',{name:'Customer name',exact:true})).toHaveValue('Unsaved directory draft');
+  await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
+  await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
+  await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
+  await page.getByRole('button',{name:'Refresh access',exact:true}).click();
+  await expect(page.getByRole('button',{name:'My profile & pets',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
+  await page.getByRole('button',{name:'简体中文',exact:true}).click();
+  await page.setViewportSize({width:400,height:860});
+  await expect(page.getByRole('heading',{name:'我的客户页面',exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.getByRole('region',{name:'工作页面',exact:true}).screenshot({path:'test-results/workspace-mobile-zh.png'});
+  await claims(false);
+  await page.getByRole('button',{name:'刷新访问权限',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'客户账号',exact:true})).toBeVisible();
+  await expect(page.getByRole('region',{name:'工作页面',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('textbox',{name:'客户姓名',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('textbox',{name:'宠物名字',exact:true})).toHaveValue('Unsaved pet draft');
+  await page.getByRole('button',{name:'退出登录',exact:true}).click();
+  await expect(page.getByRole('region',{name:'我的资料',exact:true})).toHaveCount(0);
+});
