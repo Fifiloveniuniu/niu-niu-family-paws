@@ -6,7 +6,7 @@ A responsive English and Simplified Chinese company website and pet service usag
 
 The public website is hosted at https://niu-niu-family-paws.web.app on Google Firebase Hosting, project `niu-niu-family-paws` (number `775511787236`). The responsive English/Simplified Chinese site uses React, TypeScript, Vite, and react-i18next, with prerendered public content. HTTPS, language switching, and FAQs have been verified on the hosted site. Business contact details, rates, and photos still await owner input.
 
-Shared Google sign-in and administrator customer contact management are live at https://niu-niu-family-paws.web.app/#/login. Administrators can add, edit, and search names/contact emails, with audited edits stored through the Cloud Run API in Firestore. Customer self-registration, pets, balances, employee workflows, and reminders remain future features. See [the customer-management release](docs/release-3.md).
+Shared Google sign-in, customer profile registration, and administrator customer contact management are live at https://niu-niu-family-paws.web.app/#/login. Google users can save their own name/language; administrators can add/edit contacts and search names, contact emails, or verified Google emails. Both workflows share canonical records and edit history through Cloud Run/Firestore. Pets, existing-record linking, balances, employee workflows, and reminders remain future features. See [customer profiles](docs/release-4.md) and [customer contact management](docs/release-3.md).
 
 ## Run and deploy
 
