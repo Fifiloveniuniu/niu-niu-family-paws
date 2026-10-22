@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
 import Customers from './customers';
+import Profile from './profile';
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -14,9 +15,9 @@ const en = {
   denied: 'Verified account required', deniedBody: 'We could not verify access for this account. Refresh access or sign out and try your Google account again.',
   refresh: 'Refresh access', error: 'We couldn’t complete that request. Please try again.', popup: 'Allow the Google sign-in window, then try again.', network: 'Check your connection and try again.',
   dashboard: 'Administrator dashboard', welcome: 'Welcome back.', account: 'Your account', role: 'Administrator',
-  ready: 'Your administrator sign-in is ready.', next: 'Customer and pet management will be added in upcoming releases. No customer records are stored or displayed in this release.',
+  ready: 'Your administrator sign-in is ready.',
   customerTitle: 'Customer account', employeeTitle: 'Staff account', customerRole: 'Customer', employeeRole: 'Staff',
-  customerNext: 'You’re signed in. Customer profiles, pet photos, and service records are coming in a future release. You cannot enter or save pet details here yet.',
+  customerNext: 'You’re signed in. Complete or update your profile below.',
   employeeNext: 'You’re signed in with staff access. Customer lookup and visit tracking are coming in a future release.',
   session: 'For shared devices, sign out when finished. Your session is limited to this browser session.',
 };
@@ -27,9 +28,9 @@ const zh: typeof en = {
   denied: '需要验证账号', deniedBody: '未能验证此账号的访问权限。请刷新访问权限，或退出后重新使用 Google 账号登录。',
   refresh: '刷新访问权限', error: '未能完成此操作，请重试。', popup: '请允许 Google 登录窗口，然后重试。', network: '请检查网络连接后重试。',
   dashboard: '管理员控制台', welcome: '欢迎回来。', account: '您的账号', role: '管理员',
-  ready: '管理员登录已就绪。', next: '客户与宠物管理将在后续版本中提供。此版本不存储或显示客户记录。',
+  ready: '管理员登录已就绪。',
   customerTitle: '客户账号', employeeTitle: '员工账号', customerRole: '客户', employeeRole: '员工',
-  customerNext: '您已登录。客户资料、宠物照片和服务记录将在后续版本开放。目前还不能在这里填写或保存宠物资料。',
+  customerNext: '您已登录。请在下方填写或更新您的资料。',
   employeeNext: '您已使用员工权限登录。客户查询与服务记录将在后续版本开放。',
   session: '使用共用设备时，请在完成后退出登录。登录状态仅保留在当前浏览器会话中。',
 };
@@ -43,9 +44,13 @@ export default function Portal({ toggle }: { toggle: () => void }) {
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<keyof typeof en | null>(null);
   const generation = React.useRef(0);
+  const previousUid = React.useRef<string | null | undefined>(undefined);
+  const [directoryRefresh, setDirectoryRefresh] = React.useState(0);
   const verify = React.useCallback(async (current: User | null, force = false) => {
     const request = ++generation.current;
-    setAccess('checking'); setError(null); setUser(current);
+    if (previousUid.current !== (current?.uid ?? null)) setAccess('checking');
+    previousUid.current = current?.uid ?? null;
+    setError(null); setUser(current);
     if (!current) { setAccess('signed-out'); return; }
     try {
       const token = await current.getIdTokenResult(force);
@@ -87,7 +92,9 @@ export default function Portal({ toggle }: { toggle: () => void }) {
           <div className="portal-actions"><button className="button" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => void run(() => signOut(auth))}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
-      </div>{access === 'admin' && <Customers key={user?.uid}/>}<p className="portal-session">{t.session}</p>
+      </div>{access === 'admin' && <Customers key={user?.uid} refreshKey={directoryRefresh}/>}
+      {(access === 'admin' || access === 'customer' || access === 'employee') && <Profile key={user?.uid} onSaved={() => setDirectoryRefresh(value => value + 1)}/>}
+      <p className="portal-session">{t.session}</p>
     </main>
   </>;
 }

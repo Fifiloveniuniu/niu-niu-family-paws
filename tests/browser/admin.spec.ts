@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({page})=>{
+  await page.route('**/api/profile',route=>route.fulfill({status:204}));
+});
+
 test('signed-out portal, bilingual navigation, and public FAQs work on mobile', async ({page}) => {
   await page.setViewportSize({width:400,height:860});
   await page.goto('/#/admin');
@@ -46,7 +50,7 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
   await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toBeVisible();
   await update({});
   await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();
-  await expect(page.getByText('You’re signed in. Customer profiles', {exact:false})).toBeVisible();
+  await expect(page.getByText('You’re signed in. Complete or update your profile below.', {exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Sign out'}).click();
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.reload();

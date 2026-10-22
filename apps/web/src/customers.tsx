@@ -12,7 +12,7 @@ const en = {
   conflict: 'This record changed since you opened it. Your edits are kept below. Reload customers, compare the latest record, and reopen it before saving.',
   forbidden: 'Your administrator session is no longer authorized. Refresh access above or sign in again.',
   invalid: 'Check the name, email, and field lengths, then try again.', retry: 'Retry save', noContact: 'No contact details added',
-  search: 'Search customers', searchHint: 'Start of customer name or contact email', noMatches: 'No matching customers.',
+  search: 'Search customers', searchHint: 'Start of customer name, contact email, or Google email', noMatches: 'No matching customers.', loginEmail: 'Google sign-in email',
 };
 const zh: typeof en = {
   title: '客户', intro: '管理客户联系方式与首选语言。添加客户不会创建登录账号或发送邮件。',
@@ -22,7 +22,7 @@ const zh: typeof en = {
   conflict: '此记录已被其他操作更新。您的修改保留在下方。请重新加载客户，对比最新记录，并重新打开后再保存。',
   forbidden: '您的管理员会话已失去授权。请刷新上方的访问权限或重新登录。',
   invalid: '请检查姓名、邮箱与字段长度后重试。', retry: '重试保存', noContact: '尚未添加联系方式',
-  search: '搜索客户', searchHint: '输入客户姓名或联系邮箱的开头', noMatches: '没有找到符合条件的客户。',
+  search: '搜索客户', searchHint: '输入客户姓名、联系邮箱或 Google 邮箱的开头', noMatches: '没有找到符合条件的客户。', loginEmail: 'Google 登录邮箱',
 };
 class ApiError extends Error { constructor(public status: number) { super('API request failed'); } }
 async function api<T>(path: string, body?: CustomerWrite): Promise<T> {
@@ -36,7 +36,7 @@ async function api<T>(path: string, body?: CustomerWrite): Promise<T> {
   if (!response.ok) throw new ApiError(response.status);
   return response.json() as Promise<T>;
 }
-export default function Customers() {
+export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const { i18n } = useTranslation();
   const chinese = i18n.language === 'zh';
   const t = chinese ? zh : en;
@@ -72,7 +72,7 @@ export default function Customers() {
     } catch (e) { if (alive.current && generation === request.current) report(e); }
     finally { if (alive.current && generation === request.current) setLoading(false); }
   }
-  React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++request.current; }; }, []);
+  React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++request.current; }; }, [refreshKey]);
   React.useEffect(() => { if (editor) heading.current?.focus(); }, [editor?.id]);
   function open(customer?: Customer) {
     setError(null); setMessage(null); setUncertain(false);
@@ -114,7 +114,7 @@ export default function Customers() {
       <div className="portal-actions"><button className="button" disabled={saving || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={saving || uncertain} onClick={() => { setEditor(null); setError(null); }}>{t.cancel}</button></div>
     </form>}
     <div className="customer-heading"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : ''}</p><button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button></div>
-    <ul className="customer-list">{items.map(customer => <li key={customer.id}><div><h3>{customer.name}</h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p><span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button></li>)}</ul>
+    <ul className="customer-list">{items.map(customer => <li key={customer.id}><div><h3>{customer.name}</h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button></li>)}</ul>
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
   </section>;
