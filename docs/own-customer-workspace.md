@@ -6,4 +6,6 @@ Both panels stay mounted while switching so unsaved directory/profile/pet edits 
 
 Reuses the canonical `/api/profile` and pet endpoints. No backend, database, IAM, billing or region changes. Existing pet-capable Cloud Run revision must remain deployed.
 
-Build and seven isolated Chrome/Auth emulator browser tests passed. The new test verifies selection, directory/profile/pet draft preservation, same-UID access refresh, role revocation, sign-out and 400px Chinese layout. Business responses are mocked in browser tests. Real Google preview, PR/CI, Hosting deployment and live checks remain before delivery.
+Build and seven isolated Chrome/Auth emulator browser tests passed. The new test verifies selection, directory/profile/pet draft preservation, same-UID access refresh, role revocation, sign-out and 400px Chinese layout. Business responses are mocked in browser tests.
+
+CUA local walkthrough used isolated Auth/Firestore emulators plus the actual API: a simulated Google user was assigned a test administrator claim only in `demo-niu-niu`, saved one canonical personal profile and saw it in the administrator directory. Directory and pet drafts survived switching; English/Chinese desktop views were reviewed. No production records were written. A real Google local sign-in attempt displayed a blank Google account chooser despite a normal retry; do not report it as passed. Live validation will use the existing authorized administrator session. PR #14, Hosting deployment and live checks remain before delivery.
