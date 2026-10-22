@@ -25,11 +25,19 @@ The live website is https://niu-niu-family-paws.web.app. A local preview is for 
 
 ## Managing customer contacts
 
-Open the website, choose **Sign in**, and use your authorized administrator Google account. In **Customers**, choose **Add customer**, enter the name, optional contact email/phone, and preferred language, then choose **Save customer**. Choose **Edit customer** beside a saved record to update it. Search using the beginning of the customer's name or contact email; clear the search box and search again to show all records.
+Open the website, choose **Sign in**, and use your authorized administrator Google account. In **Customers**, choose **Add customer**, enter the name, optional contact email/phone, and preferred language, then choose **Save customer**. Choose **Edit customer** beside a saved record to update it. Search using the beginning of the customer's name, contact email, or Google login email; clear the search box and search again to show all records. A Google login email is shown separately and cannot be changed by editing contact details.
 
-中文界面：点击“登录”，使用已获授权的管理员 Google 账号。在“客户”中点击“添加客户”，填写姓名、可选的邮箱和电话及首选语言，再点击“保存客户”。点击记录旁的“编辑客户”可修改资料。搜索时输入姓名或联系邮箱的开头；清空搜索框后再次搜索可显示所有记录。
+中文界面：点击“登录”，使用已获授权的管理员 Google 账号。在“客户”中点击“添加客户”，填写姓名、可选的邮箱和电话及首选语言，再点击“保存客户”。点击记录旁的“编辑客户”可修改资料。搜索时输入姓名、联系邮箱或 Google 登录邮箱的开头；清空搜索框后再次搜索可显示所有记录。Google 登录邮箱单独显示，修改联系方式不会改变登录身份。
 
-Adding a customer saves contact information. It does not create their login, link a Google account, or send an email. Contact email is editable profile information, not verified login identity. Pet profiles and customer self-registration are still upcoming features. Edits keep an audit history; customers and employees cannot open the administrator directory.
+Adding a customer in the administrator directory saves contact information. It does not create their login, link a Google account, or send an email. Contact email is editable profile information, not verified login identity. Edits keep an audit history; customers and employees cannot open the administrator directory.
+
+## Saving your own profile
+
+Customers sign in with their own Google account, enter **Your name** and **Your preferred language** under **My profile**, then choose **Save profile**. Later they can update these fields or reload their saved profile. Each Google identity accesses only its own profile. Administrators and staff also have a personal profile panel; it uses the same canonical record across their roles.
+
+客户使用自己的 Google 账号登录，在“我的资料”中填写“您的姓名”和“您的首选语言”，再点击“保存我的资料”。以后可在这里修改或重新加载资料。每个 Google 账号只能访问自己的个人资料；管理员和员工也可填写自己的资料，不必另建账号。
+
+The administrator directory shows these registered profiles automatically. Administrator edits and customer edits refer to the same record. Existing administrator-created records are not automatically linked by matching names/emails; the linking workflow is still a future feature. Pets and photos are also upcoming. If another edit changes a record first, the app asks you to reload before saving again.
 
 ## Information still needed
 
