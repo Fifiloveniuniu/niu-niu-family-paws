@@ -37,7 +37,17 @@ Customers sign in with their own Google account, enter **Your name** and **Your 
 
 客户使用自己的 Google 账号登录，在“我的资料”中填写“您的姓名”和“您的首选语言”，再点击“保存我的资料”。以后可在这里修改或重新加载资料。每个 Google 账号只能访问自己的个人资料；管理员和员工也可填写自己的资料，不必另建账号。
 
-The administrator directory shows these registered profiles automatically. Administrator edits and customer edits refer to the same record. Existing administrator-created records are not automatically linked by matching names/emails; the linking workflow is still a future feature. Pets and photos are also upcoming. If another edit changes a record first, the app asks you to reload before saving again.
+The administrator directory shows these registered profiles automatically. Administrator edits and customer edits refer to the same record. Existing administrator-created records are not automatically linked by matching names/emails; the linking workflow is still a future feature. If another edit changes a record first, the app asks you to reload before saving again.
+
+## Managing pets
+
+After saving your profile, use **My pets → Add pet**, enter the pet's name and choose **Save pet**. Add as many separate pets as you need. Photos can be added later: choose **Edit pet**, select a JPEG, PNG or WebP image (up to 3 MB and 16 megapixels), and save. A newly selected image stays on your device until you save. Only the owner and authorized administrators can view saved photos. The system resizes photos and removes source metadata.
+
+保存个人资料后，在“我的宠物”中点击“添加宠物”，填写名字后点击“保存宠物”。每只宠物单独添加。照片可以以后补：点击“编辑宠物”，选择 JPEG、PNG 或 WebP 图片（最大 3 MB、1600 万像素），再保存。新选的图片只有保存后才会上传。已保存的照片仅主人与获授权的管理员可查看，系统会缩小图片并移除原始元数据。
+
+Administrators choose **Manage pets** beside a customer to see that customer's pets. **Search pet names** finds names by their beginning and shows the customer's name/Google email; **Manage these pets** opens all pets belonging to that customer. Edits update the same records the customer sees and keep an audit history. Use the existing customer search for customer names or Google emails. Adding pets does not link an unlinked contact to a Google account.
+
+管理员在客户记录旁点击“管理宠物”，即可查看和编辑该客户的宠物。输入宠物名字的开头并点击“搜索宠物名字”，结果会显示宠物归属的客户；点击“管理这些宠物”可打开该客户的全部宠物。按客户姓名或 Google 邮箱查找时，仍使用“搜索客户”。管理员与客户修改同一份资料，修改会保留记录；添加宠物不会自动关联 Google 账号。
 
 ## Information still needed
 

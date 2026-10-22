@@ -40,6 +40,12 @@ test('multiple pets share canonical ownership, private photos, audited retries a
   await assert.rejects(preparePhoto(Buffer.from('<svg/>').toString('base64')),PetInvalid);
   await assert.rejects(preparePhoto('bad'),PetInvalid);
   const metadata=await sharp(await preparePhoto(image)).metadata();assert.equal(metadata.format,'webp');assert.equal(metadata.exif,undefined);
+  for(let index=0;index<52;index++)await store.save(admin,customer.id,randomUUID(),{name:'Paging sample '+index,version:0});
+  const page1=await store.search(admin,'paging sample'),page2=await store.search(admin,'paging sample',page1.nextCursor);
+  assert.equal(page1.items.length,50);assert.equal(page2.items.length,2);assert.equal(page2.nextCursor,null);
+  assert.equal(new Set([...page1.items,...page2.items].map(item=>item.pet.id)).size,52);
+  const ownPage1=await store.list(owner,customer.id),ownPage2=await store.list(owner,customer.id,ownPage1.nextCursor);
+  assert.equal(ownPage1.items.length,50);assert.equal(ownPage2.items.length,4);
 });
 test('Firestore saves are audited, retry-safe, concurrency-safe and searchable before pagination',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'});

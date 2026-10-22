@@ -139,7 +139,7 @@ export function PetSearch({ onChoose }: { onChoose: (customer: { id: string; nam
     <label>{t.searchHint}<input type="search" required maxLength={120} value={search} onChange={event => setSearch(event.target.value)}/></label><button className="language" disabled={loading || !search.trim()}>{t.search}</button>
   </form>{error && <p role="alert">{t.error}</p>}{loading && <p role="status">{t.loading}</p>}
     {page && !loading && !page.items.length && <p>{t.noMatches}</p>}
-    <ul className="customer-list">{page?.items.map(({ pet, customer }) => <li key={pet.id}><div><h4>{pet.name}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
+    <ul className="customer-list">{page?.items.map(({ pet, customer }) => <li key={pet.customerId + '/' + pet.id}><div><h4>{pet.name}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
     {page?.nextCursor && <button className="language" disabled={loading} onClick={() => void load(active, page.nextCursor!)}>{t.more}</button>}
   </div>;
 }

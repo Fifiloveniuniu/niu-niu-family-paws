@@ -112,7 +112,7 @@ test('administrator can add, edit and search customers in both languages on mobi
     return route.fulfill({json:pet});
   });
   await page.route('**/api/pet-search?**',route=>route.fulfill({json:{items:pets.map(pet=>({pet,customer:{id:customers[0].id,name:customers[0].name,loginEmail:null}})),nextCursor:null}}));
-  await page.getByRole('combobox',{name:'Choose a customer to manage pets',exact:true}).selectOption(customers[0].id);
+  await page.getByRole('button',{name:'Manage pets: Alice Chen',exact:true}).click();
   const petSection=page.getByRole('region',{name:'Customer’s pets',exact:true});
   await petSection.getByRole('button',{name:'Add pet',exact:true}).click();
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin sample pet');
