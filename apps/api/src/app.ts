@@ -2,6 +2,7 @@ import Fastify, { type FastifyRequest } from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 import spec from '../../../packages/contracts/openapi.json' with { type: 'json' };
 import type { components } from '../../../packages/contracts/generated.ts';
+import { petRoutes, PetAccess, PetMissing, PetInvalid, type PetStore } from './pets.ts';
 
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
@@ -16,7 +17,7 @@ export interface CustomerStore {
   saveProfile(identity: ProfileIdentity, input: ProfileWrite): Promise<Customer>;
 }
 export class Conflict extends Error {}
-export function buildApp(deps: { verify: (token: string) => Promise<Identity>; store: CustomerStore }) {
+export function buildApp(deps: { verify: (token: string) => Promise<Identity>; store: CustomerStore; pets?: PetStore }) {
   const app = Fastify({ logger: false, bodyLimit: 16_384, ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } });
   app.register(rateLimit, { max: 120, timeWindow: '1 minute' });
   app.addHook('onRequest', async (_request, reply) => {
@@ -34,6 +35,7 @@ export function buildApp(deps: { verify: (token: string) => Promise<Identity>; s
       if (identity.email_verified !== true) return reply.code(403).send({ code: 'forbidden' });
       (request as typeof request & { identity: Identity }).identity = identity;
     });
+    if (deps.pets) petRoutes(api, deps.pets);
     api.register(async own => {
       own.addHook('onRequest', async (request, reply) => {
         const identity = identityOf(request);
@@ -72,6 +74,9 @@ export function buildApp(deps: { verify: (token: string) => Promise<Identity>; s
   }, { prefix: '/api' });
   app.setErrorHandler((error: Error & { validation?: unknown; statusCode?: number }, _request, reply) => {
     if (error instanceof Conflict) return reply.code(409).send({ code: 'conflict' });
+    if (error instanceof PetAccess) return reply.code(403).send({ code: 'forbidden' });
+    if (error instanceof PetMissing) return reply.code(404).send({ code: 'not_found' });
+    if (error instanceof PetInvalid || error.statusCode === 413) return reply.code(400).send({ code: 'invalid_input' });
     if (error.validation) return reply.code(400).send({ code: 'invalid_input' });
     if (error.statusCode === 429) return reply.code(429).send({ code: 'rate_limited' });
     // Do not log request bodies, credentials, customer records, or raw SDK errors.

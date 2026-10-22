@@ -1,0 +1,56 @@
+import {test,expect} from '@playwright/test';
+import sharp from 'sharp';
+
+test('customer manages multiple pets, adds a private photo later and retries the same write',async({page,request})=>{
+  const email=`pets-${Date.now()}@example.test`;
+  const response=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key',{data:{email,password:'emulator-only-password',returnSecureToken:true}});
+  const {localId}=await response.json();
+  await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true}});
+  const customerId='10000000-0000-4000-8000-000000000020';
+  const profile={id:customerId,name:'Sample owner 示例主人',email:'',phone:'',language:'zh',version:1,loginEmail:email,createdAt:'2026-10-22',updatedAt:'2026-10-22'};
+  await page.route('**/api/profile',route=>route.fulfill({json:profile}));
+  const pets:any[]=[];let lose=false;const writes:any[]=[];
+  const photo=await sharp({create:{width:240,height:180,channels:3,background:'#b8c7ae'}}).webp().toBuffer();
+  await page.route('**/api/customers/*/pets**',async route=>{
+    const req=route.request();expect(req.headers().authorization).toMatch(/^Bearer /);
+    if(req.url().endsWith('/photo'))return route.fulfill({body:photo,contentType:'image/webp',headers:{'cache-control':'private, no-store'}});
+    if(req.method()==='GET')return route.fulfill({json:{items:pets,nextCursor:null}});
+    const input=req.postDataJSON(),id=req.url().split('/').at(-1)!;writes.push(input);
+    const previous=pets.find(p=>p.id===id);
+    const pet={id,customerId,name:input.name,version:input.version+1,photo:input.photoData?'private-revision':previous?.photo??null,createdAt:'2026-10-22',updatedAt:'2026-10-22'};
+    if(previous)Object.assign(previous,pet);else pets.push(pet);
+    if(lose){lose=false;return route.abort();}return route.fulfill({json:pet});
+  });
+  await page.goto('/#/login');
+  await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
+  await page.evaluate(async({email})=>{
+    const {auth}=await import('/apps/web/src/auth-client.ts');
+    const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
+    await signInWithEmailAndPassword(auth,email,'emulator-only-password');
+  },{email});
+  const section=page.getByRole('region',{name:'My pets',exact:true});
+  await section.getByRole('button',{name:'Add pet',exact:true}).click();
+  await section.getByRole('textbox',{name:'Pet name',exact:true}).fill('Sample Niu Niu');
+  await section.getByRole('button',{name:'Save pet',exact:true}).click();
+  await expect(section.getByText('Photo not added yet',{exact:true})).toBeVisible();
+  await section.getByRole('button',{name:'Add pet',exact:true}).click();
+  await section.getByRole('textbox',{name:'Pet name',exact:true}).fill('Sample Bao Bao');
+  await section.getByRole('button',{name:'Save pet',exact:true}).click();
+  await expect(section.getByRole('article')).toHaveCount(2);
+  await section.getByRole('button',{name:'Edit pet: Sample Niu Niu',exact:true}).click();
+  await section.getByLabel('Pet photo (optional)',{exact:true}).setInputFiles({name:'synthetic-photo.webp',mimeType:'image/webp',buffer:photo});
+  lose=true;
+  await section.getByRole('button',{name:'Save pet',exact:true}).click();
+  await expect(section.getByRole('button',{name:'Retry pet save',exact:true})).toBeVisible();
+  await expect(section.getByRole('textbox',{name:'Pet name',exact:true})).toBeDisabled();
+  await section.getByRole('button',{name:'Retry pet save',exact:true}).click();
+  expect(writes.at(-1)).toEqual(writes.at(-2));expect(pets).toHaveLength(2);
+  await expect(section.getByRole('img',{name:'Sample Niu Niu',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'简体中文',exact:true}).click();
+  await page.setViewportSize({width:400,height:860});await page.reload();
+  await expect(page.getByRole('region',{name:'我的宠物',exact:true}).getByRole('article')).toHaveCount(2);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.getByRole('region',{name:'我的宠物',exact:true}).screenshot({path:'test-results/pets-mobile-zh.png'});
+  await page.getByRole('button',{name:'退出登录',exact:true}).click();
+  await expect(page.getByRole('region',{name:'我的宠物',exact:true})).toHaveCount(0);
+});

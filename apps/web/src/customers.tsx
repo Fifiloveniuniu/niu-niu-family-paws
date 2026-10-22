@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
+import Pets, { PetSearch } from './pets';
 import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
@@ -51,6 +52,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const [uncertain, setUncertain] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const [activeSearch, setActiveSearch] = React.useState('');
+  const [petCustomer, setPetCustomer] = React.useState<{ id: string; name: string; loginEmail: string | null } | null>(null);
   const request = React.useRef(0);
   const alive = React.useRef(true);
   const heading = React.useRef<HTMLHeadingElement>(null);
@@ -114,7 +116,9 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       <div className="portal-actions"><button className="button" disabled={saving || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={saving || uncertain} onClick={() => { setEditor(null); setError(null); }}>{t.cancel}</button></div>
     </form>}
     <div className="customer-heading"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : ''}</p><button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button></div>
-    <ul className="customer-list">{items.map(customer => <li key={customer.id}><div><h3>{customer.name}</h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button></li>)}</ul>
+    <ul className="customer-list">{items.map(customer => <li key={customer.id}><div><h3>{customer.name}</h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button><button className="language" aria-label={`${chinese ? '管理宠物' : 'Manage pets'}: ${customer.name}`} onClick={() => setPetCustomer(customer)}>{chinese ? '管理宠物' : 'Manage pets'}</button></div></li>)}</ul>
+    <PetSearch onChoose={setPetCustomer}/>
+    {petCustomer && <div className="admin-pets"><h3>{chinese ? '客户' : 'Customer'}: {petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}<Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></div>}
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
   </section>;

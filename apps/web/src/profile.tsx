@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
+import Pets from './pets';
 import type { components } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
@@ -10,7 +11,6 @@ const en = {
   setup: 'Complete your profile to get started.', name: 'Your name', language: 'Your preferred language',
   loginEmail: 'Google sign-in email', identity: 'Your Google account determines which profile you can access. This email cannot be changed here.',
   existing: 'Existing customer records are not linked automatically. Linking requires administrator verification.',
-  future: 'Pet profiles and photos will be added in a later release.',
   save: 'Save profile', retry: 'Retry profile save', saving: 'Saving profile…', saved: 'Your profile is saved.',
   loading: 'Loading your profile…', reload: 'Reload saved profile', error: 'Couldn’t load or save your profile. Please try again.',
   conflict: 'Your profile changed elsewhere. Your edits are kept below. Reload the saved profile before editing again; reloading replaces the edits below.',
@@ -22,7 +22,6 @@ const zh: typeof en = {
   setup: '请先填写您的资料。', name: '您的姓名', language: '您的首选语言',
   loginEmail: 'Google 登录邮箱', identity: '系统根据您的 Google 账号确认资料归属。此处不能修改登录邮箱。',
   existing: '已有客户记录不会自动关联。关联记录需要管理员核实身份。',
-  future: '宠物资料与照片将在后续版本开放。',
   save: '保存我的资料', retry: '重试保存我的资料', saving: '正在保存资料…', saved: '您的资料已保存。',
   loading: '正在加载您的资料…', reload: '重新加载已保存的资料', error: '未能加载或保存您的资料，请重试。',
   conflict: '资料已被其他操作更新。您的修改保留在下方。请先重新加载已保存的资料，再编辑；重新加载会替换下方尚未保存的修改。',
@@ -101,7 +100,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
         <button className="button" disabled={saving || loading || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button>
       </form>
       {!profile && <p className="customer-intro">{t.existing}</p>}
-      <p className="customer-intro">{t.future}</p>
+      {profile && <Pets key={profile.id} customerId={profile.id}/>}
     </>}
     <button className="language" disabled={loading || saving || uncertain} onClick={() => void load()}>{t.reload}</button>
   </section>;

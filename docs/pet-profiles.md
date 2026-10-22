@@ -1,0 +1,25 @@
+# Pet profiles and private photos
+
+One feature: owners add multiple named pets, then add or replace photos when ready. The owner explicitly approved adding photos later on 2026-10-22. Administrators manage the same pet records for a selected customer and search pet-name prefixes. Customer-name/Google-email search remains in the customer directory. No linking, reassignment, impersonation, service balances, visits, deletion, or role changes are included.
+
+## Storage and authorization
+
+Canonical records: `customers/{customerId}/pets/{petId}`. UUID identifies each pet; names need not be unique. Every list/save/photo request verifies the current Firebase account and requires either the current administrator claim or a verified Google identity matching the canonical customer's `ownerUid`. The browser cannot access Firestore directly. Search across customers is administrator-only, joins current customer name/login email rather than copying them into pet records, and paginates 50 matches at a time. `nameKeys` has a collection-group array index.
+
+Saving uses a Firestore transaction, optimistic versions, identical-request retry handling, and `history/{version}` with the actual actor, source, before/after and timestamp. Ownership is checked before image processing and again inside the save transaction. Payloads cannot assign ownership, select object names, or change roles. Customers need to save their profile first; administrators can manage pets for unlinked contacts without claiming those contacts as their own.
+
+Private bucket `niu-niu-family-paws-pet-photos` is in owner-approved `us-west1`, with uniform bucket access and enforced public-access prevention. Runtime custom role `familyPawsPhotoAccess` grants only `storage.objects.create` and `storage.objects.get`, scoped to this bucket. No public ACLs, signed URLs, download tokens, or browser Storage access. Photos are fetched through the authenticated API with `private, no-store`; the frontend keeps data URLs only in its mounted state.
+
+Uploads accept JPEG/PNG/WebP, at most 3 MiB and 16 megapixels. Server checks signatures, decodes, rejects animation/other formats, auto-orients, resizes within 1200×1200 and reencodes WebP without source metadata. See [Sharp input safety options](https://sharp.pixelplumbing.com/api-constructor/) and [output metadata behavior](https://sharp.pixelplumbing.com/api-output/). One decoder per instance, bounded cache and route body limit protect memory; busy requests safely retry. Content-addressed immutable objects use create-only generation preconditions. The browser freezes an uncertain save so its retry keeps the same pet ID, version and image.
+
+Historical images remain private for audit/recovery. An upload that succeeds before a failed/conflicting database commit can also leave a private unreferenced object. No automatic image/customer/audit expiry is introduced while business retention/recovery policy is unresolved. Runtime cannot delete objects. Bucket soft delete protects operator deletions for seven days; this is not an automated backup or business recovery plan.
+
+## Delivery checks
+
+Passed API typecheck, frontend build, eight unit tests, three isolated Firestore integration cases and six Chrome/Auth emulator browser tests. Integration covers ownership, private photo access, shared customer references, version conflicts, audit actors, identical retries and 50-item list/search pagination. Browser tests mock business API responses; storage/database logic is tested separately. Production dependencies have no reported npm audit vulnerabilities; development-tool findings remain outside this feature.
+
+Real local production preview with an ordinary Google account saved two pets without photos, added a photo later, reloaded it, and safely saved the identical photo again. The real administrator searched by pet name, saw both pets and the photo, and renamed the same canonical pet. The customer then saw that change. Firestore history verifies self/admin actors and no extra version for identical photo save. Real anonymous object read/list returns 403; anonymous photo/API access returns 401. Image metadata confirms processed WebP, private/no-store and no Firebase download token. Reviewed bilingual desktop and 400px mobile layouts and cropped screenshots without account details. Extension automated file upload was unavailable; native system file selection worked without changing extension permissions.
+
+Backend source `55595a8`, Cloud Build `99b9c2ab-c039-42d1-a286-42f026f36032`, image `sha256:42c33563669c1ba1107a829f23c090703e130ceb62e046b6d6b7a20de0953992`, revision `family-paws-api-00003-b8d`. Image processing uses 512 MiB and concurrency 4; request-based CPU and zero-to-two instances remain. Both pet-name indexes are ready. Hosting remains on the previous API until frontend delivery; new API preserves existing profiles/contacts.
+
+PR #12: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/12. Remaining before delivery: final CI, merge, Firebase Hosting deployment, live checks, exact synthetic-data cleanup and final handoff. Do not describe this as live until those steps complete.
