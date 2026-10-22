@@ -1,0 +1,16 @@
+# Release 5 — pet profiles and private photos
+
+Delivered 2026-10-22 at https://niu-niu-family-paws.web.app/#/login.
+
+- PR #12: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/12; merged `eeccb9bc3ab9c74e507e612b18c5ac0a358176a3`, built from merged main and deployed Firebase Hosting.
+- Customers save multiple pet names, then add/replace photos whenever ready. Owner approved photos later. Administrators manage the same records and search pet-name prefixes, with customer identity shown alongside results. Existing customer/Google-email search remains.
+- Server enforces ownership/current administrator authority on records and photos. Saves keep audit history, stale-update checks and identical retries. Private storage has no public access or download tokens. Photos are validated, resized and reencoded without source metadata.
+- Backend revision `family-paws-api-00003-b8d`, pinned Hosting tag `fh-89991aa26bea0d7f`; immutable image digest `sha256:42c33563669c1ba1107a829f23c090703e130ceb62e046b6d6b7a20de0953992`. Details: `docs/pet-profiles.md`.
+
+Validation: API typecheck/build, 8 unit tests, 3 Firestore integration cases, 6 browser tests and GitHub CI passed. Tests include ownership/injection boundaries, self/admin shared edits, concurrency, version conflicts, audits, retry-safe photo saves, search/list pagination and Chinese mobile layouts. Browser tests mock business APIs; database/image logic has independent integration checks.
+
+Real Google customer/admin walkthrough passed locally and live: multiple pets, optional-photo save, later photo upload, repeat identical image save, pet-name search, both roles editing the same record, photo preservation and persistence after reload. Live 400px Chinese layout has no horizontal overflow; English/Chinese, sign-out, homepage navigation/FAQ and the single sign-in entry remain working. Captured live customer console errors were empty. Hosting HTML exactly matches the released build; homepage returns 200/no-cache/security headers. Missing/invalid business API/photo tokens return 401/private-no-store. Anonymous actual photo-object reads and bucket listing return 403.
+
+Cleanup removed exactly one synthetic owner profile, its UID mapping, two synthetic pets and seven synthetic history entries (11 documents total), with update-time preconditions. One exact test photo object was removed with its generation precondition; normal bucket soft delete retains it for seven days. Verified all targets absent from active storage/database; preserved authentication accounts and real records. Screenshot `docs/screenshots/pets-live-mobile-zh.png` shows only disposable sample pets/test artwork, without account details. Temporary preview stopped and testing tabs closed; the live administrator page remains available in desktop/English.
+
+No pet deletion/reassignment, old-account linking, impersonation, balances, employee visit workflows or reminders in this release. Public business facts/rates/photos/service rules and retention/recovery policies remain unresolved. Historical/failed-upload objects stay private; no automatic data expiry or automated backup policy was added. Keep the current metadata-preserving, pet-capable API during frontend rollbacks.

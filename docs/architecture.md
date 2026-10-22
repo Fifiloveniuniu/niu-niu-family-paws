@@ -26,6 +26,8 @@ The API checks the token and current Firebase account status on every business r
 
 Registered profiles require the metadata-preserving API introduced with customer registration. Do not roll Hosting back to a pre-registration API that replaces entire customer documents and drops ownership fields. Older frontend payloads can use the new API. See `docs/customer-profile.md` for the deployment/rollback boundary.
 
+Pet profiles use canonical `customers/{customerId}/pets/{petId}` documents with immutable customer relationships, transactional versions and actor audit history. Current customer ownership/current administrator authorization is checked for list, save and private photo reads. Administrator pet-name search joins canonical customer information using a collection-group prefix index. Photos use a private Oregon Cloud Storage bucket with enforced public-access prevention; the API validates/reencodes uploads and reads immutable content-addressed WebP objects. Browser Storage access/download tokens/public URLs are not used. Runtime create/get permissions are bucket-scoped. See `docs/pet-profiles.md` for image limits, retention caveats and deployed revision. Retain the pet-capable API when rolling back frontend releases; older APIs have no pet endpoints.
+
 Keep secrets in Secret Manager. Production customer data, tokens, and credentials must never be committed. The database has deletion protection. Customer records and audit history have no automatic deletion; scheduled backups/exports and a business recovery/retention policy remain undecided.
 
 ## Verification before launch
