@@ -36,7 +36,7 @@ Emails include pet/service details, remaining days, and renewal contact instruct
 - Whether drop-off/pickup means customer handoff at the business or employee transport.
 - When a visit consumes days; cancellation, overnight, and partial-day rules.
 - Whether packages expire and whether pets can share a balance.
-- Login onboarding and customer account-linking workflow.
+- Reconciliation of existing duplicate profiles (no automatic merge).
 - Reminder defaults, replenishment behavior, and email provider/domain verification.
 - Data retention, backup policy, and available Google Cloud billing/credits.
 
@@ -50,4 +50,6 @@ Avoid duplicate information: one canonical person/profile per verified identity,
 
 Administrators may impersonate any customer or employee for their business workflows. Implement this only with server-authorized, scoped impersonation sessions; never grant the browser permission by selecting an account ID or modifying another account's claims. Every operation must retain the actual administrator actor and the effective customer/employee identity in its audit record. Display a persistent, prominent impersonation banner with the target identity and an exit action. Leaving impersonation returns to administrator context. Revoked administrator access must terminate impersonation authority. Impersonation must not expose passwords, allow changing another person's Google credentials, or silently grant roles. Switching to the administrator's own customer context uses that same person's existing profile and pets.
 
-Delivered: shared sign-in, administrator customer-contact editing, UID-owned customer name/language registration, multiple pet profiles and private optional photos. Administrators can switch between customer management and their own profile/pets; staff also retain their own personal profile/pet panel. Customer/pet profiles share canonical records with administrator management, including customer-name/Google-email and pet-name search. Public and portal headers provide explicit English/简体中文 selection, independent of saved profile-language preferences. Linking existing records, employee business workflows and authorized impersonation remain subsequent features; do not present them as delivered.
+Delivered before the current account-linking release: shared sign-in, administrator customer-contact editing, UID-owned customer name/language registration, multiple pet profiles and private optional photos. Administrators can switch between customer management and their own profile/pets; staff also retain their own personal profile/pet panel. Customer/pet profiles share canonical records with administrator management, including customer-name/Google-email and pet-name search. Public and portal headers provide explicit English/简体中文 selection, independent of saved profile-language preferences. Employee business workflows and authorized impersonation remain subsequent features.
+
+Owner approved account linking on 2026-10-22: administrator generates a one-time code, customer submits it after their Google sign-in, administrator verifies and approves. Link only an unclaimed existing customer to an identity without a separate saved profile; preserve all original customer/pet/photo/history references. Never automatically merge duplicates. See `docs/account-linking.md` and the session handoff for delivery status.

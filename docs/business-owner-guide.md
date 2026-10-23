@@ -45,7 +45,15 @@ Customers sign in with their own Google account, enter **Your name** and **Your 
 
 客户使用自己的 Google 账号登录，在“我的资料”中填写“您的姓名”和“您的首选语言”，再点击“保存我的资料”。以后可在这里修改或重新加载资料。每个 Google 账号只能访问自己的个人资料；管理员和员工也可填写自己的资料，不必另建账号。
 
-The administrator directory shows these registered profiles automatically. Administrator edits and customer edits refer to the same record. Existing administrator-created records are not automatically linked by matching names/emails; the linking workflow is still a future feature. If another edit changes a record first, the app asks you to reload before saving again.
+The administrator directory shows these registered profiles automatically. Administrator edits and customer edits refer to the same record. Existing administrator-created records are never automatically linked by matching names/emails. If another edit changes a record first, the app asks you to reload before saving again.
+
+## Linking an existing customer
+
+Before the customer saves a new personal profile, choose **Link Google account** beside their existing customer record. Generate a code and share it privately with that customer. They sign in with their own Google account, enter the code under **Already registered with us?**, and submit. Open the customer's linking panel and **Check status**. Verify that the displayed Google email belongs to this customer, then choose **Approve account link**. The customer checks status or signs in again to see their original profile and pets. Codes last 24 hours. Replacing a code cancels its earlier request; reject or cancel any incorrect request. The website does not send the code by email.
+
+在客户保存新个人资料前，管理员先在原客户记录旁点击“关联 Google 账号”，生成关联码后私下交给客户。客户用自己的 Google 账号登录，在“之前已登记过资料？”中输入关联码并提交。管理员打开该客户的关联页面，点击“查看最新状态”，核实显示的 Google 邮箱确实属于该客户后，再“批准关联”。客户查看最新状态或重新登录，即可看到原资料和宠物。关联码 24 小时内有效；重新生成会使旧码及申请失效。错误申请请拒绝或取消。网站不会自动发送关联邮件。
+
+If the account already saved a separate profile, linking stops to protect both records. Ask for help resolving the duplicate; the website will not automatically merge or move pets. 如果账号已经另存个人资料，系统会停止关联，保护两份资料。请联系管理员处理重复资料；不会自动合并或转移宠物。
 
 ## Managing pets
 
