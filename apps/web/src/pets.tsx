@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
+import UnsavedChanges from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
 type PetWrite = components['schemas']['PetWrite'];
@@ -61,6 +62,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
   const [editor, setEditor] = React.useState<{ id: string; input: PetWrite; preview: string } | null>(null);
   const alive = React.useRef(true), generation = React.useRef(0), heading = React.useRef<HTMLHeadingElement>(null);
   const path = `/customers/${customerId}/pets`;
+  const baseline = React.useRef('');
   function report(e: unknown) {
     const status = e instanceof PetError ? e.status : 0;
     setError(status === 409 ? 'conflict' : status === 401 || status === 403 ? 'forbidden' : status === 400 ? 'invalid' : 'error');
@@ -78,7 +80,9 @@ export default function Pets({ customerId, title }: { customerId: string; title?
   React.useEffect(() => { if (editor) heading.current?.focus(); }, [editor?.id]);
   function open(pet?: Pet) {
     setError(null); setSaved(false); setUncertain(false);
-    setEditor({ id: pet?.id ?? crypto.randomUUID(), input: { name: pet?.name ?? '', version: pet?.version ?? 0 }, preview: '' });
+    const input = { name: pet?.name ?? '', version: pet?.version ?? 0 };
+    baseline.current = JSON.stringify(input);
+    setEditor({ id: pet?.id ?? crypto.randomUUID(), input, preview: '' });
   }
   async function choose(file?: File) {
     if (!file || !editor) return;
@@ -107,6 +111,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
     <p className="customer-intro">{t.intro}</p>
     {error && <p role="alert">{t[error]}</p>}{saved && <p role="status">{t.saved}</p>}
     {editor && <form className="customer-form pet-form" onSubmit={event => void save(event)}>
+      <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || reading || uncertain}/>
       <h4 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h4>
       <fieldset disabled={blocked}>
         <label>{t.name}<input required maxLength={120} value={editor.input.name} onChange={event => { setEditor({ ...editor, input: { ...editor.input, name: event.target.value } }); if (error === 'invalid') setError(null); }}/></label>

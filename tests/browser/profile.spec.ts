@@ -38,9 +38,11 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   await expect(page.getByRole('combobox',{name:'Your preferred language',exact:true})).toHaveValue('zh');
   await page.getByRole('button',{name:'Save profile',exact:true}).click();
   await expect(page.getByRole('button',{name:'Retry profile save',exact:true})).toBeVisible();
+  await expect(page.getByText('You have unsaved changes.',{exact:false})).toBeVisible();
   await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toBeDisabled();
   await page.getByRole('button',{name:'Retry profile save',exact:true}).click();
   await expect(page.getByText('Your profile is saved.',{exact:true})).toBeVisible();
+  await expect(page.getByText('You have unsaved changes.',{exact:false})).toHaveCount(0);
   expect(writes).toHaveLength(2);expect(writes[0]).toEqual(writes[1]);
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await page.reload();

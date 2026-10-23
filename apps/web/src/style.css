@@ -39,6 +39,7 @@ select:focus-visible,input:focus-visible{outline:3px solid #b5c9b1;outline-offse
 .customer-section{margin-top:32px;padding-top:28px}
 .customer-heading h2,.profile-section h2{font-size:2rem;letter-spacing:-.025em}
 .customer-form{padding:24px;background:white;border-color:#d3dccb}
+.unsaved-notice{padding:12px 16px;border-left:3px solid #638153;background:#f0f4e9;border-radius:4px;font-size:.9rem;line-height:1.6}
 .customer-form label{font-weight:600}.customer-form input,.customer-form select{font-weight:400;min-height:46px;border-color:#a9b8a2;border-radius:8px}
 .customer-search{padding:20px;background:#f1f3ec;border-radius:10px}
 .customer-search label{display:block;font-size:13px;font-weight:600;color:#516354}
