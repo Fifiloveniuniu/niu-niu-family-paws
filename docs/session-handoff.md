@@ -6,6 +6,8 @@
 
 **Current user request:** Make the UI clean and consistent; make English/简体中文 selection clearer; make both languages read naturally. Implement this as the next separate feature/PR/release, preserving existing business facts, Google Cloud architecture and workflows. The user supplied this request during final workspace verification. Do not invent business content to improve copy.
 
+UI refinement is in progress on `feat/ui-language-polish`. Shared explicit language selector, compact consistent portal controls, responsive header and revised English/Chinese copy implemented; no backend/data/permission changes. See `docs/ui-language-polish.md`. Complete validation, PR/merge, Firebase Hosting deploy and live checks. Preserve existing authorized live administrator tab for testing; a fresh Google local sign-in previously displayed a blank account chooser, so do not claim that login passed. Workspace release #14 and its delivery docs #15 are already merged/deployed; this is the next separate change.
+
 ## Pet feature preparation — 2026-10-22 (completed; historical notes)
 
 Current branch `feat/pet-profiles` implements multiple pets and private photos as one feature; not yet delivered. Owner answered “add photo later”: names can be saved without a photo. See `docs/pet-profiles.md` for canonical data, permissions, upload limits and deployment checklist. Created the private Oregon bucket `niu-niu-family-paws-pet-photos`, runtime bucket-scoped custom create/get role, and deployed the pet-name collection-group index. Existing production frontend/API are unchanged at this stage. Continue this feature through validation, PR merge, Hosting deployment, live checks and cleanup; do not start another feature.

@@ -46,7 +46,7 @@ test('customer manages multiple pets, adds a private photo later and retries the
   await section.getByRole('button',{name:'Retry pet save',exact:true}).click();
   expect(writes.at(-1)).toEqual(writes.at(-2));expect(pets).toHaveLength(2);
   await expect(section.getByRole('img',{name:'Sample Niu Niu',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'简体中文',exact:true}).click();
+  await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await page.setViewportSize({width:400,height:860});await page.reload();
   await expect(page.getByRole('region',{name:'我的宠物',exact:true}).getByRole('article')).toHaveCount(2);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
