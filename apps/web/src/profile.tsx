@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets from './pets';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
+import {AccountLinkRequest} from './account-link';
 import type { components } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
@@ -48,6 +49,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
   const [profile, setProfile] = React.useState<Customer | null>(null);
   const [input, setInput] = React.useState<ProfileWrite>({ name: '', language: i18n.language === 'zh' ? 'zh' : 'en', version: 0 });
   const [loaded, setLoaded] = React.useState(false);
+  const [linkPending,setLinkPending] = React.useState(false);
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null);
   const [loading, setLoading] = React.useState(true);
@@ -94,10 +96,11 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
     {error && <p role="alert">{t[error]}</p>}
     {saved && <p role="status">{t.saved}</p>}
     {loaded && <>
-      {!profile && <p>{t.setup}</p>}
+      {!profile&&<AccountLinkRequest onPending={setLinkPending} onLinked={()=>{if(confirmDiscardChanges(i18n.language,form.current))void load();}}/>}
+      {!profile && !linkPending && <p>{t.setup}</p>}
       <p className="profile-identity"><span>{t.loginEmail}</span><strong>{profile?.loginEmail ?? auth.currentUser?.email}</strong></p>
       <p className="customer-intro">{t.identity}</p>
-      <form ref={form} className="customer-form" onSubmit={event => void save(event)}>
+      <form ref={form} hidden={linkPending} className="customer-form" onSubmit={event => void save(event)}>
         <UnsavedChanges active={loaded && (JSON.stringify(input) !== baseline.current || saving || uncertain)}/>
         <fieldset disabled={saving || loading || uncertain || error === 'forbidden'}>
           <label>{t.name}<input name="profile-name" autoComplete="name" required maxLength={120} value={input.name} onChange={event => { setInput({ ...input, name: event.target.value }); setSaved(false); }}/></label>
@@ -105,7 +108,6 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
         </fieldset>
         <button className="button" disabled={saving || loading || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button>
       </form>
-      {!profile && <p className="customer-intro">{t.existing}</p>}
       {profile && <Pets key={profile.id} customerId={profile.id}/>}
     </>}
     <button className="language" disabled={loading || saving || uncertain} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) void load(); }}>{t.reload}</button>

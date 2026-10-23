@@ -5,6 +5,7 @@ import { getStorage } from 'firebase-admin/storage';
 import { petStore } from './pets.ts';
 import { buildApp } from './app.ts';
 import { firestoreStore } from './store.ts';
+import { linkStore } from './linking.ts';
 const emulated = process.env.FAMILY_PAWS_EMULATORS === 'true';
 if (emulated) {
   if (process.env.GCLOUD_PROJECT !== 'demo-niu-niu' || process.env.FIREBASE_AUTH_EMULATOR_HOST !== '127.0.0.1:9099' || process.env.FIRESTORE_EMULATOR_HOST !== '127.0.0.1:8085') throw new Error('Local testing requires isolated demo emulators.');
@@ -27,6 +28,11 @@ const app = buildApp({
     };
   },
   store: firestoreStore(getFirestore()),
+  links: linkStore(getFirestore(),async uid=>{
+    const user = await auth.getUser(uid);
+    if (user.disabled || !user.emailVerified || !user.email || !user.providerData.some(provider=>provider.providerId==='google.com')) throw new Error('Verified Google identity required');
+    return {uid:user.uid,email:user.email};
+  }),
   pets: petStore(getFirestore(), {
     async put(key, bytes) {
       const file = getStorage().bucket('niu-niu-family-paws-pet-photos').file(key);

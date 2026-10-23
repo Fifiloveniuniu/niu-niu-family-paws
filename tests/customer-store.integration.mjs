@@ -7,8 +7,55 @@ import { firestoreStore } from '../apps/api/src/store.ts';
 import { Conflict } from '../apps/api/src/app.ts';
 import { petStore, PetAccess, preparePhoto, PetInvalid } from '../apps/api/src/pets.ts';
 import sharp from 'sharp';
+import {linkStore,LinkUnavailable} from '../apps/api/src/linking.ts';
 
 if(process.env.FIRESTORE_EMULATOR_HOST!=='127.0.0.1:8085'||process.env.GCLOUD_PROJECT!=='demo-niu-niu') throw new Error('Isolated demo Firestore emulator required');
+test('account linking requires two parties, preserves records and rejects races, stale approvals and reused codes',async t=>{
+  const app=initializeApp({projectId:'demo-niu-niu'},'link-'+randomUUID());t.after(()=>deleteApp(app));
+  const db=getFirestore(app),customers=firestoreStore(db),identity={uid:randomUUID(),email:'link-owner@example.test'};
+  let now=Date.now(),verified=true,verifiedEmail=identity.email;
+  const links=linkStore(db,async uid=>{if(!verified)throw new Error('Disabled');return {uid,email:verifiedEmail};},()=>now);
+  const c=await customers.save(randomUUID(),{name:'Original customer',email:'contact@example.test',phone:'123',language:'zh',version:0},'admin');
+  const petRef=db.doc(`customers/${c.id}/pets/${randomUUID()}`);await petRef.set({name:'Existing pet',photo:'private-hash'});
+  const issued=await links.issue(c.id,'admin');assert.equal(issued.state.status,'open');
+  const data=(await db.doc(`customers/${c.id}/accountLink/current`).get()).data();assert.equal(JSON.stringify(data).includes(issued.code),false);
+  const result=await links.request(identity,issued.code.toLowerCase());assert.equal(result.status,'requested');
+  assert.deepEqual(await links.request(identity,issued.code),result);
+  assert.equal(await customers.profile(identity),null);
+  await assert.rejects(links.request({...identity,uid:randomUUID()},issued.code),LinkUnavailable);
+  const state=await links.adminState(c.id);assert.equal(state.requestedEmail,identity.email);
+  verified=false;await assert.rejects(links.decide(c.id,{action:'approve',version:state.version,customerVersion:1},'admin'),LinkUnavailable);verified=true;
+  verifiedEmail='changed@example.test';await assert.rejects(links.decide(c.id,{action:'approve',version:state.version,customerVersion:1},'admin'),Conflict);verifiedEmail=identity.email;
+  await customers.save(c.id,{name:'Updated customer',email:c.email,phone:c.phone,language:'zh',version:1},'admin');
+  await assert.rejects(links.decide(c.id,{action:'approve',version:state.version,customerVersion:1},'admin'),Conflict);
+  const input={action:'approve',version:state.version,customerVersion:2};
+  assert.equal((await links.decide(c.id,input,'admin')).status,'approved');
+  assert.equal((await links.decide(c.id,input,'admin')).status,'approved');
+  const linked=await customers.profile(identity);assert.equal(linked.id,c.id);assert.equal(linked.name,'Updated customer');assert.equal(linked.phone,c.phone);assert.equal(linked.language,'zh');assert.equal(linked.loginEmail,identity.email);
+  assert.deepEqual((await petRef.get()).data(),{name:'Existing pet',photo:'private-hash'});
+  const history=await db.doc(`customers/${c.id}/history/3`).get();assert.equal(history.data().actor,'admin');assert.equal(history.data().effectiveUid,identity.uid);assert.equal(history.data().source,'account-link');
+  assert.equal((await db.doc(`customers/${c.id}`).collection('history').get()).size,3);
+  await assert.rejects(links.issue(c.id,'admin'),Conflict);await assert.rejects(links.request({...identity,uid:randomUUID()},issued.code),LinkUnavailable);
+  const make=()=>customers.save(randomUUID(),{name:'Unclaimed',email:'',phone:'',language:'en',version:0},'admin');
+  const other=await make(),old=await links.issue(other.id,'admin'),replacement=await links.issue(other.id,'admin');
+  const second={uid:randomUUID(),email:'second@example.test'};
+  await assert.rejects(links.request(second,old.code),LinkUnavailable);
+  now+=86400001;await assert.rejects(links.request(second,replacement.code),LinkUnavailable);
+  const fresh=await links.issue(other.id,'admin');await links.request(second,fresh.code);
+  // Registration racing approval never overwrites or merges a personal profile.
+  const independent=await customers.saveProfile(second,{name:'Separate profile',language:'en',version:0});
+  const waiting=await links.adminState(other.id);
+  await assert.rejects(links.decide(other.id,{action:'approve',version:waiting.version,customerVersion:1},'admin'),Conflict);
+  assert.equal((await customers.profile(second)).id,independent.id);
+  await links.decide(other.id,{action:'reject',version:waiting.version,customerVersion:1},'admin');
+  assert.equal((await links.ownState(second.uid)).status,'rejected');
+  const cancel=await links.issue(other.id,'admin');await links.decide(other.id,{action:'cancel',version:cancel.state.version,customerVersion:1},'admin');
+  await assert.rejects(links.request({uid:randomUUID(),email:'new@example.test'},cancel.code),LinkUnavailable);
+  // Two concurrent claimants cannot both reserve a single code.
+  const race=await links.issue(other.id,'admin');
+  const claims=await Promise.allSettled([links.request({uid:randomUUID(),email:'one@example.test'},race.code),links.request({uid:randomUUID(),email:'two@example.test'},race.code)]);
+  assert.equal(claims.filter(r=>r.status==='fulfilled').length,1);
+});
 test('multiple pets share canonical ownership, private photos, audited retries and administrator search',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'},'pets-'+randomUUID());t.after(()=>deleteApp(app));
   const db=getFirestore(app), customers=firestoreStore(db), files=new Map();
