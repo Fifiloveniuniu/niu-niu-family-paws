@@ -126,6 +126,22 @@ test('administrator can add, edit and search customers in both languages on mobi
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin renamed pet');
   await petSection.getByRole('button',{name:'Save pet',exact:true}).click();
   await expect(petSection.getByRole('heading',{name:'Admin renamed pet',exact:true})).toBeVisible();
+  await petSection.getByRole('button',{name:'Edit pet: Admin renamed pet',exact:true}).click();
+  await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Keep this pet draft');
+  // Opening the same customer preserves the mounted editor without a confirmation.
+  await page.getByRole('button',{name:'Manage pets: Alice Chen',exact:true}).click();
+  await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Keep this pet draft');
+  const otherCustomer={id:'10000000-0000-4000-8000-000000000099',name:'Other sample',loginEmail:null};
+  await page.route('**/api/pet-search?**',route=>route.fulfill({json:{items:[{pet:{...pets[0],customerId:otherCustomer.id},customer:otherCustomer}],nextCursor:null}}));
+  await page.getByRole('button',{name:'Search pet names',exact:true}).click();
+  await expect(page.getByText('Customer: Other sample',{exact:true})).toBeVisible();
+  page.once('dialog',dialog=>dialog.dismiss());
+  await page.getByRole('button',{name:'Manage these pets',exact:true}).click();
+  await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Keep this pet draft');
+  page.once('dialog',dialog=>dialog.accept());
+  await page.getByRole('button',{name:'Manage these pets',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Customer: Other sample',exact:true})).toBeVisible();
+  await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveCount(0);
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await expect(page.getByRole('button',{name:'添加客户',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

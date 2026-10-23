@@ -49,6 +49,10 @@ The administrator directory shows these registered profiles automatically. Admin
 
 ## Managing pets
 
+When an action would discard edits, the website asks first. Choose **Cancel** to keep editing, or **OK** to discard and continue. This applies to cancelling/replacing a form, reloading your profile, switching to another customer's pets, signing out and returning to the website. Changing the interface language or switching administrator workspaces keeps drafts. Use **Save** to store changes; reminders do not save automatically.
+
+操作会丢失未保存的修改时，网站会先询问。点击“取消”可留下继续编辑，点击“确定”会放弃修改并继续操作。切换界面语言或管理员工作页面会保留草稿。请点击“保存”才会正式保存；提醒不会自动保存。
+
 After saving your profile, use **My pets → Add pet**, enter the pet's name and choose **Save pet**. Add as many separate pets as you need. Photos can be added later: choose **Edit pet**, select a JPEG, PNG or WebP image (up to 3 MB and 16 megapixels), and save. A newly selected image stays on your device until you save. Only the owner and authorized administrators can view saved photos. The system resizes photos and removes source metadata.
 
 保存个人资料后，在“我的宠物”中点击“添加宠物”，填写名字后点击“保存宠物”。每只宠物单独添加。照片可以以后补：点击“编辑宠物”，选择 JPEG、PNG 或 WebP 图片（最大 3 MB、1600 万像素），再保存。新选的图片只有保存后才会上传。已保存的照片仅主人与获授权的管理员可查看，系统会缩小图片并移除原始元数据。

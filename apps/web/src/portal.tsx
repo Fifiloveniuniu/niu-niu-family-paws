@@ -6,6 +6,7 @@ import { auth } from './auth-client';
 import Customers from './customers';
 import Profile from './profile';
 import LanguageSelector from './language-selector';
+import { confirmDiscardChanges } from './unsaved-changes';
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -95,7 +96,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
           {access === 'denied' && <h2>{t.denied}</h2>}
           <div className="portal-identity-row"><p className="portal-account"><span>{t.account}</span><strong>{user?.email}</strong></p>{access !== 'denied' && <span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span>}</div>
           <p className="customer-intro">{access === 'denied' ? t.deniedBody : access === 'admin' ? t.ready : access === 'employee' ? t.employeeNext : t.customerNext}</p>
-          <div className="portal-actions session-actions"><button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => void run(() => signOut(auth))}>{t.logout}</button></div>
+          <div className="portal-actions session-actions"><button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => { if (confirmDiscardChanges(i18n.language)) void run(() => signOut(auth)); }}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
       </div>

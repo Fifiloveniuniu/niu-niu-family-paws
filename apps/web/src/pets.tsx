@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
-import UnsavedChanges from './unsaved-changes';
+import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
 type PetWrite = components['schemas']['PetWrite'];
@@ -63,6 +63,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
   const alive = React.useRef(true), generation = React.useRef(0), heading = React.useRef<HTMLHeadingElement>(null);
   const path = `/customers/${customerId}/pets`;
   const baseline = React.useRef('');
+  const form = React.useRef<HTMLFormElement>(null);
   function report(e: unknown) {
     const status = e instanceof PetError ? e.status : 0;
     setError(status === 409 ? 'conflict' : status === 401 || status === 403 ? 'forbidden' : status === 400 ? 'invalid' : 'error');
@@ -79,6 +80,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
   React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++generation.current; }; }, [customerId]);
   React.useEffect(() => { if (editor) heading.current?.focus(); }, [editor?.id]);
   function open(pet?: Pet) {
+    if (!confirmDiscardChanges(i18n.language, form.current)) return;
     setError(null); setSaved(false); setUncertain(false);
     const input = { name: pet?.name ?? '', version: pet?.version ?? 0 };
     baseline.current = JSON.stringify(input);
@@ -110,7 +112,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
     <div className="customer-heading"><h3 id={headingId}>{title ?? t.own}</h3><button className="button" disabled={blocked || loading} onClick={() => open()}>{t.add}</button></div>
     <p className="customer-intro">{t.intro}</p>
     {error && <p role="alert">{t[error]}</p>}{saved && <p role="status">{t.saved}</p>}
-    {editor && <form className="customer-form pet-form" onSubmit={event => void save(event)}>
+    {editor && <form ref={form} className="customer-form pet-form" onSubmit={event => void save(event)}>
       <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || reading || uncertain}/>
       <h4 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h4>
       <fieldset disabled={blocked}>
@@ -119,7 +121,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
       </fieldset>
       <p className="customer-intro">{t.hint}</p>
       {editor.preview && <><img className="pet-preview" src={editor.preview} alt={editor.input.name}/><p>{t.selected}</p></>}
-      <div className="portal-actions"><button className="button" type="submit" disabled={saving || reading || loading || error === 'conflict' || error === 'forbidden' || error === 'invalid'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={blocked} onClick={() => { setEditor(null); setError(null); }}>{t.cancel}</button></div>
+      <div className="portal-actions"><button className="button" type="submit" disabled={saving || reading || loading || error === 'conflict' || error === 'forbidden' || error === 'invalid'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={blocked} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
     </form>}
     <div className="pet-grid">{items.map(pet => <article className="pet-card" key={pet.id}><PetPhoto pet={pet}/><div><h4>{pet.name}</h4><button className="language" aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}>{t.edit}</button></div></article>)}</div>
     {loading ? <p role="status">{t.loading}</p> : !items.length && !error ? <p>{t.empty}</p> : null}
