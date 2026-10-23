@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets from './pets';
-import UnsavedChanges from './unsaved-changes';
+import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
@@ -49,6 +49,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
   const [input, setInput] = React.useState<ProfileWrite>({ name: '', language: i18n.language === 'zh' ? 'zh' : 'en', version: 0 });
   const [loaded, setLoaded] = React.useState(false);
   const baseline = React.useRef('');
+  const form = React.useRef<HTMLFormElement>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [uncertain, setUncertain] = React.useState(false);
@@ -96,7 +97,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
       {!profile && <p>{t.setup}</p>}
       <p className="profile-identity"><span>{t.loginEmail}</span><strong>{profile?.loginEmail ?? auth.currentUser?.email}</strong></p>
       <p className="customer-intro">{t.identity}</p>
-      <form className="customer-form" onSubmit={event => void save(event)}>
+      <form ref={form} className="customer-form" onSubmit={event => void save(event)}>
         <UnsavedChanges active={loaded && (JSON.stringify(input) !== baseline.current || saving || uncertain)}/>
         <fieldset disabled={saving || loading || uncertain || error === 'forbidden'}>
           <label>{t.name}<input name="profile-name" autoComplete="name" required maxLength={120} value={input.name} onChange={event => { setInput({ ...input, name: event.target.value }); setSaved(false); }}/></label>
@@ -107,6 +108,6 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
       {!profile && <p className="customer-intro">{t.existing}</p>}
       {profile && <Pets key={profile.id} customerId={profile.id}/>}
     </>}
-    <button className="language" disabled={loading || saving || uncertain} onClick={() => void load()}>{t.reload}</button>
+    <button className="language" disabled={loading || saving || uncertain} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) void load(); }}>{t.reload}</button>
   </section>;
 }

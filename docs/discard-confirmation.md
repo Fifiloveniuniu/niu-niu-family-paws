@@ -1,0 +1,9 @@
+# Confirm before discarding edits
+
+The website now asks before an in-app action discards a dirty form: cancelling a customer/pet editor, opening another customer/pet editor, reloading a personal profile, changing the customer whose pets are open, signing out, or leaving the portal through its hash navigation (including browser Back). Choose Cancel to keep editing, or OK to discard. Confirmation wording follows the website language; browser button labels follow the browser language.
+
+Warnings are scoped to the form being replaced. Signing out or leaving the portal checks all mounted drafts, including hidden administrator workspaces. Changing the website language, switching administrator workspaces, refreshing access with unchanged permissions, searching/reloading lists or reopening the same customer's pet panel preserves drafts and does not ask. A cancelled hash navigation restores the portal URL without unmounting its forms. Browser history entries may be replaced when a back/forward navigation is cancelled.
+
+The existing native full-page departure warning remains. This is not autosave or persistent draft storage. Permission revocation, session expiry or external account changes still take effect immediately; a confirmation cannot preserve unauthorized access. No backend, database, IAM or billing changes are involved.
+
+Validation: production build and browser regression suite. Tests exercise keeping/discarding customer and pet drafts, personal reload cancellation, hidden workspace protection, leaving/returning to the portal, sign-out acceptance/cancellation, switching pet customers, clean refresh and bilingual confirmation copy. Business API responses are mocked in these browser tests; no production data is written by tests.
