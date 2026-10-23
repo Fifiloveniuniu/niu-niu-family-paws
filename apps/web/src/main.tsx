@@ -17,11 +17,11 @@ const en = {
 };
 const zh: typeof en = {
   skip:'跳至正文', services:'服务项目', approach:'关于我们', questions:'常见问题', contact:'联系我们', signIn:'登录',
-  eyebrow:'NIU NIU FAMILY PAWS SITTING LLC', title:'小小的爪印，\n满满的关爱。', intro:'准备为毛孩子安排托管？在这里了解 Niu Niu Family Paws 的日托与寄宿服务。', explore:'了解服务', note:'是您的家人，也是我们的牵挂。',
-  servicesLabel:'日托与寄宿', servicesTitle:'您安心出门，\n它也有好安排。', servicesIntro:'先了解服务，再确认日期、照护安排和费用。',
-  day:'宠物日托', dayTag:'白天的陪伴', dayDescription:'白天需要有人照顾宠物？请先确认可安排的日期，并沟通它的日常习惯和照护需求。', night:'宠物寄宿', nightTag:'过夜的安排', nightDescription:'需要出门过夜？请提前确认寄宿日期，并沟通宠物的作息和照护安排。', price:'价格和套餐详情确认后会在这里公布。',
+  eyebrow:'NIU NIU FAMILY PAWS SITTING LLC', title:'小小的爪印，\n满满的关爱。', intro:'准备为毛孩子安排托管？了解 Niu Niu Family Paws 的日间托管和寄养服务。', explore:'了解服务', note:'是您的家人，也是我们的牵挂。',
+  servicesLabel:'日间托管与寄养', servicesTitle:'您安心出门，\n它也有好安排。', servicesIntro:'先了解服务，再确认日期、照护安排和费用。',
+  day:'日间托管', dayTag:'白天的陪伴', dayDescription:'白天需要有人照顾宠物？请先确认可安排的日期，并沟通它的日常习惯和照护需求。', night:'过夜寄养', nightTag:'过夜的安排', nightDescription:'需要出门过夜？请提前确认寄养日期，并沟通宠物的作息和照护安排。', price:'价格和套餐详情确认后会在这里公布。',
   aboutLabel:'了解您的毛孩子', aboutTitle:'多了解一点，\n住得更安心。', aboutBody:'每只宠物都有自己的习惯。请告诉我们托管日期、日常作息，以及能让它放松的小细节，并在托管前确认好照护安排。',
-  step1:'介绍您的宠物', step1Body:'准备好宠物的名字、年龄、日常习惯和照护需求。', step2:'计划托管时间', step2Body:'想好托管日期，以及需要日托还是寄宿。', step3:'确认具体安排', step3Body:'托管前，请确认日期、费用和交接安排。',
+  step1:'介绍您的宠物', step1Body:'准备好宠物的名字、年龄、日常习惯和照护需求。', step2:'计划托管时间', step2Body:'想好托管日期，以及需要白天照护还是过夜寄养。', step3:'确认具体安排', step3Body:'托管前，请确认日期、费用和交接安排。',
   faqLabel:'托管前先了解', faqTitle:'常见问题', q1:'如何安排托管？', a1:'请先准备宠物资料和希望托管的日期。联系方式确认后会在这里公布，目前还不能通过网站预约。', q2:'在哪里查看价格与套餐？', a2:'价格和套餐规则还在确认中，确定后会在这里公布。', q3:'需要提供哪些宠物资料？', a3:'请告诉我们宠物的日常作息、喂食习惯、用药情况和特殊照护需求，并在预约前确认具体安排。',
   contactLabel:'联系我们', contactTitle:'下次托管，\n从这里开始。', contactBody:'联系方式和服务地点确认后，会在这里公布。', pending:'联系方式待公布', footer:'Niu Niu Family Paws Sitting LLC', footerNote:'用心陪伴每一个小爪印。', illustration:'一只小狗在植物旁休息的插画',
 };
