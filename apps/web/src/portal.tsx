@@ -16,6 +16,8 @@ const en = {
   refresh: 'Refresh access', error: 'We couldn’t complete that request. Please try again.', popup: 'Allow the Google sign-in window, then try again.', network: 'Check your connection and try again.',
   dashboard: 'Administrator dashboard', welcome: 'Welcome back.', account: 'Your account', role: 'Administrator',
   ready: 'Your administrator sign-in is ready.',
+  workspace: 'Workspace', manage: 'Customer management', personal: 'My profile & pets', personalTitle: 'My customer account',
+  manageHint: 'Manage customer records and their pets.', personalHint: 'You’re viewing your own profile and pets with this Google account.',
   customerTitle: 'Customer account', employeeTitle: 'Staff account', customerRole: 'Customer', employeeRole: 'Staff',
   customerNext: 'You’re signed in. Complete or update your profile below.',
   employeeNext: 'You’re signed in with staff access. Customer lookup and visit tracking are coming in a future release.',
@@ -29,6 +31,8 @@ const zh: typeof en = {
   refresh: '刷新访问权限', error: '未能完成此操作，请重试。', popup: '请允许 Google 登录窗口，然后重试。', network: '请检查网络连接后重试。',
   dashboard: '管理员控制台', welcome: '欢迎回来。', account: '您的账号', role: '管理员',
   ready: '管理员登录已就绪。',
+  workspace: '工作页面', manage: '客户管理', personal: '我的资料与宠物', personalTitle: '我的客户页面',
+  manageHint: '管理客户及其宠物资料。', personalHint: '您正在查看当前 Google 账号自己的资料与宠物。',
   customerTitle: '客户账号', employeeTitle: '员工账号', customerRole: '客户', employeeRole: '员工',
   customerNext: '您已登录。请在下方填写或更新您的资料。',
   employeeNext: '您已使用员工权限登录。客户查询与服务记录将在后续版本开放。',
@@ -46,9 +50,10 @@ export default function Portal({ toggle }: { toggle: () => void }) {
   const generation = React.useRef(0);
   const previousUid = React.useRef<string | null | undefined>(undefined);
   const [directoryRefresh, setDirectoryRefresh] = React.useState(0);
+  const [personal, setPersonal] = React.useState(false);
   const verify = React.useCallback(async (current: User | null, force = false) => {
     const request = ++generation.current;
-    if (previousUid.current !== (current?.uid ?? null)) setAccess('checking');
+    if (previousUid.current !== (current?.uid ?? null)) { setAccess('checking'); setPersonal(false); }
     previousUid.current = current?.uid ?? null;
     setError(null); setUser(current);
     if (!current) { setAccess('signed-out'); return; }
@@ -83,7 +88,7 @@ export default function Portal({ toggle }: { toggle: () => void }) {
   return <>
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><button className="language" onClick={toggle} lang={chinese ? 'en' : 'zh-Hans'}>{chinese ? 'English' : '简体中文'}</button></header>
     <main className="portal" id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
-      <h1>{access === 'admin' ? t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
+      <h1>{access === 'admin' ? personal ? t.personalTitle : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
       <div className="portal-card" aria-busy={busy || access === 'checking'}>
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
           <h2>{access === 'denied' ? t.denied : t.welcome}</h2>
@@ -92,8 +97,19 @@ export default function Portal({ toggle }: { toggle: () => void }) {
           <div className="portal-actions"><button className="button" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => void run(() => signOut(auth))}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
-      </div>{access === 'admin' && <Customers key={user?.uid} refreshKey={directoryRefresh}/>}
-      {(access === 'admin' || access === 'customer' || access === 'employee') && <Profile key={user?.uid} onSaved={() => setDirectoryRefresh(value => value + 1)}/>}
+      </div>
+      {access === 'admin' && <>
+        <section className="portal-workspace" aria-label={t.workspace}>
+          <p className="eyebrow">{t.workspace}</p>
+          <div className="workspace-buttons" role="group" aria-label={t.workspace}>
+            <button className="language" aria-pressed={!personal} onClick={() => setPersonal(false)}>{t.manage}</button>
+            <button className="language" aria-pressed={personal} onClick={() => setPersonal(true)}>{t.personal}</button>
+          </div>
+          <p className="customer-intro">{personal ? t.personalHint : t.manageHint}</p>
+        </section>
+        <div hidden={personal}><Customers key={user?.uid} refreshKey={directoryRefresh}/></div>
+      </>}
+      {(access === 'admin' || access === 'customer' || access === 'employee') && <div hidden={access === 'admin' && !personal}><Profile key={user?.uid} onSaved={() => setDirectoryRefresh(value => value + 1)}/></div>}
       <p className="portal-session">{t.session}</p>
     </main>
   </>;

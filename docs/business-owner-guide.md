@@ -33,6 +33,10 @@ Adding a customer in the administrator directory saves contact information. It d
 
 ## Saving your own profile
 
+Administrators first choose **My profile & pets** in **Workspace**. Choose **Customer management** to return to the directory. Both pages use the same Google login and existing profile/pet records. Switching pages keeps unsaved edits during the current session; reloading the website starts in customer management and discards unsaved edits. Saving still requires the usual Save buttons. Ordinary customers go straight to their own profile.
+
+管理员先在“工作页面”中选择“我的资料与宠物”，即可管理自己的资料。点击“客户管理”返回客户目录。两页共用同一个 Google 账号和已有资料，不必重复注册。当前会话内切换页面会保留未保存的修改；刷新网站会回到客户管理，并放弃未保存的修改。修改仍需点击相应“保存”按钮才会保存。普通客户登录后直接进入自己的资料。
+
 Customers sign in with their own Google account, enter **Your name** and **Your preferred language** under **My profile**, then choose **Save profile**. Later they can update these fields or reload their saved profile. Each Google identity accesses only its own profile. Administrators and staff also have a personal profile panel; it uses the same canonical record across their roles.
 
 客户使用自己的 Google 账号登录，在“我的资料”中填写“您的姓名”和“您的首选语言”，再点击“保存我的资料”。以后可在这里修改或重新加载资料。每个 Google 账号只能访问自己的个人资料；管理员和员工也可填写自己的资料，不必另建账号。

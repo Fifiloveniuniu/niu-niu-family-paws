@@ -2,6 +2,8 @@
 
 **Latest delivered state:** Multiple pet profiles and optional private photos are live at https://niu-niu-family-paws.web.app/#/login. PR #12 merged as `eeccb9b`, Firebase Hosting deployed, real Google customer/admin and private-photo checks passed, and exact synthetic-data cleanup completed. Customers may add photos later (explicit owner decision). See `docs/release-5.md` and the final delivery note below. Earlier preparation/blocker notes are historical.
 
+**Next feature in progress:** `feat/own-customer-workspace` adds administrator switching between Customer management and My profile & pets, reusing the same canonical records and existing authorization. It preserves unsaved edits across switches and resets on reload/sign-out/UID change. Build and seven browser tests pass. See `docs/own-customer-workspace.md`; complete real preview, PR/CI/merge, Hosting deploy and live verification before delivery. No backend or data changes needed. Do not start another feature.
+
 ## Pet feature preparation — 2026-10-22 (completed; historical notes)
 
 Current branch `feat/pet-profiles` implements multiple pets and private photos as one feature; not yet delivered. Owner answered “add photo later”: names can be saved without a photo. See `docs/pet-profiles.md` for canonical data, permissions, upload limits and deployment checklist. Created the private Oregon bucket `niu-niu-family-paws-pet-photos`, runtime bucket-scoped custom create/get role, and deployed the pet-name collection-group index. Existing production frontend/API are unchanged at this stage. Continue this feature through validation, PR merge, Hosting deployment, live checks and cleanup; do not start another feature.
