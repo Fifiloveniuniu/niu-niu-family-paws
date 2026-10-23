@@ -10,20 +10,20 @@ const en = {
   noPhoto: 'Photo not added yet', save: 'Save pet', retry: 'Retry pet save', cancel: 'Cancel', loading: 'Loading pets…', saving: 'Saving pet…',
   empty: 'No pets yet. Add your first pet.', more: 'Load more pets', reload: 'Reload pets', saved: 'Pet saved.',
   error: 'Couldn’t load or save pets. Please try again.', invalid: 'Enter a pet name (up to 120 characters) and choose a valid photo within the limits.',
-  forbidden: 'You do not have access to these pets. Refresh access above or sign in again.',
+  forbidden: 'You don’t have access to these pets. Refresh your session above or sign in again.',
   conflict: 'This pet changed elsewhere. Your edits are kept. Reload pets and reopen the latest pet before saving.',
   photoError: 'Couldn’t load this private photo.', photoRetry: 'Retry photo', selected: 'New photo selected. Save the pet to upload it.',
   search: 'Search pet names', searchHint: 'Start of pet name', noMatches: 'No matching pets.', customer: 'Customer', manage: 'Manage these pets',
 };
 const zh: typeof en = {
-  title: '宠物', own: '我的宠物', intro: '每只宠物都有独立资料。照片可现在上传，也可稍后添加。',
+  title: '宠物', own: '我的宠物', intro: '为每只宠物单独添加资料，照片可以以后再补。',
   add: '添加宠物', edit: '编辑宠物', name: '宠物名字', photo: '宠物照片（选填）', hint: '支持 JPEG、PNG 或 WebP，最大 3 MB、1600 万像素。仅宠物主人和管理员可查看照片。',
   noPhoto: '尚未添加照片', save: '保存宠物', retry: '重试保存宠物', cancel: '取消', loading: '正在加载宠物…', saving: '正在保存宠物…',
-  empty: '暂无宠物。请添加第一只宠物。', more: '加载更多宠物', reload: '重新加载宠物', saved: '宠物已保存。',
-  error: '未能加载或保存宠物，请重试。', invalid: '请填写宠物名字（最多 120 个字符），并选择符合大小限制的有效照片。',
-  forbidden: '您没有这些宠物的访问权限。请刷新上方的访问权限或重新登录。',
-  conflict: '此宠物资料已被其他操作更新。您的修改保留在下方。请重新加载宠物，并重新打开最新资料后再保存。',
-  photoError: '未能加载此私密照片。', photoRetry: '重试加载照片', selected: '已选择新照片，保存宠物后才会上传。',
+  empty: '还没有添加宠物，先添加一只吧。', more: '加载更多宠物', reload: '重新加载宠物', saved: '宠物资料已保存。',
+  error: '宠物资料加载或保存失败，请重试。', invalid: '请填写宠物名字（最多 120 个字符），并检查照片格式和大小。',
+  forbidden: '暂时无法访问这些宠物的资料。请刷新上方的登录状态，或重新登录。',
+  conflict: '宠物资料已在其他页面更新，您还没保存的修改仍保留在这里。请重新加载宠物，再打开最新资料编辑。',
+  photoError: '照片加载失败。', photoRetry: '重新加载照片', selected: '已选好新照片，点击“保存宠物”后才会上传。',
   search: '搜索宠物名字', searchHint: '输入宠物名字的开头', noMatches: '没有找到符合条件的宠物。', customer: '客户', manage: '管理这些宠物',
 };
 class PetError extends Error { constructor(public status: number) { super('Pet request failed'); } }

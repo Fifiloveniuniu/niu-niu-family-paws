@@ -6,24 +6,24 @@ import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
 const en = {
-  title: 'Customers', intro: 'Keep contact details and preferred language together. Adding a customer does not create a login or send an email.',
+  title: 'Customers', intro: 'Manage contact details and pets. Adding a customer saves their details without creating a login or sending an email.',
   add: 'Add customer', edit: 'Edit customer', name: 'Customer name', email: 'Email (optional)', phone: 'Phone (optional)', language: 'Preferred language',
   save: 'Save customer', cancel: 'Cancel', loading: 'Loading customers…', saving: 'Saving…', empty: 'No customers yet. Add your first customer to get started.',
   more: 'Load more customers', reload: 'Reload customers', saved: 'Customer saved.', error: 'Couldn’t load or save customers. Please try again.',
   conflict: 'This record changed since you opened it. Your edits are kept below. Reload customers, compare the latest record, and reopen it before saving.',
-  forbidden: 'Your administrator session is no longer authorized. Refresh access above or sign in again.',
+  forbidden: 'Administrator access is required. Refresh your session above or sign in again.',
   invalid: 'Check the name, email, and field lengths, then try again.', retry: 'Retry save', noContact: 'No contact details added',
-  search: 'Search customers', searchHint: 'Start of customer name, contact email, or Google email', noMatches: 'No matching customers.', loginEmail: 'Google sign-in email',
+  search: 'Search customers', searchHint: 'Customer name or email (starts with)', noMatches: 'No matching customers.', loginEmail: 'Google sign-in email',
 };
 const zh: typeof en = {
-  title: '客户', intro: '管理客户联系方式与首选语言。添加客户不会创建登录账号或发送邮件。',
+  title: '客户', intro: '管理客户的联系方式与宠物资料。添加客户只会保存资料，不会创建登录账号或发送邮件。',
   add: '添加客户', edit: '编辑客户', name: '客户姓名', email: '邮箱（选填）', phone: '电话（选填）', language: '首选语言',
   save: '保存客户', cancel: '取消', loading: '正在加载客户…', saving: '正在保存…', empty: '暂无客户。请添加第一位客户。',
   more: '加载更多客户', reload: '重新加载客户', saved: '客户已保存。', error: '未能加载或保存客户，请重试。',
-  conflict: '此记录已被其他操作更新。您的修改保留在下方。请重新加载客户，对比最新记录，并重新打开后再保存。',
-  forbidden: '您的管理员会话已失去授权。请刷新上方的访问权限或重新登录。',
-  invalid: '请检查姓名、邮箱与字段长度后重试。', retry: '重试保存', noContact: '尚未添加联系方式',
-  search: '搜索客户', searchHint: '输入客户姓名、联系邮箱或 Google 邮箱的开头', noMatches: '没有找到符合条件的客户。', loginEmail: 'Google 登录邮箱',
+  conflict: '客户资料已在其他页面更新，您还没保存的修改仍保留在这里。请重新加载客户，核对最新资料后重新打开编辑。',
+  forbidden: '需要管理员权限。请刷新上方的登录状态，或重新登录。',
+  invalid: '请检查姓名、邮箱格式和内容长度，然后重试。', retry: '重试保存', noContact: '尚未填写联系方式',
+  search: '搜索客户', searchHint: '输入姓名或邮箱的开头', noMatches: '没有找到匹配的客户。', loginEmail: 'Google 登录邮箱',
 };
 class ApiError extends Error { constructor(public status: number) { super('API request failed'); } }
 async function api<T>(path: string, body?: CustomerWrite): Promise<T> {

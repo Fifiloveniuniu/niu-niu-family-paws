@@ -9,12 +9,12 @@ test('signed-out portal, bilingual navigation, and public FAQs work on mobile', 
   await page.goto('/#/admin');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toHaveCount(0);
-  await page.getByRole('button',{name:'简体中文'}).click();
+  await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await page.reload();
-  await expect(page.getByRole('button',{name:'使用 Google 继续'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'使用 Google 登录'})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/admin-sign-in-mobile-zh.png',fullPage:true});
-  await page.getByRole('link',{name:'返回网站'}).click();
+  await page.getByRole('link',{name:'返回首页'}).click();
   await page.getByText('如何安排托管？',{exact:true}).click();
   await expect(page.locator('details').first()).toHaveAttribute('open','');
 });
@@ -36,7 +36,7 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
   const update=async (claims:object)=>{
     const response=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true,customAttributes:JSON.stringify(claims)}});
     expect(response.ok(),await response.text()).toBe(true);
-    await page.getByRole('button',{name:'Refresh access'}).click();
+    await page.getByRole('button',{name:'Refresh session'}).click();
   };
   await update({admin:'true'});
   await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();
@@ -50,7 +50,7 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
   await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toBeVisible();
   await update({});
   await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();
-  await expect(page.getByText('You’re signed in. Complete or update your profile below.', {exact:true})).toBeVisible();
+  await expect(page.getByText('Manage your profile and pets below.', {exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Sign out'}).click();
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.reload();
@@ -96,10 +96,10 @@ test('administrator can add, edit and search customers in both languages on mobi
   await page.getByRole('button',{name:'Save customer',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Alice Chen',exact:true})).toBeVisible();
   expect(customers[0].version).toBe(2);
-  await page.getByRole('searchbox',{name:'Start of customer name, contact email, or Google email',exact:true}).fill('Bob');
+  await page.getByRole('searchbox',{name:'Customer name or email (starts with)',exact:true}).fill('Bob');
   await page.getByRole('button',{name:'Search customers',exact:true}).click();
   await expect(page.getByText('No matching customers.',{exact:true})).toBeVisible();
-  await page.getByRole('searchbox',{name:'Start of customer name, contact email, or Google email',exact:true}).fill('Alice');
+  await page.getByRole('searchbox',{name:'Customer name or email (starts with)',exact:true}).fill('Alice');
   await page.getByRole('button',{name:'Search customers',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Alice Chen',exact:true})).toBeVisible();
   expect(queries).toContain('Alice');
@@ -126,7 +126,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin renamed pet');
   await petSection.getByRole('button',{name:'Save pet',exact:true}).click();
   await expect(petSection.getByRole('heading',{name:'Admin renamed pet',exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'简体中文'}).click();
+  await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await expect(page.getByRole('button',{name:'添加客户',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/customers-mobile-zh.png',fullPage:true});
@@ -140,18 +140,18 @@ test('prominent shared sign-in works from the home page in English and Chinese',
   await page.locator('header').getByRole('link',{name:'Sign in',exact:true}).click();
   await expect(page).toHaveURL(/#\/login$/);
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
-  await expect(page.getByText('Continue with your Google account.',{exact:false})).toBeVisible();
+  await expect(page.getByText('Sign in with your Google account to continue.',{exact:true})).toBeVisible();
   await page.getByRole('link',{name:'Back to website'}).click();
   await page.setViewportSize({width:400,height:860});
-  await page.getByRole('button',{name:'简体中文'}).click();
+  await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await expect(page.locator('header').getByRole('link',{name:'登录',exact:true})).toBeVisible();
   await expect(page.getByRole('link',{name:'登录',exact:true})).toHaveCount(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/shared-login-mobile-zh.png',fullPage:true});
   await page.locator('header').getByRole('link',{name:'登录',exact:true}).click();
-  await expect(page.getByRole('button',{name:'使用 Google 继续'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'使用 Google 登录'})).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('button',{name:'使用 Google 继续'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'使用 Google 登录'})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/shared-login-portal-mobile-zh.png',fullPage:true});
 });

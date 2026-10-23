@@ -7,25 +7,25 @@ import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type ProfileWrite = components['schemas']['ProfileWrite'];
 const en = {
-  title: 'My profile', intro: 'Save your name and preferred language for your customer account.',
+  title: 'My profile', intro: 'Tell us your name and which language you prefer.',
   setup: 'Complete your profile to get started.', name: 'Your name', language: 'Your preferred language',
-  loginEmail: 'Google sign-in email', identity: 'Your Google account determines which profile you can access. This email cannot be changed here.',
-  existing: 'Existing customer records are not linked automatically. Linking requires administrator verification.',
+  loginEmail: 'Google sign-in email', identity: 'This profile belongs to your Google account. Your sign-in email can’t be changed here.',
+  existing: 'Already have a customer record? An administrator needs to verify it before linking your account.',
   save: 'Save profile', retry: 'Retry profile save', saving: 'Saving profile…', saved: 'Your profile is saved.',
   loading: 'Loading your profile…', reload: 'Reload saved profile', error: 'Couldn’t load or save your profile. Please try again.',
-  conflict: 'Your profile changed elsewhere. Your edits are kept below. Reload the saved profile before editing again; reloading replaces the edits below.',
-  forbidden: 'Your account could not be authorized. Refresh access above or sign in with your verified Google account again.',
+  conflict: 'Your profile was updated elsewhere. Your edits are still here. Reload the saved profile to continue; this will replace your unsaved edits.',
+  forbidden: 'We couldn’t verify access to your profile. Refresh your session above or sign in again.',
   invalid: 'Enter your name using 120 characters or fewer.',
 };
 const zh: typeof en = {
-  title: '我的资料', intro: '保存您的姓名和首选语言，用于您的客户账号。',
+  title: '我的资料', intro: '填写您的姓名，并选择偏好的语言。',
   setup: '请先填写您的资料。', name: '您的姓名', language: '您的首选语言',
-  loginEmail: 'Google 登录邮箱', identity: '系统根据您的 Google 账号确认资料归属。此处不能修改登录邮箱。',
-  existing: '已有客户记录不会自动关联。关联记录需要管理员核实身份。',
+  loginEmail: 'Google 登录邮箱', identity: '这份资料与您的 Google 账号关联，登录邮箱不能在这里修改。',
+  existing: '之前已经登记过客户资料？请联系管理员核实身份后再关联账号。',
   save: '保存我的资料', retry: '重试保存我的资料', saving: '正在保存资料…', saved: '您的资料已保存。',
-  loading: '正在加载您的资料…', reload: '重新加载已保存的资料', error: '未能加载或保存您的资料，请重试。',
-  conflict: '资料已被其他操作更新。您的修改保留在下方。请先重新加载已保存的资料，再编辑；重新加载会替换下方尚未保存的修改。',
-  forbidden: '未能验证您的账号权限。请刷新上方的访问权限，或重新使用已验证的 Google 账号登录。',
+  loading: '正在加载资料…', reload: '重新加载资料', error: '资料加载或保存失败，请重试。',
+  conflict: '资料已在其他页面更新，您还没保存的修改仍保留在这里。请重新加载资料后再编辑；重新加载会替换未保存的修改。',
+  forbidden: '暂时无法访问您的资料。请刷新上方的登录状态，或重新登录。',
   invalid: '请填写姓名，最多 120 个字符。',
 };
 class ProfileError extends Error { constructor(public status: number) { super('Profile request failed'); } }

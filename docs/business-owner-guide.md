@@ -35,7 +35,11 @@ Adding a customer in the administrator directory saves contact information. It d
 
 Administrators first choose **My profile & pets** in **Workspace**. Choose **Customer management** to return to the directory. Both pages use the same Google login and existing profile/pet records. Switching pages keeps unsaved edits during the current session; reloading the website starts in customer management and discards unsaved edits. Saving still requires the usual Save buttons. Ordinary customers go straight to their own profile.
 
-管理员先在“工作页面”中选择“我的资料与宠物”，即可管理自己的资料。点击“客户管理”返回客户目录。两页共用同一个 Google 账号和已有资料，不必重复注册。当前会话内切换页面会保留未保存的修改；刷新网站会回到客户管理，并放弃未保存的修改。修改仍需点击相应“保存”按钮才会保存。普通客户登录后直接进入自己的资料。
+管理员先在“切换页面”中选择“我的资料与宠物”，即可管理自己的资料。点击“客户管理”返回客户目录。两页共用同一个 Google 账号和已有资料，不必重复注册。当前会话内切换页面会保留未保存的修改；刷新网站会回到客户管理，并放弃未保存的修改。修改仍需点击相应“保存”按钮才会保存。普通客户登录后直接进入自己的资料。
+
+To change the website language, use **Language / 语言** at the top of any page and choose **English** or **简体中文**. The website remembers your choice in this browser. This changes the interface, without changing the preferred language saved in your profile.
+
+切换网站语言时，在页面顶部的 **Language / 语言** 中选择 **English** 或 **简体中文**。浏览器会记住您的选择。这只会切换界面语言，不会修改个人资料中保存的语言偏好。
 
 Customers sign in with their own Google account, enter **Your name** and **Your preferred language** under **My profile**, then choose **Save profile**. Later they can update these fields or reload their saved profile. Each Google identity accesses only its own profile. Administrators and staff also have a personal profile panel; it uses the same canonical record across their roles.
 
