@@ -23,6 +23,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   await expect(page.getByRole('region',{name:'My profile',exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Add customer',exact:true}).click();
   await page.getByRole('textbox',{name:'Customer name',exact:true}).fill('Unsaved directory draft');
+  await expect(page.getByText('You have unsaved changes.',{exact:false})).toBeVisible();
   await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
   await expect(page.getByRole('heading',{name:'My profile & pets',exact:true})).toBeVisible();
   await expect(page.getByRole('region',{name:'Customers',exact:true})).toHaveCount(0);
@@ -33,6 +34,14 @@ test('administrator switches to own profile and pets without losing drafts or by
   await expect(page.getByRole('textbox',{name:'Customer name',exact:true})).toHaveValue('Unsaved directory draft');
   await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
+  await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
+  // Hidden workspace drafts still protect a full page refresh. Dismissing keeps all inputs.
+  const warning = page.waitForEvent('dialog');
+  const refresh = page.reload({timeout:1500}).catch(() => null);
+  const dialog = await warning;
+  expect(dialog.type()).toBe('beforeunload');
+  await dialog.dismiss();
+  await refresh;
   await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
   await page.getByRole('button',{name:'Refresh session',exact:true}).click();
   await expect(page.getByRole('button',{name:'My profile & pets',exact:true})).toHaveAttribute('aria-pressed','true');
@@ -50,6 +59,13 @@ test('administrator switches to own profile and pets without losing drafts or by
   await expect(page.getByRole('region',{name:'切换页面',exact:true})).toHaveCount(0);
   await expect(page.getByRole('textbox',{name:'客户姓名',exact:true})).toHaveCount(0);
   await expect(page.getByRole('textbox',{name:'宠物名字',exact:true})).toHaveValue('Unsaved pet draft');
+  await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Sample owner');
+  await page.getByRole('button',{name:'取消',exact:true}).click();
+  await expect(page.getByText('修改尚未保存。',{exact:false})).toHaveCount(0);
+  // Returning to original values and cancelling a pet draft remove every listener.
+  page.on('dialog',async dialog=>{ await dialog.dismiss(); throw new Error('Unexpected warning on a clean form'); });
+  await page.reload();
+  await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
   await page.getByRole('button',{name:'退出登录',exact:true}).click();
   await expect(page.getByRole('region',{name:'我的资料',exact:true})).toHaveCount(0);
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets, { PetSearch } from './pets';
+import UnsavedChanges from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
@@ -56,6 +57,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const request = React.useRef(0);
   const alive = React.useRef(true);
   const heading = React.useRef<HTMLHeadingElement>(null);
+  const baseline = React.useRef('');
   function report(e: unknown) {
     const status = e instanceof ApiError ? e.status : 0;
     setError(status === 409 ? 'conflict' : status === 401 || status === 403 ? 'forbidden' : status === 400 ? 'invalid' : 'error');
@@ -78,7 +80,9 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   React.useEffect(() => { if (editor) heading.current?.focus(); }, [editor?.id]);
   function open(customer?: Customer) {
     setError(null); setMessage(null); setUncertain(false);
-    setEditor(customer ? { id: customer.id, input: { name: customer.name, email: customer.email, phone: customer.phone, language: customer.language, version: customer.version } } : { id: crypto.randomUUID(), input: { name: '', email: '', phone: '', language: chinese ? 'zh' : 'en', version: 0 } });
+    const input: CustomerWrite = customer ? { name: customer.name, email: customer.email, phone: customer.phone, language: customer.language, version: customer.version } : { name: '', email: '', phone: '', language: chinese ? 'zh' : 'en', version: 0 };
+    baseline.current = JSON.stringify(input);
+    setEditor({ id: customer?.id ?? crypto.randomUUID(), input });
   }
   async function save(event: React.FormEvent) {
     event.preventDefault();
@@ -106,6 +110,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     {message && <p role="status">{t[message]}</p>}
     {error && <p role="alert">{t[error]}</p>}
     {editor && <form className="customer-form" onSubmit={event => void save(event)}>
+      <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || uncertain}/>
       <h3 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h3>
       <fieldset disabled={saving || uncertain}>
         <label>{t.name}<input name="name" autoComplete="name" required maxLength={120} value={editor.input.name} onChange={e => setEditor({ ...editor, input: { ...editor.input, name: e.target.value } })}/></label>

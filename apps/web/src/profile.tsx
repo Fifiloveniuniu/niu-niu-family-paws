@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets from './pets';
+import UnsavedChanges from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
@@ -47,6 +48,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
   const [profile, setProfile] = React.useState<Customer | null>(null);
   const [input, setInput] = React.useState<ProfileWrite>({ name: '', language: i18n.language === 'zh' ? 'zh' : 'en', version: 0 });
   const [loaded, setLoaded] = React.useState(false);
+  const baseline = React.useRef('');
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [uncertain, setUncertain] = React.useState(false);
@@ -63,7 +65,8 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
       const current = await profileRequest();
       if (!alive.current) return;
       setProfile(current);
-      setInput(current ? { name: current.name, language: current.language, version: current.version } : { name: '', language: i18n.language === 'zh' ? 'zh' : 'en', version: 0 });
+      const next = current ? { name: current.name, language: current.language, version: current.version } : { name: '', language: i18n.language === 'zh' ? 'zh' as const : 'en' as const, version: 0 };
+      baseline.current = JSON.stringify(next); setInput(next);
       setLoaded(true); setUncertain(false);
     } catch (e) { if (alive.current) report(e); }
     finally { if (alive.current) setLoading(false); }
@@ -77,7 +80,8 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
       const current = await profileRequest(input);
       if (!alive.current) return;
       if (!current) throw new Error('Missing saved profile');
-      setProfile(current); setInput({ name: current.name, language: current.language, version: current.version });
+      const next = { name: current.name, language: current.language, version: current.version };
+      baseline.current = JSON.stringify(next); setProfile(current); setInput(next);
       setUncertain(false); setSaved(true); onSaved();
     } catch (e) {
       if (alive.current) { report(e); setUncertain(!(e instanceof ProfileError) || e.status >= 500); }
@@ -93,6 +97,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
       <p className="profile-identity"><span>{t.loginEmail}</span><strong>{profile?.loginEmail ?? auth.currentUser?.email}</strong></p>
       <p className="customer-intro">{t.identity}</p>
       <form className="customer-form" onSubmit={event => void save(event)}>
+        <UnsavedChanges active={loaded && (JSON.stringify(input) !== baseline.current || saving || uncertain)}/>
         <fieldset disabled={saving || loading || uncertain || error === 'forbidden'}>
           <label>{t.name}<input name="profile-name" autoComplete="name" required maxLength={120} value={input.name} onChange={event => { setInput({ ...input, name: event.target.value }); setSaved(false); }}/></label>
           <label>{t.language}<select value={input.language} onChange={event => { setInput({ ...input, language: event.target.value as 'en' | 'zh' }); setSaved(false); }}><option value="en">English</option><option value="zh">简体中文</option></select></label>
