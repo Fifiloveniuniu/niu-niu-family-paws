@@ -32,4 +32,6 @@ Keep secrets in Secret Manager. Production customer data, tokens, and credential
 
 ## Verification before launch
 
+Account linking is deployed: a 24-hour hash-only one-time code allows a verified Google identity to request access to an unclaimed customer; a current administrator must verify and approve the request. Approval rechecks the target Auth account and reviewed record versions, then atomically adds canonical ownership/mapping and actor/effective-UID audit records without moving pets or photos. Existing personal profiles are not merged. Runtime IAM remains unchanged. See `docs/account-linking.md`.
+
 Test authorization boundaries, duplicate submission handling, concurrent balance updates, correction behavior, reminder retry/deduplication, timezone handling, bilingual forms, and mobile handoff workflows. Configure logs to avoid customer data and credentials. Separate development/test data from production.
