@@ -12,6 +12,12 @@
       }
     },
     "schemas": {
+      "LinkState": {
+        "type": "object", "additionalProperties": false, "required": ["status", "version", "customerVersion"],
+        "properties": {"status": {"type": "string", "enum": ["none", "open", "requested", "approved", "rejected", "cancelled", "expired"]}, "version": {"type": "integer", "minimum": 0}, "customerVersion": {"type": "integer", "minimum": 1}, "customerName": {"type": "string"}, "expiresAt": {"type": "string"}, "requestedEmail": {"type": "string"}}
+      },
+      "LinkCode": {"type": "object", "additionalProperties": false, "required": ["code"], "properties": {"code": {"type": "string", "minLength": 32, "maxLength": 80}}},
+      "LinkDecision": {"type": "object", "additionalProperties": false, "required": ["action", "version", "customerVersion"], "properties": {"action": {"type": "string", "enum": ["approve", "reject", "cancel"]}, "version": {"type": "integer", "minimum": 1}, "customerVersion": {"type": "integer", "minimum": 1}}},
       "Pet": {
         "type": "object", "additionalProperties": false,
         "required": ["id", "customerId", "name", "photo", "version", "createdAt", "updatedAt"],
@@ -185,6 +191,16 @@
     }
   ],
   "paths": {
+    "/api/account-link": {
+      "get": {"summary": "Read own linking request status", "security": [{"firebase": []}], "responses": {"200": {"description": "Own status only, no unapproved customer data"}, "403": {"description": "Verified Google identity required"}}},
+      "post": {"summary": "Submit one-time linking code with verified Google identity", "security": [{"firebase": []}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LinkCode"}}}}, "responses": {"200": {"description": "Request awaits administrator approval"}, "409": {"description": "Code unavailable or identity already has a profile"}, "429": {"description": "Rate limited"}}}
+    },
+    "/api/customers/{id}/account-link": {
+      "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}],
+      "get": {"summary": "Administrator reviews current linking request", "security": [{"firebase": []}], "responses": {"200": {"description": "Current request and customer version", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LinkState"}}}}, "403": {"description": "Administrator required"}}},
+      "post": {"summary": "Administrator issues or replaces a 24-hour code", "security": [{"firebase": []}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "additionalProperties": false}}}}, "responses": {"200": {"description": "Plaintext code shown once; server stores only its hash"}, "409": {"description": "Customer already has an owner"}}},
+      "put": {"summary": "Administrator approves, rejects or cancels a versioned request", "security": [{"firebase": []}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LinkDecision"}}}}, "responses": {"200": {"description": "Decision saved transactionally", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LinkState"}}}}, "409": {"description": "Stale, expired, already owned or identity changed"}}}
+    },
     "/api/customers/{customerId}/pets": {
       "parameters": [{ "name": "customerId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
       "get": { "operationId": "listPets", "description": "Owner or administrator only. 50 pets per page.",
