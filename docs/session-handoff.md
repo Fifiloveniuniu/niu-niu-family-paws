@@ -1,5 +1,17 @@
 # Session handoff — 2026-10-22
 
+## Sequential implementation authorized — 2026-11-15
+
+Owner now says “Finish all PRs. 1 PR at a time.” This supersedes planning-only instructions. Finish validation/merge/deploy/live checks before next feature. Added read-only customer preview and separately scoped customer impersonation to roadmap. Do not invent unresolved package/payment/capacity rules. Documentation baseline is the first PR; preserve unrelated `dist-dev/` and pending PR #24.
+
+## UX and PR plan refined — 2026-11-15
+
+Owner emphasized simple, clean, intuitive UX and a core house map, then requested a revised PR plan. Updated requirements and `docs/booking-delivery-plan.md`: map is a main admin destination, planned occupancy/map release follows booking, actual handoffs are a separate feature PR, and task-based usability criteria apply throughout. Documentation edits only; no implementation or Git commits. Cancellation delivery must be available before exposing refund promises without an operational resolution path.
+
+## Requirements and commit planning recorded — 2026-11-15
+
+Owner requested planning first, no code, then asked to record requirements and plan commits. Updated `docs/requirements.md` with confirmed multi-house booking/package rules, weight approval, operational UX, proposals and explicit unresolved decisions. Added `docs/booking-delivery-plan.md` with incremental feature PRs and planned commit titles. No application code, business data, infrastructure, payments, deployment, or commits changed as part of recording this plan. Implementation remains paused pending owner instruction; do not treat the plan as resolved business facts. Preserve pending environment PR #24 and untracked `dist-dev/`. Latest confirmed addition: admin approves weight or verifies during drop-off; employee weight-verification authority is unresolved. Packages: 30 days, type/weight-band pricing, three months from first care use, configurable eligible months; holiday rate mechanism and refund details remain unresolved.
+
 ## Dialogs and icons delivered; localhost sign-in working — 2026-11-14
 
 Owner now explicitly requires actual browser previews at localhost using running dev servers, rather than screenshot-only review. Recorded in AGENTS.md. The preview initially opened at `127.0.0.1:4177`, where real Google sign-in failed; switching to `http://localhost:4177/#/login` succeeded and displayed the real administrator directory/pets. Do not widen Auth domains or weaken protections to work around this. Vite/package dev defaults now use localhost except test mode, which retains 127.0.0.1 for isolated browser checks.

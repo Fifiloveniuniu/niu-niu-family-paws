@@ -28,14 +28,14 @@ There is no separate attendance page; relevant service dates and drop-off/pickup
 
 Administrator-configured remaining-day thresholds are required. Proposed behavior: a global default with per-customer overrides and an option to disable reminders. Check eligibility following usage, balance changes, and threshold changes. Avoid repeating reminders for the same balance cycle; successful replenishment starts a new cycle. Define edge cases before implementation.
 
-Emails include pet/service details, remaining days, and renewal contact instructions in English or Simplified Chinese. No checkout or payment history is included.
+Emails include pet/service details, remaining days, and renewal contact instructions in English or Simplified Chinese. Package purchasing/prepayment is now requested below; a general payment-history or income-reporting feature is not implied.
 
 ## Decisions still needed
 
 - Company location/timezone, official Chinese name, contact details, domain, and branding assets.
 - Whether drop-off/pickup means customer handoff at the business or employee transport.
-- When a visit consumes days; cancellation, overnight, and partial-day rules.
-- Whether packages expire and whether pets can share a balance.
+- When a visit consumes days; overnight and partial-day rules; cancellation details listed below.
+- Exact three-month expiry calculation and whether pets can share a balance; activation and eligible-month requirements are confirmed below.
 - Reconciliation of existing duplicate profiles (no automatic merge).
 - Reminder defaults, replenishment behavior, and email provider/domain verification.
 - Data retention, backup policy, and available Google Cloud billing/credits.
@@ -53,3 +53,78 @@ Administrators may impersonate any customer or employee for their business workf
 Delivered before the current account-linking release: shared sign-in, administrator customer-contact editing, UID-owned customer name/language registration, multiple pet profiles and private optional photos. Administrators can switch between customer management and their own profile/pets; staff also retain their own personal profile/pet panel. Customer/pet profiles share canonical records with administrator management, including customer-name/Google-email and pet-name search. Public and portal headers provide explicit English/简体中文 selection, independent of saved profile-language preferences. Employee business workflows and authorized impersonation remain subsequent features.
 
 Owner approved account linking on 2026-10-22: administrator generates a one-time code, customer submits it after their Google sign-in, administrator verifies and approves. Link only an unclaimed existing customer to an identity without a separate saved profile; preserve all original customer/pet/photo/history references. Never automatically merge duplicates. See `docs/account-linking.md` and the session handoff for delivery status.
+
+## Booking, packages, and multi-house UX — owner planning, 2026-11-15
+
+Status: requirements recorded; implementation has not started. Owner initially requested planning before coding and subsequently authorized finishing the PRs sequentially on 2026-11-15. This section supersedes earlier statements that package expiry or package purchasing are outside scope. See [delivery plan](booking-delivery-plan.md) for proposed commits/PRs. Proposed UX and open decisions below are not approved business rules.
+
+### Confirmed: customers, pets, and weight
+
+- Customers see their own combined timeline and availability; every pet has its own calendar.
+- Customers specify planned drop-off and pickup dates/times and choose a house.
+- Pricing depends on pet type (such as dog/cat) and weight range, not exact-weight multiplication.
+- An administrator approves weight or verifies it during drop-off. Preserve entered versus verified weight and verification actor/time.
+- Preserve canonical customer/pet records, existing photos, ownership, and bilingual mobile/desktop workflows.
+
+### Confirmed: prepaid packages and holidays
+
+- Sell 30-day packages; customers prepay for sufficient days before booking.
+- Package validity is three months from first use, rather than purchase. First use means the first day of care covered by the package, not the date a future booking is made.
+- Packages have configurable eligible service months (January–September is an example, not an approved universal schedule). Both expiry and eligible-month restrictions apply.
+- Holiday dates have holiday rates.
+- Administrators configure pricing and business rules through the UI, without code changes.
+- Show applicable terms, weight band, price, balance, activation/expiry, eligible months, and holiday charges before commitment.
+
+### Confirmed: bookings, extensions, and cancellations
+
+- Check suitable capacity throughout a requested stay.
+- Customers can extend sitting time when suitable slots are available; check package eligibility and required additional prepayment.
+- Customers can cancel 14 days ahead for a full refund and seven days ahead for a half refund. Exact boundaries and refund form remain unresolved; do not silently choose them.
+- Show cancellation consequences before confirmation and preserve visit history.
+
+### Confirmed: houses, spaces, and admin overview
+
+- Support multiple houses, each containing rooms with slots/spaces.
+- Admins adjust room/space constraints in the UI; availability and placement must respect them.
+- Admins have a combined overview and can focus on an individual house.
+- Provide a dynamic house map at a selected date/time to inspect occupancy and help optimize placement.
+- Overview covers arrivals, pickups, pets in care, capacity, requests, unassigned pets, and conflicts as applicable to the approved workflow.
+
+### Confirmed: actual handoffs
+
+- Employees record actual drop-off and pickup times separately from customer-scheduled times.
+- Retain the responsible actor and correction history.
+- Actual presence must remain visible when a pickup is late; elapsed scheduled time is not proof of departure.
+
+### Proposed UX and safeguards to review
+
+- Customer navigation: My timeline, Book a stay, My packages, My pets, My profile.
+- Admin navigation: Overview, Bookings, House map/timeline, Customers/pets, Settings.
+- Available/reserved/used package balances, with atomic reservation to prevent spending the same days twice.
+- House selector, time controls, space timeline beside the map, and mobile room-list alternative.
+- Focused booking/assignment/edit dialogs; explain unavailable dates and preserve original bookings when an extension fails.
+- Admin approval for initial bookings/extensions; timed space moves and explainable placement suggestions.
+- Preview affected bookings before publishing rule changes; retain historical prices/terms and audit changes. Existing purchases/confirmed bookings retain agreed terms by default, subject to owner approval.
+
+### Decisions required before dependent implementation
+
+1. Services and units; day/night/partial-day counting; timezone and daylight-saving boundaries; early arrival/late pickup charging.
+2. Weight units/bands/prices; who enters/measures weight; whether employees can verify or only admins; whether unverified weight permits purchase/booking; changes in weight band and settlement of price differences.
+3. Payment method/provider, payment confirmation, currency, refunds, and any provider/billing access. No payment provider selected.
+4. Package sharing across pets/services/houses; allocation between multiple packages; fractional balances; exact three-calendar-month expiry and eligible-month boundary behavior. How projected activation changes when the earliest future visit is moved/cancelled; whether activation uses actual or scheduled care date when they differ.
+5. Holiday dates/rate mechanism (money surcharge, extra prepaid days, or another model), overlapping holidays, and application to stays spanning rate periods.
+6. Cancellation: confirm at-least-14-days full / 7-to-under-14-days half interpretation; exact-hour versus calendar-day cutoff; under-seven-day/no-show policy; money versus days; rounding; returned-day expiry; holidays and extensions.
+7. Booking/extension approval, pending-request holds and their expiry, balance reservation/consumption/release, alternative availability, and concurrent-request behavior.
+8. House facts/timezones, spaces/capacities, suitability and compatibility constraints, closures/buffers, moves during stays, and whether a move can satisfy extension availability. No actual address, capacity, or constraint values supplied.
+9. Employee access by house, verification authority, correction permissions, and operational handling of unexpected presence/capacity conflicts.
+10. Rule effective dates and treatment of existing purchases/bookings. Admin configuration must expose approved options, not invent defaults for unresolved rules.
+
+Existing separate workstreams remain renewal reminders, audited balance adjustments, scoped admin impersonation, duplicate-profile reconciliation, and backup/retention policy. They are not automatically part of the booking deliveries.
+
+### UX clarification — 2026-11-15
+
+Owner explicitly requires the simplest, cleanest, easy-to-use and intuitive UX, including a core house map. Planned customer navigation is My pets / Calendar / Packages; admin navigation is Overview / Calendar / House map, with management/settings secondary. The map defaults to now, supports house/time selection, room/space occupancy and linked timeline, click/tap actions and mobile room-list access. No required dragging or hover. Actual-task browser walkthroughs must check clarity and minimize unnecessary steps before each UI release. See delivery plan for acceptance criteria.
+
+### Customer preview and execution authorization — 2026-11-15
+
+Owner requested admin impersonation or confirmation of customer view. Plan a read-only customer preview first, then separately scoped acting-on-behalf workflows with server checks, persistent identity banner/exit, current admin revocation checks, and actual/effective actor history. No credential exposure or role changes. Owner subsequently authorized finishing all PRs one at a time; prior planning-only status is superseded. Unresolved business decisions still require owner input.
