@@ -2,6 +2,8 @@
 
 ## Per-pet balance management and planning validation — 2026-11-15
 
+Review/merge record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/46. Implementation `6e9b699` is GitHub Verified. UI redesign record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/45 (merged). Consult PR state/checks for final status; no hosted deployment.
+
 Owner requested professional UI and per-pet balance management/validation. UI redesign PR #45 is merged as `c43162ab33c8d0196cff984dc9c43fa5322a762c` (GitHub Verified); build/CI passed, 13 browser cases passed full plus awaited-dialog workspace targeted rerun. Current branch `feat/pet-balance-preview` adds a separate sample balance manager filtered by customer/pet, separate daycare/boarding records, explicit add/remove day adjustments with required reasons, reviewed validity dates, eligible months and retained in-memory adjustment history. No assumed real credits, prices, package activation, first-use expiry calculation or automatic day count. New records are unset until configured.
 
 Add pet asks service and staff-reviewed whole days explicitly, then review checks this pet/service only, sufficiency after other new preview plans, full date coverage and all months crossed. Missing/insufficient/invalid coverage blocks Add to preview. New placements carry planning coverage metadata; removing a placement releases only that in-memory planning allocation, keeping pet and balance history. Adjustment reducer prevents negative balances, stale versions, conflicting operation retries and changes that strand existing plans. This is planning simulation, not a financial reservation/deduction lifecycle. Earlier sample stays have no day allocations and are not charged by this preview.
