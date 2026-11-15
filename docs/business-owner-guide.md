@@ -78,3 +78,9 @@ Service tracking also needs decisions about drop-off/pickup, when units are cons
 ## Continuing on another computer or account
 
 Use the same GitHub project, `Fifiloveniuniu/niu-niu-family-paws`, and ask Codex to read its instructions. The saved guidance travels with the repository; it does not automatically grant access to GitHub, Google Cloud, or administrator accounts. A new environment may need the owner's authorized sign-in. Never paste passwords, private keys, or verification codes into project files.
+
+## Choosing a customer's pets
+
+In **Customer management**, the customer list appears on the left and the selected customer's pets appear on the right. Click a customer's name or **Manage pets** to select them. The selected row is highlighted. On phones, the pets appear below the customer list. Search customers or pet names in the left panel; pet search results can also select a customer. Existing private photos remain visible only to the owner and authorized administrators. Switching customers asks before discarding unsaved pet edits.
+
+在“客户管理”中，左侧显示客户列表，右侧显示所选客户的宠物。点击客户姓名或“管理宠物”即可选择，所选客户会高亮显示。手机上，宠物区域显示在客户列表下方。左侧可按客户或宠物名字搜索，宠物搜索结果也可用于选择客户。已保存的照片仍仅供主人和获授权的管理员查看。切换客户前，如有未保存的宠物修改，系统会先询问。
