@@ -70,6 +70,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 - Display remaining days, activation/expiry, eligible months, price/weight band and relevant terms clearly.
 - Keep service/unit balances separate where relevant (for example daycare days versus boarding nights).
 - Admin manages package prices, terms and balance adjustments in the UI. Preserve adjustment history.
+- Customer balance management/validation is per pet and service. Show credit adjustments/history and coverage status in the scheduling review, without borrowing another pet or service’s days. Automatic counting and reservation/consumption rules remain unresolved; the current local prototype uses explicit staff-reviewed days and planning-only allocations.
 - Balance operations and usage must be atomic, concurrent-safe and idempotent. Usage references customer, pet, service/date, consumed units and recording actor.
 
 Proposed UX, not a resolved deduction policy: show **available**, **reserved for upcoming stays**, and **used** days. Preserve historical purchase/booking terms by default; effective dates and retroactive changes need approval.

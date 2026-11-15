@@ -140,3 +140,11 @@ Customer / House / Room / Pet type / Status / Pet name filters combine. The rese
 Choose a pet and enter arrival/pickup. Gray bands show the actual unavailable time ranges for each room; white areas are free. Click Choose room or its green range to use the entered times, or tap a free time to shift the entire entered stay there. Any stay crossing an unavailable period is rejected. Gray bands cannot be selected. Hover for exact unavailable times/reasons. Use the datetime fields or manual selectors for precise keyboard scheduling; dragging is not required. Changes stay in the preview.
 
 选择宠物并填写到店和接回时间。灰色条表示房间的实际不可用时段，白色区域表示空闲。点击“选择房间”或绿色条使用已填写时间，或点击空闲处把整个托管时段移到该开始时间。跨越冲突时段的安排不能提交，灰色条不可选。悬停可查看准确时间与原因。也可以使用日期时间输入框或手动选房，无需拖动。修改仅保留在预览中。
+
+## Pet balances and the new scheduling flow (local preview)
+
+Add pet now guides you through **Stay details → Choose room → Review**. Choose the pet, service, planned times and staff-reviewed required days. Gray room ranges remain unavailable. The review shows this pet’s balance check, required days and planning remainder; missing or insufficient eligible days blocks Add. Open **Set up balance / Manage pet balance** from review without losing the stay draft.
+
+Use **Pet balances** in the calendar header to select a customer, pet and Daycare/Boarding. Set up its sample day credits, reviewed coverage dates and eligible months. Each addition/removal of days needs a reason and retains an adjustment history. The same pet’s services remain separate, and different pets do not share credits. Recorded days / Planned here / Available to plan are planning figures for this page. No real payment, reservation, deduction or package activation is saved. Leaving/reloading this page resets the sample data. Real day-counting and balance lifecycle still need your decisions.
+
+添加宠物分为“托管详情 → 选择房间 → 确认”：选择宠物、服务、时间并填写员工核对的天数。灰色时段不可用。确认页检查该宠物的余额、所需天数和计划后剩余，缺少余额或覆盖不足时不能添加。可直接打开“设置余额 / 管理宠物余额”，托管草稿会保留。日历顶部“宠物余额”可按客户、宠物及日间托管/寄养管理示例天数、核对后的覆盖日期和可用月份。增减天数必须注明原因，并保留记录；宠物及服务之间不混用天数。数字仅用于当前页的计划预览，不保存实际付款、预留、扣减或套餐激活，离开或刷新页面后重置。实际天数计算及扣减时机仍需确定。

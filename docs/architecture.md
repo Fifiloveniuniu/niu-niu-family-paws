@@ -55,3 +55,7 @@ Continue from main using canonical customer/pet IDs and server-derived ownership
 Thirty-day package size, three-month first-use validity, eligible-month restriction, holiday rates and 14-/7-day refund policy are confirmed requirements. The exact financial/day-counting/activation/refund boundaries are not settled; consult requirements before implementing them. Available/reserved/used balances are a proposed presentation, not permission to invent a deduction lifecycle. No payment provider is selected.
 
 Preserve Google Cloud and the existing local demo isolation. Keep the current build tooling; the SWC migration was cancelled. Defer deployment until the full requested feature set is complete.
+
+## Balance planning prototype (not a financial backend)
+
+The dev-only calendar keeps sample PetBalance records and adjustment history in React page state. Coverage is keyed by sample pet and service, checks explicit staff-reviewed whole days, manually reviewed coverage dates and eligible months, and subtracts other new preview plans from planning headroom. A pure reducer rejects negative totals, stale versions, conflicting operation IDs and changes that invalidate a plan. Removal only removes the preview plan reference. No financial reservation, purchase, activation, deduction, refund or persisted ledger is implemented, and the UI says so. This client-side simulation provides no production authorization/transaction guarantee; real balances must use canonical IDs, current server roles, audited idempotent Firestore transactions and approved financial policies.
