@@ -1,0 +1,35 @@
+import {test} from '@playwright/test';
+test('calendar prototype manages empty locations and time-aware pet placement',async({page:p})=>{
+await p.setViewportSize({width:1440,height:1100});p.setDefaultTimeout(7000);const errors:string[]=[];p.on('pageerror',e=>errors.push(e.message));
+await p.goto('/#/house-calendar');
+await p.getByRole('button',{name:'Add house',exact:true}).click();await p.getByLabel('House name',{exact:true}).fill('Preview West');await p.getByRole('button',{name:'Apply to preview',exact:true}).click();
+const house=p.locator('.hc-house').filter({hasText:'Preview West'});await house.getByRole('button',{name:'Add room',exact:true}).click();await p.getByLabel('Room name',{exact:true}).fill('Oak');await p.getByLabel('Maximum capacity',{exact:true}).fill('2');await p.getByLabel('Dog capacity usage',{exact:true}).fill('1');await p.getByRole('button',{name:'Apply to preview',exact:true}).click();
+await p.getByRole('button',{name:'Add pet to room',exact:true}).click();await p.getByLabel('Pet',{exact:true}).selectOption('Willow');const times=await p.evaluate(()=>{const a=new Date();a.setHours(10,0,0,0);a.setDate(a.getDate()+2);const z=(d:Date)=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);return [z(a),z(new Date(a.getTime()+86400000))];});await p.getByLabel('Arrival',{exact:true}).fill(times[0]);await p.getByLabel('Pickup',{exact:true}).fill(times[1]);const houseId=await p.getByRole('dialog').getByLabel('House',{exact:true}).locator('option').filter({hasText:'Preview West'}).getAttribute('value');await p.getByRole('dialog').getByLabel('House',{exact:true}).selectOption(houseId!);const roomId=await p.getByRole('dialog').getByLabel('Room',{exact:true}).locator('option').filter({hasText:'Oak'}).getAttribute('value');await p.getByRole('dialog').getByLabel('Room',{exact:true}).selectOption(roomId!);await p.getByRole('button',{name:'Add to preview',exact:true}).click();await p.getByRole('button',{name:'Remove placement: Willow',exact:true}).waitFor();
+await p.getByRole('button',{name:'Room settings: Preview West · Oak',exact:true}).click();if(!await p.getByRole('button',{name:'Remove room',exact:true}).isDisabled())throw Error('Room removal with stay allowed');await p.getByRole('button',{name:'Cancel',exact:true}).click();
+p.once('dialog',d=>d.accept());await p.getByRole('button',{name:'Remove placement: Willow',exact:true}).click();await p.getByRole('button',{name:'Room settings: Preview West · Oak',exact:true}).click();p.once('dialog',d=>d.accept());await p.getByRole('button',{name:'Remove room',exact:true}).click();await p.getByRole('button',{name:'House settings: Preview West',exact:true}).click();p.once('dialog',d=>d.accept());await p.getByRole('button',{name:'Remove house',exact:true}).click();if(await p.locator('.hc-house').filter({hasText:'Preview West'}).count())throw Error('House still visible');if(!await p.getByRole('button',{name:'Remove placement: Mochi',exact:true}).isDisabled())throw Error('In care removal allowed');
+await p.getByRole('button',{name:'Add pet to room',exact:true}).click();await p.getByLabel('Pet',{exact:true}).selectOption('Miso');await p.getByLabel('Arrival',{exact:true}).fill(times[0]);await p.getByLabel('Pickup',{exact:true}).fill(times[1]);if(!await p.getByRole('dialog').getByLabel('House',{exact:true}).locator('option[value="1"]').evaluate(e=>(e as HTMLOptionElement).disabled))throw Error('Unconfigured house enabled');await p.screenshot({path:'test-results/calendar-availability-desktop.png',fullPage:true});p.once('dialog',d=>d.accept());await p.getByRole('button',{name:'Cancel',exact:true}).click();await p.setViewportSize({width:390,height:844});await p.locator('.language-selector select').selectOption('zh');if(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile overflow');await p.screenshot({path:'test-results/calendar-mobile-zh.png',fullPage:true});if(errors.length)throw Error(errors.join());console.log('PASS create/remove house/room, configure capacity, place/remove pet, occupied removal guard, in-care guard, disabled availability, Chinese mobile');});
+
+test('customer filtering combines with other filters and calendar tabs support keyboard navigation',async({page})=>{
+ await page.goto('/#/house-calendar');
+ const filters=page.getByRole('region',{name:'Filters',exact:true});
+ await filters.getByRole('combobox',{name:'Customer',exact:true}).selectOption('1');
+ await page.getByRole('button',{name:'Remove placement: Luna',exact:true}).waitFor();
+ if(await page.locator('.hc-pet').count()!==3)throw Error('Customer filter');
+ await filters.getByRole('combobox',{name:'Status',exact:true}).selectOption('in');
+ if(await page.locator('.hc-pet').count()!==2)throw Error('Customer/status filter');
+ await filters.getByRole('button',{name:'Clear filters',exact:true}).click();
+ if(await page.locator('.hc-pet').count()!==9)throw Error('Clear customer filter');
+ const weeks=page.getByRole('tab',{name:'Weeks',exact:true});await weeks.focus();await weeks.press('ArrowRight');
+ await page.getByRole('tab',{name:'Month',exact:true,selected:true}).waitFor();
+ await page.getByRole('tab',{name:'Month',exact:true}).press('End');
+ await page.getByRole('tab',{name:'Year',exact:true,selected:true}).waitFor();
+ await page.getByRole('tab',{name:'Year',exact:true}).press('Home');
+ await page.getByRole('tab',{name:'Day',exact:true,selected:true}).waitFor();
+ await page.getByRole('tabpanel',{name:'Day',exact:true}).waitFor();
+ await weeks.click();
+ await page.setViewportSize({width:390,height:844});await page.locator('.language-selector select').selectOption('zh');
+ await page.getByRole('combobox',{name:'客户',exact:true}).selectOption('2');
+ if(await page.locator('.hc-pet').count()!==3)throw Error('Chinese customer filter');
+ if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile overflow');
+ await page.screenshot({path:'test-results/calendar-customer-mobile-zh.png',fullPage:true});
+});

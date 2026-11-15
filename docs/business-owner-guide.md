@@ -120,3 +120,17 @@ For each space, enter its name, choose the sharing rule, enter capacity, select 
 ## Current planning focus — 2026-11-15
 
 Calendar and balance management is the next focus on a clean branch. The house/room screen is work in progress. Its latest design is houses/rooms on the left and room capacity on the right; each room holds one species at a time, can change species between non-overlapping stays, and uses group-based pet capacity with individual admin overrides. Earlier individual-space instructions describe a superseded draft. No SWC migration is planned. Changes stay local until the requested features are complete.
+
+## House calendar navigation (local prototype)
+
+Choose **House calendar · Prototype** in Workspace, then **Manage houses & rooms** to open house setup. Add/Edit house use the existing saved house records. Room setup is still being developed; the calendar itself shows labelled example stays. The separate Houses tab is removed from the local preview.
+
+在工作区选择“房屋日历 · 原型”，再点击“管理房屋与房间”打开设置弹窗。添加和编辑房屋使用原有保存的记录。房间设置仍在开发中，日历显示的是已标注的示例托管安排。本地预览不再单独显示“房屋”标签。
+
+## Trying calendar placement (local prototype)
+
+Use the house-plus icon to add a sample house, the plus beside a house to add a room, and the pet-plus icon to add a timed pet stay. Configure the room’s maximum capacity and sample pet-type usage in its gear dialog first. Select pet and arrival/pickup times to see available houses/rooms and explanations for unavailable ones. The × beside a pet removes its placement while keeping the sample pet profile; in-care pets are protected. Empty rooms/houses can be removed in their gear dialogs. All these calendar changes stay on the current page and reset when leaving or reloading. They do not change saved business records.
+
+Customer / House / Room / Pet type / Status / Pet name filters combine. The reset-arrow icon clears them. Day / Weeks / Month / Year are tabs; arrow keys, Home and End switch views. Gear and plus icons have tooltips.
+
+房屋加号用于添加示例房屋，房屋旁的加号添加房间，宠物加号安排托管。请先在房间齿轮弹窗中配置容量和示例种类用量。选择宠物及到店、接回时间后，可查看可选房屋、房间及不可用原因。宠物旁的 × 仅移除安排，不删除示例宠物；在店宠物受保护。空房间和空房屋可在齿轮弹窗移除。日历修改仅保留在当前页面，离开或刷新后重置，不修改正式业务记录。客户、房屋、房间、种类、状态和宠物名字筛选可组合使用，重置箭头清空筛选。日、周、月、年使用标签切换，支持方向键、Home 和 End。

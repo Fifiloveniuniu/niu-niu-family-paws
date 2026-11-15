@@ -19,11 +19,12 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
     const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
-  await page.getByRole('button',{name:'Houses',exact:true}).click();
+  await page.getByRole('link',{name:'House calendar · Prototype',exact:true}).click();
+  await page.getByRole('button',{name:'Manage houses & rooms',exact:true}).click();
   const section=page.getByRole('region',{name:'Houses',exact:true});
   await expect(section.getByText('No houses yet. Add your first house.',{exact:true})).toBeVisible();
   await section.getByRole('button',{name:'Add house',exact:true}).click();
-  const dialog=page.getByRole('dialog');
+  const dialog=page.getByRole('dialog').last();
   await expect(dialog.getByLabel('House name',{exact:true})).toBeFocused();
   await dialog.getByLabel('House name',{exact:true}).fill('Demo West');
   await dialog.getByLabel('Address (optional)',{exact:true}).fill('Synthetic address');
@@ -47,7 +48,9 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await expect(section.getByRole('heading',{name:'Demo West updated',exact:true})).toBeVisible();
   await page.getByRole('combobox',{name:'Show house',exact:true}).selectOption('');
   for(const language of ['en','zh']){
+    await page.getByRole('dialog').first().getByRole('button',{name:/^(Close|关闭)$/}).click();
     await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption(language);
+    await page.getByRole('button',{name:language==='zh'?'管理房屋与房间':'Manage houses & rooms',exact:true}).click();
     for(const width of [320,400,1280]){
       await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     }

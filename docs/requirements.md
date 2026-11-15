@@ -34,7 +34,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 
 ## 3. Houses, rooms and capacity — confirmed latest model
 
-- Manage multiple houses, each with its own rooms, address and timezone.
+- Manage multiple houses, each with its own rooms, address and timezone. Provide create/remove house and add/remove room actions; permanent deletion/history semantics still require a production policy. Prototype removal is limited to empty locations.
 - **No individual spaces/slots as managed entities.** Earlier House → Room → Space proposals are superseded by **House → Room**.
 - Houses UI is split: house/room selection on the left; selected room’s details and capacity rules on the right. Stack sensibly on phones.
 - Each room has a **maximum capacity**, not just a fixed pet count.
@@ -109,10 +109,12 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 
 ## 10. Admin overview and placement — confirmed
 
+- House calendar UX: House → Room → Pet hierarchy, one row per pet, horizontal timeline with day/weeks/month/year tabs, visible Now marker and actual check-in status. Prototype with clearly labelled fictional data before connecting business workflows.
+
 - Provide combined all-house and individual-house overviews.
 - Show arrivals, pickups, pets in care, capacity, requests requiring action, unassigned pets and conflicts as applicable to the approved lifecycle.
-- Calendar/timeline supports reviewing all bookings and filtering by house/room/pet/status.
-- Assign pets to rooms and inspect occupancy over time; schedule moves only under approved policies.
+- Calendar/timeline supports reviewing all bookings, with a dedicated Filters section for house, room, customer, pet type, pet name and status, plus clear/reset. House/room gear icons open their editable settings directly in focused dialogs.
+- Add/remove timed pet placements from rooms. Select the pet and complete stay period first, then disable unsuitable houses/rooms and explain availability conflicts. Removing a placement must not delete the pet profile. Inspect occupancy over time; schedule moves only under approved policies.
 - Placement optimization is requested. Explainable admin-reviewed suggestions are a proposed later implementation, not an approved automatic-movement policy.
 
 ## 11. Admin settings and customer preview — confirmed
@@ -130,7 +132,7 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 - Preserve entered information through recoverable errors and uncertain-save retries; warn before discarding drafts.
 - Make times/house context, price/day calculations, balance changes and refund outcomes clear before confirmation.
 - Do not require hover or dragging. Use readable layouts and touch-friendly controls on phones.
-- Suggested customer navigation: My pets / Calendar / Packages. Final admin navigation remains to be refined as features arrive; **Houses** is the requested setup tab name. Earlier tab-name suggestions are not approval to build empty tabs.
+- Suggested customer navigation: My pets / Calendar / Packages. Latest approved admin navigation: **House calendar** is the daily destination; **Manage houses & rooms** opens setup in a focused dialog, replacing the separate Houses tab. Room setup remains WIP until implemented and validated.
 
 ## 13. Existing separate workstreams
 
