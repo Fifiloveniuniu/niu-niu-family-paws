@@ -101,6 +101,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       // Invalidate any list response started before this write.
       ++request.current; setLoading(false);
       setItems(previous => [customer, ...previous.filter(item => item.id !== customer.id)]);
+      setPetCustomer(previous => previous?.id === customer.id ? customer : previous);
       setEditor(null); setUncertain(false); setMessage('saved'); setLoaded(true);
       void load();
     } catch (e) {
@@ -110,6 +111,8 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   return <section className="customer-section" aria-labelledby="customers-title">
     <div className="customer-heading"><div><p className="eyebrow">{chinese ? '客户管理' : 'CUSTOMER DIRECTORY'}</p><h2 id="customers-title">{t.title}</h2></div><button className="button" disabled={saving || uncertain} onClick={() => open()}>{t.add}</button></div>
     <p className="customer-intro">{t.intro}</p>
+    <div className="customer-pet-layout">
+    <div className="customer-directory-panel" role="region" aria-label={chinese ? '客户列表' : 'Customer list'}>
     <form className="customer-search" role="search" onSubmit={event => { event.preventDefault(); setActiveSearch(search); void load(undefined, search); }}>
       <label htmlFor="customer-search">{t.searchHint}</label>
       <div className="portal-actions"><input id="customer-search" type="search" maxLength={254} value={search} onChange={event => setSearch(event.target.value)} /><button className="language" disabled={loading || saving} type="submit">{t.search}</button></div>
@@ -128,11 +131,13 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       <div className="portal-actions"><button className="button" disabled={saving || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={saving || uncertain} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
     </form>}
     <div className="customer-heading"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : ''}</p><button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button></div>
-    <ul className="customer-list">{items.map(customer => <li key={customer.id}><div><h3>{customer.name}</h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button><button className="language" aria-label={`${chinese ? '管理宠物' : 'Manage pets'}: ${customer.name}`} onClick={() => choosePets(customer)}>{chinese ? '管理宠物' : 'Manage pets'}</button>{!customer.loginEmail&&<button className="language" onClick={()=>setLinkCustomer(customer.id)}>{chinese?'关联 Google 账号':'Link Google account'}: {customer.name}</button>}</div></li>)}</ul>
+    <ul className="customer-list">{items.map(customer => <li key={customer.id} className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}><div><h3><button className="customer-select" aria-pressed={petCustomer?.id === customer.id} onClick={() => choosePets(customer)}>{customer.name}</button></h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button><button className="language" aria-label={`${chinese ? '管理宠物' : 'Manage pets'}: ${customer.name}`} onClick={() => choosePets(customer)}>{chinese ? '管理宠物' : 'Manage pets'}</button>{!customer.loginEmail&&<button className="language" onClick={()=>setLinkCustomer(customer.id)}>{chinese?'关联 Google 账号':'Link Google account'}: {customer.name}</button>}</div></li>)}</ul>
     {linkCustomer&&<AdminAccountLink key={linkCustomer} customerId={linkCustomer} onLinked={()=>void load()}/>}
     <PetSearch onChoose={choosePets}/>
-    {petCustomer && <div ref={petsPanel} className="admin-pets"><h3>{chinese ? '客户' : 'Customer'}: {petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}<Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></div>}
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
+    </div>
+    <div ref={petsPanel} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><h3>{chinese ? '客户' : 'Customer'}: {petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}<Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
+    </div>
   </section>;
 }
