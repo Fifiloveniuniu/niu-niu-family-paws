@@ -34,9 +34,10 @@ async function api<T>(path:string,method='GET',body?:unknown):Promise<T> {
   const response=await fetch('/api'+path,{method,cache:'no-store',headers:{Authorization:`Bearer ${await user.getIdToken()}`,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
   if(!response.ok)throw new Error('Account link failed');return response.json();
 }
-export function AdminAccountLink({customerId,onLinked}:{customerId:string;onLinked:()=>void}) {
+export function AdminAccountLink({customerId,onLinked,onBusyChange}:{customerId:string;onLinked:()=>void;onBusyChange?:(busy:boolean)=>void}) {
   const {i18n}=useTranslation(),t=i18n.language==='zh'?zh:en;
   const [state,setState]=React.useState<State|null>(null),[code,setCode]=React.useState(''),[busy,setBusy]=React.useState(false),[error,setError]=React.useState(false);
+  React.useEffect(()=>{onBusyChange?.(busy);},[busy,onBusyChange]);
   const alive=React.useRef(true),generation=React.useRef(0),path=`/customers/${customerId}/account-link`;
   async function run(action:(current:()=>boolean)=>Promise<void>){const id=++generation.current,current=()=>alive.current&&id===generation.current;setBusy(true);setError(false);try{await action(current);}catch{if(current())setError(true);}finally{if(current())setBusy(false);}}
   async function load(current:()=>boolean){const next=await api<State>(path);if(current())setState(next);}

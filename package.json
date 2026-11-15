@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "vite",
     "build": "tsc --noEmit && vite build && node scripts/prerender.mjs",
-    "preview": "vite preview --host 127.0.0.1",
+    "preview": "vite preview --host localhost",
     "deploy": "npm run build && firebase deploy --only hosting --project niu-niu-family-paws",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:browser": "firebase emulators:exec --only auth --project demo-niu-niu --config firebase.test.json \"playwright test\"",
