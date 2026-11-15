@@ -1,5 +1,11 @@
 # Session handoff — 2026-10-22
 
+## Continuous gray unavailability ranges — 2026-11-15
+
+Owner clarified that unavailable periods must be gray time ranges, not individual dark date tiles. Revised unmerged PR #44 accordingly: Add pet now has continuous per-room timelines, gray bands at exact occupied/unavailable boundaries (including partial days), and free space between bands. Range reasons remain visible/accessible with exact-time tooltips. Select the entered stay with Choose room or its green range; tapping a free point shifts the whole entered interval to that minute and revalidates it. Crossing any conflict is rejected, and gray bands cannot be selected. No dragging required; exact datetime fields/manual selectors remain keyboard alternatives. Unknown configuration/overdue stays conservatively gray their affected range. Boundary/turnover decisions remain unresolved and are still rechecked on submission.
+
+Added pure unavailableRanges sweep/merge helper and tests for partial-day boundaries, merging across unrelated stay endpoints, peak capacity changes, overdue, missing setup and duplicate-pet reservations. All 20 unit tests, build, four targeted browser cases and all 14 browser cases pass; calendar coverage includes tapping free time. Actual localhost Chrome opened the continuous timeline; desktop screenshot refreshed. PR #44 is still the active feature record; do not merge an earlier individual-day version. No deployment or real-record writes.
+
 ## Add-pet calendar and unavailable-date blackouts — 2026-11-15
 
 Review/merge record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/44. Implementation `0593980` is GitHub Verified. Check that PR for final CI and merge status; no hosted deployment.

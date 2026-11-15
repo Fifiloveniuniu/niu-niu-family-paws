@@ -17,3 +17,22 @@ export function placementIssue(stays:Placement[],pet:string,species:string,start
  if(points.some(point=>units+overlap.filter(s=>s.start<=point&&finish(s)>point).reduce((sum,s)=>sum+s.units,0)>maximum))return 'capacity';
  return null;
 }
+
+export type UnavailableRange={start:number;end:number;reason:Exclude<PlacementIssue,null>};
+// Sample occupancy changes only at stay endpoints. Evaluate each open interval,
+// then join adjacent periods with the same reason; exact handoff boundaries
+// still receive the separate placementIssue check when selecting a stay.
+export function unavailableRanges(stays:Placement[],pet:string,species:string,from:number,to:number,house:number,room:number,maximum:number,units:number):UnavailableRange[]{
+ if(!Number.isFinite(from)||!Number.isFinite(to)||to<=from)return [];
+ const points=[...new Set([from,to,...stays.filter(s=>s.status!=='out').flatMap(s=>s.overdue?[s.start]:[s.start,s.end]).filter(t=>t>from&&t<to)])].sort((a,b)=>a-b);
+ const ranges:UnavailableRange[]=[];
+ for(let i=0;i<points.length-1;i++){
+   const start=points[i],end=points[i+1],middle=(start+end)/2,epsilon=Math.min((end-start)/4,1/86400000);
+   const reason=placementIssue(stays,pet,species,middle-epsilon,middle+epsilon,house,room,maximum,units);
+   if(!reason)continue;
+   const last=ranges.at(-1);
+   if(last&&last.end===start&&last.reason===reason)last.end=end;
+   else ranges.push({start,end,reason});
+ }
+ return ranges;
+}

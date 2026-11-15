@@ -34,7 +34,7 @@ test('customer filtering combines with other filters and calendar tabs support k
  await page.screenshot({path:'test-results/calendar-customer-mobile-zh.png',fullPage:true});
 });
 
-test('add-pet calendar selects available stays and blacks out unsuitable rooms and dates',async({page})=>{
+test('add-pet calendar selects available stays and grays out continuous unavailable time ranges',async({page})=>{
  await page.goto('/#/house-calendar');
  await page.getByRole('button',{name:'Room settings: Sample house A · Room 1',exact:true}).click();
  await page.getByLabel('Maximum capacity',{exact:true}).fill('4');
@@ -46,21 +46,24 @@ test('add-pet calendar selects available stays and blacks out unsuitable rooms a
  const dates=await page.evaluate(()=>{const a=new Date();a.setHours(11,0,0,0);a.setDate(a.getDate()+1);const end=new Date(a);end.setDate(end.getDate()+1);const local=(d:Date)=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);return [local(a),local(end)];});
  await dialog.getByLabel('Arrival',{exact:true}).fill(dates[0]);await dialog.getByLabel('Pickup',{exact:true}).fill(dates[1]);
  const calendar=page.getByRole('region',{name:'Room availability calendar',exact:true});
- const blocked=calendar.locator('button.blocked');
+ const blocked=calendar.locator('button.hc-time-unavailable');
  if(!await blocked.count())throw Error('No blackout cells');
  if(!await blocked.first().isDisabled())throw Error('Blackout cell enabled');
- if(await blocked.first().evaluate(e=>getComputedStyle(e).backgroundColor)!=='rgb(48, 54, 49)')throw Error('Blackout not dark');
- await calendar.getByRole('button',{name:/^Sample house A · Room 1 .* Available$/}).first().click();
+ if(await blocked.first().evaluate(e=>getComputedStyle(e).backgroundColor)!=='rgb(220, 225, 214)')throw Error('Unavailable range is not gray');
+ await calendar.getByRole('button',{name:'Choose Sample house A · Room 1',exact:true}).click();
  await dialog.getByRole('button',{name:'Add to preview',exact:true}).waitFor();
  if(await dialog.getByRole('button',{name:'Add to preview',exact:true}).isDisabled())throw Error('Available stay not selectable');
- if(await calendar.locator('.picked').count()!==1)throw Error('Selected stay not marked');
+ if(await calendar.locator('.hc-time-request.picked').count()!==1)throw Error('Selected stay not marked');
+ const track=calendar.locator('.hc-time-track').first();const box=await track.boundingBox();if(!box)throw Error('Timeline missing');
+ await track.click({position:{x:box.width*.5,y:10}});
+ if(await calendar.locator('.hc-time-request.picked').count()!==1)throw Error('Free-time click did not select stay');
  await dialog.getByRole('button',{name:'Add to preview',exact:true}).click();
  await page.getByRole('button',{name:'Remove placement: Willow',exact:true}).waitFor();
  await page.setViewportSize({width:390,height:844});await page.locator('.language-selector select').selectOption('zh');
  await page.getByRole('button',{name:'添加宠物到房间',exact:true}).click();
  await page.getByRole('combobox',{name:'宠物',exact:true}).selectOption('Miso');
  await page.getByLabel('到店时间',{exact:true}).fill(dates[0]);await page.getByLabel('接回时间',{exact:true}).fill(dates[1]);
- if(!await page.locator('.hc-schedule-cell.blocked').count())throw Error('Chinese blackouts missing');
+ if(!await page.locator('.hc-time-unavailable').count())throw Error('Chinese blackouts missing');
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile page overflow');
  await page.getByRole('button',{name:'下一周',exact:true}).click();
  await page.screenshot({path:'test-results/add-pet-calendar-mobile-zh.png',fullPage:true});

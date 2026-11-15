@@ -137,6 +137,6 @@ Customer / House / Room / Pet type / Status / Pet name filters combine. The rese
 
 ## Choosing a room on the Add pet calendar (prototype)
 
-Choose a pet and enter arrival/pickup, then click an available room/date in the weekly calendar. Each date checks the entire stay starting on that date with the same local times and calendar-day length. Dark cells are unavailable and show why; they cannot be selected. Move between weeks to compare starting dates. Capacity overrides and manual room selection are under the expandable options. The selection summary shows final times before Add to preview.
+Choose a pet and enter arrival/pickup. Gray bands show the actual unavailable time ranges for each room; white areas are free. Click Choose room or its green range to use the entered times, or tap a free time to shift the entire entered stay there. Any stay crossing an unavailable period is rejected. Gray bands cannot be selected. Hover for exact unavailable times/reasons. Use the datetime fields or manual selectors for precise keyboard scheduling; dragging is not required. Changes stay in the preview.
 
-选择宠物并填写到店和接回时间后，在周日历中选择可用的房间和开始日期。每个日期检查从该日开始、当地时间和日历天数与上方一致的整个托管时段。深色格表示不可选，并显示原因。可切换周比较日期；容量覆盖值与手动选房收纳在展开选项中。添加前请核对选择摘要中的时间。
+选择宠物并填写到店和接回时间。灰色条表示房间的实际不可用时段，白色区域表示空闲。点击“选择房间”或绿色条使用已填写时间，或点击空闲处把整个托管时段移到该开始时间。跨越冲突时段的安排不能提交，灰色条不可选。悬停可查看准确时间与原因。也可以使用日期时间输入框或手动选房，无需拖动。修改仅保留在预览中。
