@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
 import Customers from './customers';
+import './workspace.css';
 import Profile from './profile';
 import LanguageSelector from './language-selector';
 import { confirmDiscardChanges } from './unsaved-changes';
@@ -89,13 +90,13 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
   }
   return <>
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>
-    <main className="portal" id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
+    <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
       <h1>{access === 'admin' ? personal ? t.personalTitle : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
       <div className="portal-card" aria-busy={busy || access === 'checking'}>
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
           {access === 'denied' && <h2>{t.denied}</h2>}
           <div className="portal-identity-row"><p className="portal-account"><span>{t.account}</span><strong>{user?.email}</strong></p>{access !== 'denied' && <span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span>}</div>
-          <p className="customer-intro">{access === 'denied' ? t.deniedBody : access === 'admin' ? t.ready : access === 'employee' ? t.employeeNext : t.customerNext}</p>
+          {access !== 'admin' && <p className="customer-intro">{access === 'denied' ? t.deniedBody : access === 'employee' ? t.employeeNext : t.customerNext}</p>}
           <div className="portal-actions session-actions"><button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => { if (confirmDiscardChanges(i18n.language)) void run(() => signOut(auth)); }}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
@@ -107,7 +108,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
             <button className="language" aria-pressed={!personal} onClick={() => setPersonal(false)}>{t.manage}</button>
             <button className="language" aria-pressed={personal} onClick={() => setPersonal(true)}>{t.personal}</button>
           </div>
-          <p className="customer-intro">{personal ? t.personalHint : t.manageHint}</p>
+
         </section>
         <div hidden={personal}><Customers key={user?.uid} refreshKey={directoryRefresh}/></div>
       </>}
