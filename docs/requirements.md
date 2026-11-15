@@ -1,140 +1,160 @@
 # Product requirements
 
-## Roles
+Canonical requirements, consolidated from owner instructions through 2026-11-15. Later explicit owner decisions supersede earlier proposals in historical handoff entries. “Confirmed” describes requested behavior, not implementation status. Do not invent unresolved business rules or treat example numbers as real rates/capacities.
 
-- Administrator: manage all business records, employee access, balances, and reminder thresholds.
-- Employee: view necessary customer/pet information and record drop-off/pickup events. No administrative account management.
-- Customer: view only their own pets, balances, and service dates. Cannot edit balances or roles.
+## Current focus and delivery
 
-Customer records exist independently of login accounts. Account linking must use verified identity and administrator-controlled authorization, not a self-entered customer name.
+- Preserve the current house/room implementation as **WIP**. PR #41 is draft and must not be merged as completed work.
+- Start a clean branch from main for **calendar and balance management**, without importing unfinished room code. Record requirements before implementing.
+- Develop and validate locally, one focused feature/PR at a time. Deploy once all requested features are complete; no intermediate deployments.
+- Use Google Cloud: Firebase Hosting, Firebase Authentication, Cloud Run API and Firestore; private pet photos use Google Cloud Storage. Do not switch to Sites hosting.
+- Target main through PRs, never direct pushes. Use authorized signed commits and confirm GitHub verification before merging. Owner has authorized routine validated merges.
+- Actual localhost Chrome walkthroughs are required, alongside relevant tests. Keep English/Simplified Chinese, phone/desktop usability, existing records and working features.
+- SWC migration was cancelled. Keep the existing Vite and tsc checks.
 
-## Customer self-registration — owner requested 2026-10-19
+## 1. Roles, accounts and privacy — confirmed
 
-Customers sign in with their own Google account, then enter their name and their own pet information. A new self-registered profile belongs to the verified Firebase Authentication UID; the server derives ownership from the verified token, never a client-supplied owner identifier. A name is profile information, not proof of identity or permission to access an existing customer record. Linking an existing administrator-created record still requires administrator authorization. Customers must only access their own records and cannot change roles or service balances.
+- One shared Google sign-in supports administrator, employee and customer roles; one identity can have multiple roles and own pets.
+- Customers access only their own profile, pets, packages/balances, bookings, calendars and history. They cannot edit roles or balances.
+- Employees access necessary operational information and record actual handoffs. Employee house scope and some permissions remain undecided.
+- Administrators manage customers, pets, houses, rooms, business rules, balances and operations across houses.
+- Enforce current roles and record ownership on the server, including image reads. UI visibility is not authorization.
+- Maintain one canonical customer/person and stable pet records. No automatic merging/linking by editable name/email.
+- Preserve existing administrator-managed contacts, self-registration, explicit personal/admin workspaces, private optional photo upload and administrator-approved Google-account linking.
+- Changes/corrections retain appropriate history and responsible actors. Never store credentials or customer secrets in project documentation.
 
-Each customer can have multiple pets. Each pet has its own name and photo, entered/uploaded by the customer. Store each pet as a separate record linked to its owner, with its own stable identifier; names are not unique identifiers. Enforce ownership for photo upload and access as well as pet records. Do not expose customer-uploaded photos publicly by default. Owner confirmed on 2026-10-22: photos can be added later; a name is sufficient to save a pet.
+## 2. Pets, photos and weight — confirmed
 
-## Administrator customer and pet management — owner requested 2026-10-19
+- A customer may have multiple pets. Supported species: **dog, cat and rabbit**.
+- Each pet has its own name, profile, calendar and visit history; maintain stable ownership/reference IDs.
+- Admin approves a pet’s weight or verifies it during drop-off; retain verification actor/date and distinguish entered from verified weight.
+- All test pets must have photos. Use cloud-sourced photos, not bundled/hardcoded pet images; preserve existing uploaded photos.
+- Downloaded test library: 300 licensed photos, 100 per species, in the private development GCS bucket. Local demo has 100 fake families and 300 photo-complete pets. Retain attribution/source/license metadata and label samples as test photos.
+- Do not misrepresent stock photos as real pets or overwrite real photos. Policy for real pets with missing photos is unresolved. Earlier “name sufficient, photo later” behavior remains until a replacement policy is approved.
 
-Administrators can view, search, and edit customer information and the information for all pets belonging to each customer, including pet names and photos. Provide search by customer name, customer Google login email, and pet name. Search results must show the customer/pet relationship clearly, including customers with multiple pets. Enforce administrator authorization on the server for cross-customer reads, searches, and edits. Editing profile information must not silently change the verified login identity or record ownership. Balance adjustments remain a separate authorized workflow. Preserve an audit trail for administrator edits.
+## 3. Houses, rooms and capacity — confirmed latest model
 
-## Service usage
+- Manage multiple houses, each with its own rooms, address and timezone.
+- **No individual spaces/slots as managed entities.** Earlier House → Room → Space proposals are superseded by **House → Room**.
+- Houses UI is split: house/room selection on the left; selected room’s details and capacity rules on the right. Stack sensibly on phones.
+- Each room has a **maximum capacity**, not just a fixed pet count.
+- Admin configures capacity consumed by pet **category/type/weight group**.
+- Admin may set a **custom capacity for an individual pet**, overriding its applicable group rule. Show whether group rule or override applies.
+- Each room hosts **one species at a time**. Pets of different species cannot have overlapping occupancy in the same room even when capacity remains.
+- A room can switch species between **non-overlapping stays**; it is not permanently assigned to a species.
+- Total concurrent pet capacity usage cannot exceed the room’s maximum.
+- Admin adjusts applicable constraints/closures through UI. Show affected future bookings before changes that would cause conflicts; exact change policy remains unresolved.
+- Provide a dynamic house map for a selected date/time, plus room timelines, to inspect occupancy and help optimize placements. No required dragging; provide tap/click/keyboard actions and mobile room-list access.
+- Distinguish planned occupancy from actual presence. Keep overdue pets visibly in care until pickup is recorded.
+- No actual business addresses, room capacities, capacity group values or pricing have been supplied. Do not seed example values as approved business rules.
 
-Keep balances separate by service and unit (for example daycare days versus boarding nights). Each usage record identifies the customer, pet, service date, units consumed, and recording employee. Drop-off and pickup belong to the same visit. Corrections preserve an audit trail.
+## 4. Customer calendars, timeline and availability — confirmed
 
-There is no separate attendance page; relevant service dates and drop-off/pickup information appear in existing views.
+- Every pet has a calendar. Each customer also sees a combined timeline of their own pets, with pet filtering and upcoming/past visits.
+- Customer chooses the pet, service/house as applicable, and planned drop-off and pickup dates/times.
+- Customer can see availability suitable for the pet for the **whole requested period**. Do not expose other customers’ pets or private internal assignments.
+- Review booking details, required days, applicable holiday charges, package coverage and balance before submission.
+- Customer must prepay sufficient valid days before booking. Avoid spending the same days or reserving the same capacity twice.
+- Maintain booking status and history; exact approval/hold lifecycle remains undecided.
+- Keep selected booking details when a package purchase is needed.
+- Do not advertise a working paid booking/refund flow before its dependencies and approved rules are implemented.
 
-## Renewal reminders
+## 5. Packages, prices and balances — confirmed
 
-Administrator-configured remaining-day thresholds are required. Proposed behavior: a global default with per-customer overrides and an option to disable reminders. Check eligibility following usage, balance changes, and threshold changes. Avoid repeating reminders for the same balance cycle; successful replenishment starts a new cycle. Define edge cases before implementation.
+- Packages contain **30 days**.
+- Package prices depend on **pet type and weight range**, not a per-exact-weight multiplication.
+- Customers prepay days before booking. Actual payment method/confirmation remains undecided.
+- Packages last **three months from first use**, not purchase or booking creation. First use refers to the first day of care covered by the package; exact activation/expiry boundaries still need decisions.
+- Packages are usable only in configured service months. January–September is an example, not a universal approved calendar.
+- Both the expiry rule and eligible-month rule apply to each covered service date, including extensions.
+- Display remaining days, activation/expiry, eligible months, price/weight band and relevant terms clearly.
+- Keep service/unit balances separate where relevant (for example daycare days versus boarding nights).
+- Admin manages package prices, terms and balance adjustments in the UI. Preserve adjustment history.
+- Balance operations and usage must be atomic, concurrent-safe and idempotent. Usage references customer, pet, service/date, consumed units and recording actor.
 
-Emails include pet/service details, remaining days, and renewal contact instructions in English or Simplified Chinese. Package purchasing/prepayment is now requested below; a general payment-history or income-reporting feature is not implied.
+Proposed UX, not a resolved deduction policy: show **available**, **reserved for upcoming stays**, and **used** days. Preserve historical purchase/booking terms by default; effective dates and retroactive changes need approval.
 
-## Decisions still needed
+## 6. Holiday rates — confirmed
 
-- Company location/timezone, official Chinese name, contact details, domain, and branding assets.
-- Whether drop-off/pickup means customer handoff at the business or employee transport.
-- When a visit consumes days; overnight and partial-day rules; cancellation details listed below.
-- Exact three-month expiry calculation and whether pets can share a balance; activation and eligible-month requirements are confirmed below.
-- Reconciliation of existing duplicate profiles (no automatic merge).
-- Reminder defaults, replenishment behavior, and email provider/domain verification.
-- Data retention, backup policy, and available Google Cloud billing/credits.
-
-Do not treat these unresolved business rules as approved behavior.
-
-## Shared sign-in, multiple roles, and administrator impersonation — 2026-10-19
-
-Use one prominent bilingual sign-in entry for customers, employees, and administrators. A verified Google identity may have multiple authorized roles; do not force a person into mutually exclusive administrator/employee/customer accounts. An administrator can also own pets and use customer workflows for their own pets.
-
-Avoid duplicate information: one canonical person/profile per verified identity, with role assignments referencing it. Customer/employee views reuse profile information and pets rather than copying records. Each pet has one stable record. Do not automatically merge people on matching names or editable contact email; linking pre-existing records still requires administrator authorization and verified identity. Account linking must preserve history and references.
-
-Administrators may impersonate any customer or employee for their business workflows. Implement this only with server-authorized, scoped impersonation sessions; never grant the browser permission by selecting an account ID or modifying another account's claims. Every operation must retain the actual administrator actor and the effective customer/employee identity in its audit record. Display a persistent, prominent impersonation banner with the target identity and an exit action. Leaving impersonation returns to administrator context. Revoked administrator access must terminate impersonation authority. Impersonation must not expose passwords, allow changing another person's Google credentials, or silently grant roles. Switching to the administrator's own customer context uses that same person's existing profile and pets.
-
-Delivered before the current account-linking release: shared sign-in, administrator customer-contact editing, UID-owned customer name/language registration, multiple pet profiles and private optional photos. Administrators can switch between customer management and their own profile/pets; staff also retain their own personal profile/pet panel. Customer/pet profiles share canonical records with administrator management, including customer-name/Google-email and pet-name search. Public and portal headers provide explicit English/简体中文 selection, independent of saved profile-language preferences. Employee business workflows and authorized impersonation remain subsequent features.
-
-Owner approved account linking on 2026-10-22: administrator generates a one-time code, customer submits it after their Google sign-in, administrator verifies and approves. Link only an unclaimed existing customer to an identity without a separate saved profile; preserve all original customer/pet/photo/history references. Never automatically merge duplicates. See `docs/account-linking.md` and the session handoff for delivery status.
-
-## Booking, packages, and multi-house UX — owner planning, 2026-11-15
-
-Status: requirements recorded; implementation has not started. Owner initially requested planning before coding and subsequently authorized finishing the PRs sequentially on 2026-11-15. This section supersedes earlier statements that package expiry or package purchasing are outside scope. See [delivery plan](booking-delivery-plan.md) for proposed commits/PRs. Proposed UX and open decisions below are not approved business rules.
-
-### Confirmed: customers, pets, and weight
-
-- Customers see their own combined timeline and availability; every pet has its own calendar.
-- Customers specify planned drop-off and pickup dates/times and choose a house.
-- Pricing depends on pet type (such as dog/cat) and weight range, not exact-weight multiplication.
-- An administrator approves weight or verifies it during drop-off. Preserve entered versus verified weight and verification actor/time.
-- Preserve canonical customer/pet records, existing photos, ownership, and bilingual mobile/desktop workflows.
-
-### Confirmed: prepaid packages and holidays
-
-- Sell 30-day packages; customers prepay for sufficient days before booking.
-- Package validity is three months from first use, rather than purchase. First use means the first day of care covered by the package, not the date a future booking is made.
-- Packages have configurable eligible service months (January–September is an example, not an approved universal schedule). Both expiry and eligible-month restrictions apply.
 - Holiday dates have holiday rates.
-- Administrators configure pricing and business rules through the UI, without code changes.
-- Show applicable terms, weight band, price, balance, activation/expiry, eligible months, and holiday charges before commitment.
+- Admin configures holiday dates, applicable scope and rate rules through the UI.
+- Identify holiday dates and explain charges before a booking or extension is confirmed.
+- Surcharge mechanism, actual dates/rates, overlapping holidays and package interaction remain unresolved.
 
-### Confirmed: bookings, extensions, and cancellations
+## 7. Cancellations and refunds — confirmed policy, unresolved details
 
-- Check suitable capacity throughout a requested stay.
-- Customers can extend sitting time when suitable slots are available; check package eligibility and required additional prepayment.
-- Customers can cancel 14 days ahead for a full refund and seven days ahead for a half refund. Exact boundaries and refund form remain unresolved; do not silently choose them.
-- Show cancellation consequences before confirmation and preserve visit history.
+- Cancellation 14 days ahead receives a **full refund**.
+- Cancellation seven days ahead receives a **half refund**.
+- Show exact deadline and refund consequences before the customer confirms cancellation.
+- Retain cancelled visit history and release its reserved capacity consistently with the approved lifecycle.
 
-### Confirmed: houses, spaces, and admin overview
+Proposed cutoff interpretation, awaiting confirmation: at least 14 days before scheduled drop-off → full; seven to fewer than 14 days → half. Do not invent the under-seven-day/no-show policy or whether refunds return money or package days.
 
-- Support multiple houses, each containing rooms with slots/spaces.
-- Admins adjust room/space constraints in the UI; availability and placement must respect them.
-- Admins have a combined overview and can focus on an individual house.
-- Provide a dynamic house map at a selected date/time to inspect occupancy and help optimize placement.
-- Overview covers arrivals, pickups, pets in care, capacity, requests, unassigned pets, and conflicts as applicable to the approved workflow.
+## 8. Extensions — confirmed
 
-### Confirmed: actual handoffs
+- Customer can extend sitting time if suitable room capacity is available for the additional period.
+- Respect one-species occupancy, capacity group/override usage, package validity/eligible months and holiday rules.
+- Show additional days/charges and require sufficient prepayment before acceptance.
+- Leave the original booking intact if an extension fails or is unavailable.
+- Update accepted time/capacity/balance changes together; approval and cancellation treatment for extension days remain undecided.
 
-- Employees record actual drop-off and pickup times separately from customer-scheduled times.
-- Retain the responsible actor and correction history.
-- Actual presence must remain visible when a pickup is late; elapsed scheduled time is not proof of departure.
+## 9. Employee handoffs — confirmed
 
-### Proposed UX and safeguards to review
+- Employee records **actual** drop-off and pickup times, separately from planned customer times.
+- Record responsible employee; retain correction history.
+- Proposed convenient UI: today’s expected arrivals, pets in care and expected pickups, with clear Record arrival / Record pickup actions and default current time.
+- Support recording an earlier actual time when a handoff is entered later, subject to approved correction permissions.
+- Show overdue pickups and distinguish actual occupancy from schedule predictions.
+- No separate attendance page is required; handoff details appear in relevant visit/operational views.
 
-- Customer navigation: My timeline, Book a stay, My packages, My pets, My profile.
-- Admin navigation: Overview, Bookings, House map/timeline, Customers/pets, Settings.
-- Available/reserved/used package balances, with atomic reservation to prevent spending the same days twice.
-- House selector, time controls, space timeline beside the map, and mobile room-list alternative.
-- Focused booking/assignment/edit dialogs; explain unavailable dates and preserve original bookings when an extension fails.
-- Admin approval for initial bookings/extensions; timed space moves and explainable placement suggestions.
-- Preview affected bookings before publishing rule changes; retain historical prices/terms and audit changes. Existing purchases/confirmed bookings retain agreed terms by default, subject to owner approval.
+## 10. Admin overview and placement — confirmed
 
-### Decisions required before dependent implementation
+- Provide combined all-house and individual-house overviews.
+- Show arrivals, pickups, pets in care, capacity, requests requiring action, unassigned pets and conflicts as applicable to the approved lifecycle.
+- Calendar/timeline supports reviewing all bookings and filtering by house/room/pet/status.
+- Assign pets to rooms and inspect occupancy over time; schedule moves only under approved policies.
+- Placement optimization is requested. Explainable admin-reviewed suggestions are a proposed later implementation, not an approved automatic-movement policy.
 
-1. Services and units; day/night/partial-day counting; timezone and daylight-saving boundaries; early arrival/late pickup charging.
-2. Weight units/bands/prices; who enters/measures weight; whether employees can verify or only admins; whether unverified weight permits purchase/booking; changes in weight band and settlement of price differences.
-3. Payment method/provider, payment confirmation, currency, refunds, and any provider/billing access. No payment provider selected.
-4. Package sharing across pets/services/houses; allocation between multiple packages; fractional balances; exact three-calendar-month expiry and eligible-month boundary behavior. How projected activation changes when the earliest future visit is moved/cancelled; whether activation uses actual or scheduled care date when they differ.
-5. Holiday dates/rate mechanism (money surcharge, extra prepaid days, or another model), overlapping holidays, and application to stays spanning rate periods.
-6. Cancellation: confirm at-least-14-days full / 7-to-under-14-days half interpretation; exact-hour versus calendar-day cutoff; under-seven-day/no-show policy; money versus days; rounding; returned-day expiry; holidays and extensions.
-7. Booking/extension approval, pending-request holds and their expiry, balance reservation/consumption/release, alternative availability, and concurrent-request behavior.
-8. House facts/timezones, spaces/capacities, suitability and compatibility constraints, closures/buffers, moves during stays, and whether a move can satisfy extension availability. No actual address, capacity, or constraint values supplied.
-9. Employee access by house, verification authority, correction permissions, and operational handling of unexpected presence/capacity conflicts.
-10. Rule effective dates and treatment of existing purchases/bookings. Admin configuration must expose approved options, not invent defaults for unresolved rules.
+## 11. Admin settings and customer preview — confirmed
 
-Existing separate workstreams remain renewal reminders, audited balance adjustments, scoped admin impersonation, duplicate-profile reconciliation, and backup/retention policy. They are not automatically part of the booking deliveries.
+- Configure business rules in UI rather than code: package prices/weight bands, eligible months/validity, holidays, cancellation/refund rules, booking/extension rules, room capacities and pet capacity groups/overrides, applicable constraints, and employee access.
+- Validate contradictory ranges/rules and show a clear preview before applying changes. Record who changed rules and when.
+- Admin can confirm a customer’s view. Plan read-only preview separately from acting on behalf of a customer.
+- Acting as a customer requires server-authorized scoped impersonation, a persistent target banner and obvious exit, current admin-access checks, and actual-admin/effective-customer audit identities.
+- No exposure of passwords, Google-credential changes or silent role grants.
 
-### UX clarification — 2026-11-15
+## 12. UX requirements
 
-Owner explicitly requires the simplest, cleanest, easy-to-use and intuitive UX, including a core house map. Planned customer navigation is My pets / Calendar / Packages; admin navigation is Overview / Calendar / House map, with management/settings secondary. The map defaults to now, supports house/time selection, room/space occupancy and linked timeline, click/tap actions and mobile room-list access. No required dragging or hover. Actual-task browser walkthroughs must check clarity and minimize unnecessary steps before each UI release. See delivery plan for acceptance criteria.
+- Keep common tasks intuitive, with plain English/Chinese, clear primary actions, sensible non-business defaults and contextual details.
+- Use focused dialogs for edits and linking; recognizable secondary icons need tooltips and accessible names.
+- Preserve entered information through recoverable errors and uncertain-save retries; warn before discarding drafts.
+- Make times/house context, price/day calculations, balance changes and refund outcomes clear before confirmation.
+- Do not require hover or dragging. Use readable layouts and touch-friendly controls on phones.
+- Suggested customer navigation: My pets / Calendar / Packages. Final admin navigation remains to be refined as features arrive; **Houses** is the requested setup tab name. Earlier tab-name suggestions are not approval to build empty tabs.
 
-### Customer preview and execution authorization — 2026-11-15
+## 13. Existing separate workstreams
 
-Owner requested admin impersonation or confirmation of customer view. Plan a read-only customer preview first, then separately scoped acting-on-behalf workflows with server checks, persistent identity banner/exit, current admin revocation checks, and actual/effective actor history. No credential exposure or role changes. Owner subsequently authorized finishing all PRs one at a time; prior planning-only status is superseded. Unresolved business decisions still require owner input.
+- Low-balance renewal reminders: configurable admin thresholds, bilingual pet/service/balance details and renewal instructions. Defaults, per-customer overrides, cycle/reset/deduplication, email provider and outbox recovery policy need decisions.
+- Duplicate profile reconciliation without automatic merging.
+- Data retention, backups and recovery policy.
+- Approved public contact details/location, official Chinese business name, real photos and branding.
+- General payment history, income reporting and care notes have not been requested as part of this scope.
 
-### Supported pet types and test photo library — 2026-11-15
+## Decisions still required before dependent workflows
 
-Owner confirmed cats, dogs, and rabbits. Owner requested hundreds of downloaded photos, permitting datasets, uploaded to blob storage for test pet photos. Use Google Cloud Storage, keep them test-only in the existing private development bucket, retain per-image provenance/license records, and never replace real customer photos. Target 300 unique photos (100 per species); this quantity is an implementation assumption, not a package/business rule. This request temporarily takes priority over the sequential feature roadmap; preserve unfinished house-management work separately.
+| Area | Open decisions |
+| --- | --- |
+| Calendar/day usage | Services and units; how daytime, overnight and partial stays consume days; business timezone facts and date/time boundaries; transport versus on-site handoff |
+| Booking lifecycle | Approval versus automatic confirmation; request holds/expiry; when days and room capacity are reserved, consumed or released; waitlisting/alternatives if desired |
+| Payment | Online provider versus externally collected/admin-confirmed payment; currency, provider access/billing and payment/refund confirmation |
+| Packages | Sharing across pets/services/houses; allocation between packages; fractional days; exact three-calendar-month expiry; future-booking activation when first visit changes/cancels; actual versus planned date differences |
+| Weight/pricing | Actual weight bands/prices and units; who enters/measures weight; employee verification authority; use of unverified weight; changes in weight band and price adjustments |
+| Capacity groups | Category definitions, group values and weight boundaries; precedence/overlap/gaps between groups; group selection versus automatic matching; override effective dates; which weight verification state applies |
+| Room scheduling | Back-to-back boundary handling, cleaning/turnover buffers, permitted room moves, closures and changes affecting existing confirmed stays; how early arrival/late pickup affects conflicts |
+| Holidays | Actual dates/rates, house/service scope, money versus extra-day charging, overlaps and multi-rate stays |
+| Refunds | Confirm 14-/7-day boundary interpretation; exact hours versus calendar days; refund money versus days; under-seven-day/no-show policy; rounding; returned-day expiry; holiday/extension refunds |
+| Actual handoffs | Correction permissions; early/late fees or extra-day use; review of unexpected occupancy |
+| Rule changes | Effective dates, purchased/confirmed terms, retroactive application and conflict resolution |
+| Missing photos | Labelled species samples versus actual owner photos for real pets; whether photo becomes mandatory for new real pets |
 
-### Photo completeness and local-first delivery — 2026-11-15
-
-Owner requires all pets to have photos, with every displayed pet photograph sourced from Google Cloud Storage rather than bundled/hardcoded assets. Ensure every synthetic test pet has a cloud-library photo, preserving already saved images. Do not misrepresent stock photos as real pets: whether to use clearly labelled species samples for real pets lacking images is awaiting owner decision, as are missing actual pet photos/species. The downloaded 300-image library is uploaded, but assignment to test pets remains to be completed; do not claim inventory upload alone fills pet records.
-
-Owner also changed delivery to local development/validation, one PR at a time, and a single deployment after all features are done. No intermediate deployment after photo PR #38; that release occurred before the change in preference.
+Unknown values must stay unconfigured or explicitly pending, not be silently replaced by illustrative numbers. Calendar/balance development can proceed on independent UI and record foundations, but financially consequential booking, deduction and refund behavior must wait for the relevant approved rules.

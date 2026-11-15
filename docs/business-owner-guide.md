@@ -116,3 +116,7 @@ Choose **House map**, then choose a house. The first saved house opens automatic
 For each space, enter its name, choose the sharing rule, enter capacity, select allowed pet types and optionally set a weight limit in kg or lb. **One pet** sets capacity to one. Tap a space to edit it; the room pencil edits its name or closes the whole room. Closed rooms/spaces are labelled and shaded. These settings are entered by you; sample test values are not your business policy. The map currently configures spaces; timed bookings/occupancy will follow in separate PRs.
 
 选择“房屋地图”并选择房屋，点击“添加房间”，再在房间内“添加空间”。填写名称、共用规则、容量、允许的宠物种类，以及可选体重上限（kg 或 lb）。“单只宠物”会将容量设为 1。点击空间修改规则；房间旁的铅笔可修改名称或关闭整个房间。关闭的区域会有文字标记。目前用于配置空间，预约时段与占用情况将在后续独立功能中完成。
+
+## Current planning focus — 2026-11-15
+
+Calendar and balance management is the next focus on a clean branch. The house/room screen is work in progress. Its latest design is houses/rooms on the left and room capacity on the right; each room holds one species at a time, can change species between non-overlapping stays, and uses group-based pet capacity with individual admin overrides. Earlier individual-space instructions describe a superseded draft. No SWC migration is planned. Changes stay local until the requested features are complete.

@@ -1,5 +1,19 @@
 # Session handoff — 2026-10-22
 
+## Owner changes focus to calendar/balances; record requirements first — 2026-11-15
+
+Owner explicitly says to treat current changes as WIP and start a new branch for calendar and balance management, then requires recording all requirements first. This supersedes the earlier instruction to finish PR #41 before starting another feature. Consolidated `docs/requirements.md` into confirmed requirements, proposed UX, current delivery instructions and unresolved decisions; updated architecture, delivery plan and owner guide. Latest room model includes maximum capacity, type/category/weight group consumption, per-pet admin override, one species at a time and non-overlapping species switches; no individual spaces. SWC is cancelled.
+
+Preserve committed PR #41 and the intermediate uncommitted room revision on `feat/house-rooms-spaces`; mark it WIP/unmerged. It does not implement the latest group/override model, and its old tests are not current. New work must branch from main and carry only these planning documents, not room code. Preserve untracked `dist-dev/`, pending PR #24, local demo records/photos and any owner edits. No deployment or business-data reset is needed for this branch change. Exact WIP and new-branch commit references will be recorded after the checkpoint is created.
+
+## Latest steering: room capacity; SWC cancelled — 2026-11-15
+
+Owner explicitly dropped the SWC changes. No SWC packages, Vite plugins, build-script changes, or compiler PR were implemented; retain the existing Vite and tsc type-check workflow. Do not resume or schedule a SWC migration.
+
+Active feature remains PR #41, now being revised from individual spaces to Houses/rooms in a left/right workspace. Latest confirmed rules: each room has maximum capacity; capacity consumed is configured by pet category/type/weight group, with an admin-set per-pet override. A room hosts only one species at a time and may switch species between non-overlapping stays. No individual spaces. These supersede earlier room/space and simple pet-count proposals below.
+
+Current uncommitted code is an intermediate room-capacity revision (room maximum plus per-type costs), not the complete latest group/override model. Old tests/docs still require updating; do not claim the current revision is validated or complete. Preserve all saved local records and the 300 cloud-sourced pet photos. Continue locally, one feature PR at a time, with deployment deferred. Latest local preview was restored at localhost:4180, API8081, Auth9099, existing Firestore8085; seeder verified 300 photo-complete pets without remote writes.
+
 ## Room/space map ready for local walkthrough — 2026-11-15
 
 PR #40 house management merged as GitHub-Verified `eed81685cca987db3482fe79c265d251af26ad30`, implementation `99864de` Verified, CI `43697139814` passed; no deployment. Current branch `feat/house-rooms-spaces` adds room/space configuration and a core House map entry, parent-scoped admin APIs, audited transaction/retry/version checks, explicit capacity/species/sharing/optional kg-lb limit and closure controls. No business configuration values seeded. Map is setup only; timed occupancy and booking compatibility enforcement remain later roadmap items.

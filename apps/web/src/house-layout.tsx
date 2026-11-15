@@ -4,69 +4,83 @@ import Modal from './modal';
 import Icon from './icons';
 import UnsavedChanges,{confirmDiscardChanges} from './unsaved-changes';
 import {houseApi,HouseError} from './house-api';
+import {petTypes,validCapacity,maximumPets,type PetType} from '../../../packages/contracts/room-capacity';
 import type {components} from '../../../packages/contracts/generated';
-type Layout=components['schemas']['HouseLayout'];
+type House=components['schemas']['House'];
 type Room=components['schemas']['Room'];
-type Space=components['schemas']['Space'];
-type Species='cat'|'dog'|'rabbit';
-type Draft={kind:'room'|'space';id:string;roomId:string;name:string;closed:boolean;version:number;capacity:string;species:Species[];sharing:Space['sharing']|'';weight:string;unit:'kg'|'lb'};
-const en={title:'Rooms & spaces',intro:'Choose a room or space to edit its rules.',addRoom:'Add room',editRoom:'Edit room',addSpace:'Add space',editSpace:'Edit space',roomName:'Room name',spaceName:'Space name',empty:'No rooms yet. Add a room to start your house map.',emptyRoom:'No spaces yet.',capacity:'Pet capacity',species:'Allowed pets',sharing:'Sharing',choose:'Choose a sharing rule',individual:'One pet',household:'Same household only',compatible:'Shared · admin assigns',weight:'Maximum weight per pet (optional)',unit:'Weight unit',closedRoom:'Close this room',closedSpace:'Close this space',closed:'Closed',open:'Configured',save:'Save',cancel:'Cancel',loading:'Loading rooms…',saving:'Saving…',retry:'Try again',error:'Couldn’t load or save the layout. Please try again.',invalid:'Enter a name, capacity, allowed pets and sharing rule. Any weight limit must be greater than zero.',conflict:'This configuration changed elsewhere. Your draft is kept. Close and reopen it to edit the latest version.',denied:'Administrator access is required. Please sign in again.',missing:'This house or room is no longer available. Return to Houses and choose it again.',saved:'Layout saved.',cat:'Cat',dog:'Dog',rabbit:'Rabbit',upTo:'Up to',pets:'pets'};
-const zh:typeof en={title:'房间与空间',intro:'选择房间或空间，修改使用规则。',addRoom:'添加房间',editRoom:'编辑房间',addSpace:'添加空间',editSpace:'编辑空间',roomName:'房间名称',spaceName:'空间名称',empty:'暂无房间。添加房间，开始设置房屋地图。',emptyRoom:'尚未添加空间。',capacity:'宠物容量',species:'允许的宠物',sharing:'共用规则',choose:'请选择共用规则',individual:'单只宠物',household:'仅限同一家庭',compatible:'可共用 · 管理员安排',weight:'每只宠物的体重上限（选填）',unit:'体重单位',closedRoom:'关闭此房间',closedSpace:'关闭此空间',closed:'已关闭',open:'已配置',save:'保存',cancel:'取消',loading:'正在加载房间…',saving:'正在保存…',retry:'重试',error:'未能加载或保存地图，请重试。',invalid:'请填写名称、容量、允许的宠物及共用规则，体重上限须大于零。',conflict:'配置已在其他页面更新。草稿仍保留，请关闭后重新打开最新配置再修改。',denied:'需要管理员权限，请重新登录。',missing:'此房屋或房间已不可用，请返回房屋列表重新选择。',saved:'地图已保存。',cat:'猫',dog:'狗',rabbit:'兔子',upTo:'不超过',pets:'只宠物'};
-export default function HouseLayout({houseId}:{houseId:string}){
+type Layout=components['schemas']['HouseLayout'];
+type Draft={id:string;name:string;closed:boolean;version:number;capacity:string;costs:Record<PetType,string>};
+const en={rooms:'Rooms',details:'Room details',add:'Add room',edit:'Edit room',name:'Room name',empty:'No rooms yet. Add your first room.',noHouse:'Add a house to start configuring rooms.',select:'Choose a room to see its capacity.',capacity:'Total room capacity',perPet:'Capacity used per pet',hint:'Leave a pet type blank if it cannot use this room.',units:'units',notAllowed:'Not allowed',maximum:'Maximum if the room holds only this pet type',emptyRoom:'Based on an otherwise empty room.',closed:'Closed',close:'Close this room',save:'Save room',cancel:'Cancel',loading:'Loading rooms…',saving:'Saving…',retry:'Try again',error:'Couldn’t load or save rooms. Please try again.',invalid:'Enter a name, a positive room capacity, and a positive capacity cost for at least one pet type. Use up to three decimal places.',conflict:'This room changed elsewhere. Your draft is kept. Close and reopen it to edit the latest version.',denied:'Administrator access is required. Please sign in again.',missing:'This house is no longer available. Choose it again from Houses.',saved:'Room saved.',cat:'Cat',dog:'Dog',rabbit:'Rabbit',unset:'Capacity not set',setup:'Set this room’s total capacity and capacity used per pet to finish its setup.',back:'← Rooms'};
+const zh:typeof en={rooms:'房间',details:'房间详情',add:'添加房间',edit:'编辑房间',name:'房间名称',empty:'暂无房间，请添加第一个房间。',noHouse:'请先添加房屋，再配置房间。',select:'选择房间，查看容量设置。',capacity:'房间总容量',perPet:'每只宠物占用的容量',hint:'某种宠物不能使用此房间时，请留空。',units:'容量单位',notAllowed:'不允许',maximum:'房间只接待此类宠物时的数量上限',emptyRoom:'按房间尚未入住宠物计算。',closed:'已关闭',close:'关闭此房间',save:'保存房间',cancel:'取消',loading:'正在加载房间…',saving:'正在保存…',retry:'重试',error:'未能加载或保存房间，请重试。',invalid:'请填写名称、正数总容量，以及至少一种宠物的正数容量用量，最多支持三位小数。',conflict:'房间已在其他页面更新。草稿仍保留，请关闭后重新打开最新资料再修改。',denied:'需要管理员权限，请重新登录。',missing:'此房屋已不可用，请在房屋列表中重新选择。',saved:'房间已保存。',cat:'猫',dog:'狗',rabbit:'兔子',unset:'尚未设置容量',setup:'请设置房间总容量及每只宠物占用的容量，完成房间配置。',back:'← 房间列表'};
+export default function RoomCapacity({house,navigation}:{house:House|null;navigation:React.ReactNode}){
   const {i18n}=useTranslation(),t=i18n.language==='zh'?zh:en;
-  const [layout,setLayout]=React.useState<Layout>({rooms:[]}),[loading,setLoading]=React.useState(true),[saving,setSaving]=React.useState(false),[uncertain,setUncertain]=React.useState(false);
+  const [layout,setLayout]=React.useState<Layout>({rooms:[]}),[selected,setSelected]=React.useState('');
+  const [loading,setLoading]=React.useState(false),[saving,setSaving]=React.useState(false),[uncertain,setUncertain]=React.useState(false);
   const [editor,setEditor]=React.useState<Draft|null>(null),[error,setError]=React.useState<keyof typeof en|null>(null),[saved,setSaved]=React.useState(false);
   const alive=React.useRef(true),generation=React.useRef(0),baseline=React.useRef(''),form=React.useRef<HTMLFormElement>(null);
-  const blocked=saving||uncertain;
+  const detail=React.useRef<HTMLElement>(null),directory=React.useRef<HTMLElement>(null);
+  const blocked=saving||uncertain,room=layout.rooms.find(value=>value.id===selected);
+  const number=(value:number)=>new Intl.NumberFormat(i18n.language==='zh'?'zh-CN':'en',{maximumFractionDigits:3}).format(value);
   function report(error:unknown){const status=error instanceof HouseError?error.status:0;setError(status===409?'conflict':status===403||status===401?'denied':status===404?'missing':status===400?'invalid':'error');}
-  async function load(){const request=++generation.current;setLoading(true);setError(null);try{const result=await houseApi<Layout>('/'+houseId+'/layout');if(alive.current&&request===generation.current)setLayout(result);}catch(error){if(alive.current&&request===generation.current)report(error);}finally{if(alive.current&&request===generation.current)setLoading(false);}}
-  React.useEffect(()=>{alive.current=true;void load();return()=>{alive.current=false;++generation.current;};},[houseId]);
-  function open(kind:'room'|'space',room?:Room,space?:Space){
+  async function load(){
+    if(!house)return;
+    const request=++generation.current;setLoading(true);setError(null);
+    try{const result=await houseApi<Layout>('/'+house.id+'/layout');if(alive.current&&request===generation.current){setLayout(result);setSelected(previous=>result.rooms.some(room=>room.id===previous)?previous:result.rooms[0]?.id??'');}}
+    catch(error){if(alive.current&&request===generation.current)report(error);}
+    finally{if(alive.current&&request===generation.current)setLoading(false);}
+  }
+  React.useEffect(()=>{alive.current=true;void load();return()=>{alive.current=false;++generation.current;};},[house?.id]);
+  function choose(id:string){
     if(!confirmDiscardChanges(i18n.language,form.current))return;
-    const value=kind==='room'?room:space;
-    const next:Draft={kind,id:value?.id??crypto.randomUUID(),roomId:room?.id??'',name:value?.name??'',closed:value?.closed??false,version:value?.version??0,capacity:space?String(space.capacity):'',species:space?[...space.species]:[],sharing:space?.sharing??'',weight:space?.weightLimit?String(space.weightLimit.value):'',unit:space?.weightLimit?.unit??'kg'};
+    setSelected(id);setSaved(false);
+    if(window.matchMedia('(max-width: 800px)').matches)requestAnimationFrame(()=>{detail.current?.focus({preventScroll:true});detail.current?.scrollIntoView({block:'start',behavior:'instant'});});
+  }
+  function open(value?:Room){
+    if(!confirmDiscardChanges(i18n.language,form.current))return;
+    const next:Draft={id:value?.id??crypto.randomUUID(),name:value?.name??'',closed:value?.closed??false,version:value?.version??0,capacity:value?.capacity==null?'':String(value.capacity),costs:{cat:value?.petCosts.cat===undefined?'':String(value.petCosts.cat),dog:value?.petCosts.dog===undefined?'':String(value.petCosts.dog),rabbit:value?.petCosts.rabbit===undefined?'':String(value.petCosts.rabbit)}};
     baseline.current=JSON.stringify(next);setEditor(next);setError(null);setSaved(false);setUncertain(false);
   }
   function close(){if(!blocked&&confirmDiscardChanges(i18n.language,form.current)){setEditor(null);setError(null);if(error==='conflict')void load();}}
   async function save(event:React.FormEvent){
-    event.preventDefault();if(!editor||saving)return;
-    if(editor.kind==='space'&&(!editor.species.length||!editor.sharing||!Number.isInteger(Number(editor.capacity))||Number(editor.capacity)<1||(editor.weight!==''&&(!Number.isFinite(Number(editor.weight))||Number(editor.weight)<=0)))){setError('invalid');return;}
+    event.preventDefault();if(!editor||saving||!house)return;
+    const types=petTypes.filter(type=>editor.costs[type]!=='');
+    if(!editor.name.trim()||!validCapacity(Number(editor.capacity))||!types.length||types.some(type=>!validCapacity(Number(editor.costs[type])))){setError('invalid');return;}
+    const body={name:editor.name,closed:editor.closed,version:editor.version,capacity:Number(editor.capacity),petCosts:Object.fromEntries(types.map(type=>[type,Number(editor.costs[type])]))};
     setSaving(true);setError(null);setSaved(false);
-    const base={name:editor.name,closed:editor.closed,version:editor.version};
-    const body=editor.kind==='room'?base:{...base,capacity:Number(editor.capacity),species:editor.species,sharing:editor.sharing,...(editor.weight!==''?{weightLimit:{value:Number(editor.weight),unit:editor.unit}}:{})};
-    const path='/'+houseId+'/rooms/'+(editor.kind==='room'?editor.id:editor.roomId+'/spaces/'+editor.id);
-    try{await houseApi(path,body);if(!alive.current)return;setEditor(null);setUncertain(false);setSaved(true);void load();}
+    try{const result=await houseApi<Room>('/'+house.id+'/rooms/'+editor.id,body);if(!alive.current)return;++generation.current;setLoading(false);setLayout(previous=>({rooms:[result,...previous.rooms.filter(room=>room.id!==result.id)].sort((a,b)=>a.name.localeCompare(b.name))}));setSelected(result.id);setEditor(null);setUncertain(false);setSaved(true);}
     catch(error){if(alive.current){report(error);setUncertain(!(error instanceof HouseError)||error.status>=500);}}
     finally{if(alive.current)setSaving(false);}
   }
-  const set=(change:Partial<Draft>)=>editor&&setEditor({...editor,...change});
-  return <section className="house-layout" aria-label={t.title}>
-    <div className="customer-heading"><h2>{t.title}</h2><button className="button" disabled={blocked} onClick={()=>open('room')}>{t.addRoom}</button></div><p className="customer-intro">{t.intro}</p>
-    {loading&&<p role="status">{t.loading}</p>}{saved&&<p role="status">{t.saved}</p>}{error&&!editor&&<p role="alert">{t[error]}</p>}
-    {!loading&&!error&&!layout.rooms.length&&<p>{t.empty}</p>}
-    <div className="room-map">{layout.rooms.map(({room,spaces})=><article className={'room-card'+(room.closed?' room-closed':'')} key={room.id} aria-label={room.name}>
-      <div className="room-heading"><h3>{room.name}</h3><button className="icon-button" aria-label={`${t.editRoom}: ${room.name}`} title={t.editRoom} disabled={blocked} onClick={()=>open('room',room)}><Icon name="edit"/></button></div>
-      {room.closed&&<p className="room-status">{t.closed}</p>}
-      <div className="space-map">{spaces.map(space=><button className={'space-card'+(room.closed||space.closed?' space-closed':'')} key={space.id} disabled={blocked} aria-label={`${t.editSpace}: ${space.name}`} title={t.editSpace} onClick={()=>open('space',room,space)}>
-        <strong>{space.name}</strong><span>{room.closed||space.closed?t.closed:t.open}</span><span>{t.capacity}: {space.capacity}</span><span>{space.species.map(species=>t[species]).join(' · ')}</span><span>{space.sharing==='individual'?t.individual:space.sharing==='same-household'?t.household:t.compatible}</span>{space.weightLimit&&<span>{t.upTo} {space.weightLimit.value} {space.weightLimit.unit}</span>}
-      </button>)}</div>
-      {!spaces.length&&<p className="customer-intro">{t.emptyRoom}</p>}<button className="language" disabled={blocked} onClick={()=>open('space',room)}>{t.addSpace}</button>
-    </article>)}</div>
-    {error==='error'&&!editor&&<button className="language" disabled={loading} onClick={()=>void load()}>{t.retry}</button>}
-    {editor&&<Modal title={editor.kind==='room'?(editor.version?t.editRoom:t.addRoom):(editor.version?t.editSpace:t.addSpace)} disabled={blocked} onClose={close}><form ref={form} className="customer-form" onSubmit={event=>void save(event)}>
+  return <div className="houses-split">
+    <aside ref={directory} tabIndex={-1} className="house-directory" aria-label={t.rooms}>
+      {navigation}
+      {house&&<><div className="room-list-heading"><h3>{t.rooms}</h3><button className="button" disabled={blocked} onClick={()=>open()}>{t.add}</button></div>
+        {loading&&<p role="status">{t.loading}</p>}{!loading&&!layout.rooms.length&&!error&&<p className="customer-intro">{t.empty}</p>}
+        <ul className="room-list">{layout.rooms.map(value=><li key={value.id}><button className="room-select" aria-label={value.name} aria-pressed={selected===value.id} disabled={blocked} onClick={()=>choose(value.id)}><strong>{value.name}</strong><span>{value.capacity==null?t.unset:`${number(value.capacity)} ${t.units}`}{value.closed?` · ${t.closed}`:''}</span></button></li>)}</ul>
+      </>}
+      {error&&!editor&&<p role="alert">{t[error]}</p>}{error==='error'&&!editor&&<button className="language" disabled={loading} onClick={()=>void load()}>{t.retry}</button>}
+    </aside>
+    <section ref={detail} tabIndex={-1} className="room-details" aria-label={t.details}>
+      {house&&<header className="room-house-heading"><h2>{house.name}</h2>{house.address&&<p>{house.address}</p>}<p>{house.timezone}</p></header>}
+      {saved&&<p role="status">{t.saved}</p>}
+      {room?<><button className="back-to-rooms" onClick={()=>{directory.current?.focus({preventScroll:true});directory.current?.scrollIntoView({block:'start',behavior:'instant'});}}>{t.back}</button>
+        <div className="room-heading"><h3>{room.name}</h3><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${room.name}`} disabled={blocked} onClick={()=>open(room)}><Icon name="edit"/></button></div>
+        {room.closed&&<p className="room-status">{t.closed}</p>}
+        {room.capacity==null?<p>{t.setup}</p>:<>
+          <div className="room-capacity-total"><span>{t.capacity}</span><strong>{number(room.capacity)} <small>{t.units}</small></strong></div>
+          <h4>{t.perPet}</h4><div className="pet-capacity-rules">{petTypes.map(type=><article key={type} aria-label={t[type]}><h5>{t[type]}</h5>{room.petCosts[type]===undefined?<p>{t.notAllowed}</p>:<><p><strong>{number(room.petCosts[type]!)}</strong> {t.units}</p><p className="capacity-maximum"><span>{t.maximum}</span><strong>{maximumPets(room.capacity!,room.petCosts[type]!)}</strong></p></>}</article>)}</div><p className="customer-intro">{t.emptyRoom}</p>
+        </>}
+      </>:<p className="room-empty">{house?t.select:t.noHouse}</p>}
+    </section>
+    {editor&&<Modal title={editor.version?t.edit:t.add} disabled={blocked} onClose={close}><form ref={form} className="customer-form" onSubmit={event=>void save(event)}>
       <UnsavedChanges active={JSON.stringify(editor)!==baseline.current||saving||uncertain}/>{error&&<p role="alert">{t[error]}</p>}
       <fieldset disabled={blocked}>
-        <label>{editor.kind==='room'?t.roomName:t.spaceName}<input required maxLength={120} value={editor.name} onChange={event=>set({name:event.target.value})}/></label>
-        {editor.kind==='space'&&<>
-          <label>{t.sharing}<select required value={editor.sharing} onChange={event=>set({sharing:event.target.value as Draft['sharing'],...(event.target.value==='individual'?{capacity:'1'}:{})})}><option value="" disabled>{t.choose}</option><option value="individual">{t.individual}</option><option value="same-household">{t.household}</option><option value="compatible">{t.compatible}</option></select></label>
-          <label>{t.capacity}<input required type="number" min={1} max={1000} step={1} readOnly={editor.sharing==='individual'} value={editor.capacity} onChange={event=>set({capacity:event.target.value})}/></label>
-          <fieldset className="space-species"><legend>{t.species}</legend>{(['cat','dog','rabbit'] as const).map(species=><label key={species}><input type="checkbox" checked={editor.species.includes(species)} onChange={event=>set({species:event.target.checked?[...editor.species,species]:editor.species.filter(value=>value!==species)})}/>{t[species]}</label>)}</fieldset>
-          <label>{t.weight}<input type="number" min={0.001} max={1000000} step="any" value={editor.weight} onChange={event=>set({weight:event.target.value})}/></label>
-          <label>{t.unit}<select value={editor.unit} onChange={event=>set({unit:event.target.value as 'kg'|'lb'})}><option value="kg">kg</option><option value="lb">lb</option></select></label>
-        </>}
-        <label className="space-check"><input type="checkbox" checked={editor.closed} onChange={event=>set({closed:event.target.checked})}/>{editor.kind==='room'?t.closedRoom:t.closedSpace}</label>
+        <label>{t.name}<input required maxLength={120} value={editor.name} onChange={event=>setEditor({...editor,name:event.target.value})}/></label>
+        <label>{t.capacity}<input required type="number" min={0.001} max={1000000} step={0.001} value={editor.capacity} onChange={event=>setEditor({...editor,capacity:event.target.value})}/></label>
+        <fieldset className="capacity-inputs"><legend>{t.perPet}</legend><p className="customer-intro">{t.hint}</p><div>{petTypes.map(type=><label key={type}>{t[type]}<input type="number" min={0.001} max={1000000} step={0.001} placeholder={t.notAllowed} value={editor.costs[type]} onChange={event=>setEditor({...editor,costs:{...editor.costs,[type]:event.target.value}})}/></label>)}</div></fieldset>
+        <label className="room-check"><input type="checkbox" checked={editor.closed} onChange={event=>setEditor({...editor,closed:event.target.checked})}/>{t.close}</label>
       </fieldset>
       <div className="portal-actions"><button className="button" type="submit" disabled={saving||error==='conflict'||error==='denied'||error==='missing'}>{saving?t.saving:uncertain?t.retry:t.save}</button><button className="language" type="button" disabled={blocked} onClick={close}>{t.cancel}</button></div>
     </form></Modal>}
-  </section>;
+  </div>;
 }

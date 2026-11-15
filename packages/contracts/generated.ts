@@ -85,50 +85,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/houses/{houseId}/rooms/{roomId}/spaces/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Save space (administrator only) */
-        put: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    houseId: string;
-                    roomId: string;
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["SpaceWrite"];
-                };
-            };
-            responses: {
-                /** @description House configuration */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Space"];
-                    };
-                };
-            };
-        };
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/houses": {
         parameters: {
             query?: never;
@@ -530,39 +486,41 @@ export interface components {
         RoomWrite: {
             name: string;
             closed: boolean;
-            version: number;
-        };
-        SpaceWrite: {
-            name: string;
+            /** @description Capacity units, up to three decimal places. */
             capacity: number;
-            species: ("cat" | "dog" | "rabbit")[];
-            /** @enum {string} */
-            sharing: "individual" | "same-household" | "compatible";
-            closed: boolean;
-            weightLimit?: {
-                value: number;
-                /** @enum {string} */
-                unit: "kg" | "lb";
+            /** @description Capacity consumed by one pet of each type. Omitted types are not allowed. */
+            petCosts: {
+                /** @description Capacity units, up to three decimal places. */
+                cat?: number;
+                /** @description Capacity units, up to three decimal places. */
+                dog?: number;
+                /** @description Capacity units, up to three decimal places. */
+                rabbit?: number;
             };
             version: number;
         };
-        Room: components["schemas"]["RoomWrite"] & {
+        Room: {
             /** Format: uuid */
             id: string;
-            createdAt: string;
-            updatedAt: string;
-        };
-        Space: components["schemas"]["SpaceWrite"] & {
-            /** Format: uuid */
-            id: string;
+            name: string;
+            closed: boolean;
+            /** @description Null for older rooms awaiting explicit capacity configuration. */
+            capacity: number | null;
+            /** @description Capacity consumed by one pet of each type. Omitted types are not allowed. */
+            petCosts: {
+                /** @description Capacity units, up to three decimal places. */
+                cat?: number;
+                /** @description Capacity units, up to three decimal places. */
+                dog?: number;
+                /** @description Capacity units, up to three decimal places. */
+                rabbit?: number;
+            };
+            version: number;
             createdAt: string;
             updatedAt: string;
         };
         HouseLayout: {
-            rooms: {
-                room: components["schemas"]["Room"];
-                spaces: components["schemas"]["Space"][];
-            }[];
+            rooms: components["schemas"]["Room"][];
         };
         HouseWrite: {
             name: string;

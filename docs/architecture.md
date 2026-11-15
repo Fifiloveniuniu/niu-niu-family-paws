@@ -42,8 +42,16 @@ Admin-only `/api/houses` GET and `/api/houses/{id}` PUT use canonical `houses/{i
 
 Local fixture API uses demo Auth/Firestore and a disposable photo cache sourced from private dev GCS; production uses its existing private bucket. Integration tests use the emulator's separate per-run `integration-*` database to avoid adding partial fixtures to the owner’s default demo preview. Test-mode frontend proxy always targets local demo API port 8081, never the production relay.
 
-## Room and space layout (local feature)
+## Room capacity direction — WIP, not deployed
 
-Admin-only layout GET and room/space PUT endpoints use `houses/{houseId}/rooms/{roomId}/spaces/{spaceId}`. Stable IDs and parent-existence checks preserve hierarchy; each editable record uses transactional versions, identical-retry handling and actor history. Room closure overrides its spaces in the map. Space rules include explicit capacity, allowed cat/dog/rabbit types, sharing mode, optional weight limit with kg/lb unit and closure. No active business rule values are seeded or inferred. Individual mode requires capacity one.
+The requested hierarchy is House → Room. Individual spaces are removed from the product model. Room configuration has a maximum capacity; pet category/type/weight groups determine consumption, and an admin-set per-pet override takes precedence. Only one species may occupy a room at a time; it may switch species between non-overlapping stays. Weighted capacity and temporal species exclusivity must both be checked when bookings are implemented.
 
-The current map is room/space configuration, not timed occupancy. Booking allocation, rule-impact review for reservations, scheduling and placement optimization remain subsequent features. Future booking transactions must read and validate these constraints consistently with capacity/balance reservations; configuration reads alone cannot guarantee future availability.
+Draft PR #41 and its intermediate uncommitted room revision are preserved as WIP. Do not treat its API/contracts as completed architecture or import them into the clean calendar/balance branch. Preserve old saved local records/history rather than deleting them to reflect a UI change. No actual capacity/group defaults have been approved.
+
+## Calendar and balance implementation boundaries
+
+Continue from main using canonical customer/pet IDs and server-derived ownership/current roles. Keep planned and actual visit timestamps distinct and display house-local times. Package/purchase/usage references must survive customer linking and corrections. Use audited, idempotent transactions for balances and room reservations; no double spending/deduction on retries. A future combined booking operation must check package eligibility, balance and room/species constraints consistently, not rely on an earlier availability read.
+
+Thirty-day package size, three-month first-use validity, eligible-month restriction, holiday rates and 14-/7-day refund policy are confirmed requirements. The exact financial/day-counting/activation/refund boundaries are not settled; consult requirements before implementing them. Available/reserved/used balances are a proposed presentation, not permission to invent a deduction lifecycle. No payment provider is selected.
+
+Preserve Google Cloud and the existing local demo isolation. Keep the current build tooling; the SWC migration was cancelled. Defer deployment until the full requested feature set is complete.
