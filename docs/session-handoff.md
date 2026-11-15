@@ -1,5 +1,20 @@
 # Session handoff — 2026-10-22
 
+## Separate dev environment in progress — 2026-11-14
+
+Owner approved an isolated hosted environment, then specified project ID `niu-niu-family-paws-dev`. Created that Google Cloud project, but Firebase activation returned 403. Earlier `niu-niu-family-paws-test` cloud project was also created before the naming correction and remains unused; do not delete without authorization. No billing linked; no live feature deployed. Owner questions pending: Firebase terms acceptance for current CLI account and using production billing account for dev. Firebase console displays unchecked terms; do not infer acceptance from naming correction. See `docs/development-environment.md` for prepared configuration, checks and remaining provisioning/release steps. Working branch `feat/isolated-test-environment`; retain original live sample records until dev works. No secrets recorded.
+
+## Live development samples — 2026-11-14
+
+Owner requested sample customers/pets, explicitly labeled for development/testing, with a separate test environment as an alternative. Added through the hosted administrator UI using the existing API (no application release or infrastructure change):
+
+- `[TEST / 测试] Alex — development only`: `[TEST / 测试] Mochi`, `[TEST / 测试] Biscuit`.
+- `[TEST / 测试] 林小雨 — development only`: `[TEST / 测试] 豆豆 Doudou`.
+
+These are intentionally retained synthetic records in the production directory, not a separate test environment. No contact details, photos, login accounts, ownership links, prices or service rules were invented. Existing Nature profile preserved. UI confirmed customer/pet saves, correct owner relationships and Doudou after pet reload. Use Manage pets beside each sample customer; name prefix `[TEST` finds samples. Do not automatically remove samples; owner requested them for ongoing testing. Future cleanup must identify exact documents and preserve real records/audit policy.
+
+Firebase CLI connected in this session; requested `magicoder10@gmail.com` administrator claim was granted with the existing script and read back as active/verified/admin. No credentials or authorization codes belong in documentation. Current native Chrome showed the administrator dashboard successfully.
+
 **Latest delivery — verified account linking (2026-10-24):** PR #22 merged as `a34d842`, Cloud Run revision `family-paws-api-00004-5m5` deployed, then Firebase Hosting deployed from main and live checks passed. Owner approved administrator one-time code → customer Google submission → administrator verification/approval. This links unclaimed existing customers to identities without another saved profile. No automatic merge. Stable customer/pet/photo/history references are preserved; approval adds canonical ownership/mapping transactionally. Codes are 128-bit, hash-only at rest, valid 24h, one claimant and 10/minute submission limit. Rotation/rejection/cancellation, stale-review/version protection, current target Auth status/email checks and actual/effective actor audits are included. No new IAM/service/billing setup. See `docs/account-linking.md` and owner guide.
 
 Build/API checks, nine unit tests, four Firestore/image integration tests and all nine final browser tests passed; GitHub CI passed. Actual local API + isolated demo Auth/Firestore CUA walkthrough issued/submitted/reviewed/approved as verified Google demo identities, showed no original records before approval, then showed original customer/pet on customer re-login. Chinese 400px had no overflow. Screenshots `linking-review-zh.png` and `linking-original-pet-mobile-zh.png` contain only synthetic demo data, no usable codes. Local servers/emulators stopped after walkthrough. Browser extension now uses ID `1` (same profile/extension previously ID `2`). A hot-update/debugger-detach blank tab recovered in a new preview; recovered page had no captured errors.
