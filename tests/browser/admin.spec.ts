@@ -36,7 +36,7 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
   const update=async (claims:object)=>{
     const response=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true,customAttributes:JSON.stringify(claims)}});
     expect(response.ok(),await response.text()).toBe(true);
-    await page.getByRole('button',{name:'Refresh session'}).click();
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   };
   await update({admin:'true'});
   await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();

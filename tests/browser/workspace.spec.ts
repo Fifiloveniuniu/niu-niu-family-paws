@@ -61,8 +61,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.getByRole('button',{name:'Add pet',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('');
   await page.getByRole('textbox',{name:'Pet name',exact:true}).fill('Unsaved pet draft');
-  pending = dismissDiscard();
-  await page.getByRole('button',{name:'Reload saved profile',exact:true}).click(); await pending;
+  await expect(page.getByRole('button',{name:/Reload|Refresh session/})).toHaveCount(0);
   await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
   pending = dismissDiscard();
   await page.getByRole('button',{name:'Sign out',exact:true}).click(); await pending;
@@ -85,7 +84,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   await expect(page.getByRole('textbox',{name:'Customer name',exact:true})).toHaveValue('');
   await page.getByRole('textbox',{name:'Customer name',exact:true}).fill('Unsaved directory draft');
   await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
-  await page.getByRole('button',{name:'Refresh session',exact:true}).click();
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect(page.getByRole('button',{name:'My profile & pets',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
@@ -96,7 +95,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.locator('header').scrollIntoViewIfNeeded();
   await page.screenshot({path:'test-results/ui-portal-mobile-zh.png'});
   await claims(false);
-  await page.getByRole('button',{name:'刷新登录状态',exact:true}).click();
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect(page.getByRole('heading',{name:'客户账号',exact:true})).toBeVisible();
   await expect(page.getByRole('region',{name:'切换页面',exact:true})).toHaveCount(0);
   await expect(page.getByRole('textbox',{name:'客户姓名',exact:true})).toHaveCount(0);
