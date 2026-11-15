@@ -1,8 +1,12 @@
 # Session handoff — 2026-10-22
 
-## Commit signatures — 2026-11-14
+## Customer/pet panels delivered with verified signatures — 2026-11-14
 
-Owner requires verified signatures on every commit. Repository-local Git configuration enables SSH commit signing using the existing authorized `id_ed25519_naturetime10.pub` identity, already registered as a GitHub signing key for `naturetime10`. Verify GitHub commit verification before merging. Never commit signing credentials. PR #25 unsigned commits are being re-signed; retry normal merge after Verified status and CI.
+PR #25 merged as GitHub-Verified squash `182cca78b541f37b8eea82e227b812cd42fab416` after all four PR commits were re-signed with the existing authorized SSH identity and GitHub confirmed `verified: true, reason: valid` for every commit. CI run `43683626321` passed. The earlier merge blocker was unsigned commits; no protection was bypassed. Auto-merge remains disabled in the repository.
+
+Rebuilt merged main under Node 24 and deployed Firebase Hosting. Stable live URL: https://niu-niu-family-paws.web.app/#/login. Live HTML matches dist exactly; anonymous customer API remains 401. Native Chrome live administrator review showed the two panels and existing customer/pet records (Nature selected, saved Niuniu visible, no photo yet). No business records were written by the agent. User interaction may change saved data; preserve all real records. Browser left English on the stable live site. Prior preview/blocked notes below are historical. No API/IAM/database changes.
+
+Owner requires verified signatures on every commit. `AGENTS.md` records this; repository-local Git config now sets SSH signing, `commit.gpgsign=true` and the existing `id_ed25519_naturetime10.pub` signing identity, already registered with GitHub. Verify GitHub status before merging. Do not commit private signing material. New machines must configure an authorized signing identity. Pending environment PR #24 remains a separate feature and may also need its commits re-signed before merge; consult its branch handoff and do not resume its infrastructure/cleanup as part of this delivery.
 
 ## Customer/pet panels hosted for review — 2026-11-14
 
