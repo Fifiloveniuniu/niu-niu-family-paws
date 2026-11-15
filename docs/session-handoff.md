@@ -2,6 +2,8 @@
 
 ## Add-pet calendar and unavailable-date blackouts — 2026-11-15
 
+Review/merge record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/44. Implementation `0593980` is GitHub Verified. Check that PR for final CI and merge status; no hosted deployment.
+
 Owner requested Add pet as a calendar and dark blackouts for unavailable room/time choices. Branch `feat/calendar-date-picker` starts from merged #43 (`2895ff8`, Verified). Add pet now shows weekly room/date availability: enter pet and precise arrival/pickup first; each date tests the entire stay shifted to that start date, preserving local times and calendar-day length (including DST). Each room/date option is checked for the full interval using existing species, capacity, duplicate-pet, overdue and unresolved-boundary safeguards. Unavailable cells are dark charcoal, labelled with reasons, and disabled; incomplete inputs stay neutral. Selecting an available cell fills house/room and dates, shows selection summary and rechecks before Add. Manual selection/capacity override are tucked into details. This is candidate-start-date availability, not an hourly occupancy map; caption explicitly explains that each cell checks the whole stay.
 
 Modal accepts an optional class name for the wider scheduling dialog. Mobile uses an internally scrolling table with sticky room labels and precise datetime fields. Actual localhost Chrome opened the calendar-based dialog; automated desktop/mobile Chinese test confirms black disabled cells, selecting a valid room/date, adding a stay and week navigation. Build, four focused browser cases and all 14 browser cases pass on Node 24. Prototype-only, no production records/writes or deployment. Existing saved demo records and room WIP #41 preserved.
