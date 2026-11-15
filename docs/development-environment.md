@@ -1,27 +1,49 @@
-# Separate development environment (in progress)
+# Development website
 
-Requested project: `niu-niu-family-paws-dev`. Production remains `niu-niu-family-paws`.
+Owner selected a separate development website inside the existing Google Cloud project on 2026-11-14. English is the default; Simplified Chinese remains available. No extra billing account or project is needed for this arrangement. Additional database/storage/API usage uses existing project billing.
 
-Not delivered yet. Cloud project creation succeeded, but Firebase activation returned HTTP 403 twice for the initial `-test` project and once for `-dev`. Firebase console under the same CLI Google account shows an unchecked Firebase terms acceptance requirement. Terms acceptance and billing account choice are pending owner responses. Do not assume this proves the entire 403 cause; retry after acceptance and inspect remaining permissions if needed.
+| Resource | Live | Development |
+| --- | --- | --- |
+| Google Cloud project | `niu-niu-family-paws` | same project |
+| Website | `niu-niu-family-paws.web.app` | `niu-niu-family-paws-sandbox.web.app` |
+| Cloud Run | `family-paws-api` | `family-paws-api-dev` |
+| Firestore | `(default)` | `development` |
+| Private photos | `niu-niu-family-paws-pet-photos` | `niu-niu-family-paws-dev-pet-photos` |
+| Firebase Authentication | existing Google identities and roles | shared identities and roles |
 
-The earlier `niu-niu-family-paws-test` cloud project is unused and was not deleted. No billing was attached to either new project. No production samples have been removed.
+## Separation
 
-## Prepared configuration
+Development runtime identity `family-paws-dev-runtime@niu-niu-family-paws.iam.gserviceaccount.com` has `roles/datastore.user` conditioned on exactly `projects/niu-niu-family-paws/databases/development`, the existing Auth get-only custom role, and create/get access scoped to its private photo bucket. Production IAM bindings remain unchanged. IAM database conditions follow https://firebase.google.com/docs/firestore/manage-databases#configure_per-database_access_permissions . Existing production runtime permissions are project-scoped; this is resource separation, not full project-level isolation.
 
-- `npm run build:staging` builds to `dist-dev` and requires the dev web application's public API key/app ID in ignored `.env.staging.local`. Production `npm run build` still builds to `dist`.
-- `npm run deploy:dev` explicitly targets `niu-niu-family-paws-dev` and `firebase.dev.json`. Never deploy validation-placeholder builds. Dev Hosting sends noindex headers and uses dev Auth domains in CSP.
-- Dev pages have a persistent English/Chinese test banner. The frontend uses the dev Firebase project; no production Auth fallback.
-- Set Cloud Run `FAMILY_PAWS_ENV=staging` and `GCLOUD_PROJECT=niu-niu-family-paws-dev`; runtime rejects mismatched project configuration and uses only the dev private photo bucket. Production defaults remain compatible.
-- `npm run seed:dev` targets ONLY dev, creates deterministic synthetic customer/pet IDs through existing stores/audits, preserves existing records and never deletes anything. No real contacts, photos or test Google identities are invented.
-- No reminder/email sending implementation exists yet. Do not connect a real outbound sender to dev when reminders are added; require tester-only recipients or a sink.
+Runtime selects the named database and development bucket only in `FAMILY_PAWS_ENV=staging`, and rejects mismatched `K_SERVICE` or project values. A development service without its mode fails rather than falling back to live data. Browser access to both databases is denied by rules; API ownership/current identity checks remain in force. Development photo bucket has public access prevention, uniform access, and seven-day soft delete. Oregon database has deletion protection. Neither environment has automatic customer/audit deletion or a newly configured backup schedule.
 
-## Remaining delivery
+Auth is shared intentionally: role changes and disabled/deleted login accounts affect both sites. Do not use Auth deletion or role changes as development cleanup. A separate website has separate browser sessions/preferences even though it uses the same Google identities. The development domain is added to existing authorized domains without replacing them.
 
-1. Obtain Firebase terms confirmation and billing choice; finish Firebase activation.
-2. Provision dev Auth Google provider (approved support email/consent setup), dev web app, Hosting, Oregon Firestore/indexes/deny rules and private photo bucket.
-3. Create dedicated dev runtime/build identities with minimal roles; keep production service identities and resources unchanged. Provision Cloud Run/Artifact Registry/build config in dev, zero minimum instances, bounded maximum instances. No service-account keys.
-4. Set real dev web identifiers, deploy API and Hosting, seed fixtures, sign in as approved tester and grant the requested account admin in DEV only. Existing admin-access script currently targets production; do not accidentally rerun it for dev.
-5. Validate real sign-in, customer/pet edits and private photos in both languages/phone and desktop. Verify production remains isolated. Record screenshots without account details.
-6. Finish PR validation/merge/deployment, then remove only the original live synthetic samples and their exact audited documents after inspecting current versions and obtaining mandatory permanent-deletion confirmation if needed. Preserve Nature and any other real customer/pet records. The UI has no deletion feature.
+Development Hosting uses a separate site, build output (`dist-dev`), API rewrite and noindex headers. The public/sign-in/portal pages display a persistent test warning in the selected language. Default language is English. No email sender exists yet; future reminder testing must use a sink or designated recipients.
 
-Local checks so far: production build, API TypeScript and 11 unit tests passed. Staging build passed using placeholder public identifiers only to validate compilation/prerender/banner; this is not a working Auth configuration and must not be deployed. Full emulator/browser and actual hosted checks remain pending.
+## Owner use
+
+Open https://niu-niu-family-paws-sandbox.web.app/#/login and use the same approved administrator Google account. Try customer and pet edits here with synthetic data only. The directory starts with Alex (Mochi and Biscuit) and 林小雨 (豆豆 Doudou); every name includes `[TEST / 测试]`.
+
+## Maintainer commands
+
+- `npm run build`: production frontend, output `dist`.
+- `npm run build:staging`: development frontend, output `dist-dev`, shared Firebase web config.
+- `npm run deploy:dev`: build and deploy only the sandbox Hosting site using `firebase.dev.json` and the existing project.
+- `npm run seed:dev`: add-only deterministic fixtures in the `development` database. Cannot select production or an arbitrary database; preserves existing records and never deletes or resets edits.
+- `npx firebase deploy --only firestore --config firebase.dev.json --project niu-niu-family-paws --non-interactive`: development rules/indexes only.
+- `cloudbuild.dev.yaml`: separate `api-dev` image using the existing builder/source bucket/repository. Cloud Run uses `FAMILY_PAWS_ENV=staging`, `GCLOUD_PROJECT=niu-niu-family-paws`, zero minimum/two maximum instances, 512 MiB, concurrency four and request-based CPU.
+
+Development API image built successfully in `3acb36bd-f5fe-4024-bbe0-586e2112f3e7`: `us-west1-docker.pkg.dev/niu-niu-family-paws/family-paws/api-dev@sha256:da6be0215e95442c1acd976014ab0c49d444112a7009da788d6638ac5f31dc2f`. Initial revision `family-paws-api-dev-00001-7r9`. Automatic development request URL logs are excluded to avoid search-term logging; application/system logs remain.
+
+## Release verification
+
+Production/development builds, API TypeScript, 11 unit tests, four database/image integration tests, nine existing browser tests and one development layout/banner test passed. Development test covers English/Chinese, 320/400/1280px, public/sign-in navigation and overflow. Native Chrome local review verified banner and both languages, left English. Screenshot `docs/screenshots/development-preview-mobile-en.png` contains only public content.
+
+Local machine starts with Node 22; project requires Node 24. Browser runner passed with `npm exec --yes --package=node@24 -- npm run test:browser`. Integration tests passed with Node 22's explicit `NODE_OPTIONS=--experimental-strip-types`. No application source was changed to accommodate the local runtime.
+
+Hosted frontend verification and production sample cleanup are pending until merge/Hosting deployment. The original two live test customers must remain until dev is usable; inspect exact record versions before cleanup and preserve real profiles, identities and all real pets/history.
+
+## Earlier project attempt
+
+Before the owner chose one project, the separate `niu-niu-family-paws-dev` project (Firebase/web app enabled) and `niu-niu-family-paws-test` cloud project were created. Firebase terms were accepted after owner confirmation. Linking the existing billing account failed for lack of `billing.resourceAssociations.create`. No new billing association was made. These earlier projects are unused and were not deleted. Do not resume provisioning them or delete them without an explicit request.

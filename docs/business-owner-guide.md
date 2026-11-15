@@ -78,3 +78,9 @@ Service tracking also needs decisions about drop-off/pickup, when units are cons
 ## Continuing on another computer or account
 
 Use the same GitHub project, `Fifiloveniuniu/niu-niu-family-paws`, and ask Codex to read its instructions. The saved guidance travels with the repository; it does not automatically grant access to GitHub, Google Cloud, or administrator accounts. A new environment may need the owner's authorized sign-in. Never paste passwords, private keys, or verification codes into project files.
+
+## Trying changes with sample data
+
+Use https://niu-niu-family-paws-sandbox.web.app/#/login for development/testing and https://niu-niu-family-paws.web.app for the live business. The development website defaults to English, has a prominent test warning, and uses separate customer/pet records and photos. Sign in using the same Google account; administrator access is shared. Only enter made-up customer information on the development site.
+
+测试网站为 https://niu-niu-family-paws-sandbox.web.app/#/login 。页面默认英文，可切换简体中文，并有明显的测试提示。测试网站与正式网站共用 Google 登录账号和权限，但客户、宠物及照片分开保存。请仅使用虚构资料进行测试。

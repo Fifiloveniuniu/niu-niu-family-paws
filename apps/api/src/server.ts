@@ -16,6 +16,7 @@ if (emulated) {
 const deployment = emulated ? null : runtimeEnvironment(process.env);
 initializeApp(emulated ? { projectId: 'demo-niu-niu' } : { credential: applicationDefault(), projectId: deployment!.projectId });
 const auth = getAuth();
+const db = getFirestore(deployment?.databaseId ?? '(default)');
 const app = buildApp({
   async verify(token) {
     const decoded = await auth.verifyIdToken(token, true);
@@ -29,13 +30,13 @@ const app = buildApp({
       email: user.email,
     };
   },
-  store: firestoreStore(getFirestore()),
-  links: linkStore(getFirestore(),async uid=>{
+  store: firestoreStore(db),
+  links: linkStore(db,async uid=>{
     const user = await auth.getUser(uid);
     if (user.disabled || !user.emailVerified || !user.email || !user.providerData.some(provider=>provider.providerId==='google.com')) throw new Error('Verified Google identity required');
     return {uid:user.uid,email:user.email};
   }),
-  pets: petStore(getFirestore(), {
+  pets: petStore(db, {
     async put(key, bytes) {
       const file = getStorage().bucket(deployment?.bucket ?? 'demo-niu-niu-pet-photos').file(key);
       try { await file.save(bytes, { resumable: false, preconditionOpts: { ifGenerationMatch: 0 }, metadata: { contentType: 'image/webp', cacheControl: 'private, no-store' } }); }

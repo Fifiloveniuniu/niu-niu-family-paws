@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { runtimeEnvironment } from '../apps/api/src/environment.ts';
-test('staging uses its own project and private photo bucket', () => {
-  assert.deepEqual(runtimeEnvironment({FAMILY_PAWS_ENV:'staging',GCLOUD_PROJECT:'niu-niu-family-paws-dev'}), {projectId:'niu-niu-family-paws-dev',bucket:'niu-niu-family-paws-dev-pet-photos'});
+test('development selects separate database and private photo bucket with shared Auth project', () => {
+  assert.deepEqual(runtimeEnvironment({FAMILY_PAWS_ENV:'staging',GCLOUD_PROJECT:'niu-niu-family-paws',K_SERVICE:'family-paws-api-dev'}), {projectId:'niu-niu-family-paws',databaseId:'development',bucket:'niu-niu-family-paws-dev-pet-photos'});
+  assert.equal(runtimeEnvironment({}).databaseId,'(default)');
 });
-test('mismatched projects and unknown environments fail closed', () => {
-  for (const env of [{FAMILY_PAWS_ENV:'staging',GCLOUD_PROJECT:'niu-niu-family-paws'}, {GCLOUD_PROJECT:'niu-niu-family-paws-dev'}, {FAMILY_PAWS_ENV:'typo'}]) assert.throws(()=>runtimeEnvironment(env));
-  assert.equal(runtimeEnvironment({}).projectId,'niu-niu-family-paws');
+test('mismatched services, projects and unknown environments fail closed', () => {
+  for (const env of [{FAMILY_PAWS_ENV:'staging',GCLOUD_PROJECT:'another-project'}, {K_SERVICE:'family-paws-api-dev'}, {FAMILY_PAWS_ENV:'staging',K_SERVICE:'family-paws-api'}, {FAMILY_PAWS_ENV:'typo'}]) assert.throws(()=>runtimeEnvironment(env));
 });

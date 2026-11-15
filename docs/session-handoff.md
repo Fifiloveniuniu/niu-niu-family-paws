@@ -1,8 +1,8 @@
 # Session handoff — 2026-10-22
 
-## Separate dev environment in progress — 2026-11-14
+## Development environment delivery in progress — 2026-11-14
 
-Owner approved an isolated hosted environment, then specified project ID `niu-niu-family-paws-dev`. Created that Google Cloud project, but Firebase activation returned 403. Earlier `niu-niu-family-paws-test` cloud project was also created before the naming correction and remains unused; do not delete without authorization. No billing linked; no live feature deployed. Owner questions pending: Firebase terms acceptance for current CLI account and using production billing account for dev. Firebase console displays unchecked terms; do not infer acceptance from naming correction. See `docs/development-environment.md` for prepared configuration, checks and remaining provisioning/release steps. Working branch `feat/isolated-test-environment`; retain original live sample records until dev works. No secrets recorded.
+Owner changed scope to one Google Cloud project and confirmed English for development. PR #24 now implements a separate sandbox Hosting site/API, named `development` database and private dev photo bucket inside `niu-niu-family-paws`; Google identities/admin roles intentionally shared. See `docs/development-environment.md` for configuration, resources and validation. All local checks passed; dedicated API/image and fixtures are deployed. Merge/Hosting/live verification and removal of exact original live synthetic samples remain pending. Preserve production API revision and site, real records and all Auth identities. Earlier separate `-dev` and `-test` projects are unused; no new billing linked, do not resume or delete them without request.
 
 ## Live development samples — 2026-11-14
 

@@ -24,7 +24,7 @@
           },
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://niu-niu-family-paws-dev.firebaseapp.com https://www.googleapis.com; frame-src https://niu-niu-family-paws-dev.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+            "value": "default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://niu-niu-family-paws.firebaseapp.com https://www.googleapis.com; frame-src https://niu-niu-family-paws.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
           },
           {
             "key": "X-Robots-Tag",
@@ -55,15 +55,19 @@
       {
         "source": "/api/**",
         "run": {
-          "serviceId": "family-paws-api",
+          "serviceId": "family-paws-api-dev",
           "region": "us-west1",
           "pinTag": true
         }
       }
-    ]
+    ],
+    "site": "niu-niu-family-paws-sandbox"
   },
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  }
+  "firestore": [
+    {
+      "database": "development",
+      "rules": "firestore.rules",
+      "indexes": "firestore.indexes.json"
+    }
+  ]
 }

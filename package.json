@@ -15,7 +15,7 @@
     "check:api": "tsc --project apps/api/tsconfig.json",
     "test:store": "firebase emulators:exec --only firestore --project demo-niu-niu --config firebase.test.json \"node --test tests/customer-store.integration.mjs\"",
     "build:staging": "tsc --noEmit && vite build --mode staging && node scripts/prerender.mjs staging",
-    "deploy:dev": "npm run build:staging && firebase deploy --only hosting --config firebase.dev.json --project niu-niu-family-paws-dev",
+    "deploy:dev": "npm run build:staging && firebase deploy --only hosting --config firebase.dev.json --project niu-niu-family-paws",
     "seed:dev": "node --experimental-strip-types scripts/seed-dev.mjs"
   },
   "dependencies": {
