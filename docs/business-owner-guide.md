@@ -89,9 +89,9 @@ Routine reload buttons are removed. Customers and pets load when you open them, 
 
 日常页面不再显示重新加载按钮。打开资料时会自动加载，保存后列表会自动更新。加载失败时，点击错误旁的“重试”。返回浏览器标签页时会自动检查登录权限，未保存的修改仍受到保护。
 
-Pet cards without an uploaded photo show a cat-and-dog stock photo labelled **Sample photo · Pexels**. Upload the pet’s own photo through **Edit pet** to replace the sample. Uploaded photos remain private.
+Pet photos load privately from Google Cloud Storage. A pet without a saved photo shows **No photo yet**. Use **Edit pet** to upload its own photo. Test-library photos are separate from real customer photos.
 
-未上传照片的宠物卡片会显示猫和狗的图库照片，并标注“示例照片 · Pexels”。通过“编辑宠物”上传宠物自己的照片，即可替换示例。上传的照片仍为私密照片。
+宠物照片从 Google Cloud Storage 私密加载。未保存照片时显示“尚未添加照片”。通过“编辑宠物”上传宠物自己的照片。测试图库与真实客户照片分开存放。
 
 Editing customers and pets, adding them, and linking Google accounts open in focused pop-ups. Use Save to apply changes, Cancel or the × icon to close; unsaved changes ask first. Escape closes the pop-up with the same protection. Icon buttons have tooltips and accessible names. The local browser preview uses **http://localhost:4177**, where Google sign-in works; avoid `127.0.0.1` for real sign-in. Codex runs and manages the dev servers.
 

@@ -128,3 +128,7 @@ Owner explicitly requires the simplest, cleanest, easy-to-use and intuitive UX, 
 ### Customer preview and execution authorization — 2026-11-15
 
 Owner requested admin impersonation or confirmation of customer view. Plan a read-only customer preview first, then separately scoped acting-on-behalf workflows with server checks, persistent identity banner/exit, current admin revocation checks, and actual/effective actor history. No credential exposure or role changes. Owner subsequently authorized finishing all PRs one at a time; prior planning-only status is superseded. Unresolved business decisions still require owner input.
+
+### Supported pet types and test photo library — 2026-11-15
+
+Owner confirmed cats, dogs, and rabbits. Owner requested hundreds of downloaded photos, permitting datasets, uploaded to blob storage for test pet photos. Use Google Cloud Storage, keep them test-only in the existing private development bucket, retain per-image provenance/license records, and never replace real customer photos. Target 300 unique photos (100 per species); this quantity is an implementation assumption, not a package/business rule. This request temporarily takes priority over the sequential feature roadmap; preserve unfinished house-management work separately.

@@ -1,3 +1,11 @@
+# Pet photo sources
+
+Pet photographs are read from private Google Cloud Storage through the authenticated API. No pet-photo fallback is bundled in the frontend. Pets without saved photos show a bilingual neutral placeholder.
+
+The test library and per-image attribution are documented in [test photo library](test-photo-library.md).
+
+## Historical Pexels sample (removed)
+
 # Stock photo credit
 
 - Asset: `apps/web/src/assets/cat-and-dog-pexels-16440218.jpg`
@@ -8,3 +16,5 @@
 - [Pexels license](https://www.pexels.com/license/) checked November 14, 2026: free website/app use and modification; attribution optional. Retained source credit in the UI.
 
 The owner explicitly requested a photo from Pexels (or Pinterest). This is a stock sample, not an identified customer's pet. It appears only when no private photo is saved, with a bilingual Sample photo label linked to its source. Existing uploaded photos and private-photo failures keep their existing behavior. The local asset is served by Firebase Hosting; no visitor/customer data is sent to Pexels to load it.
+
+The bundled Pexels sample and visible credit were removed at the owner's request on November 15, 2026. The statements above about its use describe the earlier release only.
