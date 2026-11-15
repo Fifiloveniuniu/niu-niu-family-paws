@@ -1,5 +1,11 @@
 # Session handoff — 2026-10-22
 
+## Professional calendar workspace redesign — 2026-11-15
+
+Owner requested a professional, clean whole calendar/Add pet UX and per-pet balance management/validation. First focused change redesigns the calendar visual system and Add pet into Stay details → Choose room → Review, with stable sticky actions, explicit step progression, narrow details/review dialogs and a wider room timeline. Draft guards remain, but the large unsaved banner is visually hidden within this wizard. Gray continuous unavailable ranges, precise inputs and keyboard/manual alternatives are retained. Replaced accumulated CSS overrides with a consolidated stylesheet; updated browser flows for step navigation. Actual localhost Chrome opened the redesigned first step; desktop/mobile artifacts in docs/screenshots/add-pet-details-*.png.
+
+Build and all 14 browser cases pass on Node 24. Per-pet balance feature is next, as a separate PR after this one. Asked owner asynchronously for day-counting and reservation/consumption rules; these are required for real financial workflows. Independent sample balance UI/manual validation can proceed without guessing automatic deductions or payment rules. No deployment, production records or room WIP #41 changes.
+
 ## Continuous gray unavailability ranges — 2026-11-15
 
 Owner clarified that unavailable periods must be gray time ranges, not individual dark date tiles. Revised unmerged PR #44 accordingly: Add pet now has continuous per-room timelines, gray bands at exact occupied/unavailable boundaries (including partial days), and free space between bands. Range reasons remain visible/accessible with exact-time tooltips. Select the entered stay with Choose room or its green range; tapping a free point shifts the whole entered interval to that minute and revalidates it. Crossing any conflict is rejected, and gray bands cannot be selected. No dragging required; exact datetime fields/manual selectors remain keyboard alternatives. Unknown configuration/overdue stays conservatively gray their affected range. Boundary/turnover decisions remain unresolved and are still rechecked on submission.
