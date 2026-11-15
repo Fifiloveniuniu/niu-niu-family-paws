@@ -1,5 +1,21 @@
 # Session handoff — 2026-10-22
 
+## Photo-complete local fixtures — in progress 2026-11-15
+
+Active worktree `/tmp/family-paws-local-fixtures`, branch `chore/local-pet-photo-fixtures`, follows PR #38 and takes priority over preserved house work. Added isolated local demo mode on localhost:4180 with API 127.0.0.1:8081, Auth 9099 and Firestore 8085. Seeder downloads/verifies 300 image objects from the private dev GCS manifest into a disposable local cache and creates 100 fake families/300 pets with a photo each, attribution and species labels. No remote writes or deployment. Fake Google emulator accounts local-admin@example.test and local-customer@example.test allow review. Local photo adapter is gated on exact demo emulator configuration; uploaded test images stay local. Production photo path is unchanged.
+
+Actual native Chrome walkthrough signed into the Auth emulator, searched Family 001 and visibly confirmed dog/rabbit/cat photos with creator/source/license links. Eleven unit tests, five Firestore/image integration tests, and all ten browser tests passed. Integration data was cleared from the disposable demo Firestore after tests and the photo-only fixture set reseeded so owner preview is clean. Preserve local servers while owner reviews; do not redeploy. Customer/owner real-photo fallback decision still pending. PR, signed commit and CI merge pending. Updated delivery preferences and photo PR #38 verification are included below.
+
+## Latest photo-completeness instruction — 2026-11-15
+
+Owner says all pets must have photos. Ensure synthetic/local test fixtures use the cloud library and preserve existing saved images. Photo PR #38 delivered inventory and removed hardcoded fallback but did NOT assign library images to test pet records; this is outstanding. Asked whether real pets without photos should receive clearly labelled species samples or wait for actual photos; no answer yet. Do not infer species from names or overwrite user-uploaded images. Keep work local under the newest single-final-deployment instruction. Main workspace currently has uncommitted house API/contract work plus updated delivery/requirements docs; keep it intact.
+
+## Delivery preference changed: local first, one final deployment — 2026-11-15
+
+Owner explicitly requested local development and deployment only once all features are done. This overrides earlier deploy-after-each-feature guidance. Continue sequential feature PRs, local Chrome walkthroughs and validation/authorized merges; do not deploy intermediate PRs. Final integrated release gets Cloud Run/Firebase deployment and live checks. Use isolated local test data for upcoming business writes; the existing localhost relay forwards to production and must not be used for fixture writes. Updated AGENTS, owner guide and roadmap accordingly.
+
+Photo work was already delivered before this instruction: PR #38 merged as GitHub-Verified `931752a7c669f1388eb5bbefa3e223c7e864eff6`, implementation `53e66d6` Verified, CI `43695169333` passed. Built merged main and deployed Firebase Hosting. All five hosted files match dist, anonymous customers API is 401, anonymous test-library object is 403, and live native Chrome verified Alex's two pet cards have neutral placeholders. 300 image objects and manifest are verified in the private development bucket; no pet/customer records changed. Ten unit tests and all ten browser tests passed. Photo worktree is detached at merged main; source assets remain `/tmp/family-paws-photo-assets`. Original workspace resumed `feat/manage-houses`, rebased on this release, with unfinished house API/contract changes; no house feature has been deployed. Old in-progress/pause notes below are historical.
+
 ## Test photo library and cloud-only pet images — in progress 2026-11-15
 
 Owner steered sequential PR work to collecting hundreds of test photos, allowed datasets, confirmed supported species cat/dog/rabbit, and required no hardcoded pet photos. Existing unfinished house API work remains uncommitted on `feat/manage-houses` in the original workspace; preserve it. Photo change is isolated in `/tmp/family-paws-test-photo-library`, branch `chore/test-pet-photo-library`, based on merged docs PR #37 (`271212c`, GitHub Verified, CI passed). Only photo feature is active.

@@ -348,6 +348,12 @@ export interface components {
             name: string;
             /** @description Opaque image revision; photos require authenticated API access. */
             readonly photo: string | null;
+            readonly photoCredit?: {
+                creator: string;
+                sourcePage: string;
+                license: string;
+                licenseUrl: string;
+            };
             version: number;
             createdAt: string;
             updatedAt: string;

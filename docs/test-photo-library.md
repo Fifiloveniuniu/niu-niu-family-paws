@@ -10,7 +10,7 @@ Owner requested hundreds of cat, dog, and rabbit photos on November 15, 2026, wi
 - Per-image source/creator/license, transformations, checksums and verified object generations are in [the manifest](test-assets/pet-photos.json).
 - This is a test asset library, not real customer photos. No customer/pet documents are created or overwritten by the collector/uploader. No Auth or IAM changes.
 - Existing pet cards read their saved private photo through the authenticated pet-photo API, backed by Cloud Storage. Missing photos show “No photo yet” / “尚未添加照片”; no bundled stock photo remains.
-- Downloading this library does not automatically assign images to existing test pets. Future development fixtures must select by species from the manifest, retain attribution, and use the normal private pet-photo storage/API path. Do not assign stock images to real pets or load Wikimedia directly in the customer browser.
+- The local fixture command now creates 100 demo families with 300 pets (100 per species), all with cloud-sourced photos and visible attribution. It does not assign photos to production or hosted development pet records. Future hosted development fixtures must select by species from the manifest, retain attribution, and use the normal private pet-photo storage/API path. Do not assign stock images to real pets or load Wikimedia directly in the customer browser.
 - These are photographs, not 300 distinct animal identities. Some show the same animal or different crops; each uploaded object has distinct bytes.
 
 ## Provenance and licensing
@@ -39,3 +39,22 @@ Upload uses the existing Firebase CLI login, fixed development bucket/test prefi
 ## Validation
 
 All 300 prepared images were decoded, checked for unique content hashes, visually reviewed in contact sheets, and uploaded with per-object read-back verification. Anonymous access must remain denied. Application production build, API typecheck, unit tests and all ten browser tests cover the existing flows; bilingual placeholder and private-photo behavior are included. Actual signed-in localhost Chrome walkthrough confirmed missing-image placeholders on the existing test pet cards without business writes.
+
+## Photo-complete local preview
+
+Local review: **http://localhost:4180/#/login**. It uses isolated `demo-niu-niu` Auth/Firestore emulators, a local API at 127.0.0.1:8081, and a photo cache populated by authenticated reads of the existing private development GCS library. It never reads/writes production customer data or the production photo bucket. No photographs are bundled in the frontend. The local cache is disposable; cloud objects and the attribution manifest remain the source.
+
+Codex starts/manages these processes. Maintainer commands (Node 24, Java 21):
+
+```sh
+npm run dev:local:emulators
+npm run seed:local:photos
+npm run dev:local:api
+npm run dev:local
+```
+
+Run the emulator/API/frontend commands in separate processes. Seeder fails closed unless the exact demo emulator project/ports are selected; it only reads the fixed development cloud bucket and adds deterministic local fixtures, preserving existing local edits/photos. Every seeded pet is verified to have matching cached image bytes. New uploads in the emulator also remain local. Fixtures do not replace existing real or hosted development pets.
+
+Choose `local-admin@example.test` in the Google **Auth Emulator** picker for admin review, or `local-customer@example.test` for the customer's own three pets. These are fake local accounts, not production Google identities. No real password is needed. Search `[TEST / 测试] Family 001` to view a cat, dog and rabbit together. A persistent bilingual LOCAL TEST banner identifies this environment. Source/creator/license links appear on sample photo cards; attribution survives a name edit and clears if a different photo replaces it.
+
+The earlier localhost:4177 production-API relay is different: do not use that origin for fixture writes. Current owner preference is local development only, with deployment deferred until the full feature set is complete.

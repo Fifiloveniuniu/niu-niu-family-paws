@@ -132,3 +132,9 @@ Owner requested admin impersonation or confirmation of customer view. Plan a rea
 ### Supported pet types and test photo library — 2026-11-15
 
 Owner confirmed cats, dogs, and rabbits. Owner requested hundreds of downloaded photos, permitting datasets, uploaded to blob storage for test pet photos. Use Google Cloud Storage, keep them test-only in the existing private development bucket, retain per-image provenance/license records, and never replace real customer photos. Target 300 unique photos (100 per species); this quantity is an implementation assumption, not a package/business rule. This request temporarily takes priority over the sequential feature roadmap; preserve unfinished house-management work separately.
+
+### Photo completeness and local-first delivery — 2026-11-15
+
+Owner requires all pets to have photos, with every displayed pet photograph sourced from Google Cloud Storage rather than bundled/hardcoded assets. Ensure every synthetic test pet has a cloud-library photo, preserving already saved images. Do not misrepresent stock photos as real pets: whether to use clearly labelled species samples for real pets lacking images is awaiting owner decision, as are missing actual pet photos/species. The downloaded 300-image library is uploaded, but assignment to test pets remains to be completed; do not claim inventory upload alone fills pet records.
+
+Owner also changed delivery to local development/validation, one PR at a time, and a single deployment after all features are done. No intermediate deployment after photo PR #38; that release occurred before the change in preference.

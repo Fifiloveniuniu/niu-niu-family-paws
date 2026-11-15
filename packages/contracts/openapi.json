@@ -26,6 +26,7 @@
           "customerId": { "type": "string", "format": "uuid", "readOnly": true },
           "name": { "type": "string", "minLength": 1, "maxLength": 120 },
           "photo": { "type": "string", "nullable": true, "readOnly": true, "description": "Opaque image revision; photos require authenticated API access." },
+          "photoCredit": { "type": "object", "readOnly": true, "additionalProperties": false, "required": ["creator", "sourcePage", "license", "licenseUrl"], "properties": { "creator": { "type": "string" }, "sourcePage": { "type": "string" }, "license": { "type": "string" }, "licenseUrl": { "type": "string" } } },
           "version": { "type": "integer", "minimum": 1 },
           "createdAt": { "type": "string" }, "updatedAt": { "type": "string" }
         }
