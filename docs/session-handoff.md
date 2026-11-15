@@ -1,5 +1,35 @@
 # Session handoff — 2026-10-22
 
+## Clean calendar/balance branch created — 2026-11-15
+
+Current branch: `feat/calendar-balances`, created from `origin/main` after requirements were consolidated. Only updated requirements, architecture, roadmap, owner guide and handoff are carried forward; no unfinished room API/UI/contracts/helpers are included. No calendar/balance implementation has started in this checkpoint.
+
+Room WIP is safely committed/pushed on `feat/house-rooms-spaces` as `f42160ea9b6497d3646a093f3d6f9262fff7a04d` (GitHub Verified). PR #41 remains draft and is titled “WIP: room capacity and Houses layout”; do not merge or resume it until requested. WIP code is intentionally not claimed validated against latest requirements. The old local preview follows whichever branch is checked out, so it no longer displays the unmerged room revision. Saved demo data/photos and untracked `dist-dev/` are preserved; no reset or deployment performed.
+
+Next: scope the first calendar/balance milestone using `docs/requirements.md`, distinguishing safe record/UI foundations from unresolved payment, day-counting, package activation and refund behavior. Keep the workstream split into focused feature PRs, with one final deployment after completion. SWC remains cancelled.
+
+## Owner changes focus to calendar/balances; record requirements first — 2026-11-15
+
+Owner explicitly says to treat current changes as WIP and start a new branch for calendar and balance management, then requires recording all requirements first. This supersedes the earlier instruction to finish PR #41 before starting another feature. Consolidated `docs/requirements.md` into confirmed requirements, proposed UX, current delivery instructions and unresolved decisions; updated architecture, delivery plan and owner guide. Latest room model includes maximum capacity, type/category/weight group consumption, per-pet admin override, one species at a time and non-overlapping species switches; no individual spaces. SWC is cancelled.
+
+Preserve committed PR #41 and the intermediate uncommitted room revision on `feat/house-rooms-spaces`; mark it WIP/unmerged. It does not implement the latest group/override model, and its old tests are not current. New work must branch from main and carry only these planning documents, not room code. Preserve untracked `dist-dev/`, pending PR #24, local demo records/photos and any owner edits. No deployment or business-data reset is needed for this branch change. Exact WIP and new-branch commit references will be recorded after the checkpoint is created.
+
+## Latest steering: room capacity; SWC cancelled — 2026-11-15
+
+Owner explicitly dropped the SWC changes. No SWC packages, Vite plugins, build-script changes, or compiler PR were implemented; retain the existing Vite and tsc type-check workflow. Do not resume or schedule a SWC migration.
+
+Active feature remains PR #41, now being revised from individual spaces to Houses/rooms in a left/right workspace. Latest confirmed rules: each room has maximum capacity; capacity consumed is configured by pet category/type/weight group, with an admin-set per-pet override. A room hosts only one species at a time and may switch species between non-overlapping stays. No individual spaces. These supersede earlier room/space and simple pet-count proposals below.
+
+Current uncommitted code is an intermediate room-capacity revision (room maximum plus per-type costs), not the complete latest group/override model. Old tests/docs still require updating; do not claim the current revision is validated or complete. Preserve all saved local records and the 300 cloud-sourced pet photos. Continue locally, one feature PR at a time, with deployment deferred. Latest local preview was restored at localhost:4180, API8081, Auth9099, existing Firestore8085; seeder verified 300 photo-complete pets without remote writes.
+
+## Room/space map ready for local walkthrough — 2026-11-15
+
+PR #40 house management merged as GitHub-Verified `eed81685cca987db3482fe79c265d251af26ad30`, implementation `99864de` Verified, CI `43697139814` passed; no deployment. Current branch `feat/house-rooms-spaces` adds room/space configuration and a core House map entry, parent-scoped admin APIs, audited transaction/retry/version checks, explicit capacity/species/sharing/optional kg-lb limit and closure controls. No business configuration values seeded. Map is setup only; timed occupancy and booking compatibility enforcement remain later roadmap items.
+
+Build/API check and 14 unit tests pass. Seven integration cases pass with a fresh per-run `integration-*` emulator database. Earlier failures were accumulated prior-run test fixtures matching searches, resolved by per-run DB names; default photo-filled owner demo stays separate. All twelve browser cases have passed: nine unchanged cases in full run plus corrected three targeted cases (layout, houses, workspace). Workspace dialog race was fixed by awaiting hash-departure dialogs explicitly rather than attaching two handlers before the first async dialog. Screenshot `docs/screenshots/house-map-mobile-zh.png` visually reviewed. Real native local walkthrough for this room/space feature is NOT done: CUA returns `cgWindowNotFound` for Chrome and browser access host unavailable, despite Chrome process running. Asked owner to open a Chrome window via pending async question. Do not claim actual walkthrough or merge until completed; prior house and photo features had actual walkthroughs.
+
+Local frontend/API continue localhost:4180 / 127.0.0.1:8081 with isolated Auth9099/Firestore8085 and 300 photo-complete pets. `[TEST] Demo house` was created in the previous actual house walkthrough; preserve subsequent owner local edits. No remote writes/deployment in this feature. Draft PR #41 is open: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/41. Implementation `11314618355ea9eeaf7f65b613f6439f78300e3c` is GitHub Verified; CI `43738854061` passed. Keep it draft/unmerged while awaiting actual local review access. All code checks are complete; do not start another feature before finishing this PR. Unrelated `dist-dev/` and pending environment PR #24 remain untouched. User's original instruction to finish sequential PRs remains active; the current local review access issue and unanswered payment/business decisions must not be treated as feature completion.
+
 ## House management local feature — in progress 2026-11-15
 
 Branch `feat/manage-houses` rebased on merged photo-fixture PR #39 (`c560d3b23d733098d3f0c1697e13c9d9cf8ea179`, implementation `68a5b41`, both GitHub Verified, CI `43696211139` passed). No deployment after owner's local-first instruction. Photo-fixture changes are merged and local preview remains 300 photo-complete pets/100 families; cloud source inventory unchanged.
