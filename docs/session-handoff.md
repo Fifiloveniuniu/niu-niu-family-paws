@@ -1,5 +1,13 @@
 # Session handoff — 2026-10-22
 
+## Test photo library and cloud-only pet images — in progress 2026-11-15
+
+Owner steered sequential PR work to collecting hundreds of test photos, allowed datasets, confirmed supported species cat/dog/rabbit, and required no hardcoded pet photos. Existing unfinished house API work remains uncommitted on `feat/manage-houses` in the original workspace; preserve it. Photo change is isolated in `/tmp/family-paws-test-photo-library`, branch `chore/test-pet-photo-library`, based on merged docs PR #37 (`271212c`, GitHub Verified, CI passed). Only photo feature is active.
+
+Uploaded 300 licensed Wikimedia photographs (100 per species, roughly 15 MB) to existing private Oregon development bucket `gs://niu-niu-family-paws-dev-pet-photos/test-library/v1/`. Every object has remote size/MD5 verification; manifest records source/creator/license, SHA-256 and generations. Immutable cloud manifest: `test-library/v1/manifests/6c52bb0d5b52722e2f9962bea9c49e8dfe82a542aa3606811bb8a2a1a3fe1086.json`. Repository inventory `docs/test-assets/pet-photos.json`; scripts/usage in `docs/test-photo-library.md`. No customer/pet records assigned or changed, no IAM/Auth changes, no public URLs. Attribution must follow images into future fixture UI. Source bytes/prepared/contact sheets live outside git in `/tmp/family-paws-photo-assets`.
+
+Removed bundled Pexels sample and credit styling; pet cards use the existing authenticated GCS-backed API, with neutral bilingual placeholder when no photo is saved. Production build, API check, 9 existing unit tests and all 10 browser tests passed; new manifest integrity check is next. Actual signed-in localhost Chrome preview confirmed Alex's two photo-less test pets show placeholders. No business writes. Local preview on localhost:4177 plus API relay on 127.0.0.1:8080 uses production data; do not seed test-library assets there. PR/merge/deploy/live verification pending; do not call frontend delivered until completed.
+
 ## Sequential implementation authorized — 2026-11-15
 
 Owner now says “Finish all PRs. 1 PR at a time.” This supersedes planning-only instructions. Finish validation/merge/deploy/live checks before next feature. Added read-only customer preview and separately scoped customer impersonation to roadmap. Do not invent unresolved package/payment/capacity rules. Documentation baseline is the first PR; preserve unrelated `dist-dev/` and pending PR #24.

@@ -87,8 +87,6 @@ html[lang=zh-Hans] h1,html[lang=zh-Hans] h2{letter-spacing:0;line-height:1.25}
 .customer-directory-panel>.customer-list>li:has(.customer-select:focus-visible){outline:3px solid #b66c43;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.customer-directory-panel>.customer-list>li{transition:none}}
 
-.pet-photo-sample{position:relative}.sample-photo-credit{position:absolute;bottom:8px;right:8px;max-width:calc(100% - 16px);padding:3px 7px;border-radius:4px;background:#fffdf7ed;color:#293f35;font-size:11px;line-height:1.5}.sample-photo-credit:hover{text-decoration:underline}
-.pet-photo-sample>img{position:absolute;inset:0}
 
 .icon-button{display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;padding:10px;border:1px solid #c8d3c1;border-radius:8px;background:#fff;color:#31594c;cursor:pointer;line-height:1}
 .icon-button:hover{background:#edf2e7;border-color:#829c75}.icon-button:disabled{opacity:.6;cursor:wait}.icon-button svg{pointer-events:none}
