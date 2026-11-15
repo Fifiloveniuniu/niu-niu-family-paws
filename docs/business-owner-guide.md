@@ -134,3 +134,9 @@ Use the house-plus icon to add a sample house, the plus beside a house to add a 
 Customer / House / Room / Pet type / Status / Pet name filters combine. The reset-arrow icon clears them. Day / Weeks / Month / Year are tabs; arrow keys, Home and End switch views. Gear and plus icons have tooltips.
 
 房屋加号用于添加示例房屋，房屋旁的加号添加房间，宠物加号安排托管。请先在房间齿轮弹窗中配置容量和示例种类用量。选择宠物及到店、接回时间后，可查看可选房屋、房间及不可用原因。宠物旁的 × 仅移除安排，不删除示例宠物；在店宠物受保护。空房间和空房屋可在齿轮弹窗移除。日历修改仅保留在当前页面，离开或刷新后重置，不修改正式业务记录。客户、房屋、房间、种类、状态和宠物名字筛选可组合使用，重置箭头清空筛选。日、周、月、年使用标签切换，支持方向键、Home 和 End。
+
+## Choosing a room on the Add pet calendar (prototype)
+
+Choose a pet and enter arrival/pickup, then click an available room/date in the weekly calendar. Each date checks the entire stay starting on that date with the same local times and calendar-day length. Dark cells are unavailable and show why; they cannot be selected. Move between weeks to compare starting dates. Capacity overrides and manual room selection are under the expandable options. The selection summary shows final times before Add to preview.
+
+选择宠物并填写到店和接回时间后，在周日历中选择可用的房间和开始日期。每个日期检查从该日开始、当地时间和日历天数与上方一致的整个托管时段。深色格表示不可选，并显示原因。可切换周比较日期；容量覆盖值与手动选房收纳在展开选项中。添加前请核对选择摘要中的时间。
