@@ -12,7 +12,7 @@ import {linkStore,LinkUnavailable} from '../apps/api/src/linking.ts';
 if(process.env.FIRESTORE_EMULATOR_HOST!=='127.0.0.1:8085'||process.env.GCLOUD_PROJECT!=='demo-niu-niu') throw new Error('Isolated demo Firestore emulator required');
 test('account linking requires two parties, preserves records and rejects races, stale approvals and reused codes',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'},'link-'+randomUUID());t.after(()=>deleteApp(app));
-  const db=getFirestore(app),customers=firestoreStore(db),identity={uid:randomUUID(),email:'link-owner@example.test'};
+  const db=getFirestore(app,'integration-tests'),customers=firestoreStore(db),identity={uid:randomUUID(),email:'link-owner@example.test'};
   let now=Date.now(),verified=true,verifiedEmail=identity.email;
   const links=linkStore(db,async uid=>{if(!verified)throw new Error('Disabled');return {uid,email:verifiedEmail};},()=>now);
   const c=await customers.save(randomUUID(),{name:'Original customer',email:'contact@example.test',phone:'123',language:'zh',version:0},'admin');
@@ -58,7 +58,7 @@ test('account linking requires two parties, preserves records and rejects races,
 });
 test('multiple pets share canonical ownership, private photos, audited retries and administrator search',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'},'pets-'+randomUUID());t.after(()=>deleteApp(app));
-  const db=getFirestore(app), customers=firestoreStore(db), files=new Map();
+  const db=getFirestore(app,'integration-tests'), customers=firestoreStore(db), files=new Map();
   const store=petStore(db,{put:async(key,bytes)=>files.set(key,bytes),get:async key=>files.get(key)});
   const owner={uid:randomUUID(),email:'pet-owner@example.test',google:true,email_verified:true};
   const other={...owner,uid:randomUUID()}, admin={...other,admin:true};
@@ -97,7 +97,7 @@ test('multiple pets share canonical ownership, private photos, audited retries a
 test('Firestore saves are audited, retry-safe, concurrency-safe and searchable before pagination',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'});
   t.after(()=>deleteApp(app));
-  const db=getFirestore(app);
+  const db=getFirestore(app,'integration-tests');
   const store=firestoreStore(db);
   const id=randomUUID();
   const input={name:'Alice Chen',email:'alice@example.test',phone:'',language:'zh',version:0};
@@ -134,7 +134,7 @@ test('Firestore saves are audited, retry-safe, concurrency-safe and searchable b
 test('self-registration has one canonical profile across retries and roles, without claiming existing records',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'},'profile-'+randomUUID());
   t.after(()=>deleteApp(app));
-  const db=getFirestore(app), store=firestoreStore(db);
+  const db=getFirestore(app,'integration-tests'), store=firestoreStore(db);
   const owner={uid:'profile-'+randomUUID(),email:'verified-owner@example.test'};
   const other={uid:'other-'+randomUUID(),email:'other@example.test'};
   const unlinked=await store.save(randomUUID(),{name:'Same Name',email:owner.email,phone:'',language:'en',version:0},'admin');
@@ -170,7 +170,7 @@ test('self-registration has one canonical profile across retries and roles, with
 
 test('licensed fixture photo attribution survives rename and clears when a new photo replaces it',async t=>{
   const app=initializeApp({projectId:'demo-niu-niu'},'credits-'+randomUUID());t.after(()=>deleteApp(app));
-  const db=getFirestore(app),customers=firestoreStore(db),identity={uid:randomUUID(),email:'credits@example.test',google:true,email_verified:true};
+  const db=getFirestore(app,'integration-tests'),customers=firestoreStore(db),identity={uid:randomUUID(),email:'credits@example.test',google:true,email_verified:true};
   const customer=await customers.saveProfile(identity,{name:'Local photo sample',language:'en',version:0});
   const photos=new Map(),store=petStore(db,{put:async(k,b)=>photos.set(k,b),get:async k=>photos.get(k)}),id=randomUUID();
   await store.save(identity,customer.id,id,{name:'Test pet',version:0});
@@ -179,4 +179,17 @@ test('licensed fixture photo attribution survives rename and clears when a new p
   const renamed=await store.save(identity,customer.id,id,{name:'Renamed test pet',version:1});assert.deepEqual(renamed.photoCredit,credit);
   const image=await sharp({create:{width:20,height:20,channels:3,background:'#223344'}}).png().toBuffer();
   const replaced=await store.save(identity,customer.id,id,{name:renamed.name,version:renamed.version,photoData:image.toString('base64')});assert.equal(replaced.photoCredit,undefined);
+});
+
+test('house edits preserve stable IDs, retry once, audit actors and reject conflicting versions',async t=>{
+  const {houseStore}=await import('../apps/api/src/houses.ts');
+  const app=initializeApp({projectId:'demo-niu-niu'},'houses-'+randomUUID());t.after(()=>deleteApp(app));
+  const db=getFirestore(app,'integration-tests'),store=houseStore(db),id=randomUUID(),body={name:'Local test house',address:'',timezone:'America/Los_Angeles',version:0};
+  const first=await store.save(id,body,'admin-one');assert.equal(first.id,id);assert.equal(first.version,1);
+  assert.deepEqual(await store.save(id,body,'admin-one'),first);
+  const edits=await Promise.allSettled([store.save(id,{...body,name:'House A',version:1},'admin-one'),store.save(id,{...body,name:'House B',version:1},'admin-two')]);
+  assert.equal(edits.filter(r=>r.status==='fulfilled').length,1);assert.equal(edits.filter(r=>r.status==='rejected'&&r.reason instanceof Conflict).length,1);
+  assert.equal((await db.doc('houses/'+id).collection('history').get()).size,2);
+  const audit=(await db.doc(`houses/${id}/history/2`).get()).data();assert.ok(['admin-one','admin-two'].includes(audit.actor));assert.equal(audit.before.name,body.name);
+  assert.ok((await store.list()).items.some(h=>h.id===id&&h.version===2));
 });

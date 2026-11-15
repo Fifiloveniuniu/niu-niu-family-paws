@@ -35,3 +35,9 @@ Keep secrets in Secret Manager. Production customer data, tokens, and credential
 Account linking is deployed: a 24-hour hash-only one-time code allows a verified Google identity to request access to an unclaimed customer; a current administrator must verify and approve the request. Approval rechecks the target Auth account and reviewed record versions, then atomically adds canonical ownership/mapping and actor/effective-UID audit records without moving pets or photos. Existing personal profiles are not merged. Runtime IAM remains unchanged. See `docs/account-linking.md`.
 
 Test authorization boundaries, duplicate submission handling, concurrent balance updates, correction behavior, reminder retry/deduplication, timezone handling, bilingual forms, and mobile handoff workflows. Configure logs to avoid customer data and credentials. Separate development/test data from production.
+
+## House configuration (local feature)
+
+Admin-only `/api/houses` GET and `/api/houses/{id}` PUT use canonical `houses/{id}` records, stable UUIDs, named IANA timezones, transactional versions and `history/{version}` actual-actor audit entries. Identical retries do not duplicate history; conflicting updates return 409. Houses are not yet deployed and do not imply approved addresses, capacities, rooms or booking rules. No deletion/archiving policy is introduced.
+
+Local fixture API uses demo Auth/Firestore and a disposable photo cache sourced from private dev GCS; production uses its existing private bucket. Integration tests use the emulator's separate `integration-tests` database to avoid adding partial fixtures to the owner’s default demo preview. Test-mode frontend proxy always targets local demo API port 8081, never the production relay.

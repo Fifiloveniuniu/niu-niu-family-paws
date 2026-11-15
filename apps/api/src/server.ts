@@ -3,6 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { localPhotos } from './local-photos.ts';
+import { houseStore } from './houses.ts';
 import { petStore } from './pets.ts';
 import { buildApp } from './app.ts';
 import { firestoreStore } from './store.ts';
@@ -28,6 +29,7 @@ const app = buildApp({
       email: user.email,
     };
   },
+  houses: houseStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(),async uid=>{
     const user = await auth.getUser(uid);

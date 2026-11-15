@@ -12,6 +12,8 @@
       }
     },
     "schemas": {
+      "HouseWrite": {"type": "object", "additionalProperties": false, "required": ["name", "address", "timezone", "version"], "properties": {"name": {"type": "string", "minLength": 1, "maxLength": 120}, "address": {"type": "string", "maxLength": 500}, "timezone": {"type": "string", "minLength": 1, "maxLength": 100}, "version": {"type": "integer", "minimum": 0}}},
+      "House": {"allOf": [{"$ref": "#/components/schemas/HouseWrite"}, {"type": "object", "required": ["id", "createdAt", "updatedAt"], "properties": {"id": {"type": "string", "format": "uuid"}, "createdAt": {"type": "string"}, "updatedAt": {"type": "string"}}}]},
       "LinkState": {
         "type": "object", "additionalProperties": false, "required": ["status", "version", "customerVersion"],
         "properties": {"status": {"type": "string", "enum": ["none", "open", "requested", "approved", "rejected", "cancelled", "expired"]}, "version": {"type": "integer", "minimum": 0}, "customerVersion": {"type": "integer", "minimum": 1}, "customerName": {"type": "string"}, "expiresAt": {"type": "string"}, "requestedEmail": {"type": "string"}}
@@ -192,6 +194,8 @@
     }
   ],
   "paths": {
+    "/api/houses": {"get": {"summary": "List houses (administrator only)", "responses": {"200": {"description": "Houses", "content": {"application/json": {"schema": {"type": "object", "required": ["items"], "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/House"}}}}}}}}}},
+    "/api/houses/{id}": {"put": {"summary": "Create or edit a house (administrator only)", "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HouseWrite"}}}}, "responses": {"200": {"description": "Saved house", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/House"}}}}}}},
     "/api/account-link": {
       "get": {"summary": "Read own linking request status", "security": [{"firebase": []}], "responses": {"200": {"description": "Own status only, no unapproved customer data"}, "403": {"description": "Verified Google identity required"}}},
       "post": {"summary": "Submit one-time linking code with verified Google identity", "security": [{"firebase": []}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/LinkCode"}}}}, "responses": {"200": {"description": "Request awaits administrator approval"}, "409": {"description": "Code unavailable or identity already has a profile"}, "429": {"description": "Rate limited"}}}

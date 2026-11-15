@@ -102,3 +102,9 @@ Editing customers and pets, adding them, and linking Google accounts open in foc
 Codex can open **http://localhost:4180/#/login**, an isolated local test environment with 100 fake families and 300 pets, all with cloud-sourced sample photos. Use the Auth Emulator account `local-admin@example.test`; no real Google password is needed. Search `[TEST / 测试] Family 001` to see a cat, dog, and rabbit. Changes here stay local. The yellow LOCAL TEST banner distinguishes it from the live site. Codex manages the servers and setup.
 
 本地照片测试页面：**http://localhost:4180/#/login**。使用模拟账号 `local-admin@example.test`，不需要真实 Google 密码。搜索 `[TEST / 测试] Family 001`，可查看猫、狗、兔子的示例照片。这里的修改仅保存在本地，不影响线上真实客户。黄色“本地测试”提示可帮助区分环境，服务器由 Codex 管理。
+
+## Managing houses (local development)
+
+Administrators choose **Houses** in Workspace, then **Add house**. Enter the house name, optional address, and its local time zone, then save. Use **Show house** to see all houses or one location; the pencil icon edits it. The site does not publish addresses or invent location details. Rooms/spaces and booking occupancy are separate upcoming features. Changes currently remain in the isolated local preview; deployment is deferred until the requested feature set is complete.
+
+管理员在“切换页面”中选择“房屋”，点击“添加房屋”，填写名称、可选地址和当地时区后保存。通过“显示房屋”选择全部或一处房屋，点击铅笔图标修改资料。这里不会公开地址。房间、空间与预约占用安排将分别完成，目前只在本地测试，所有功能完成后再上线。
