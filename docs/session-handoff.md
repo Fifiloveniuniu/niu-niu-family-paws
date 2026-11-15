@@ -1,5 +1,94 @@
 # Session handoff — 2026-10-22
 
+## Calendar prototype review record — 2026-11-15
+
+PR #42: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/42 is the authoritative review/merge record for the locally reviewed calendar prototype, placement controls, customer filter, date tabs and icon refinements. Implementation `c162c02fd80c6d4e2348d5e6127f264b9959f275` is GitHub Verified; carried planning commit `9c76bdb` is also Verified. Production build, API type check, 17 unit tests and all 13 browser tests passed. Hosted delivery remains deferred; this is dev-only preview UI, with production Houses navigation retained. Room WIP #41 remains untouched. Consult PR checks/state before continuing; routine merge is authorized after CI passes.
+
+## Placement controls, customer filter and calendar tabs — 2026-11-15
+
+Added in-memory prototype house/room creation and empty-only removal, timed pet placement/removal, optional per-placement usage override and explicit illustrative dog/cat/rabbit room usage rules. Existing sample stays use one labelled illustrative capacity unit; actual business values remain unset. Placement checks all overlapping intervals for peak concurrent weighted capacity, same-species occupancy, duplicate pet stays across houses and overdue unknown release; unconfigured rooms are disabled with reasons. Back-to-back stays are blocked pending turnover policy. Placement removal preserves the sample roster; in-care pets cannot be removed. Rooms with placements and houses with rooms cannot be removed; capacity edits cannot go below current peak assigned usage. No real booking/balance/handoff writes or room WIP imported. Local page state resets when leaving/reloading.
+
+Latest owner refinement adds Customer filter (explicit sample families), combined/reset behavior, Day/Weeks/Month/Year ARIA tabs with arrow/Home/End keyboard navigation, and tooltip-labelled SVG icons for secondary add/settings/reset actions. Customer detail appears in stay dialog and pet-name tooltip. Actual native localhost Chrome shows new filter, tabs and icons; previously observed timed placement dialog too.
+
+Production build and all 17 unit tests pass. Three focused browser cases pass: full create/configure/place/remove lifecycle with guards/disabled choices/Chinese mobile, customer+status filtering/reset and keyboard tabs, and existing saved-house dialog flow including retry and discard protection. Existing house browser test adapted to calendar entry/setup nesting. All 13 browser cases pass on the project-supported Node 24 runtime (Node 22 full-suite collection hit a module-loader error; rerun on Node 24 succeeded). No deployment; local frontend 4180/API8081/Auth9099/Firestore8085 remain separate from production. New files: calendar-assignment.tsx, calendar-placement.ts, calendar settings and calendar UI; tests/calendar-placement.test.mjs and tests/browser/calendar.spec.ts. Review/merge tracked in PR #42 (see entry above).
+
+## Direct settings forms and calendar filters — 2026-11-15
+
+Owner requested direct house/room settings in icon-opened modal, removing the secondary Manage saved houses hop, plus dedicated filters. Added `calendar-settings.tsx`: house name/address/timezone and room name/optional maximum weighted capacity are editable directly, with Apply to preview and discard protection. Values are explicit in-memory prototype settings only, reflected in calendar names/filter options; no real records mapped/written and no capacity enforcement/group defaults invented. Browser timezone still drives sample timeline and form says house timezone conversion is not connected. Existing saved-house management remains separate top-level management action.
+
+Dedicated Filters section has house, house-scoped room, species, actual status/overdue and pet name; Clear filters resets all. Changing house resets room selection. Timeline scale moved beside date navigation. Build/type check and automated Chrome checks cover direct forms/apply/retained preview values, discard protection, combined filters/reset and Chinese mobile layout. Native actual localhost Chrome observed direct House settings form; subsequent click timed out, so do not overstate native walkthrough. Screenshots updated. No deployment.
+
+## Contextual calendar settings icons — 2026-11-15
+
+Added gear icons beside every sample house and room, with bilingual tooltips and accessible names identifying house/room. Room settings is a separate button from collapse. Icons open focused context dialogs; sample locations explicitly remain unlinked to saved records, room capacity/group controls remain WIP. Administrators can continue to Manage saved houses; no invented sample-to-real mapping or business writes. Added shared settings SVG icon. Build and automated desktop/mobile bilingual checks pass for both dialogs and room-collapse independence. Actual native localhost Chrome confirmed row icons and opened Room settings for Sample house A / Room 1. Screenshot `docs/screenshots/calendar-room-settings-mobile-zh.png`. No deployment.
+
+## Calendar contains house setup — 2026-11-15
+
+Owner approved replacing separate Houses navigation with House calendar, with Manage houses & rooms opening a focused setup dialog. Implemented in local dev UI: administrator Workspace now has Customers / House calendar prototype / My profile; calendar management dialog reuses existing house list/Add/Edit and server authorization. Room setup explicitly remains in progress; no PR #41 WIP imported. Saved house configuration remains distinct from fictional calendar rows. Direct prototype access offers Sign in to manage houses when no administrator claim is present. Existing production Houses navigation is retained until the dev-only calendar is ready for production, preserving access during deferred delivery.
+
+Build passed. Automated local Chrome checks cover authenticated navigation, setup dialog, nested editor and cancel/discard protection, plus Chinese mobile layout. Actual native localhost Chrome clicked Workspace → House calendar → Manage houses & rooms and visibly confirmed preserved [TEST] Demo house, Add house and Edit house. No business writes. New screenshot `docs/screenshots/calendar-setup-mobile-zh.png`. No deployment.
+
+## Calendar visual cleanup — 2026-11-15
+
+Owner requested cleaner whole UI in the active house calendar prototype. Simplified header and prototype notice, tightened spacing/rows/controls, softened grid/status surfaces, removed repeated pet names inside bars and duplicate bottom Now badge. Bars show stay dates (overdue bars retain explicit warning); status remains beside pet names and detail dialog remains available. Preserved foreground continuous Now overlay/badge below dates. Build and automated Chrome desktop/mobile English/Chinese control/detail/filter checks pass; no runtime errors/page overflow. Actual native localhost Chrome accessibility preview confirms updated calendar. Screenshots updated. No deployment or merge yet.
+
+## Now badge visibility — 2026-11-15
+
+Moved top Now badge into the same foreground overlay as its line, with an opaque background and white outline. It stays below date numbers and above all timeline rows, avoiding separate header stacking that hid the earlier badge. Type check and local Chrome render check pass; desktop screenshot updated.
+
+## Now label below dates — 2026-11-15
+
+Owner requested preserving visible date labels. Added a separate strip below date numbers for the Now badge; continuous overlay begins below the dates so it cannot cross date text. Local-only prototype refinement.
+
+## Now marker layering refinement — 2026-11-15
+
+Owner requested Now line on top, then clarified remaining lines/headers were still above it. Calendar now uses one pointer-transparent overlay spanning the full grid (including house/room header rows), stacked above those rows and stay bars, with a Now label at the top axis. Type check passes. Local prototype only; no deployment.
+
+## Local backend restarted — 2026-11-15
+
+Owner requested starting backend. API now runs on 127.0.0.1:8081 with isolated demo configuration; `/health` returns `{"ok":true}`. Existing Firestore emulator on 8085 was left running with all records untouched. Started missing Auth emulator on 9099 and restored only the two documented demo identities (local-demo-admin/local-demo-customer) with their existing test roles; did not run the data/photo seeder. Current shell Node is 22.17.0, so API is running with `--experimental-strip-types` (normal project script assumes Node 24). No package/tooling changes. Local frontend remains localhost:4180. Owner may need to sign in again because restarted Auth emulator has new sessions. No production changes.
+
+## House calendar UI entry — 2026-11-15
+
+Added owner-requested dev-only **House calendar · Prototype / 房屋日历 · 原型** link in administrator Workspace, alongside Houses, plus bilingual **Back to workspace** link inside the calendar. Existing hash-departure unsaved-change confirmation applies. Production navigation stays unchanged while prototype is local-only. Build passes. Native Chrome now works through app accessibility (browser-tab host still unavailable); observed actual localhost calendar and used its Back to workspace link successfully. Existing local-admin session is currently denied with connection error because local Auth/API services are unavailable; could not yet click the administrator entry in an authenticated actual session. Do not reset/reseed saved emulator data to solve this. Required full walkthrough/PR merge remains pending. No deployment.
+
+## House calendar UX prototype — 2026-11-15
+
+Owner requested a house calendar prototype: House → Room → Pet rows with a horizontal date timeline, day/weeks/month/year scale, Now marker and actual check-in status. Implemented a dev-only `http://localhost:4180/#/house-calendar` route on `feat/calendar-balances`, with explicitly fictional inline sample stays, house/pet filters, collapsible rooms, date navigation, focused stay-detail dialog and English/Chinese responsive UI. Initials are used instead of inventing pet photos; no saved pet records or business configuration are created. No room WIP imported, business APIs called, attendance actions or balance/payment rules implemented. Browser-local timezone is explicitly labelled as sample timezone. Year view is an illustrative overview, not a booking engine.
+
+Production build passes. Automated headless Chrome checks cover desktop/mobile, both languages, scale switching, period navigation/Today, pet search, house filtering, room collapse and stay detail dialog. Screenshots: `docs/screenshots/house-calendar-desktop.png` and `docs/screenshots/house-calendar-mobile-zh.png`. Native actual owner Chrome walkthrough remains blocked: CUA reports browser access host unavailable; Chrome DevTools also did not return promptly. Do not claim the required actual walkthrough is complete. Prototype remains unmerged and undeployed pending that walkthrough; no commit/PR created yet. Local Vite preview runs at localhost:4180; prototype needs no API or sign-in. Preserve unrelated `dist-dev/` and WIP PR #41.
+
+
+## Clean calendar/balance branch created — 2026-11-15
+
+Current branch: `feat/calendar-balances`, created from `origin/main` after requirements were consolidated. Only updated requirements, architecture, roadmap, owner guide and handoff are carried forward; no unfinished room API/UI/contracts/helpers are included. No calendar/balance implementation has started in this checkpoint.
+
+Room WIP is safely committed/pushed on `feat/house-rooms-spaces` as `f42160ea9b6497d3646a093f3d6f9262fff7a04d` (GitHub Verified). PR #41 remains draft and is titled “WIP: room capacity and Houses layout”; do not merge or resume it until requested. WIP code is intentionally not claimed validated against latest requirements. The old local preview follows whichever branch is checked out, so it no longer displays the unmerged room revision. Saved demo data/photos and untracked `dist-dev/` are preserved; no reset or deployment performed.
+
+Next: scope the first calendar/balance milestone using `docs/requirements.md`, distinguishing safe record/UI foundations from unresolved payment, day-counting, package activation and refund behavior. Keep the workstream split into focused feature PRs, with one final deployment after completion. SWC remains cancelled.
+
+## Owner changes focus to calendar/balances; record requirements first — 2026-11-15
+
+Owner explicitly says to treat current changes as WIP and start a new branch for calendar and balance management, then requires recording all requirements first. This supersedes the earlier instruction to finish PR #41 before starting another feature. Consolidated `docs/requirements.md` into confirmed requirements, proposed UX, current delivery instructions and unresolved decisions; updated architecture, delivery plan and owner guide. Latest room model includes maximum capacity, type/category/weight group consumption, per-pet admin override, one species at a time and non-overlapping species switches; no individual spaces. SWC is cancelled.
+
+Preserve committed PR #41 and the intermediate uncommitted room revision on `feat/house-rooms-spaces`; mark it WIP/unmerged. It does not implement the latest group/override model, and its old tests are not current. New work must branch from main and carry only these planning documents, not room code. Preserve untracked `dist-dev/`, pending PR #24, local demo records/photos and any owner edits. No deployment or business-data reset is needed for this branch change. Exact WIP and new-branch commit references will be recorded after the checkpoint is created.
+
+## Latest steering: room capacity; SWC cancelled — 2026-11-15
+
+Owner explicitly dropped the SWC changes. No SWC packages, Vite plugins, build-script changes, or compiler PR were implemented; retain the existing Vite and tsc type-check workflow. Do not resume or schedule a SWC migration.
+
+Active feature remains PR #41, now being revised from individual spaces to Houses/rooms in a left/right workspace. Latest confirmed rules: each room has maximum capacity; capacity consumed is configured by pet category/type/weight group, with an admin-set per-pet override. A room hosts only one species at a time and may switch species between non-overlapping stays. No individual spaces. These supersede earlier room/space and simple pet-count proposals below.
+
+Current uncommitted code is an intermediate room-capacity revision (room maximum plus per-type costs), not the complete latest group/override model. Old tests/docs still require updating; do not claim the current revision is validated or complete. Preserve all saved local records and the 300 cloud-sourced pet photos. Continue locally, one feature PR at a time, with deployment deferred. Latest local preview was restored at localhost:4180, API8081, Auth9099, existing Firestore8085; seeder verified 300 photo-complete pets without remote writes.
+
+## Room/space map ready for local walkthrough — 2026-11-15
+
+PR #40 house management merged as GitHub-Verified `eed81685cca987db3482fe79c265d251af26ad30`, implementation `99864de` Verified, CI `43697139814` passed; no deployment. Current branch `feat/house-rooms-spaces` adds room/space configuration and a core House map entry, parent-scoped admin APIs, audited transaction/retry/version checks, explicit capacity/species/sharing/optional kg-lb limit and closure controls. No business configuration values seeded. Map is setup only; timed occupancy and booking compatibility enforcement remain later roadmap items.
+
+Build/API check and 14 unit tests pass. Seven integration cases pass with a fresh per-run `integration-*` emulator database. Earlier failures were accumulated prior-run test fixtures matching searches, resolved by per-run DB names; default photo-filled owner demo stays separate. All twelve browser cases have passed: nine unchanged cases in full run plus corrected three targeted cases (layout, houses, workspace). Workspace dialog race was fixed by awaiting hash-departure dialogs explicitly rather than attaching two handlers before the first async dialog. Screenshot `docs/screenshots/house-map-mobile-zh.png` visually reviewed. Real native local walkthrough for this room/space feature is NOT done: CUA returns `cgWindowNotFound` for Chrome and browser access host unavailable, despite Chrome process running. Asked owner to open a Chrome window via pending async question. Do not claim actual walkthrough or merge until completed; prior house and photo features had actual walkthroughs.
+
+Local frontend/API continue localhost:4180 / 127.0.0.1:8081 with isolated Auth9099/Firestore8085 and 300 photo-complete pets. `[TEST] Demo house` was created in the previous actual house walkthrough; preserve subsequent owner local edits. No remote writes/deployment in this feature. Draft PR #41 is open: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/41. Implementation `11314618355ea9eeaf7f65b613f6439f78300e3c` is GitHub Verified; CI `43738854061` passed. Keep it draft/unmerged while awaiting actual local review access. All code checks are complete; do not start another feature before finishing this PR. Unrelated `dist-dev/` and pending environment PR #24 remain untouched. User's original instruction to finish sequential PRs remains active; the current local review access issue and unanswered payment/business decisions must not be treated as feature completion.
+
 ## House management local feature — in progress 2026-11-15
 
 Branch `feat/manage-houses` rebased on merged photo-fixture PR #39 (`c560d3b23d733098d3f0c1697e13c9d9cf8ea179`, implementation `68a5b41`, both GitHub Verified, CI `43696211139` passed). No deployment after owner's local-first instruction. Photo-fixture changes are merged and local preview remains 300 photo-complete pets/100 families; cloud source inventory unchanged.

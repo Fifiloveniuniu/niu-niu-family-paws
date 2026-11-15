@@ -1,6 +1,6 @@
 # Booking and multi-house delivery plan
 
-Planning only — 2026-11-15. Owner has now authorized completing the PR sequence one PR at a time, including validation, merge and deployment. Do not invent unresolved business rules; complete independent work while requesting required decisions. Source: [requirements](requirements.md#booking-packages-and-multi-house-ux--owner-planning-2026-11-15).
+Updated focus — 2026-11-15. Owner requested a clean calendar/balance branch and preservation of house/room changes as WIP. Requirements must be recorded first. Continue one feature PR at a time with one final deployment. Do not invent unresolved business rules; complete independent work while requesting required decisions. Source: [requirements](requirements.md#booking-packages-and-multi-house-ux--owner-planning-2026-11-15).
 
 ## Delivery discipline
 
@@ -12,9 +12,15 @@ For implementation: resolve each feature's blocking decisions first; preview the
 
 Customer navigation: My pets, Calendar, Packages. Admin navigation: Overview, Calendar, House map. Customers, Pricing & rules, Employee access, and setup belong in secondary management navigation. Employees see a scoped daily arrivals/pickups view.
 
-House map is a core destination, not an optional enhancement. Select a house and date/time (default now), inspect named rooms/spaces and pets, and switch to the space timeline without losing context. Provide tap/click assignment actions and a readable mobile room list; no required dragging or hover. Customers see suitable availability without internal placements or other customer records.
+House map is a core destination, not an optional enhancement. Select a house and date/time (default now), inspect named rooms and pets, and switch to the room timeline without losing context. Provide tap/click assignment actions and a readable mobile room list; no required dragging or hover. Customers see suitable availability without internal placements or other customer records.
 
 Every UI release must support a common task with clear primary actions, plain language, sensible defaults, contextual details, cost/refund previews before commitment, and recoverable errors that preserve inputs. Walk through actual tasks locally in Chrome and simplify confusing or unnecessary steps before release.
+
+## Immediate calendar/balance focus
+
+Start `feat/calendar-balances` from current main, carrying only updated requirement/handoff/planning documents. Do not base it on draft house PR #41. Preserve existing local demo data/photos; no resets or production writes just to change branches.
+
+First scope the smallest usable calendar/balance milestone from the confirmed requirements: per-pet/combined service dates, planned versus actual times, package validity/eligible months, balances and auditability. Resolve day-counting, payment confirmation, reservation/consumption and refund blockers before consequential behavior. No arbitrary prices, group capacities, automatic approvals or refund defaults. Keep one feature per PR; this branch name is a workstream, not authorization to combine every workflow into one PR. SWC is cancelled.
 
 ## Proposed PR and commit sequence
 
@@ -33,12 +39,11 @@ Each numbered item is one PR/local milestone; deploy the integrated features onc
 - `test: verify house access and responsive management`
 - Outcome: admins can create/edit houses and select one. Needs actual timezone/address requirements and archive behavior.
 
-### 2. Manage rooms, spaces, and constraints
+### 2. House/room capacity — WIP, explicitly paused
 
-- `feat: add room and space configuration with validation`
-- `feat: add house layout and constraint editing`
-- `test: verify capacity rules and house isolation`
-- Outcome: a usable house setup/map with spaces and closures. Needs approved capacity and constraint model; occupancy arrives with bookings.
+- PR #41 remains draft; preserve both committed work and the uncommitted intermediate revision on its existing branch.
+- Final requested model: House → Room; no managed individual spaces. Left/right Houses layout, maximum room capacity, capacity by category/type/weight group, per-pet override, one species per room at a time, species switches between non-overlapping stays.
+- Current intermediate code is not the final approved model and is not validated after recent edits. Do not merge or import it into the new calendar/balance branch.
 
 ### 3. Record and approve pet weight
 
@@ -78,9 +83,9 @@ Each numbered item is one PR/local milestone; deploy the integrated features onc
 ### 8. Show bookings on the dynamic house map
 
 - `feat: add timed occupancy and assignment validation`
-- `feat: add house map and linked space timeline`
+- `feat: add house map and linked room timeline`
 - `test: verify interval conflicts and responsive map actions`
-- Outcome: core House map destination showing planned occupancy at a selected time, unassigned pets, space schedules, assignment/move dialogs, and a mobile room list. Retain valid initial allocations from PR 7; never silently move confirmed bookings. Needs movement and compatibility policies.
+- Outcome: core House map destination showing planned occupancy at a selected time, unassigned pets, room schedules, assignment/move dialogs, and a mobile room list. Retain valid initial allocations from PR 7; never silently move confirmed bookings. Needs movement and compatibility policies.
 
 ### 9. Record actual arrivals and pickups
 
@@ -126,7 +131,7 @@ Each numbered item is one PR/local milestone; deploy the integrated features onc
 
 ### 15. Placement assistance (optional, after workflow review)
 
-- `feat: suggest compatible space placements with reasons`
+- `feat: suggest compatible room placements with reasons`
 - `feat: add admin review and apply placement suggestions`
 - `test: verify suggestions respect all constraints`
 - Outcome: reviewed suggestions to improve capacity; no automatic movement or promised optimum. Algorithm objectives and owner approval required before starting.

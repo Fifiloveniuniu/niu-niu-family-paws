@@ -110,13 +110,14 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
           <p className="eyebrow">{t.workspace}</p>
           <div className="workspace-buttons" role="group" aria-label={t.workspace}>
             <button className="language" aria-pressed={workspace==='customers'} onClick={() => setWorkspace('customers')}>{t.manage}</button>
-            <button className="language" aria-pressed={workspace==='houses'} onClick={() => setWorkspace('houses')}>{chinese?'房屋':'Houses'}</button>
+            {!import.meta.env.DEV && <button className="language" aria-pressed={workspace==='houses'} onClick={() => setWorkspace('houses')}>{chinese?'房屋':'Houses'}</button>}
+            {import.meta.env.DEV && <a className="language" href="#/house-calendar">{chinese?'房屋日历 · 原型':'House calendar · Prototype'}</a>}
             <button className="language" aria-pressed={personal} onClick={() => setWorkspace('personal')}>{t.personal}</button>
           </div>
 
         </section>
         <div hidden={workspace!=='customers'}><Customers key={user?.uid} refreshKey={directoryRefresh}/></div>
-        <div hidden={workspace!=='houses'}><Houses key={user?.uid}/></div>
+        {!import.meta.env.DEV && <div hidden={workspace!=='houses'}><Houses key={user?.uid}/></div>}
       </>}
       {(access === 'admin' || access === 'customer' || access === 'employee') && <div hidden={access === 'admin' && !personal}><Profile key={user?.uid} onSaved={() => setDirectoryRefresh(value => value + 1)}/></div>}
       <p className="portal-session">{t.session}</p>

@@ -108,3 +108,29 @@ Codex can open **http://localhost:4180/#/login**, an isolated local test environ
 Administrators choose **Houses** in Workspace, then **Add house**. Enter the house name, optional address, and its local time zone, then save. Use **Show house** to see all houses or one location; the pencil icon edits it. The site does not publish addresses or invent location details. Rooms/spaces and booking occupancy are separate upcoming features. Changes currently remain in the isolated local preview; deployment is deferred until the requested feature set is complete.
 
 管理员在“切换页面”中选择“房屋”，点击“添加房屋”，填写名称、可选地址和当地时区后保存。通过“显示房屋”选择全部或一处房屋，点击铅笔图标修改资料。这里不会公开地址。房间、空间与预约占用安排将分别完成，目前只在本地测试，所有功能完成后再上线。
+
+## Setting up the house map (local development)
+
+Choose **House map**, then choose a house. The first saved house opens automatically; **All houses** shows the location list and **Open map** opens one location. **Add room** creates a room; **Add space** inside it defines a usable space.
+
+For each space, enter its name, choose the sharing rule, enter capacity, select allowed pet types and optionally set a weight limit in kg or lb. **One pet** sets capacity to one. Tap a space to edit it; the room pencil edits its name or closes the whole room. Closed rooms/spaces are labelled and shaded. These settings are entered by you; sample test values are not your business policy. The map currently configures spaces; timed bookings/occupancy will follow in separate PRs.
+
+选择“房屋地图”并选择房屋，点击“添加房间”，再在房间内“添加空间”。填写名称、共用规则、容量、允许的宠物种类，以及可选体重上限（kg 或 lb）。“单只宠物”会将容量设为 1。点击空间修改规则；房间旁的铅笔可修改名称或关闭整个房间。关闭的区域会有文字标记。目前用于配置空间，预约时段与占用情况将在后续独立功能中完成。
+
+## Current planning focus — 2026-11-15
+
+Calendar and balance management is the next focus on a clean branch. The house/room screen is work in progress. Its latest design is houses/rooms on the left and room capacity on the right; each room holds one species at a time, can change species between non-overlapping stays, and uses group-based pet capacity with individual admin overrides. Earlier individual-space instructions describe a superseded draft. No SWC migration is planned. Changes stay local until the requested features are complete.
+
+## House calendar navigation (local prototype)
+
+Choose **House calendar · Prototype** in Workspace, then **Manage houses & rooms** to open house setup. Add/Edit house use the existing saved house records. Room setup is still being developed; the calendar itself shows labelled example stays. The separate Houses tab is removed from the local preview.
+
+在工作区选择“房屋日历 · 原型”，再点击“管理房屋与房间”打开设置弹窗。添加和编辑房屋使用原有保存的记录。房间设置仍在开发中，日历显示的是已标注的示例托管安排。本地预览不再单独显示“房屋”标签。
+
+## Trying calendar placement (local prototype)
+
+Use the house-plus icon to add a sample house, the plus beside a house to add a room, and the pet-plus icon to add a timed pet stay. Configure the room’s maximum capacity and sample pet-type usage in its gear dialog first. Select pet and arrival/pickup times to see available houses/rooms and explanations for unavailable ones. The × beside a pet removes its placement while keeping the sample pet profile; in-care pets are protected. Empty rooms/houses can be removed in their gear dialogs. All these calendar changes stay on the current page and reset when leaving or reloading. They do not change saved business records.
+
+Customer / House / Room / Pet type / Status / Pet name filters combine. The reset-arrow icon clears them. Day / Weeks / Month / Year are tabs; arrow keys, Home and End switch views. Gear and plus icons have tooltips.
+
+房屋加号用于添加示例房屋，房屋旁的加号添加房间，宠物加号安排托管。请先在房间齿轮弹窗中配置容量和示例种类用量。选择宠物及到店、接回时间后，可查看可选房屋、房间及不可用原因。宠物旁的 × 仅移除安排，不删除示例宠物；在店宠物受保护。空房间和空房屋可在齿轮弹窗移除。日历修改仅保留在当前页面，离开或刷新后重置，不修改正式业务记录。客户、房屋、房间、种类、状态和宠物名字筛选可组合使用，重置箭头清空筛选。日、周、月、年使用标签切换，支持方向键、Home 和 End。
