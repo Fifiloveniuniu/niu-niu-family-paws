@@ -1,5 +1,11 @@
 # Session handoff — 2026-10-22
 
+## Customer selection simplified — delivered 2026-11-14
+
+PR #27 merged as GitHub-Verified `eaa5161cefb73ce7149c8b833db6160f6c85313e`; implementation commit `fb64ca7` was also GitHub Verified. CI run `43684190632` passed. Removed customer-row Manage pets buttons: click a customer row/name to see that customer's pets on the right. Hover highlights a row without changing selection; active selection has a stronger green background/left border and bilingual Selected badge. Keyboard name-button activation and independent Edit/link actions remain; pet-search selection and unsaved-edit protection are preserved. Owner guide and synthetic screenshots updated.
+
+Production build, all 10 existing browser tests and expanded focused panel checks passed under Node 24. Focused coverage checks contact-area row clicks, hover without selection, independent Edit, both languages/320/400/1280px, correct pet ownership and dismissed/accepted draft discard. Local rendered screenshot reviewed in Chrome. Rebuilt merged main and deployed Firebase Hosting; live HTML exactly matches dist, anonymous customer API is 401. Native Chrome stable-site reload confirmed no Manage pets buttons; selecting Nature showed its saved Niuniu and active styling/Selected badge. No business data written. Live browser left English, Nature selected, no drafts. No API/IAM/database changes; pending environment PR #24 remains separate.
+
 ## Customer/pet panels delivered with verified signatures — 2026-11-14
 
 PR #25 merged as GitHub-Verified squash `182cca78b541f37b8eea82e227b812cd42fab416` after all four PR commits were re-signed with the existing authorized SSH identity and GitHub confirmed `verified: true, reason: valid` for every commit. CI run `43683626321` passed. The earlier merge blocker was unsigned commits; no protection was bypassed. Auto-merge remains disabled in the repository.
