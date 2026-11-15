@@ -4,7 +4,7 @@
 
 Owner requested more compact filters, recognizable icons and the original tab appearance. Branch `polish/calendar-controls` starts from merged #42 (`6448ff9`, GitHub Verified). Desktop filters are one labelled row (83px panel at 1440px); tablet uses three columns and phones two columns with tighter spacing. Restored original rounded segmented-style date tabs while keeping ARIA/keyboard behavior. Replaced composite add icons with plus, placement removal with trash, normalized gear shape, added visible Add house label and grouped header actions in one row. Tooltips/accessibility names and all filter/placement behavior remain. Actual native localhost Chrome visually reviewed; desktop and Chinese mobile screenshots refreshed.
 
-Production build passed; all 13 browser tests passed on Node 24, followed by three calendar/setup cases plus type check after final header grouping. Signed focused PR to follow; final hosted deployment remains deferred. Previous prototype PR #42 is merged and verified. Saved demo data and room WIP #41 are preserved.
+Production build passed; all 13 browser tests passed on Node 24, followed by three calendar/setup cases plus type check after final header grouping. Review/merge record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/43 (implementation `65f29db`, GitHub Verified). Final hosted deployment remains deferred. Previous prototype PR #42 is merged and verified. Saved demo data and room WIP #41 are preserved.
 
 ## Calendar prototype review record — 2026-11-15
 
