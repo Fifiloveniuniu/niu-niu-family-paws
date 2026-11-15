@@ -11,6 +11,8 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 
 # Pull requests
 
+- All commits must have verified signatures. Sign commits with the authorized GitHub signing identity and check GitHub verification before merging.
+
 - Use a concise title that clearly describes the change.
 - Write a short description in clear bullet points covering the change and relevant validation.
 - Add screenshots when they help reviewers understand visible UI changes.

@@ -1,5 +1,9 @@
 # Session handoff — 2026-10-22
 
+## Commit signatures — 2026-11-14
+
+Owner requires verified signatures on every commit. Repository-local Git configuration enables SSH commit signing using the existing authorized `id_ed25519_naturetime10.pub` identity, already registered as a GitHub signing key for `naturetime10`. Verify GitHub commit verification before merging. Never commit signing credentials. PR #25 unsigned commits are being re-signed; retry normal merge after Verified status and CI.
+
 ## Customer/pet panels hosted for review — 2026-11-14
 
 User requested the customer list on the left and selected customer's pets on the right. PR #25: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/25, branch `feat/customer-pet-panels`, based on main independently of pending environment PR #24. Clicking a name or Manage pets highlights the selected customer and displays that customer's existing canonical pets/private photos on the right; pet search can also choose a customer. Panels stack below 800px. Draft confirmation, editing, linking, search and pagination remain. No real pet names/photos were supplied; do not invent them or replace test records with purported real data.
