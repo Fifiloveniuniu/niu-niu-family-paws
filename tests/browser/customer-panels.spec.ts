@@ -21,9 +21,24 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   const left=page.getByRole('region',{name:'Customer list',exact:true});
   const right=page.getByRole('region',{name:'Selected customer pets',exact:true});
   await expect(right.getByText('Select a customer from the list to view and manage their pets.')).toBeVisible();
-  await left.getByRole('button',{name:'Sample Alex',exact:true}).click();
+  await expect(left.getByRole('button',{name:/Manage pets/})).toHaveCount(0);
+  const alexRow=left.locator('li').filter({has:page.getByRole('button',{name:'Sample Alex',exact:true})});
+  const otherRow=left.locator('li').filter({has:page.getByRole('button',{name:'示例小雨',exact:true})});
+  const background=await alexRow.evaluate(element=>getComputedStyle(element).backgroundColor);
+  await alexRow.hover();
+  await expect.poll(()=>alexRow.evaluate(element=>getComputedStyle(element).backgroundColor)).not.toBe(background);
+  // Clicking the contact area, outside the name and action buttons, selects the row.
+  await alexRow.click({position:{x:24,y:90}});
   await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeVisible();
+  await expect(alexRow.getByText('✓ Selected',{exact:true})).toBeVisible();
+  await otherRow.hover();
+  await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeVisible();
+  await left.getByRole('button',{name:'Edit customer: 示例小雨',exact:true}).click();
+  await expect(left.getByRole('textbox',{name:'Customer name',exact:true})).toHaveValue('示例小雨');
+  await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');
+  await left.getByRole('button',{name:'Cancel',exact:true}).click();
   const l=await left.boundingBox(),r=await right.boundingBox();
   expect(l!.x+l!.width).toBeLessThan(r!.x);
   await page.locator('.customer-pet-layout').screenshot({path:'test-results/customer-panels-desktop.png'});
@@ -39,6 +54,8 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toHaveCount(0);
   for(const language of ['en','zh']){
     await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption(language);
+    await expect(page.locator('.customer-directory-panel').getByRole('button',{name:/Manage pets|管理宠物/})).toHaveCount(0);
+    await expect(page.locator('.selected-customer').getByText(language==='zh'?'✓ 已选择':'✓ Selected',{exact:true})).toBeVisible();
     for(const width of [320,400,1280]){
       await page.setViewportSize({width,height:900});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

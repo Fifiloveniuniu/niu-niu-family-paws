@@ -112,7 +112,7 @@ test('administrator can add, edit and search customers in both languages on mobi
     return route.fulfill({json:pet});
   });
   await page.route('**/api/pet-search?**',route=>route.fulfill({json:{items:pets.map(pet=>({pet,customer:{id:customers[0].id,name:customers[0].name,loginEmail:null}})),nextCursor:null}}));
-  await page.getByRole('button',{name:'Manage pets: Alice Chen',exact:true}).click();
+  await page.getByRole('button',{name:'Alice Chen',exact:true}).click();
   const petSection=page.getByRole('region',{name:'Customer’s pets',exact:true});
   await petSection.getByRole('button',{name:'Add pet',exact:true}).click();
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin sample pet');
@@ -129,7 +129,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await petSection.getByRole('button',{name:'Edit pet: Admin renamed pet',exact:true}).click();
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Keep this pet draft');
   // Opening the same customer preserves the mounted editor without a confirmation.
-  await page.getByRole('button',{name:'Manage pets: Alice Chen',exact:true}).click();
+  await page.getByRole('button',{name:'Alice Chen',exact:true}).click();
   await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Keep this pet draft');
   const otherCustomer={id:'10000000-0000-4000-8000-000000000099',name:'Other sample',loginEmail:null};
   await page.route('**/api/pet-search?**',route=>route.fulfill({json:{items:[{pet:{...pets[0],customerId:otherCustomer.id},customer:otherCustomer}],nextCursor:null}}));

@@ -75,3 +75,15 @@ html[lang=zh-Hans] h1,html[lang=zh-Hans] h2{letter-spacing:0;line-height:1.25}
 .pet-selection-empty h3{color:#293f35}
 @media(max-width:800px){.customer-pet-layout{grid-template-columns:minmax(0,1fr);gap:20px}.customer-directory-panel{padding:16px}.pet-selection-empty{min-height:0;padding:8px}}
 .customer-pet-layout .pet-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
+
+/* The customer row selects the right panel; edit/link actions remain independent. */
+.customer-directory-panel>.customer-list>li{position:relative;border-left:3px solid transparent;transition:background-color .15s ease}
+.customer-select::after{content:"";position:absolute;inset:0;border-radius:8px}
+.customer-select{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-height:44px}
+.customer-select .customer-name{font-size:1.25rem}
+.customer-select .customer-selected-label{flex:none;font-size:12px;line-height:1.5;padding:4px 8px;border-radius:6px;background:#31594c;color:#fff}
+.customer-row-actions{position:relative;z-index:1}
+@media(hover:hover){.customer-directory-panel>.customer-list>li:hover{background:#f0f4eb}.customer-directory-panel>.customer-list>li.selected-customer:hover{background:#dce8d5}}
+.customer-directory-panel>.customer-list>li.selected-customer{background:#e4eddd;border-left-color:#31594c}
+.customer-directory-panel>.customer-list>li:has(.customer-select:focus-visible){outline:3px solid #b66c43;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.customer-directory-panel>.customer-list>li{transition:none}}
