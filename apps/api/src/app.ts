@@ -3,6 +3,7 @@ import rateLimit from '@fastify/rate-limit';
 import spec from '../../../packages/contracts/openapi.json' with { type: 'json' };
 import type { components } from '../../../packages/contracts/generated.ts';
 import { petRoutes, PetAccess, PetMissing, PetInvalid, type PetStore } from './pets.ts';
+import { houseRoutes, type HouseStore } from './houses.ts';
 import { linkRoutes, LinkUnavailable, type LinkStore } from './linking.ts';
 
 type Customer = components['schemas']['Customer'];
@@ -18,7 +19,7 @@ export interface CustomerStore {
   saveProfile(identity: ProfileIdentity, input: ProfileWrite): Promise<Customer>;
 }
 export class Conflict extends Error {}
-export function buildApp(deps: { verify: (token: string) => Promise<Identity>; store: CustomerStore; pets?: PetStore; links?: LinkStore }) {
+export function buildApp(deps: { verify: (token: string) => Promise<Identity>; store: CustomerStore; pets?: PetStore; links?: LinkStore; houses?: HouseStore }) {
   const app = Fastify({ logger: false, bodyLimit: 16_384, ajv: { customOptions: { removeAdditional: false, coerceTypes: false } } });
   app.register(rateLimit, { max: 120, timeWindow: '1 minute' });
   app.addHook('onRequest', async (_request, reply) => {
@@ -36,6 +37,7 @@ export function buildApp(deps: { verify: (token: string) => Promise<Identity>; s
       if (identity.email_verified !== true) return reply.code(403).send({ code: 'forbidden' });
       (request as typeof request & { identity: Identity }).identity = identity;
     });
+    if (deps.houses) houseRoutes(api, deps.houses);
     if (deps.pets) petRoutes(api, deps.pets);
     if (deps.links) linkRoutes(api, deps.links);
     api.register(async own => {

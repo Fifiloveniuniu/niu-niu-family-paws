@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
 import Customers from './customers';
+import Houses from './houses';
 import './workspace.css';
 import Profile from './profile';
 import LanguageSelector from './language-selector';
@@ -54,10 +55,11 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
   const generation = React.useRef(0);
   const previousUid = React.useRef<string | null | undefined>(undefined);
   const [directoryRefresh, setDirectoryRefresh] = React.useState(0);
-  const [personal, setPersonal] = React.useState(false);
+  const [workspace, setWorkspace] = React.useState<'customers'|'personal'|'houses'>('customers');
+  const personal = workspace === 'personal';
   const verify = React.useCallback(async (current: User | null, force = false) => {
     const request = ++generation.current;
-    if (previousUid.current !== (current?.uid ?? null)) { setAccess('checking'); setPersonal(false); }
+    if (previousUid.current !== (current?.uid ?? null)) { setAccess('checking'); setWorkspace('customers'); }
     previousUid.current = current?.uid ?? null;
     setError(null); setUser(current);
     if (!current) { setAccess('signed-out'); return; }
@@ -93,7 +95,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
     {import.meta.env.MODE==='test' && <aside className="local-test-banner" role="note">{chinese?'本地测试 · 仅供测试的资料与示例照片':'LOCAL TEST · Demo records and sample photos only'}</aside>}
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>
     <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
-      <h1>{access === 'admin' ? personal ? t.personalTitle : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
+      <h1>{access === 'admin' ? personal ? t.personalTitle : workspace==='houses' ? (chinese?'房屋':'Houses') : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
       <div className="portal-card" aria-busy={busy || access === 'checking'}>
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
           {access === 'denied' && <h2>{t.denied}</h2>}
@@ -107,12 +109,14 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
         <section className="portal-workspace" aria-label={t.workspace}>
           <p className="eyebrow">{t.workspace}</p>
           <div className="workspace-buttons" role="group" aria-label={t.workspace}>
-            <button className="language" aria-pressed={!personal} onClick={() => setPersonal(false)}>{t.manage}</button>
-            <button className="language" aria-pressed={personal} onClick={() => setPersonal(true)}>{t.personal}</button>
+            <button className="language" aria-pressed={workspace==='customers'} onClick={() => setWorkspace('customers')}>{t.manage}</button>
+            <button className="language" aria-pressed={workspace==='houses'} onClick={() => setWorkspace('houses')}>{chinese?'房屋':'Houses'}</button>
+            <button className="language" aria-pressed={personal} onClick={() => setWorkspace('personal')}>{t.personal}</button>
           </div>
 
         </section>
-        <div hidden={personal}><Customers key={user?.uid} refreshKey={directoryRefresh}/></div>
+        <div hidden={workspace!=='customers'}><Customers key={user?.uid} refreshKey={directoryRefresh}/></div>
+        <div hidden={workspace!=='houses'}><Houses key={user?.uid}/></div>
       </>}
       {(access === 'admin' || access === 'customer' || access === 'employee') && <div hidden={access === 'admin' && !personal}><Profile key={user?.uid} onSaved={() => setDirectoryRefresh(value => value + 1)}/></div>}
       <p className="portal-session">{t.session}</p>

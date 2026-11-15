@@ -77,3 +77,5 @@
 .portal-admin .customer-directory-panel:focus{outline:none}
 .portal-admin .back-to-customers{display:none}
 @media(max-width:800px){.portal-admin .back-to-customers{display:inline-flex;align-items:center;min-height:44px;border:0;border-radius:6px;background:transparent;color:#31594c;padding:0 8px;margin:0 0 12px -8px;font-size:13px}}
+
+.house-filter{display:flex;flex-direction:column;gap:8px;max-width:420px;margin:20px 0}.house-filter select{font:inherit;padding:12px;border:1px solid #899887;border-radius:6px;max-width:100%;background:white;color:#303c33}.house-list{list-style:none;margin:20px 0;padding:0;display:grid;gap:16px}.house-list li{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border:1px solid #deddd3;border-radius:12px;padding:20px;overflow-wrap:anywhere}.house-list li>div{min-width:0}.house-list h3{margin:0 0 8px}.house-list p{white-space:pre-wrap;margin:6px 0}
