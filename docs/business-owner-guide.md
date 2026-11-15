@@ -17,7 +17,7 @@ For a problem, describe what you clicked, what happened, and what you expected. 
 
 ## What Codex will handle
 
-Codex will read the project instructions, make one complete change at a time, preview visible changes locally, and walk you through the result in the browser. It will test the change, open a GitHub pull request (a reviewable record of the change), merge it after validation, publish it, and check the live website. This workflow is already authorized; routine merges do not need another approval. Necessary account sign-in, business decisions, billing, or mandatory confirmations may still require your help.
+Codex will read the project instructions, make one complete change at a time, preview visible changes locally, and walk you through the result in the browser. It will test the change, open a GitHub pull request (a reviewable record of the change), and merge it after validation. Your current instruction is to develop locally one feature at a time and publish only once all requested features are complete; Codex will check the live website after that final publication. This workflow is already authorized; routine merges do not need another approval. Necessary account sign-in, business decisions, billing, or mandatory confirmations may still require your help.
 
 Every release must keep English and Simplified Chinese working on phones and computers and preserve existing features. Hosting stays on Google Cloud: Firebase Hosting, Firebase Authentication, Firestore, and Cloud Run for the API.
 
@@ -96,3 +96,9 @@ Pet photos load privately from Google Cloud Storage. A pet without a saved photo
 Editing customers and pets, adding them, and linking Google accounts open in focused pop-ups. Use Save to apply changes, Cancel or the × icon to close; unsaved changes ask first. Escape closes the pop-up with the same protection. Icon buttons have tooltips and accessible names. The local browser preview uses **http://localhost:4177**, where Google sign-in works; avoid `127.0.0.1` for real sign-in. Codex runs and manages the dev servers.
 
 添加或编辑客户与宠物、关联 Google 账号时会打开弹窗。点击“保存”应用修改；点击“取消”或 × 关闭，如有未保存修改会先询问。Esc 键也可关闭，并保留同样的保护。图标按钮有提示文字和无障碍名称。本地预览使用 **http://localhost:4177**，支持 Google 登录；真实登录请勿使用 `127.0.0.1`。开发服务器由 Codex 运行和管理。
+
+## Local photo-filled test preview
+
+Codex can open **http://localhost:4180/#/login**, an isolated local test environment with 100 fake families and 300 pets, all with cloud-sourced sample photos. Use the Auth Emulator account `local-admin@example.test`; no real Google password is needed. Search `[TEST / 测试] Family 001` to see a cat, dog, and rabbit. Changes here stay local. The yellow LOCAL TEST banner distinguishes it from the live site. Codex manages the servers and setup.
+
+本地照片测试页面：**http://localhost:4180/#/login**。使用模拟账号 `local-admin@example.test`，不需要真实 Google 密码。搜索 `[TEST / 测试] Family 001`，可查看猫、狗、兔子的示例照片。这里的修改仅保存在本地，不影响线上真实客户。黄色“本地测试”提示可帮助区分环境，服务器由 Codex 管理。

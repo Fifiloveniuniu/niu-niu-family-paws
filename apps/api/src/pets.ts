@@ -14,7 +14,7 @@ export class PetInvalid extends Error {}
 export interface Photos { put(key: string, bytes: Buffer): Promise<void>; get(key: string): Promise<Buffer> }
 const projectPet = (data: FirebaseFirestore.DocumentData): Pet => {
   const { id, customerId, name, photo, version, createdAt, updatedAt } = data;
-  return { id, customerId, name, photo, version, createdAt, updatedAt };
+  return { id, customerId, name, photo, version, createdAt, updatedAt, ...(data.photoCredit ? {photoCredit:data.photoCredit}: {}) };
 };
 const photoKey = (pet: Pet) => `photos/${pet.customerId}/${pet.id}/${pet.photo}.webp`;
 let decoding = false;
@@ -73,7 +73,7 @@ export function petStore(db: Firestore, photos: Photos) {
         if (previous && previous.name === input.name && previous.photo === desiredPhoto && [input.version, input.version + 1].includes(previous.version)) return previous;
         if ((previous?.version ?? 0) !== input.version) throw new Conflict();
         const now = new Date().toISOString();
-        const pet: Pet = { id, customerId, name: input.name, photo: desiredPhoto, version: input.version + 1, createdAt: previous?.createdAt ?? now, updatedAt: now };
+        const pet: Pet = { ...(input.photoData === undefined && previous?.photoCredit ? {photoCredit:previous.photoCredit}: {}), id, customerId, name: input.name, photo: desiredPhoto, version: input.version + 1, createdAt: previous?.createdAt ?? now, updatedAt: now };
         transaction.set(ref, { ...pet, nameKeys: prefixes(pet.name) });
         transaction.create(ref.collection('history').doc(String(pet.version)), { actor: identity.uid, source: identity.admin === true ? 'admin' : 'self', at: now, before: previous, after: pet });
         return pet;

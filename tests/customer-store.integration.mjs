@@ -167,3 +167,16 @@ test('self-registration has one canonical profile across retries and roles, with
   await assert.rejects(store.saveProfile(other,{name:'Takeover',language:'en',version:4}),/ownership mismatch/);
   assert.equal((await store.profile(changedIdentity)).name,'Self edit');
 });
+
+test('licensed fixture photo attribution survives rename and clears when a new photo replaces it',async t=>{
+  const app=initializeApp({projectId:'demo-niu-niu'},'credits-'+randomUUID());t.after(()=>deleteApp(app));
+  const db=getFirestore(app),customers=firestoreStore(db),identity={uid:randomUUID(),email:'credits@example.test',google:true,email_verified:true};
+  const customer=await customers.saveProfile(identity,{name:'Local photo sample',language:'en',version:0});
+  const photos=new Map(),store=petStore(db,{put:async(k,b)=>photos.set(k,b),get:async k=>photos.get(k)}),id=randomUUID();
+  await store.save(identity,customer.id,id,{name:'Test pet',version:0});
+  const credit={creator:'Fixture author',sourcePage:'https://commons.wikimedia.org/wiki/File:Example.jpg',license:'CC BY 4.0',licenseUrl:'https://creativecommons.org/licenses/by/4.0/'};
+  await db.doc(`customers/${customer.id}/pets/${id}`).update({photoCredit:credit});
+  const renamed=await store.save(identity,customer.id,id,{name:'Renamed test pet',version:1});assert.deepEqual(renamed.photoCredit,credit);
+  const image=await sharp({create:{width:20,height:20,channels:3,background:'#223344'}}).png().toBuffer();
+  const replaced=await store.save(identity,customer.id,id,{name:renamed.name,version:renamed.version,photoData:image.toString('base64')});assert.equal(replaced.photoCredit,undefined);
+});

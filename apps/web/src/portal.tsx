@@ -90,6 +90,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
     await signInWithPopup(auth, provider);
   }
   return <>
+    {import.meta.env.MODE==='test' && <aside className="local-test-banner" role="note">{chinese?'本地测试 · 仅供测试的资料与示例照片':'LOCAL TEST · Demo records and sample photos only'}</aside>}
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>
     <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
       <h1>{access === 'admin' ? personal ? t.personalTitle : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>

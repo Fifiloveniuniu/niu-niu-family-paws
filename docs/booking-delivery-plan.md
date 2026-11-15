@@ -4,9 +4,9 @@ Planning only — 2026-11-15. Owner has now authorized completing the PR sequenc
 
 ## Delivery discipline
 
-One usable feature/change per PR targeting main. Related contract, backend, frontend, and validation commits belong in the same feature PR; do not ship disconnected backend-only milestones as delivered features. Every commit must use the authorized signing identity and be GitHub Verified before merge. Preserve pending environment PR #24 and untracked dist-dev/. Do not push directly to main.
+Owner changed delivery preference on 2026-11-15: focus on local development and deploy only once all requested features are complete. One locally usable feature/change per PR targeting main. Related contract, backend, frontend, and validation commits belong in the same feature PR; do not ship disconnected backend-only milestones as delivered features. Every commit must use the authorized signing identity and be GitHub Verified before merge. Preserve pending environment PR #24 and untracked dist-dev/. Do not push directly to main.
 
-For implementation: resolve each feature's blocking decisions first; preview the actual localhost site in Chrome and walk the owner through it; validate bilingual desktop/mobile behavior, ownership/role boundaries, and relevant transactional edge cases; merge after CI, deploy the merged app to Firebase Hosting (and API when required), verify live behavior, and update the handoff. Use isolated test data for writes. No Sites hosting. Do not expose secrets or alter real records for testing.
+For implementation: resolve each feature's blocking decisions first; preview the actual localhost site in Chrome and walk the owner through it; validate bilingual desktop/mobile behavior, ownership/role boundaries, and relevant transactional edge cases; merge after CI and update the handoff; defer deployment until all requested features are done, then deploy the integrated merged app/API and verify live behavior. Use isolated test data for writes. No Sites hosting. Do not expose secrets or alter real records for testing.
 
 ## UX acceptance criteria
 
@@ -18,7 +18,7 @@ Every UI release must support a common task with clear primary actions, plain la
 
 ## Proposed PR and commit sequence
 
-Each numbered item is one PR/release. Commit titles are planned, not executed. Adjust scope after UX review; do not combine independent features to meet this outline.
+Each numbered item is one PR/local milestone; deploy the integrated features once at the end. Commit titles are planned, not executed. Adjust scope after UX review; do not combine independent features to meet this outline.
 
 ### 0. Record the planning baseline (documentation only)
 
@@ -133,4 +133,4 @@ Each numbered item is one PR/release. Commit titles are planned, not executed. A
 
 ## Validation emphasis
 
-Use meaningful checks for authorization, duplicate requests, concurrent capacity/balance updates, timezone/expiry/cancellation boundaries, payment confirmation, weight/rate changes, and original-booking preservation on failed extension. Review actual local pages in Chrome, both languages and phone/desktop. Recheck deployed behavior after each feature. Owner authorized sequential execution on 2026-11-15. Resolve each feature's blockers before implementing dependent behavior.
+Use meaningful checks for authorization, duplicate requests, concurrent capacity/balance updates, timezone/expiry/cancellation boundaries, payment confirmation, weight/rate changes, and original-booking preservation on failed extension. Review actual local pages in Chrome, both languages and phone/desktop. Check local behavior after each feature; verify deployed behavior after the final integrated release. Owner authorized sequential execution on 2026-11-15. Resolve each feature's blockers before implementing dependent behavior.

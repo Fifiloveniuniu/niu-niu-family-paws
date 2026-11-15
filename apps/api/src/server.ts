@@ -2,6 +2,7 @@ import { applicationDefault, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
+import { localPhotos } from './local-photos.ts';
 import { petStore } from './pets.ts';
 import { buildApp } from './app.ts';
 import { firestoreStore } from './store.ts';
@@ -33,7 +34,7 @@ const app = buildApp({
     if (user.disabled || !user.emailVerified || !user.email || !user.providerData.some(provider=>provider.providerId==='google.com')) throw new Error('Verified Google identity required');
     return {uid:user.uid,email:user.email};
   }),
-  pets: petStore(getFirestore(), {
+  pets: petStore(getFirestore(), emulated ? localPhotos() : {
     async put(key, bytes) {
       const file = getStorage().bucket('niu-niu-family-paws-pet-photos').file(key);
       try { await file.save(bytes, { resumable: false, preconditionOpts: { ifGenerationMatch: 0 }, metadata: { contentType: 'image/webp', cacheControl: 'private, no-store' } }); }
