@@ -1,0 +1,81 @@
+/* Compact account chrome and a calm, task-focused customer workspace. */
+.portal.portal-admin{max-width:1240px;padding-top:24px}
+.portal-admin>.portal-back{margin-bottom:16px}
+.portal-admin>.eyebrow{display:none}
+.portal-admin>h1{font:600 26px/1.25 Arial,"PingFang SC",sans-serif;letter-spacing:-.03em;margin:0 0 20px}
+.portal-admin>.portal-card{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding:16px 20px;background:#fff;border-radius:10px}
+.portal-admin .portal-identity-row{gap:16px;flex:1;min-width:0}
+.portal-admin .portal-account{font-size:14px}
+.portal-admin .portal-account>span{display:none}
+.portal-admin .portal-account strong{font-weight:500}
+.portal-admin .portal-actions.session-actions{margin:0;gap:8px;border:0;padding:0}
+.portal-admin .session-actions .language{font-size:12px;min-height:40px;padding:8px 12px}
+.portal-admin .portal-workspace{padding:0;margin-top:24px;border:0;border-bottom:1px solid #dce2d6;border-radius:0;background:transparent}
+.portal-admin .portal-workspace>.eyebrow{display:none}
+.portal-admin .workspace-buttons{gap:24px;flex-direction:row}
+.portal-admin .workspace-buttons .language{border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:12px 0;color:#657065}
+.portal-admin .workspace-buttons .language[aria-pressed=true]{border-color:#31594c;color:#244539;background:transparent;font-weight:700}
+.portal-admin .customer-section{border:0;margin-top:24px;padding-top:0}
+.portal-admin .customer-heading h2{font:600 24px/1.3 Arial,"PingFang SC",sans-serif;letter-spacing:-.025em}
+.portal-admin .customer-section>.customer-intro{margin:8px 0 0;font-size:14px}
+.portal-admin .customer-pet-layout{grid-template-columns:minmax(300px, .8fr) minmax(0,1.5fr);gap:20px;margin-top:20px}
+.portal-admin .customer-directory-panel{padding:16px;background:#fff;border-color:#dce2d6}
+.portal-admin .customer-directory-panel>.customer-search{padding:0;background:transparent;margin-bottom:12px}
+.portal-admin .customer-search .portal-actions{gap:8px}
+.portal-admin .customer-search input{padding:10px 12px}
+.portal-admin .customer-search .language{padding:10px 12px;font-size:12px}
+.portal-admin .directory-toolbar{border-top:1px solid #e8ece3;padding-top:12px;gap:8px}
+.portal-admin .directory-toolbar p{margin:0;font-size:13px;flex:1}
+.portal-admin .directory-toolbar .language{padding:6px 10px;font-size:12px;min-height:40px;border-color:transparent;color:#516354}
+.portal-admin .customer-directory-panel>.customer-list{margin:12px -4px;max-height:540px;overflow-y:auto;scrollbar-width:thin;padding:4px}
+.portal-admin .customer-directory-panel>.customer-list>li{padding:12px;gap:8px;border-bottom-color:transparent;margin-bottom:4px}
+.portal-admin .customer-select{min-height:36px;gap:8px}
+.portal-admin .customer-select .customer-name{font-size:16px;line-height:1.5}
+.portal-admin .customer-select .customer-selected-label{font-size:10px;padding:4px 6px}
+.portal-admin .customer-list p{font-size:12px;line-height:1.5;margin:4px 0 6px}
+.portal-admin .customer-language{display:inline-block;font-size:11px;color:#657065}
+.portal-admin .customer-row-actions{gap:8px}
+.portal-admin .customer-row-actions .language{font-size:12px;min-height:40px;padding:7px 12px;background:transparent;border-color:#d4ddcd}
+.portal-admin .pet-search-tools{border:0;border-top:1px solid #e8ece3;padding:14px 0 0;margin-top:12px}
+.portal-admin .pet-search-tools>summary{font-size:13px;color:#31594c;font-weight:600}
+.portal-admin .pet-search-tools .pet-search{margin-top:12px}
+.portal-admin .pet-search .customer-search{padding:12px;flex-direction:column;align-items:stretch;margin:0;background:#f5f7f1}
+.portal-admin .customer-pet-layout>.admin-pets{padding:24px;background:#fff;border-color:#dce2d6;scroll-margin-top:16px}
+.portal-admin .admin-pets:focus{outline:none}
+.portal-admin .selected-customer-heading{padding-bottom:18px;border-bottom:1px solid #e8ece3}
+.portal-admin .selected-customer-heading .eyebrow{font-size:10px;letter-spacing:1.5px;color:#657065;margin-bottom:8px}
+.portal-admin .selected-customer-heading h3{font:600 22px/1.4 Arial,"PingFang SC",sans-serif;margin:0;overflow-wrap:anywhere}
+.portal-admin .selected-customer-heading>p:last-child:not(.eyebrow){font-size:13px;color:#657065;margin:6px 0 0}
+.portal-admin .admin-pets .pets-section{padding-top:20px;border:0;margin-top:0}
+.portal-admin .pets-section .customer-heading h3{font:600 18px/1.4 Arial,"PingFang SC",sans-serif;margin:0}
+.portal-admin .pets-section>.customer-intro{font-size:13px;margin:10px 0 20px}
+.portal-admin .pet-grid{gap:16px;margin:20px 0}
+.portal-admin .pet-card{border-radius:10px;background:#fff}
+.portal-admin .pet-card h4{font-size:16px;margin-bottom:10px}
+.portal-admin .pet-card>div:last-child{padding:16px}
+.portal-admin .pet-photo-empty{aspect-ratio:auto;min-height:136px;background:#f1f4ec;color:#71806d;font-size:12px}
+.portal-admin .pet-selection-empty{padding:40px 12px;text-align:center;min-height:260px;display:flex;flex-direction:column;justify-content:center}
+.portal-admin .pet-selection-empty h3{font:600 20px/1.4 Arial,"PingFang SC",sans-serif;margin:0 0 8px}
+.portal-admin .pet-selection-empty p{font-size:14px;margin:0}
+@media(max-width:800px){
+  .portal.portal-admin{padding:24px 20px 40px}
+  .portal-admin .customer-pet-layout{grid-template-columns:minmax(0,1fr)}
+  .portal-admin .customer-directory-panel>.customer-list{max-height:320px}
+  .portal-admin .customer-pet-layout>.admin-pets{padding:20px}
+  .portal-admin .portal-identity-row{flex-basis:100%}
+  .portal-admin .portal-account{flex:1;min-width:0}
+  .portal-admin .workspace-buttons{gap:20px}
+  .portal-admin .workspace-buttons .language{width:auto;text-align:center;flex:1}
+}
+@media(max-width:420px){
+  .portal-admin>.portal-card{padding:14px 16px}
+  .portal-admin .portal-identity-row{gap:8px;align-items:center;flex-wrap:wrap}
+  .portal-admin .portal-account{width:auto;flex:1;min-width:0}
+  .portal-admin .portal-role{font-size:10px;padding:4px 8px}
+  .portal-admin .customer-search .portal-actions{flex-direction:column;align-items:stretch}
+}
+
+.portal-header:has(+.portal-admin){max-width:1240px}
+.portal-admin .customer-directory-panel:focus{outline:none}
+.portal-admin .back-to-customers{display:none}
+@media(max-width:800px){.portal-admin .back-to-customers{display:inline-flex;align-items:center;min-height:44px;border:0;border-radius:6px;background:transparent;color:#31594c;padding:0 8px;margin:0 0 12px -8px;font-size:13px}}

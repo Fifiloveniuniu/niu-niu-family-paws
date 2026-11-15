@@ -41,7 +41,10 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await left.getByRole('button',{name:'Cancel',exact:true}).click();
   const l=await left.boundingBox(),r=await right.boundingBox();
   expect(l!.x+l!.width).toBeLessThan(r!.x);
+  await expect(page.getByText('Find a pet',{exact:true})).toBeVisible();
+  await expect(page.getByRole('searchbox',{name:'Start of pet name',exact:true})).not.toBeVisible();
   await page.locator('.customer-pet-layout').screenshot({path:'test-results/customer-panels-desktop.png'});
+  await page.screenshot({path:'test-results/clean-workspace-desktop.png',fullPage:true});
   await right.getByRole('button',{name:'Add pet',exact:true}).click();
   await right.getByRole('textbox',{name:'Pet name',exact:true}).fill('Unsaved draft');
   page.once('dialog',dialog=>dialog.dismiss());
@@ -62,5 +65,14 @@ test('customer list selects the correct pets in bilingual responsive panels and 
     }
   }
   await page.setViewportSize({width:400,height:900});
+  await page.locator('.customer-directory-panel').getByRole('button',{name:'Sample Alex',exact:true}).click();
+  const mobilePets=page.getByRole('region',{name:'所选客户的宠物',exact:true});
+  await expect(mobilePets).toBeFocused();
+  await expect(mobilePets.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeInViewport();
+  await mobilePets.getByRole('button',{name:'← 客户列表',exact:true}).click();
+  await expect(page.locator('.customer-directory-panel')).toBeFocused();
+  await page.locator('.customer-directory-panel').getByRole('button',{name:'Sample Alex',exact:true}).click();
+  await expect(mobilePets).toBeFocused();
   await page.locator('.customer-pet-layout').screenshot({path:'test-results/customer-panels-mobile-zh.png'});
+  await page.screenshot({path:'test-results/clean-workspace-mobile-zh.png',fullPage:true});
 });

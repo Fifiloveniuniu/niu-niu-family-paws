@@ -8,7 +8,7 @@ import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
 const en = {
-  title: 'Customers', intro: 'Manage contact details and pets. Adding a customer saves their details without creating a login or sending an email.',
+  title: 'Customers', intro: 'Choose a customer to view and manage their pets.',
   add: 'Add customer', edit: 'Edit customer', name: 'Customer name', email: 'Email (optional)', phone: 'Phone (optional)', language: 'Preferred language',
   save: 'Save customer', cancel: 'Cancel', loading: 'Loading customers…', saving: 'Saving…', empty: 'No customers yet. Add your first customer to get started.',
   more: 'Load more customers', reload: 'Reload customers', saved: 'Customer saved.', error: 'Couldn’t load or save customers. Please try again.',
@@ -18,7 +18,7 @@ const en = {
   search: 'Search customers', searchHint: 'Customer name or email (starts with)', noMatches: 'No matching customers.', loginEmail: 'Google sign-in email',
 };
 const zh: typeof en = {
-  title: '客户', intro: '管理客户的联系方式与宠物资料。添加客户只会保存资料，不会创建登录账号或发送邮件。',
+  title: '客户', intro: '选择客户，即可查看和管理其宠物。',
   add: '添加客户', edit: '编辑客户', name: '客户姓名', email: '邮箱（选填）', phone: '电话（选填）', language: '首选语言',
   save: '保存客户', cancel: '取消', loading: '正在加载客户…', saving: '正在保存…', empty: '暂无客户。请添加第一位客户。',
   more: '加载更多客户', reload: '重新加载客户', saved: '客户已保存。', error: '未能加载或保存客户，请重试。',
@@ -60,9 +60,15 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const alive = React.useRef(true);
   const heading = React.useRef<HTMLHeadingElement>(null);
   const baseline = React.useRef('');
-  const form = React.useRef<HTMLFormElement>(null), petsPanel = React.useRef<HTMLDivElement>(null);
+  const form = React.useRef<HTMLFormElement>(null), petsPanel = React.useRef<HTMLDivElement>(null), directoryPanel = React.useRef<HTMLDivElement>(null);
   function choosePets(customer: NonNullable<typeof petCustomer>) {
-    if (customer.id === petCustomer?.id || confirmDiscardChanges(i18n.language, petsPanel.current)) setPetCustomer(customer);
+    if (customer.id === petCustomer?.id || confirmDiscardChanges(i18n.language, petsPanel.current)) {
+      setPetCustomer(customer);
+      if (window.matchMedia('(max-width: 800px)').matches) requestAnimationFrame(() => {
+        petsPanel.current?.focus({ preventScroll: true });
+        petsPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      });
+    }
   }
   function report(e: unknown) {
     const status = e instanceof ApiError ? e.status : 0;
@@ -109,10 +115,10 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     } finally { if (alive.current) setSaving(false); }
   }
   return <section className="customer-section" aria-labelledby="customers-title">
-    <div className="customer-heading"><div><p className="eyebrow">{chinese ? '客户管理' : 'CUSTOMER DIRECTORY'}</p><h2 id="customers-title">{t.title}</h2></div><button className="button" disabled={saving || uncertain} onClick={() => open()}>{t.add}</button></div>
+    <div className="customer-heading"><div><h2 id="customers-title">{t.title}</h2></div><button className="button" disabled={saving || uncertain} onClick={() => open()}>{t.add}</button></div>
     <p className="customer-intro">{t.intro}</p>
     <div className="customer-pet-layout">
-    <div className="customer-directory-panel" role="region" aria-label={chinese ? '客户列表' : 'Customer list'}>
+    <div ref={directoryPanel} tabIndex={-1} className="customer-directory-panel" role="region" aria-label={chinese ? '客户列表' : 'Customer list'}>
     <form className="customer-search" role="search" onSubmit={event => { event.preventDefault(); setActiveSearch(search); void load(undefined, search); }}>
       <label htmlFor="customer-search">{t.searchHint}</label>
       <div className="portal-actions"><input id="customer-search" type="search" maxLength={254} value={search} onChange={event => setSearch(event.target.value)} /><button className="language" disabled={loading || saving} type="submit">{t.search}</button></div>
@@ -121,7 +127,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     {error && <p role="alert">{t[error]}</p>}
     {editor && <form ref={form} className="customer-form" onSubmit={event => void save(event)}>
       <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || uncertain}/>
-      <h3 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h3>
+      <h3 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h3>{!editor.input.version && <p className="customer-intro">{chinese ? '保存联系方式不会创建登录账号或发送邮件。' : 'Saving contact details does not create a login or send an email.'}</p>}
       <fieldset disabled={saving || uncertain}>
         <label>{t.name}<input name="name" autoComplete="name" required maxLength={120} value={editor.input.name} onChange={e => setEditor({ ...editor, input: { ...editor.input, name: e.target.value } })}/></label>
         <label>{t.email}<input name="email" type="email" autoComplete="email" maxLength={254} value={editor.input.email} onChange={e => setEditor({ ...editor, input: { ...editor.input, email: e.target.value } })}/></label>
@@ -130,14 +136,14 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       </fieldset>
       <div className="portal-actions"><button className="button" disabled={saving || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={saving || uncertain} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
     </form>}
-    <div className="customer-heading"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : ''}</p><button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button></div>
-    <ul className="customer-list">{items.map(customer => <li key={customer.id} className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}><div><h3><button className="customer-select" aria-label={customer.name} aria-pressed={petCustomer?.id === customer.id} onClick={() => choosePets(customer)}><span className="customer-name">{customer.name}</span>{petCustomer?.id === customer.id && <span className="customer-selected-label" aria-hidden="true">✓ {chinese ? '已选择' : 'Selected'}</span>}</button></h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{t.edit}</button>{!customer.loginEmail&&<button className="language" onClick={()=>setLinkCustomer(customer.id)}>{chinese?'关联 Google 账号':'Link Google account'}: {customer.name}</button>}</div></li>)}</ul>
+    <div className="customer-heading directory-toolbar"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : loaded ? (chinese ? `已显示 ${items.length} 位客户` : `${items.length} customers shown`) : ''}</p><button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button></div>
+    <ul className="customer-list">{items.map(customer => <li key={customer.id} className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}><div><h3><button className="customer-select" aria-label={customer.name} aria-pressed={petCustomer?.id === customer.id} onClick={() => choosePets(customer)}><span className="customer-name">{customer.name}</span>{petCustomer?.id === customer.id && <span className="customer-selected-label" aria-hidden="true">✓ {chinese ? '已选择' : 'Selected'}</span>}</button></h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span className="customer-language" lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{chinese ? '编辑' : 'Edit'}</button>{!customer.loginEmail&&<button className="language" aria-label={`${chinese ? '关联 Google 账号' : 'Link Google account'}: ${customer.name}`} onClick={()=>setLinkCustomer(customer.id)}>{chinese?'关联 Google':'Link Google'}</button>}</div></li>)}</ul>
     {linkCustomer&&<AdminAccountLink key={linkCustomer} customerId={linkCustomer} onLinked={()=>void load()}/>}
-    <PetSearch onChoose={choosePets}/>
+    <details className="pet-search-tools"><summary>{chinese ? '查找宠物' : 'Find a pet'}</summary><PetSearch onChoose={choosePets}/></details>
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
     </div>
-    <div ref={petsPanel} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><h3>{chinese ? '客户' : 'Customer'}: {petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}<Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
+    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><p className="eyebrow">{chinese ? '所选客户' : 'SELECTED CUSTOMER'}</p><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
     </div>
   </section>;
 }

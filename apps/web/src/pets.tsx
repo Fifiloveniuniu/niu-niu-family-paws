@@ -51,7 +51,7 @@ function PetPhoto({ pet }: { pet: Pet }) {
       .then(readFile).then(value => { if (alive) setUrl(value); }).catch(() => { if (alive) setFailed(true); });
     return () => { alive = false; };
   }, [pet.customerId, pet.id, pet.photo, retry]);
-  return <div className="pet-photo">{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{pet.photo ? t.loading : t.noPhoto}</span>}</div>;
+  return <div className={`pet-photo${!pet.photo ? ' pet-photo-empty' : ''}`}>{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{pet.photo ? t.loading : t.noPhoto}</span>}</div>;
 }
 export default function Pets({ customerId, title }: { customerId: string; title?: string }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;

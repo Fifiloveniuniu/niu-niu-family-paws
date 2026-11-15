@@ -118,6 +118,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin sample pet');
   await petSection.getByRole('button',{name:'Save pet',exact:true}).click();
   await expect(petSection.getByRole('heading',{name:'Admin sample pet',exact:true})).toBeVisible();
+  await page.getByText('Find a pet',{exact:true}).click();
   await page.getByRole('searchbox',{name:'Start of pet name',exact:true}).fill('Admin');
   await page.getByRole('button',{name:'Search pet names',exact:true}).click();
   await expect(page.getByText('Customer: Alice Chen',{exact:true})).toBeVisible();
@@ -140,7 +141,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Keep this pet draft');
   page.once('dialog',dialog=>dialog.accept());
   await page.getByRole('button',{name:'Manage these pets',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Customer: Other sample',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Other sample',exact:true})).toBeVisible();
   await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveCount(0);
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await expect(page.getByRole('button',{name:'添加客户',exact:true})).toBeVisible();
