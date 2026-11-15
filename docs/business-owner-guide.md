@@ -33,7 +33,7 @@ Adding a customer in the administrator directory saves contact information. It d
 
 ## Saving your own profile
 
-Administrators first choose **My profile & pets** in **Workspace**. Choose **Customer management** to return to the directory. Both pages use the same Google login and existing profile/pet records. Switching pages keeps unsaved edits during the current session; reloading the website starts in customer management and discards unsaved edits. Saving still requires the usual Save buttons. Ordinary customers go straight to their own profile.
+Administrators first choose **My profile & pets** in **Workspace**. Choose **Customer management** to return to the directory. Both pages use the same Google login and existing profile/pet records. Switching pages keeps unsaved edits during the current session; reloading the website starts in customer management and asks before discarding unsaved edits. Saving still requires the usual Save buttons. Ordinary customers go straight to their own profile.
 
 管理员先在“切换页面”中选择“我的资料与宠物”，即可管理自己的资料。点击“客户管理”返回客户目录。两页共用同一个 Google 账号和已有资料，不必重复注册。当前会话内切换页面会保留未保存的修改；刷新网站会回到客户管理，并放弃未保存的修改。修改仍需点击相应“保存”按钮才会保存。普通客户登录后直接进入自己的资料。
 
@@ -41,9 +41,9 @@ To change the website language, use **Language / 语言** at the top of any page
 
 切换网站语言时，在页面顶部的 **Language / 语言** 中选择 **English** 或 **简体中文**。浏览器会记住您的选择。这只会切换界面语言，不会修改个人资料中保存的语言偏好。
 
-Customers sign in with their own Google account, enter **Your name** and **Your preferred language** under **My profile**, then choose **Save profile**. Later they can update these fields or reload their saved profile. Each Google identity accesses only its own profile. Administrators and staff also have a personal profile panel; it uses the same canonical record across their roles.
+Customers sign in with their own Google account, enter **Your name** and **Your preferred language** under **My profile**, then choose **Save profile**. Later they can update these fields and save again. Each Google identity accesses only its own profile. Administrators and staff also have a personal profile panel; it uses the same canonical record across their roles.
 
-客户使用自己的 Google 账号登录，在“我的资料”中填写“您的姓名”和“您的首选语言”，再点击“保存我的资料”。以后可在这里修改或重新加载资料。每个 Google 账号只能访问自己的个人资料；管理员和员工也可填写自己的资料，不必另建账号。
+客户使用自己的 Google 账号登录，在“我的资料”中填写“您的姓名”和“您的首选语言”，再点击“保存我的资料”。以后可在这里修改并再次保存资料。每个 Google 账号只能访问自己的个人资料；管理员和员工也可填写自己的资料，不必另建账号。
 
 The administrator directory shows these registered profiles automatically. Administrator edits and customer edits refer to the same record. Existing administrator-created records are never automatically linked by matching names/emails. If another edit changes a record first, the app asks you to reload before saving again.
 
@@ -57,7 +57,7 @@ If the account already saved a separate profile, linking stops to protect both r
 
 ## Managing pets
 
-When an action would discard edits, the website asks first. Choose **Cancel** to keep editing, or **OK** to discard and continue. This applies to cancelling/replacing a form, reloading your profile, switching to another customer's pets, signing out and returning to the website. Changing the interface language or switching administrator workspaces keeps drafts. Use **Save** to store changes; reminders do not save automatically.
+When an action would discard edits, the website asks first. Choose **Cancel** to keep editing, or **OK** to discard and continue. This applies to cancelling/replacing a form, switching to another customer's pets, signing out and returning to the website. Changing the interface language or switching administrator workspaces keeps drafts. Use **Save** to store changes; reminders do not save automatically.
 
 操作会丢失未保存的修改时，网站会先询问。点击“取消”可留下继续编辑，点击“确定”会放弃修改并继续操作。切换界面语言或管理员工作页面会保留草稿。请点击“保存”才会正式保存；提醒不会自动保存。
 
@@ -84,3 +84,7 @@ Use the same GitHub project, `Fifiloveniuniu/niu-niu-family-paws`, and ask Codex
 In **Customer management**, the customer list appears on the left and the selected customer's pets appear on the right. Click a customer’s row to show their pets on the right. Hovering highlights the row; the selected customer has a green background, a left border and a Selected badge. Edit customer and account linking remain separate actions. On phones, selecting a customer brings their pets into view below the list. Use **← Customers** to return to the list. Search customers or pet names in the left panel; pet search results can also select a customer. Existing private photos remain visible only to the owner and authorized administrators. Switching customers asks before discarding unsaved pet edits.
 
 在“客户管理”中，左侧显示客户列表，右侧显示所选客户的宠物。点击客户行即可在右侧查看其宠物。鼠标悬停时会高亮；所选客户显示绿色背景、左侧边框和“已选择”标记。编辑客户和关联账号仍为独立操作。手机上，选择客户后会自动显示下方的宠物区域，点击“← 客户列表”可返回列表。左侧可按客户或宠物名字搜索，宠物搜索结果也可用于选择客户。已保存的照片仍仅供主人和获授权的管理员查看。切换客户前，如有未保存的宠物修改，系统会先询问。
+
+Routine reload buttons are removed. Customers and pets load when you open them, and lists update after saves. If loading fails, use **Try again** beside the error. Account access is rechecked when you return to the tab. Unsaved edits remain protected.
+
+日常页面不再显示重新加载按钮。打开资料时会自动加载，保存后列表会自动更新。加载失败时，点击错误旁的“重试”。返回浏览器标签页时会自动检查登录权限，未保存的修改仍受到保护。

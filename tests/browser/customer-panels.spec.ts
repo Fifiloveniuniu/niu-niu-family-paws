@@ -7,7 +7,9 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true,customAttributes:JSON.stringify({admin:true})}});
   const customers=['Sample Alex','示例小雨'].map((name,index)=>({id:`10000000-0000-4000-8000-00000000004${index}`,name,email:'',phone:'',language:'en',loginEmail:email,version:1}));
   await page.route('**/api/customers?*',route=>route.fulfill({json:{items:customers,nextCursor:null}}));
+  let failPetLoad=true;
   await page.route('**/api/customers/*/pets',route=>{
+    if(failPetLoad){return route.fulfill({status:503,json:{error:'unavailable'}});}
     const customerId=route.request().url().split('/').at(-2)!;
     return route.fulfill({json:{items:[{id:'10000000-0000-4000-8000-000000000050',customerId,name:customerId===customers[0].id?'Sample Mochi':'示例豆豆',photo:null,version:1}],nextCursor:null}});
   });
@@ -18,6 +20,7 @@ test('customer list selects the correct pets in bilingual responsive panels and 
     const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
+  await expect(page.getByRole('button',{name:/Reload|Refresh session/})).toHaveCount(0);
   const left=page.getByRole('region',{name:'Customer list',exact:true});
   const right=page.getByRole('region',{name:'Selected customer pets',exact:true});
   await expect(right.getByText('Select a customer from the list to view and manage their pets.')).toBeVisible();
@@ -30,7 +33,12 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   // Clicking the contact area, outside the name and action buttons, selects the row.
   await alexRow.click({position:{x:24,y:90}});
   await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(right.getByRole('button',{name:'Try again',exact:true})).toBeVisible();
+  failPetLoad=false;
+  await right.getByRole('button',{name:'Try again',exact:true}).click();
+  await expect(right.getByRole('button',{name:'Try again',exact:true})).toHaveCount(0);
   await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:/Reload|Refresh session/})).toHaveCount(0);
   await expect(alexRow.getByText('✓ Selected',{exact:true})).toBeVisible();
   await otherRow.hover();
   await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');

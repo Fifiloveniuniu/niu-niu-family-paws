@@ -15,8 +15,8 @@ const en = {
   home: 'Back to website', label: 'YOUR FAMILY PAWS ACCOUNT', title: 'Welcome to Family Paws',
   intro: 'Sign in with your Google account to continue.',
   login: 'Continue with Google', logout: 'Sign out', checking: 'Checking your access…', busy: 'Please wait…',
-  denied: 'Verified account required', deniedBody: 'We could not verify access for this account. Refresh access or sign out and try your Google account again.',
-  refresh: 'Refresh session', error: 'Something went wrong. Please try again.', popup: 'Allow the Google sign-in window, then try again.', network: 'Check your connection and try again.',
+  denied: 'Verified account required', deniedBody: 'We could not verify access for this account. Try again or sign out and try your Google account again.',
+  refresh: 'Try again', error: 'Something went wrong. Please try again.', popup: 'Allow the Google sign-in window, then try again.', network: 'Check your connection and try again.',
   dashboard: 'Administrator dashboard', welcome: 'Welcome back.', account: 'Your account', role: 'Administrator',
   ready: 'Manage customers or update your own profile and pets.',
   workspace: 'Workspace', manage: 'Customer management', personal: 'My profile & pets', personalTitle: 'My profile & pets',
@@ -30,8 +30,8 @@ const zh: typeof en = {
   home: '返回首页', label: 'FAMILY PAWS 账号', title: '欢迎来到 Family Paws',
   intro: '使用您的 Google 账号登录，即可继续。',
   login: '使用 Google 登录', logout: '退出登录', checking: '正在确认登录状态…', busy: '请稍候…',
-  denied: '请验证您的账号', deniedBody: '暂时无法确认您的登录状态。请刷新登录状态，或退出后重新登录。',
-  refresh: '刷新登录状态', error: '操作未完成，请重试。', popup: '请允许弹出 Google 登录窗口，然后重试。', network: '请检查网络连接后重试。',
+  denied: '请验证您的账号', deniedBody: '暂时无法确认您的登录状态。请重试，或退出后重新登录。',
+  refresh: '重试', error: '操作未完成，请重试。', popup: '请允许弹出 Google 登录窗口，然后重试。', network: '请检查网络连接后重试。',
   dashboard: '管理员控制台', welcome: '欢迎回来。', account: '您的账号', role: '管理员',
   ready: '管理客户资料，或打开自己的资料与宠物。',
   workspace: '切换页面', manage: '客户管理', personal: '我的资料与宠物', personalTitle: '我的资料与宠物',
@@ -97,7 +97,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
           {access === 'denied' && <h2>{t.denied}</h2>}
           <div className="portal-identity-row"><p className="portal-account"><span>{t.account}</span><strong>{user?.email}</strong></p>{access !== 'denied' && <span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span>}</div>
           {access !== 'admin' && <p className="customer-intro">{access === 'denied' ? t.deniedBody : access === 'employee' ? t.employeeNext : t.customerNext}</p>}
-          <div className="portal-actions session-actions"><button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button><button className="language" disabled={busy} onClick={() => { if (confirmDiscardChanges(i18n.language)) void run(() => signOut(auth)); }}>{t.logout}</button></div>
+          <div className="portal-actions session-actions">{access === 'denied' && <button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button>}<button className="language" disabled={busy} onClick={() => { if (confirmDiscardChanges(i18n.language)) void run(() => signOut(auth)); }}>{t.logout}</button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
       </div>
