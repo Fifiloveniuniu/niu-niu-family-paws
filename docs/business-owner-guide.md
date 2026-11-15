@@ -81,9 +81,9 @@ Use the same GitHub project, `Fifiloveniuniu/niu-niu-family-paws`, and ask Codex
 
 ## Choosing a customer's pets
 
-In **Customer management**, the customer list appears on the left and the selected customer's pets appear on the right. Click a customer’s row to show their pets on the right. Hovering highlights the row; the selected customer has a green background, a left border and a Selected badge. Edit customer and account linking remain separate actions. On phones, selecting a customer brings their pets into view below the list. Use **← Customers** to return to the list. Search customers or pet names in the left panel; pet search results can also select a customer. Existing private photos remain visible only to the owner and authorized administrators. Switching customers asks before discarding unsaved pet edits.
+In **Customer management**, the customer list appears on the left and the selected customer's pets appear on the right. Click a customer’s row to show their pets on the right. Hovering highlights the row; the selected customer has a green background and a left border. Edit customer and account linking remain separate actions. On phones, selecting a customer brings their pets into view below the list. Use **← Customers** to return to the list. Search customers or pet names in the left panel; pet search results can also select a customer. Existing private photos remain visible only to the owner and authorized administrators. Switching customers asks before discarding unsaved pet edits.
 
-在“客户管理”中，左侧显示客户列表，右侧显示所选客户的宠物。点击客户行即可在右侧查看其宠物。鼠标悬停时会高亮；所选客户显示绿色背景、左侧边框和“已选择”标记。编辑客户和关联账号仍为独立操作。手机上，选择客户后会自动显示下方的宠物区域，点击“← 客户列表”可返回列表。左侧可按客户或宠物名字搜索，宠物搜索结果也可用于选择客户。已保存的照片仍仅供主人和获授权的管理员查看。切换客户前，如有未保存的宠物修改，系统会先询问。
+在“客户管理”中，左侧显示客户列表，右侧显示所选客户的宠物。点击客户行即可在右侧查看其宠物。鼠标悬停时会高亮；所选客户显示绿色背景和左侧边框。编辑客户和关联账号仍为独立操作。手机上，选择客户后会自动显示下方的宠物区域，点击“← 客户列表”可返回列表。左侧可按客户或宠物名字搜索，宠物搜索结果也可用于选择客户。已保存的照片仍仅供主人和获授权的管理员查看。切换客户前，如有未保存的宠物修改，系统会先询问。
 
 Routine reload buttons are removed. Customers and pets load when you open them, and lists update after saves. If loading fails, use **Try again** beside the error. Account access is rechecked when you return to the tab. Unsaved edits remain protected.
 

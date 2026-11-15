@@ -81,7 +81,6 @@ html[lang=zh-Hans] h1,html[lang=zh-Hans] h2{letter-spacing:0;line-height:1.25}
 .customer-select::after{content:"";position:absolute;inset:0;border-radius:8px}
 .customer-select{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-height:44px}
 .customer-select .customer-name{font-size:1.25rem}
-.customer-select .customer-selected-label{flex:none;font-size:12px;line-height:1.5;padding:4px 8px;border-radius:6px;background:#31594c;color:#fff}
 .customer-row-actions{position:relative;z-index:1}
 @media(hover:hover){.customer-directory-panel>.customer-list>li:hover{background:#f0f4eb}.customer-directory-panel>.customer-list>li.selected-customer:hover{background:#dce8d5}}
 .customer-directory-panel>.customer-list>li.selected-customer{background:#e4eddd;border-left-color:#31594c}

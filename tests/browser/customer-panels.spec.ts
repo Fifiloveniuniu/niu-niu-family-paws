@@ -39,7 +39,8 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await expect(right.getByRole('button',{name:'Try again',exact:true})).toHaveCount(0);
   await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:/Reload|Refresh session/})).toHaveCount(0);
-  await expect(alexRow.getByText('✓ Selected',{exact:true})).toBeVisible();
+  await expect(alexRow).toHaveClass('selected-customer');
+  await expect(page.getByText(/^(✓ Selected|SELECTED CUSTOMER)$/)).toHaveCount(0);
   await otherRow.hover();
   await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeVisible();
@@ -66,7 +67,8 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   for(const language of ['en','zh']){
     await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption(language);
     await expect(page.locator('.customer-directory-panel').getByRole('button',{name:/Manage pets|管理宠物/})).toHaveCount(0);
-    await expect(page.locator('.selected-customer').getByText(language==='zh'?'✓ 已选择':'✓ Selected',{exact:true})).toBeVisible();
+    await expect(page.locator('.selected-customer')).toHaveCount(1);
+    await expect(page.getByText(/^(✓ Selected|SELECTED CUSTOMER|✓ 已选择|所选客户)$/)).toHaveCount(0);
     for(const width of [320,400,1280]){
       await page.setViewportSize({width,height:900});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

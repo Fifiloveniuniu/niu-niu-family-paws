@@ -1,5 +1,13 @@
 # Session handoff — 2026-10-22
 
+## Pexels pet-card sample — delivered 2026-11-14
+
+Owner requested a real photograph from Pexels or Pinterest. Used Pexels photo 16440218 by Helena Jankovičová Kováčová after checking its license; credits/source are in `docs/photo-credits.md`. PR #33 merged as GitHub-Verified `91640fc8c47406fed7b3c02e2053a70b30031cbd` (implementation `6742156` also Verified), CI `43688445146` passed. The 63 KB local image is served through Hosting for pets without private uploads, with a bilingual Sample photo · Pexels credit. Existing uploaded photos take priority; private-photo errors still expose the original error/retry, not a misleading stock image. No business records/photos were uploaded or modified.
+
+Rebuilt merged main and deployed Firebase Hosting. Live HTML and photo bytes match local dist/source; anonymous customer API remains 401. Signed-in native Chrome live tab showed Doudou with the stock photo and Pexels credit. A separate original tab had an open pet editor; preserved it and used a new tab for live verification. Local screenshot review and production build passed; nine full-run browser checks and both final photo/panel checks passed (mobile assertion now checks the visible stock image rather than the heading below the taller photo). Asset dimensions bounded to the card. No API/IAM/database changes.
+
+Latest steering: remove visible Selected labels while preserving active highlighting; give each pet its own image and asked about storage. Existing private pet-photo upload already uses Google Cloud Storage bucket `niu-niu-family-paws-pet-photos`, linked to each stable pet record. Asked whether to save different Pexels samples or use photos of actual pets; awaiting owner answer. Do not overwrite pet photos or imply stock imagery depicts an actual pet without resolving this choice. Selection-label change is on `fix/remove-selection-labels` until its PR/deployment completes. Preserve all real records and the separate pending environment PR #24.
+
 ## Routine reload controls removed — delivered 2026-11-14
 
 Owner requested a simpler UI without reload buttons. PR #31 merged as GitHub-Verified `d793a28648c87f4908dec068e195534afe2dabc6` (implementation `26e503c` also Verified); CI run `43686841093` passed. Removed routine customer/pet/profile reload and account Refresh session controls. Initial reads, post-save list updates and access checks on tab return remain automatic. Recoverable loading/conflict errors expose Try again only when appropriate; uncertain saves retain their existing save-retry path and draft protection. Denied access retains contextual Try again. Bilingual error guidance/owner guide and synthetic screenshots updated. No new polling or data writes.

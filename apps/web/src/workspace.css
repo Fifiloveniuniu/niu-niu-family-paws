@@ -31,7 +31,6 @@
 .portal-admin .customer-directory-panel>.customer-list>li{padding:12px;gap:8px;border-bottom-color:transparent;margin-bottom:4px}
 .portal-admin .customer-select{min-height:36px;gap:8px}
 .portal-admin .customer-select .customer-name{font-size:16px;line-height:1.5}
-.portal-admin .customer-select .customer-selected-label{font-size:10px;padding:4px 6px}
 .portal-admin .customer-list p{font-size:12px;line-height:1.5;margin:4px 0 6px}
 .portal-admin .customer-language{display:inline-block;font-size:11px;color:#657065}
 .portal-admin .customer-row-actions{gap:8px}
