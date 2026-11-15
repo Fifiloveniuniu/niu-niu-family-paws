@@ -93,6 +93,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await expect(page.getByRole('heading',{name:'Alice',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Edit customer: Alice',exact:true}).click();
   await page.getByRole('textbox',{name:'Customer name'}).fill('Alice Chen');
+  await page.getByRole('dialog',{name:'Edit customer',exact:true}).screenshot({path:'test-results/customer-dialog-mobile-en.png'});
   await page.getByRole('button',{name:'Save customer',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Alice Chen',exact:true})).toBeVisible();
   expect(customers[0].version).toBe(2);
@@ -129,17 +130,17 @@ test('administrator can add, edit and search customers in both languages on mobi
   await expect(petSection.getByRole('heading',{name:'Admin renamed pet',exact:true})).toBeVisible();
   await petSection.getByRole('button',{name:'Edit pet: Admin renamed pet',exact:true}).click();
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Keep this pet draft');
-  // Opening the same customer preserves the mounted editor without a confirmation.
-  await page.getByRole('button',{name:'Alice Chen',exact:true}).click();
+  // Modal close and Escape protect the draft before changing customers.
+  page.once('dialog',dialog=>dialog.dismiss());
+  await page.getByRole('button',{name:'Close',exact:true}).click();
   await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Keep this pet draft');
+  page.once('dialog',dialog=>dialog.accept());
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   const otherCustomer={id:'10000000-0000-4000-8000-000000000099',name:'Other sample',loginEmail:null};
   await page.route('**/api/pet-search?**',route=>route.fulfill({json:{items:[{pet:{...pets[0],customerId:otherCustomer.id},customer:otherCustomer}],nextCursor:null}}));
   await page.getByRole('button',{name:'Search pet names',exact:true}).click();
   await expect(page.getByText('Customer: Other sample',{exact:true})).toBeVisible();
-  page.once('dialog',dialog=>dialog.dismiss());
-  await page.getByRole('button',{name:'Manage these pets',exact:true}).click();
-  await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Keep this pet draft');
-  page.once('dialog',dialog=>dialog.accept());
   await page.getByRole('button',{name:'Manage these pets',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Other sample',exact:true})).toBeVisible();
   await expect(petSection.getByRole('textbox',{name:'Pet name',exact:true})).toHaveCount(0);

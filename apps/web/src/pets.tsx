@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import samplePetPhoto from './assets/cat-and-dog-pexels-16440218.jpg';
+import Modal from './modal';
+import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
@@ -62,7 +64,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
   const [loading, setLoading] = React.useState(true), [saving, setSaving] = React.useState(false), [reading, setReading] = React.useState(false);
   const [error, setError] = React.useState<keyof typeof en | null>(null), [saved, setSaved] = React.useState(false), [uncertain, setUncertain] = React.useState(false);
   const [editor, setEditor] = React.useState<{ id: string; input: PetWrite; preview: string } | null>(null);
-  const alive = React.useRef(true), generation = React.useRef(0), heading = React.useRef<HTMLHeadingElement>(null);
+  const alive = React.useRef(true), generation = React.useRef(0);
   const path = `/customers/${customerId}/pets`;
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null);
@@ -80,7 +82,6 @@ export default function Pets({ customerId, title }: { customerId: string; title?
     finally { if (alive.current && version === generation.current) setLoading(false); }
   }
   React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++generation.current; }; }, [customerId]);
-  React.useEffect(() => { if (editor) heading.current?.focus(); }, [editor?.id]);
   function open(pet?: Pet) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
     setError(null); setSaved(false); setUncertain(false);
@@ -114,9 +115,8 @@ export default function Pets({ customerId, title }: { customerId: string; title?
     <div className="customer-heading"><h3 id={headingId}>{title ?? t.own}</h3><button className="button" disabled={blocked || loading} onClick={() => open()}>{t.add}</button></div>
     <p className="customer-intro">{t.intro}</p>
     {error && <p role="alert">{t[error]}</p>}{saved && <p role="status">{t.saved}</p>}
-    {editor && <form ref={form} className="customer-form pet-form" onSubmit={event => void save(event)}>
+    {editor && <Modal title={editor.input.version ? t.edit : t.add} disabled={blocked} onClose={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}><form ref={form} className="customer-form pet-form" onSubmit={event => void save(event)}>
       <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || reading || uncertain}/>
-      <h4 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h4>
       <fieldset disabled={blocked}>
         <label>{t.name}<input required maxLength={120} value={editor.input.name} onChange={event => { setEditor({ ...editor, input: { ...editor.input, name: event.target.value } }); if (error === 'invalid') setError(null); }}/></label>
         <label>{t.photo}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => void choose(event.target.files?.[0])}/></label>
@@ -124,8 +124,8 @@ export default function Pets({ customerId, title }: { customerId: string; title?
       <p className="customer-intro">{t.hint}</p>
       {editor.preview && <><img className="pet-preview" src={editor.preview} alt={editor.input.name}/><p>{t.selected}</p></>}
       <div className="portal-actions"><button className="button" type="submit" disabled={saving || reading || loading || error === 'conflict' || error === 'forbidden' || error === 'invalid'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={blocked} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
-    </form>}
-    <div className="pet-grid">{items.map(pet => <article className="pet-card" key={pet.id}><PetPhoto pet={pet}/><div><h4>{pet.name}</h4><button className="language" aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}>{t.edit}</button></div></article>)}</div>
+    </form></Modal>}
+    <div className="pet-grid">{items.map(pet => <article className="pet-card" key={pet.id}><PetPhoto pet={pet}/><div><h4>{pet.name}</h4><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}><Icon name="edit"/></button></div></article>)}</div>
     {loading ? <p role="status">{t.loading}</p> : !items.length && !error ? <p>{t.empty}</p> : null}
     {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && <div className="portal-actions">{(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={blocked || loading} onClick={() => void load()}>{t.reload}</button>}{cursor && <button className="language" disabled={blocked || loading} onClick={() => void load(cursor)}>{t.more}</button>}</div>}
   </section>;

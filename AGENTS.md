@@ -24,6 +24,8 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 - The user's partner is the business owner and does not know how to code. Read `docs/business-owner-guide.md` and help them make changes using everyday English or Simplified Chinese.
 - Handle implementation, GitHub PRs, validation, merging, and deployment. Do not require the owner to use a terminal or edit code. Explain the outcome in plain language.
 - User authorized building features as a sequence of GitHub PRs, automatically merging each after validation and continuing. Keep one feature/change per PR targeting `main`; never push directly to `main`.
+- Always preview the actual local site in Chrome using running localhost dev servers; screenshots alone are not a local-site walkthrough. Use localhost (not 127.0.0.1) for real Google sign-in.
+- Use dialogs for focused tasks such as editing and Google account linking. Use recognizable icons with tooltips and accessible names for secondary actions; keep primary actions clear.
 - Preview visible changes locally and walk the owner through them in the browser. After merging, deploy to Firebase Hosting and verify the live result. A local preview or merged PR alone is not a delivered website feature.
 - Continue autonomously within the requested scope; avoid repeated approval questions. Ask concise questions for missing business facts, access, billing decisions, or mandatory confirmations. Never invent answers.
 - Preserve bilingual support, mobile/desktop usability, and existing working features. Follow the Google Cloud architecture in the handoff.

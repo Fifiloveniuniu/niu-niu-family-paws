@@ -57,10 +57,11 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await right.getByRole('button',{name:'Add pet',exact:true}).click();
   await right.getByRole('textbox',{name:'Pet name',exact:true}).fill('Unsaved draft');
   page.once('dialog',dialog=>dialog.dismiss());
-  await left.getByRole('button',{name:'示例小雨',exact:true}).click();
+  await page.getByRole('button',{name:'Close',exact:true}).click();
   await expect(right.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved draft');
   await expect(left.getByRole('button',{name:'Sample Alex',exact:true})).toHaveAttribute('aria-pressed','true');
   page.once('dialog',dialog=>dialog.accept());
+  await page.getByRole('button',{name:'Close',exact:true}).click();
   await left.getByRole('button',{name:'示例小雨',exact:true}).click();
   await expect(right.getByRole('heading',{name:'示例豆豆',exact:true})).toBeVisible();
   await expect(right.getByRole('heading',{name:'Sample Mochi',exact:true})).toHaveCount(0);

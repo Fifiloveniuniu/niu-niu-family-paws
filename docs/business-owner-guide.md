@@ -25,9 +25,9 @@ The live website is https://niu-niu-family-paws.web.app. A local preview is for 
 
 ## Managing customer contacts
 
-Open the website, choose **Sign in**, and use your authorized administrator Google account. In **Customers**, choose **Add customer**, enter the name, optional contact email/phone, and preferred language, then choose **Save customer**. Choose **Edit** beside a saved record to update it. Search using the beginning of the customer's name, contact email, or Google login email; clear the search box and search again to show all records. A Google login email is shown separately and cannot be changed by editing contact details.
+Open the website, choose **Sign in**, and use your authorized administrator Google account. In **Customers**, choose **Add customer**, enter the name, optional contact email/phone, and preferred language, then choose **Save customer**. Choose the pencil icon beside a saved record to edit it in a pop-up. Search using the beginning of the customer's name, contact email, or Google login email; clear the search box and search again to show all records. A Google login email is shown separately and cannot be changed by editing contact details.
 
-中文界面：点击“登录”，使用已获授权的管理员 Google 账号。在“客户”中点击“添加客户”，填写姓名、可选的邮箱和电话及首选语言，再点击“保存客户”。点击记录旁的“编辑”可修改资料。搜索时输入姓名、联系邮箱或 Google 登录邮箱的开头；清空搜索框后再次搜索可显示所有记录。Google 登录邮箱单独显示，修改联系方式不会改变登录身份。
+中文界面：点击“登录”，使用已获授权的管理员 Google 账号。在“客户”中点击“添加客户”，填写姓名、可选的邮箱和电话及首选语言，再点击“保存客户”。点击记录旁的铅笔图标，在弹窗中修改资料。搜索时输入姓名、联系邮箱或 Google 登录邮箱的开头；清空搜索框后再次搜索可显示所有记录。Google 登录邮箱单独显示，修改联系方式不会改变登录身份。
 
 Adding a customer in the administrator directory saves contact information. It does not create their login, link a Google account, or send an email. Contact email is editable profile information, not verified login identity. Edits keep an audit history; customers and employees cannot open the administrator directory.
 
@@ -49,9 +49,9 @@ The administrator directory shows these registered profiles automatically. Admin
 
 ## Linking an existing customer
 
-Before the customer saves a new personal profile, choose **Link Google account** beside their existing customer record. Generate a code and share it privately with that customer. They sign in with their own Google account, enter the code under **Already registered with us?**, and submit. Open the customer's linking panel and **Check status**. Verify that the displayed Google email belongs to this customer, then choose **Approve account link**. The customer checks status or signs in again to see their original profile and pets. Codes last 24 hours. Replacing a code cancels its earlier request; reject or cancel any incorrect request. The website does not send the code by email.
+Before the customer saves a new personal profile, choose the chain-link icon beside their existing customer record to open **Link a Google account**. Generate a code and share it privately with that customer. They sign in with their own Google account, enter the code under **Already registered with us?**, and submit. Open the customer's linking panel and **Check status**. Verify that the displayed Google email belongs to this customer, then choose **Approve account link**. The customer checks status or signs in again to see their original profile and pets. Codes last 24 hours. Replacing a code cancels its earlier request; reject or cancel any incorrect request. The website does not send the code by email.
 
-在客户保存新个人资料前，管理员先在原客户记录旁点击“关联 Google 账号”，生成关联码后私下交给客户。客户用自己的 Google 账号登录，在“之前已登记过资料？”中输入关联码并提交。管理员打开该客户的关联页面，点击“查看最新状态”，核实显示的 Google 邮箱确实属于该客户后，再“批准关联”。客户查看最新状态或重新登录，即可看到原资料和宠物。关联码 24 小时内有效；重新生成会使旧码及申请失效。错误申请请拒绝或取消。网站不会自动发送关联邮件。
+在客户保存新个人资料前，管理员先在原客户记录旁点击链条图标，打开“关联 Google 账号”弹窗，生成关联码后私下交给客户。客户用自己的 Google 账号登录，在“之前已登记过资料？”中输入关联码并提交。管理员打开该客户的关联页面，点击“查看最新状态”，核实显示的 Google 邮箱确实属于该客户后，再“批准关联”。客户查看最新状态或重新登录，即可看到原资料和宠物。关联码 24 小时内有效；重新生成会使旧码及申请失效。错误申请请拒绝或取消。网站不会自动发送关联邮件。
 
 If the account already saved a separate profile, linking stops to protect both records. Ask for help resolving the duplicate; the website will not automatically merge or move pets. 如果账号已经另存个人资料，系统会停止关联，保护两份资料。请联系管理员处理重复资料；不会自动合并或转移宠物。
 
@@ -61,9 +61,9 @@ When an action would discard edits, the website asks first. Choose **Cancel** to
 
 操作会丢失未保存的修改时，网站会先询问。点击“取消”可留下继续编辑，点击“确定”会放弃修改并继续操作。切换界面语言或管理员工作页面会保留草稿。请点击“保存”才会正式保存；提醒不会自动保存。
 
-After saving your profile, use **My pets → Add pet**, enter the pet's name and choose **Save pet**. Add as many separate pets as you need. Photos can be added later: choose **Edit pet**, select a JPEG, PNG or WebP image (up to 3 MB and 16 megapixels), and save. A newly selected image stays on your device until you save. Only the owner and authorized administrators can view saved photos. The system resizes photos and removes source metadata.
+After saving your profile, use **My pets → Add pet**, enter the pet's name and choose **Save pet**. Add as many separate pets as you need. Photos can be added later: choose the pencil icon on the pet card, select a JPEG, PNG or WebP image (up to 3 MB and 16 megapixels), and save. A newly selected image stays on your device until you save. Only the owner and authorized administrators can view saved photos. The system resizes photos and removes source metadata.
 
-保存个人资料后，在“我的宠物”中点击“添加宠物”，填写名字后点击“保存宠物”。每只宠物单独添加。照片可以以后补：点击“编辑宠物”，选择 JPEG、PNG 或 WebP 图片（最大 3 MB、1600 万像素），再保存。新选的图片只有保存后才会上传。已保存的照片仅主人与获授权的管理员可查看，系统会缩小图片并移除原始元数据。
+保存个人资料后，在“我的宠物”中点击“添加宠物”，填写名字后点击“保存宠物”。每只宠物单独添加。照片可以以后补：点击宠物卡片上的铅笔图标，在弹窗中选择 JPEG、PNG 或 WebP 图片（最大 3 MB、1600 万像素），再保存。新选的图片只有保存后才会上传。已保存的照片仅主人与获授权的管理员可查看，系统会缩小图片并移除原始元数据。
 
 Administrators click a customer’s name in the left list to see that customer's pets. Open **Find a pet**, then **Search pet names** to find names by their beginning and shows the customer's name/Google email; **Manage these pets** opens all pets belonging to that customer. Edits update the same records the customer sees and keep an audit history. Use the existing customer search for customer names or Google emails. Adding pets does not link an unlinked contact to a Google account.
 
@@ -92,3 +92,7 @@ Routine reload buttons are removed. Customers and pets load when you open them, 
 Pet cards without an uploaded photo show a cat-and-dog stock photo labelled **Sample photo · Pexels**. Upload the pet’s own photo through **Edit pet** to replace the sample. Uploaded photos remain private.
 
 未上传照片的宠物卡片会显示猫和狗的图库照片，并标注“示例照片 · Pexels”。通过“编辑宠物”上传宠物自己的照片，即可替换示例。上传的照片仍为私密照片。
+
+Editing customers and pets, adding them, and linking Google accounts open in focused pop-ups. Use Save to apply changes, Cancel or the × icon to close; unsaved changes ask first. Escape closes the pop-up with the same protection. Icon buttons have tooltips and accessible names. The local browser preview uses **http://localhost:4177**, where Google sign-in works; avoid `127.0.0.1` for real sign-in. Codex runs and manages the dev servers.
+
+添加或编辑客户与宠物、关联 Google 账号时会打开弹窗。点击“保存”应用修改；点击“取消”或 × 关闭，如有未保存修改会先询问。Esc 键也可关闭，并保留同样的保护。图标按钮有提示文字和无障碍名称。本地预览使用 **http://localhost:4177**，支持 Google 登录；真实登录请勿使用 `127.0.0.1`。开发服务器由 Codex 运行和管理。

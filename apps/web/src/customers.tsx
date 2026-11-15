@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets, { PetSearch } from './pets';
+import Modal from './modal';
+import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import {AdminAccountLink} from './account-link';
 import type { components } from '../../../packages/contracts/generated';
@@ -55,10 +57,10 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const [search, setSearch] = React.useState('');
   const [activeSearch, setActiveSearch] = React.useState('');
   const [petCustomer, setPetCustomer] = React.useState<{ id: string; name: string; loginEmail: string | null } | null>(null);
+  const [linkBusy,setLinkBusy] = React.useState(false);
   const [linkCustomer,setLinkCustomer] = React.useState<string|null>(null);
   const request = React.useRef(0);
   const alive = React.useRef(true);
-  const heading = React.useRef<HTMLHeadingElement>(null);
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null), petsPanel = React.useRef<HTMLDivElement>(null), directoryPanel = React.useRef<HTMLDivElement>(null);
   function choosePets(customer: NonNullable<typeof petCustomer>) {
@@ -89,7 +91,6 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     finally { if (alive.current && generation === request.current) setLoading(false); }
   }
   React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++request.current; }; }, [refreshKey]);
-  React.useEffect(() => { if (editor) heading.current?.focus(); }, [editor?.id]);
   function open(customer?: Customer) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
     setError(null); setMessage(null); setUncertain(false);
@@ -125,9 +126,9 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     </form>
     {message && <p role="status">{t[message]}</p>}
     {error && <p role="alert">{t[error]}</p>}
-    {editor && <form ref={form} className="customer-form" onSubmit={event => void save(event)}>
+    {editor && <Modal title={editor.input.version ? t.edit : t.add} disabled={saving || uncertain} onClose={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}><form ref={form} className="customer-form" onSubmit={event => void save(event)}>
       <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || uncertain}/>
-      <h3 ref={heading} tabIndex={-1}>{editor.input.version ? t.edit : t.add}</h3>{!editor.input.version && <p className="customer-intro">{chinese ? '保存联系方式不会创建登录账号或发送邮件。' : 'Saving contact details does not create a login or send an email.'}</p>}
+      {!editor.input.version && <p className="customer-intro">{chinese ? '保存联系方式不会创建登录账号或发送邮件。' : 'Saving contact details does not create a login or send an email.'}</p>}
       <fieldset disabled={saving || uncertain}>
         <label>{t.name}<input name="name" autoComplete="name" required maxLength={120} value={editor.input.name} onChange={e => setEditor({ ...editor, input: { ...editor.input, name: e.target.value } })}/></label>
         <label>{t.email}<input name="email" type="email" autoComplete="email" maxLength={254} value={editor.input.email} onChange={e => setEditor({ ...editor, input: { ...editor.input, email: e.target.value } })}/></label>
@@ -135,10 +136,10 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
         <label>{t.language}<select value={editor.input.language} onChange={e => setEditor({ ...editor, input: { ...editor.input, language: e.target.value as 'en' | 'zh' } })}><option value="en">English</option><option value="zh">简体中文</option></select></label>
       </fieldset>
       <div className="portal-actions"><button className="button" disabled={saving || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={saving || uncertain} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
-    </form>}
+    </form></Modal>}
     <div className="customer-heading directory-toolbar"><p>{loaded && !items.length && !loading ? activeSearch.trim() ? t.noMatches : t.empty : loaded ? (chinese ? `已显示 ${items.length} 位客户` : `${items.length} customers shown`) : ''}</p>{(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={loading || saving} onClick={() => void load()}>{t.reload}</button>}</div>
-    <ul className="customer-list">{items.map(customer => <li key={customer.id} className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}><div><h3><button className="customer-select" aria-label={customer.name} aria-pressed={petCustomer?.id === customer.id} onClick={() => choosePets(customer)}><span className="customer-name">{customer.name}</span></button></h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span className="customer-language" lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="language" aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}>{chinese ? '编辑' : 'Edit'}</button>{!customer.loginEmail&&<button className="language" aria-label={`${chinese ? '关联 Google 账号' : 'Link Google account'}: ${customer.name}`} onClick={()=>setLinkCustomer(customer.id)}>{chinese?'关联 Google':'Link Google'}</button>}</div></li>)}</ul>
-    {linkCustomer&&<AdminAccountLink key={linkCustomer} customerId={linkCustomer} onLinked={()=>void load()}/>}
+    <ul className="customer-list">{items.map(customer => <li key={customer.id} className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}><div><h3><button className="customer-select" aria-label={customer.name} aria-pressed={petCustomer?.id === customer.id} onClick={() => choosePets(customer)}><span className="customer-name">{customer.name}</span></button></h3><p>{customer.email || customer.phone ? [customer.email, customer.phone].filter(Boolean).join(' · ') : t.noContact}</p>{customer.loginEmail && <p>{t.loginEmail}: {customer.loginEmail}</p>}<span className="customer-language" lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}>{customer.language === 'zh' ? '简体中文' : 'English'}</span></div><div className="customer-row-actions"><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${customer.name}`} disabled={saving || uncertain} onClick={() => open(customer)}><Icon name="edit"/></button>{!customer.loginEmail&&<button className="icon-button" title={chinese ? '关联 Google 账号' : 'Link Google account'} aria-label={`${chinese ? '关联 Google 账号' : 'Link Google account'}: ${customer.name}`} onClick={()=>setLinkCustomer(customer.id)}><Icon name="link"/></button>}</div></li>)}</ul>
+    {linkCustomer&&<Modal title={chinese ? '关联 Google 账号' : 'Link a Google account'} disabled={linkBusy} onClose={()=>setLinkCustomer(null)}><AdminAccountLink key={linkCustomer} customerId={linkCustomer} onBusyChange={setLinkBusy} onLinked={()=>void load()}/></Modal>}
     <details className="pet-search-tools"><summary>{chinese ? '查找宠物' : 'Find a pet'}</summary><PetSearch onChoose={choosePets}/></details>
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}

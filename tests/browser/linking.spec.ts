@@ -31,6 +31,8 @@ test('administrator and customer complete linking without exposing records befor
   await login(admin,adminEmail);
   await admin.getByRole('button',{name:'Link Google account: Existing customer',exact:true}).click();
   const panel=admin.getByRole('region',{name:'Link a Google account',exact:true});
+  await expect(panel.getByRole('button',{name:'Generate linking code',exact:true})).toBeEnabled();
+  await admin.getByRole('dialog',{name:'Link a Google account',exact:true}).screenshot({path:'test-results/link-dialog-desktop.png'});
   await panel.getByRole('button',{name:'Generate linking code',exact:true}).click();
   await expect(panel.getByText(code,{exact:true})).toBeVisible();
   await login(customer,customerEmail);
