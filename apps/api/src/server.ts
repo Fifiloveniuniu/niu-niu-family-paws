@@ -3,6 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { localPhotos } from './local-photos.ts';
+import {layoutStore} from './house-layout.ts';
 import { houseStore } from './houses.ts';
 import { petStore } from './pets.ts';
 import { buildApp } from './app.ts';
@@ -29,6 +30,7 @@ const app = buildApp({
       email: user.email,
     };
   },
+  layout: layoutStore(getFirestore()),
   houses: houseStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(),async uid=>{

@@ -1,5 +1,13 @@
 # Session handoff — 2026-10-22
 
+## Room/space map ready for local walkthrough — 2026-11-15
+
+PR #40 house management merged as GitHub-Verified `eed81685cca987db3482fe79c265d251af26ad30`, implementation `99864de` Verified, CI `43697139814` passed; no deployment. Current branch `feat/house-rooms-spaces` adds room/space configuration and a core House map entry, parent-scoped admin APIs, audited transaction/retry/version checks, explicit capacity/species/sharing/optional kg-lb limit and closure controls. No business configuration values seeded. Map is setup only; timed occupancy and booking compatibility enforcement remain later roadmap items.
+
+Build/API check and 14 unit tests pass. Seven integration cases pass with a fresh per-run `integration-*` emulator database. Earlier failures were accumulated prior-run test fixtures matching searches, resolved by per-run DB names; default photo-filled owner demo stays separate. All twelve browser cases have passed: nine unchanged cases in full run plus corrected three targeted cases (layout, houses, workspace). Workspace dialog race was fixed by awaiting hash-departure dialogs explicitly rather than attaching two handlers before the first async dialog. Screenshot `docs/screenshots/house-map-mobile-zh.png` visually reviewed. Real native local walkthrough for this room/space feature is NOT done: CUA returns `cgWindowNotFound` for Chrome and browser access host unavailable, despite Chrome process running. Asked owner to open a Chrome window via pending async question. Do not claim actual walkthrough or merge until completed; prior house and photo features had actual walkthroughs.
+
+Local frontend/API continue localhost:4180 / 127.0.0.1:8081 with isolated Auth9099/Firestore8085 and 300 photo-complete pets. `[TEST] Demo house` was created in the previous actual house walkthrough; preserve subsequent owner local edits. No remote writes/deployment in this feature. Source app/contracts/tests/docs are ready for signed draft PR/CI while awaiting review access. Unrelated `dist-dev/` and pending environment PR #24 remain untouched. User's original instruction to finish sequential PRs remains active; the current local review access issue and unanswered payment/business decisions must not be treated as feature completion.
+
 ## House management local feature — in progress 2026-11-15
 
 Branch `feat/manage-houses` rebased on merged photo-fixture PR #39 (`c560d3b23d733098d3f0c1697e13c9d9cf8ea179`, implementation `68a5b41`, both GitHub Verified, CI `43696211139` passed). No deployment after owner's local-first instruction. Photo-fixture changes are merged and local preview remains 300 photo-complete pets/100 families; cloud source inventory unchanged.

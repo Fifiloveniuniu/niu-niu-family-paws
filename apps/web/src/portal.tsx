@@ -95,7 +95,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
     {import.meta.env.MODE==='test' && <aside className="local-test-banner" role="note">{chinese?'本地测试 · 仅供测试的资料与示例照片':'LOCAL TEST · Demo records and sample photos only'}</aside>}
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>
     <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
-      <h1>{access === 'admin' ? personal ? t.personalTitle : workspace==='houses' ? (chinese?'房屋':'Houses') : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
+      <h1>{access === 'admin' ? personal ? t.personalTitle : workspace==='houses' ? (chinese?'房屋地图':'House map') : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
       <div className="portal-card" aria-busy={busy || access === 'checking'}>
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
           {access === 'denied' && <h2>{t.denied}</h2>}
@@ -110,7 +110,7 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
           <p className="eyebrow">{t.workspace}</p>
           <div className="workspace-buttons" role="group" aria-label={t.workspace}>
             <button className="language" aria-pressed={workspace==='customers'} onClick={() => setWorkspace('customers')}>{t.manage}</button>
-            <button className="language" aria-pressed={workspace==='houses'} onClick={() => setWorkspace('houses')}>{chinese?'房屋':'Houses'}</button>
+            <button className="language" aria-pressed={workspace==='houses'} onClick={() => setWorkspace('houses')}>{chinese?'房屋地图':'House map'}</button>
             <button className="language" aria-pressed={personal} onClick={() => setWorkspace('personal')}>{t.personal}</button>
           </div>
 

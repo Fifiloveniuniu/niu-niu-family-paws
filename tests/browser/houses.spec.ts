@@ -14,12 +14,13 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
     items=[...items.filter(h=>h.id!==id),house];
     if(lose){lose=false;return route.fulfill({status:503,json:{code:'unavailable'}});}return route.fulfill({json:house});
   });
+  await page.route('**/api/houses/*/layout',route=>route.fulfill({json:{rooms:[]}}));
   await page.goto('/#/login');
   await page.evaluate(async({email})=>{
     const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
-  await page.getByRole('button',{name:'Houses',exact:true}).click();
+  await page.getByRole('button',{name:'House map',exact:true}).click();
   const section=page.getByRole('region',{name:'Houses',exact:true});
   await expect(section.getByText('No houses yet. Add your first house.',{exact:true})).toBeVisible();
   await section.getByRole('button',{name:'Add house',exact:true}).click();

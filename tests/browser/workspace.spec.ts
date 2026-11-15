@@ -73,11 +73,13 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.reload();
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
   await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Discard on navigation');
-  page.once('dialog',dialog=>dialog.dismiss());
-  await page.getByRole('link',{name:'← 返回首页',exact:true}).click();
+  const cancelledDeparture=page.waitForEvent('dialog');
+  const cancelledClick=page.getByRole('link',{name:'← 返回首页',exact:true}).click();
+  await (await cancelledDeparture).dismiss();await cancelledClick;
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Discard on navigation');
-  page.once('dialog',dialog=>dialog.accept());
-  await page.getByRole('link',{name:'← 返回首页',exact:true}).click();
+  const acceptedDeparture=page.waitForEvent('dialog');
+  const acceptedClick=page.getByRole('link',{name:'← 返回首页',exact:true}).click();
+  await (await acceptedDeparture).accept();await acceptedClick;
   await page.getByRole('link',{name:'登录',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
   await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Discard on sign out');

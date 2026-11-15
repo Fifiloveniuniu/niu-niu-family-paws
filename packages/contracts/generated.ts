@@ -4,6 +4,131 @@
  */
 
 export interface paths {
+    "/api/houses/{houseId}/layout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read house layout (administrator only) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    houseId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description House configuration */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["HouseLayout"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/houses/{houseId}/rooms/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save room (administrator only) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    houseId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RoomWrite"];
+                };
+            };
+            responses: {
+                /** @description House configuration */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Room"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/houses/{houseId}/rooms/{roomId}/spaces/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save space (administrator only) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    houseId: string;
+                    roomId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SpaceWrite"];
+                };
+            };
+            responses: {
+                /** @description House configuration */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Space"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/houses": {
         parameters: {
             query?: never;
@@ -402,6 +527,43 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        RoomWrite: {
+            name: string;
+            closed: boolean;
+            version: number;
+        };
+        SpaceWrite: {
+            name: string;
+            capacity: number;
+            species: ("cat" | "dog" | "rabbit")[];
+            /** @enum {string} */
+            sharing: "individual" | "same-household" | "compatible";
+            closed: boolean;
+            weightLimit?: {
+                value: number;
+                /** @enum {string} */
+                unit: "kg" | "lb";
+            };
+            version: number;
+        };
+        Room: components["schemas"]["RoomWrite"] & {
+            /** Format: uuid */
+            id: string;
+            createdAt: string;
+            updatedAt: string;
+        };
+        Space: components["schemas"]["SpaceWrite"] & {
+            /** Format: uuid */
+            id: string;
+            createdAt: string;
+            updatedAt: string;
+        };
+        HouseLayout: {
+            rooms: {
+                room: components["schemas"]["Room"];
+                spaces: components["schemas"]["Space"][];
+            }[];
+        };
         HouseWrite: {
             name: string;
             address: string;
