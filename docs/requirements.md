@@ -114,6 +114,7 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 - Provide combined all-house and individual-house overviews.
 - Show arrivals, pickups, pets in care, capacity, requests requiring action, unassigned pets and conflicts as applicable to the approved lifecycle.
 - Calendar/timeline supports reviewing all bookings, with a dedicated Filters section for house, room, customer, pet type, pet name and status, plus clear/reset. House/room gear icons open their editable settings directly in focused dialogs.
+- Add pet uses a room/date calendar for scheduling. Shade unavailable room/time ranges gray as continuous timeline bands, including partial days, with explanations, and recheck the entire requested stay before accepting.
 - Add/remove timed pet placements from rooms. Select the pet and complete stay period first, then disable unsuitable houses/rooms and explain availability conflicts. Removing a placement must not delete the pet profile. Inspect occupancy over time; schedule moves only under approved policies.
 - Placement optimization is requested. Explainable admin-reviewed suggestions are a proposed later implementation, not an approved automatic-movement policy.
 

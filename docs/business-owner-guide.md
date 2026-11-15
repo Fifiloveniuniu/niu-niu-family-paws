@@ -134,3 +134,9 @@ Use the house-plus icon to add a sample house, the plus beside a house to add a 
 Customer / House / Room / Pet type / Status / Pet name filters combine. The reset-arrow icon clears them. Day / Weeks / Month / Year are tabs; arrow keys, Home and End switch views. Gear and plus icons have tooltips.
 
 房屋加号用于添加示例房屋，房屋旁的加号添加房间，宠物加号安排托管。请先在房间齿轮弹窗中配置容量和示例种类用量。选择宠物及到店、接回时间后，可查看可选房屋、房间及不可用原因。宠物旁的 × 仅移除安排，不删除示例宠物；在店宠物受保护。空房间和空房屋可在齿轮弹窗移除。日历修改仅保留在当前页面，离开或刷新后重置，不修改正式业务记录。客户、房屋、房间、种类、状态和宠物名字筛选可组合使用，重置箭头清空筛选。日、周、月、年使用标签切换，支持方向键、Home 和 End。
+
+## Choosing a room on the Add pet calendar (prototype)
+
+Choose a pet and enter arrival/pickup. Gray bands show the actual unavailable time ranges for each room; white areas are free. Click Choose room or its green range to use the entered times, or tap a free time to shift the entire entered stay there. Any stay crossing an unavailable period is rejected. Gray bands cannot be selected. Hover for exact unavailable times/reasons. Use the datetime fields or manual selectors for precise keyboard scheduling; dragging is not required. Changes stay in the preview.
+
+选择宠物并填写到店和接回时间。灰色条表示房间的实际不可用时段，白色区域表示空闲。点击“选择房间”或绿色条使用已填写时间，或点击空闲处把整个托管时段移到该开始时间。跨越冲突时段的安排不能提交，灰色条不可选。悬停可查看准确时间与原因。也可以使用日期时间输入框或手动选房，无需拖动。修改仅保留在预览中。
