@@ -76,7 +76,9 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await page.locator('.customer-directory-panel').getByRole('button',{name:'Sample Alex',exact:true}).click();
   const mobilePets=page.getByRole('region',{name:'所选客户的宠物',exact:true});
   await expect(mobilePets).toBeFocused();
-  await expect(mobilePets.getByRole('heading',{name:'Sample Mochi',exact:true})).toBeInViewport();
+  const stockPhoto=mobilePets.getByRole('img',{name:'猫和狗的图库照片',exact:true});
+  await expect(stockPhoto).toBeInViewport();
+  await expect.poll(()=>stockPhoto.evaluate((image:HTMLImageElement)=>image.naturalWidth)).toBeGreaterThan(0);
   await mobilePets.getByRole('button',{name:'← 客户列表',exact:true}).click();
   await expect(page.locator('.customer-directory-panel')).toBeFocused();
   await page.locator('.customer-directory-panel').getByRole('button',{name:'Sample Alex',exact:true}).click();

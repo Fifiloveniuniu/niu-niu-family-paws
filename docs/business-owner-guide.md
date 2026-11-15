@@ -88,3 +88,7 @@ In **Customer management**, the customer list appears on the left and the select
 Routine reload buttons are removed. Customers and pets load when you open them, and lists update after saves. If loading fails, use **Try again** beside the error. Account access is rechecked when you return to the tab. Unsaved edits remain protected.
 
 日常页面不再显示重新加载按钮。打开资料时会自动加载，保存后列表会自动更新。加载失败时，点击错误旁的“重试”。返回浏览器标签页时会自动检查登录权限，未保存的修改仍受到保护。
+
+Pet cards without an uploaded photo show a cat-and-dog stock photo labelled **Sample photo · Pexels**. Upload the pet’s own photo through **Edit pet** to replace the sample. Uploaded photos remain private.
+
+未上传照片的宠物卡片会显示猫和狗的图库照片，并标注“示例照片 · Pexels”。通过“编辑宠物”上传宠物自己的照片，即可替换示例。上传的照片仍为私密照片。

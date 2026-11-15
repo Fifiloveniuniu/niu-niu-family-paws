@@ -53,7 +53,6 @@
 .portal-admin .pet-card{border-radius:10px;background:#fff}
 .portal-admin .pet-card h4{font-size:16px;margin-bottom:10px}
 .portal-admin .pet-card>div:last-child{padding:16px}
-.portal-admin .pet-photo-empty{aspect-ratio:auto;min-height:136px;background:#f1f4ec;color:#71806d;font-size:12px}
 .portal-admin .pet-selection-empty{padding:40px 12px;text-align:center;min-height:260px;display:flex;flex-direction:column;justify-content:center}
 .portal-admin .pet-selection-empty h3{font:600 20px/1.4 Arial,"PingFang SC",sans-serif;margin:0 0 8px}
 .portal-admin .pet-selection-empty p{font-size:14px;margin:0}
