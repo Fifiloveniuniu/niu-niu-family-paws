@@ -65,9 +65,9 @@ After saving your profile, use **My pets → Add pet**, enter the pet's name and
 
 保存个人资料后，在“我的宠物”中点击“添加宠物”，填写名字后点击“保存宠物”。每只宠物单独添加。照片可以以后补：点击“编辑宠物”，选择 JPEG、PNG 或 WebP 图片（最大 3 MB、1600 万像素），再保存。新选的图片只有保存后才会上传。已保存的照片仅主人与获授权的管理员可查看，系统会缩小图片并移除原始元数据。
 
-Administrators choose **Manage pets** beside a customer to see that customer's pets. **Search pet names** finds names by their beginning and shows the customer's name/Google email; **Manage these pets** opens all pets belonging to that customer. Edits update the same records the customer sees and keep an audit history. Use the existing customer search for customer names or Google emails. Adding pets does not link an unlinked contact to a Google account.
+Administrators click a customer’s name in the left list to see that customer's pets. **Search pet names** finds names by their beginning and shows the customer's name/Google email; **Manage these pets** opens all pets belonging to that customer. Edits update the same records the customer sees and keep an audit history. Use the existing customer search for customer names or Google emails. Adding pets does not link an unlinked contact to a Google account.
 
-管理员在客户记录旁点击“管理宠物”，即可查看和编辑该客户的宠物。输入宠物名字的开头并点击“搜索宠物名字”，结果会显示宠物归属的客户；点击“管理这些宠物”可打开该客户的全部宠物。按客户姓名或 Google 邮箱查找时，仍使用“搜索客户”。管理员与客户修改同一份资料，修改会保留记录；添加宠物不会自动关联 Google 账号。
+管理员点击左侧列表中的客户姓名，即可查看和编辑该客户的宠物。输入宠物名字的开头并点击“搜索宠物名字”，结果会显示宠物归属的客户；点击“管理这些宠物”可打开该客户的全部宠物。按客户姓名或 Google 邮箱查找时，仍使用“搜索客户”。管理员与客户修改同一份资料，修改会保留记录；添加宠物不会自动关联 Google 账号。
 
 ## Information still needed
 
@@ -81,6 +81,6 @@ Use the same GitHub project, `Fifiloveniuniu/niu-niu-family-paws`, and ask Codex
 
 ## Choosing a customer's pets
 
-In **Customer management**, the customer list appears on the left and the selected customer's pets appear on the right. Click a customer's name or **Manage pets** to select them. The selected row is highlighted. On phones, the pets appear below the customer list. Search customers or pet names in the left panel; pet search results can also select a customer. Existing private photos remain visible only to the owner and authorized administrators. Switching customers asks before discarding unsaved pet edits.
+In **Customer management**, the customer list appears on the left and the selected customer's pets appear on the right. Click a customer’s row to show their pets on the right. Hovering highlights the row; the selected customer has a green background, a left border and a Selected badge. Edit customer and account linking remain separate actions. On phones, the pets appear below the customer list. Search customers or pet names in the left panel; pet search results can also select a customer. Existing private photos remain visible only to the owner and authorized administrators. Switching customers asks before discarding unsaved pet edits.
 
-在“客户管理”中，左侧显示客户列表，右侧显示所选客户的宠物。点击客户姓名或“管理宠物”即可选择，所选客户会高亮显示。手机上，宠物区域显示在客户列表下方。左侧可按客户或宠物名字搜索，宠物搜索结果也可用于选择客户。已保存的照片仍仅供主人和获授权的管理员查看。切换客户前，如有未保存的宠物修改，系统会先询问。
+在“客户管理”中，左侧显示客户列表，右侧显示所选客户的宠物。点击客户行即可在右侧查看其宠物。鼠标悬停时会高亮；所选客户显示绿色背景、左侧边框和“已选择”标记。编辑客户和关联账号仍为独立操作。手机上，宠物区域显示在客户列表下方。左侧可按客户或宠物名字搜索，宠物搜索结果也可用于选择客户。已保存的照片仍仅供主人和获授权的管理员查看。切换客户前，如有未保存的宠物修改，系统会先询问。
