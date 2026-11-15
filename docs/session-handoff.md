@@ -1,8 +1,14 @@
 # Session handoff — 2026-10-22
 
-## Development environment delivery in progress — 2026-11-14
+## Development environment awaiting protected merge — 2026-11-14
 
-Owner changed scope to one Google Cloud project and confirmed English for development. PR #24 now implements a separate sandbox Hosting site/API, named `development` database and private dev photo bucket inside `niu-niu-family-paws`; Google identities/admin roles intentionally shared. See `docs/development-environment.md` for configuration, resources and validation. All local checks passed; dedicated API/image and fixtures are deployed. Merge/Hosting/live verification and removal of exact original live synthetic samples remain pending. Preserve production API revision and site, real records and all Auth identities. Earlier separate `-dev` and `-test` projects are unused; no new billing linked, do not resume or delete them without request.
+Owner selected one Google Cloud project and English for development. PR #24 adds sandbox Hosting/API, named `development` database and private dev photo bucket inside `niu-niu-family-paws`; Google identities/admin roles are intentionally shared. Permanent site is configured but not published yet. Working hosted review: https://niu-niu-family-paws-sandbox--development-review-i2fm3xop.web.app/#/login (expires Nov 21). Real Google administrator sign-in, separate customer list (no live Nature profile), pet list/search/owners and TEST image upload/display passed on this preview; left English/no drafts. Production API/site/data remain unchanged.
+
+API image/revision, IAM restrictions, commands and verification are in `docs/development-environment.md`. Local production/development builds, typecheck, four database/image integration tests, nine existing browser tests and development layout test passed. Twelve unit tests now include fixture API validation: first fixtures used invalid IDs, caught by hosted pet operations; ten unchanged dev-only fixture/history docs were archived under development `sampleArchives/invalid-fixture-ids-v1`, removed with update-time checks and replaced by valid reserved UUIDs. Mochi has a synthetic TEST image in dev only. Do not recreate old aliases.
+
+Merge is blocked for connected GitHub collaborator `naturetime10` (push but no admin/maintain permission): normal merge rejected by base-branch policy despite passing CI. Read-only rules queries exposed no exact policy, classic protection query 404. Owner was asked via pending question to merge PR #24; do not change/bypass protections. Push fixture correction and wait for its CI; after owner merge, rebuild/deploy permanent sandbox from merged main and verify, then archive/remove only original live synthetic samples with exact preconditions. No production samples removed yet. Preserve Nature/all real records and shared Auth identities. Earlier `-dev` and `-test` projects remain unused/unbilled; do not resume/delete them without explicit request.
+
+Owner also explicitly requested global automatic approvals. `/Users/harryliu/.codex/config.toml` was updated to `approval_policy="never"` and `sandbox_mode="danger-full-access"`, with a private dated backup. Running session still obeys enforced permissions; new sessions use saved defaults subject to managed overrides. No secrets recorded.
 
 ## Live development samples — 2026-11-14
 

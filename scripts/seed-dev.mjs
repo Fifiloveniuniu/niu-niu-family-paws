@@ -1,3 +1,4 @@
+import {fixtures} from './dev-fixtures.mjs';
 // Add-only, repeatable synthetic fixtures. No production target or deletion option.
 import {createRequire} from 'node:module';
 import {Firestore} from '@google-cloud/firestore';
@@ -18,10 +19,6 @@ authClient.setCredentials({access_token:token.access_token});
 const db=new Firestore({projectId,databaseId,authClient});
 const store=firestoreStore(db);
 const pets=petStore(db,{async put(){throw new Error('No fixture photos');},async get(){throw new Error('No fixture photos');}});
-const fixtures=[
-  {id:'dev-sample-alex',name:'[TEST / 测试] Alex — development only',language:'en',pets:[['dev-sample-mochi','[TEST / 测试] Mochi'],['dev-sample-biscuit','[TEST / 测试] Biscuit']]},
-  {id:'dev-sample-lin',name:'[TEST / 测试] 林小雨 — development only',language:'zh',pets:[['dev-sample-doudou','[TEST / 测试] 豆豆 Doudou']]},
-];
 const actor='development-fixtures';
 for(const fixture of fixtures){
   const ref=db.collection('customers').doc(fixture.id);
