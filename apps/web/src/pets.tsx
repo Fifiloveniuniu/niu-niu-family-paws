@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
+import samplePetPhoto from './assets/cat-and-dog-pexels-16440218.jpg';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
@@ -8,7 +9,7 @@ type PetWrite = components['schemas']['PetWrite'];
 const en = {
   title: 'Pets', own: 'My pets', intro: 'Each pet has its own profile. You can add a photo now or later.',
   add: 'Add pet', edit: 'Edit pet', name: 'Pet name', photo: 'Pet photo (optional)', hint: 'JPEG, PNG or WebP, up to 3 MB and 16 megapixels. Photos are private to the owner and administrators.',
-  noPhoto: 'Photo not added yet', save: 'Save pet', retry: 'Retry pet save', cancel: 'Cancel', loading: 'Loading pets…', saving: 'Saving pet…',
+  samplePhoto: 'Sample photo · Pexels', sampleAlt: 'Cat and dog — stock photo', save: 'Save pet', retry: 'Retry pet save', cancel: 'Cancel', loading: 'Loading pets…', saving: 'Saving pet…',
   empty: 'No pets yet. Add your first pet.', more: 'Load more pets', reload: 'Try again', saved: 'Pet saved.',
   error: 'Couldn’t load or save pets. Please try again.', invalid: 'Enter a pet name (up to 120 characters) and choose a valid photo within the limits.',
   forbidden: 'You don’t have access to these pets. Sign out and sign in again.',
@@ -19,7 +20,7 @@ const en = {
 const zh: typeof en = {
   title: '宠物', own: '我的宠物', intro: '为每只宠物单独添加资料，照片可以以后再补。',
   add: '添加宠物', edit: '编辑宠物', name: '宠物名字', photo: '宠物照片（选填）', hint: '支持 JPEG、PNG 或 WebP，最大 3 MB、1600 万像素。仅宠物主人和管理员可查看照片。',
-  noPhoto: '尚未添加照片', save: '保存宠物', retry: '重试保存宠物', cancel: '取消', loading: '正在加载宠物…', saving: '正在保存宠物…',
+  samplePhoto: '示例照片 · Pexels', sampleAlt: '猫和狗的图库照片', save: '保存宠物', retry: '重试保存宠物', cancel: '取消', loading: '正在加载宠物…', saving: '正在保存宠物…',
   empty: '还没有添加宠物，先添加一只吧。', more: '加载更多宠物', reload: '重试', saved: '宠物资料已保存。',
   error: '宠物资料加载或保存失败，请重试。', invalid: '请填写宠物名字（最多 120 个字符），并检查照片格式和大小。',
   forbidden: '暂时无法访问这些宠物的资料。请退出后重新登录。',
@@ -51,7 +52,8 @@ function PetPhoto({ pet }: { pet: Pet }) {
       .then(readFile).then(value => { if (alive) setUrl(value); }).catch(() => { if (alive) setFailed(true); });
     return () => { alive = false; };
   }, [pet.customerId, pet.id, pet.photo, retry]);
-  return <div className={`pet-photo${!pet.photo ? ' pet-photo-empty' : ''}`}>{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{pet.photo ? t.loading : t.noPhoto}</span>}</div>;
+  if (!pet.photo) return <div className="pet-photo pet-photo-sample"><img src={samplePetPhoto} alt={t.sampleAlt} loading="lazy"/><a className="sample-photo-credit" href="https://www.pexels.com/photo/a-portrait-of-a-little-cat-and-dog-16440218/" target="_blank" rel="noopener noreferrer">{t.samplePhoto}</a></div>;
+  return <div className="pet-photo">{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{t.loading}</span>}</div>;
 }
 export default function Pets({ customerId, title }: { customerId: string; title?: string }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;

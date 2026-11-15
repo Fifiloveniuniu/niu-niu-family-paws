@@ -32,7 +32,8 @@ test('customer manages multiple pets, adds a private photo later and retries the
   await section.getByRole('button',{name:'Add pet',exact:true}).click();
   await section.getByRole('textbox',{name:'Pet name',exact:true}).fill('Sample Niu Niu');
   await section.getByRole('button',{name:'Save pet',exact:true}).click();
-  await expect(section.getByText('Photo not added yet',{exact:true})).toBeVisible();
+  await expect(section.getByRole('img',{name:'Cat and dog — stock photo',exact:true})).toBeVisible();
+  await expect(section.getByRole('link',{name:'Sample photo · Pexels',exact:true})).toBeVisible();
   await section.getByRole('button',{name:'Add pet',exact:true}).click();
   await section.getByRole('textbox',{name:'Pet name',exact:true}).fill('Sample Bao Bao');
   await section.getByRole('button',{name:'Save pet',exact:true}).click();
@@ -46,9 +47,11 @@ test('customer manages multiple pets, adds a private photo later and retries the
   await section.getByRole('button',{name:'Retry pet save',exact:true}).click();
   expect(writes.at(-1)).toEqual(writes.at(-2));expect(pets).toHaveLength(2);
   await expect(section.getByRole('img',{name:'Sample Niu Niu',exact:true})).toBeVisible();
+  await expect(section.getByRole('link',{name:'Sample photo · Pexels',exact:true})).toHaveCount(1);
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await page.setViewportSize({width:400,height:860});await page.reload();
   await expect(page.getByRole('region',{name:'我的宠物',exact:true}).getByRole('article')).toHaveCount(2);
+  await expect(page.getByRole('link',{name:'示例照片 · Pexels',exact:true})).toHaveCount(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.getByRole('region',{name:'我的宠物',exact:true}).screenshot({path:'test-results/pets-mobile-zh.png'});
   await page.getByRole('button',{name:'退出登录',exact:true}).click();
