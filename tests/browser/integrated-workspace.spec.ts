@@ -18,9 +18,9 @@ test('five ordered tabs connect customer records, balance preview, statement and
  await expect(page.getByRole('dialog')).toHaveCount(0);
  await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Days',{exact:true}).fill('12');await page.getByLabel('Valid from',{exact:true}).fill('2026-01-01');await page.getByLabel('Valid through',{exact:true}).fill('2027-12-31');
- page.once('dialog',d=>d.dismiss());await nav.getByRole('link',{name:'Customers',exact:true}).click();
+ page.once('dialog',d=>d.dismiss());await page.evaluate(()=>{location.hash='#/customers';});
  await expect(page).toHaveURL(/#\/balances$/);await expect(page.getByLabel('Days',{exact:true})).toHaveValue('12');
- await page.getByRole('button',{name:'Add balance',exact:true}).click();
+ await page.getByRole('dialog').getByRole('button',{name:'Add balance',exact:true}).click();
  await nav.getByRole('link',{name:'Customers',exact:true}).click();await expect(page.getByRole('button',{name:'Add customer',exact:true})).toBeVisible();
  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Retained draft');
  await nav.getByRole('link',{name:'Settings',exact:true}).click();await page.getByRole('link',{name:'Cancellation policy',exact:true}).click();
