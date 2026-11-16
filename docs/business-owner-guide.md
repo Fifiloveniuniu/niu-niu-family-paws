@@ -174,3 +174,11 @@ Only current preview balance additions, corrections and policy updates appear. B
 在日历工作区选择“交易明细”，或在宠物寄养余额中点击“查看交易明细”，即可默认筛选该宠物。可按客户、宠物、日期及类型筛选；合计显示筛选后的增加、更正减少及净变动，每行余额仍是该宠物当时的原始记录。点击“查看”可看流水号、备注及变动前后余额；“导出 CSV”仅下载符合筛选的记录。手机以卡片展示，较宽表格可在面板内滚动。
 
 当前仅显示预览中的余额增加、更正及规则更新，预约扣减和取消返还尚未接入。在三个工作区页面间切换会保留预览数据，退出或刷新后重置，不创建正式财务明细或付款。
+
+## Integrated local workspace — 2026-11-16
+
+The local administrator preview now opens on Calendar and uses five tabs in this order: **Calendar / Customers / Balances / Statement / Settings**. Customers contains the existing saved customer and pet tools. Balances opens a full page; calendar/review shortcuts still open focused dialogs. Settings links to saved house management and Cancellation policy. Your personal profile is available beside your account at the top.
+
+Tab changes keep saved preview adjustments, the statement and calendar plans in the current session. Personal-profile and customer drafts stay mounted when switching tabs; leaving a balance or policy editor asks before discarding edits. Refreshing/leaving resets sample planning data. Customer and pet saves still use the connected API and its normal permissions. Sample calendar names are not canonical customer bookings. Nothing new is deployed yet, and automatic charges/refunds remain pending the business decisions in requirements.
+
+本地管理员预览默认打开日历，按重要性排列为：**日历 / 客户 / 寄养余额 / 交易明细 / 设置**。客户页面包含已保存的客户与宠物工具；余额独立成页，日历中的快捷入口仍打开弹窗。设置包含房屋管理及取消政策；顶部账号旁可打开自己的资料与宠物。页面切换保留当前预览中的余额调整、明细及日历计划；个人资料草稿也会保留。离开余额或政策编辑器前会询问是否放弃修改。刷新或退出会重置示例计划数据。客户与宠物的保存仍使用已连接的接口及原有权限。尚未部署，也未启用实际预约扣减或取消返还。

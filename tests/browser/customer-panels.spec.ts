@@ -21,6 +21,7 @@ test('customer list selects the correct pets in bilingual responsive panels and 
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
   await expect(page.getByRole('button',{name:/Reload|Refresh session/})).toHaveCount(0);
+  await page.getByRole('link',{name:'Customers',exact:true}).click();
   const left=page.getByRole('region',{name:'Customer list',exact:true});
   const right=page.getByRole('region',{name:'Selected customer pets',exact:true});
   await expect(right.getByText('Select a customer from the list to view and manage their pets.')).toBeVisible();
@@ -50,7 +51,7 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await left.getByRole('button',{name:'Cancel',exact:true}).click();
   const l=await left.boundingBox(),r=await right.boundingBox();
   expect(l!.x+l!.width).toBeLessThan(r!.x);
-  await expect(page.getByText('Find a pet',{exact:true})).toBeVisible();
+  await expect(page.locator('summary').filter({hasText:/^Find a pet$/})).toBeVisible();
   await expect(page.getByRole('searchbox',{name:'Start of pet name',exact:true})).not.toBeVisible();
   await page.locator('.customer-pet-layout').screenshot({path:'test-results/customer-panels-desktop.png'});
   await page.screenshot({path:'test-results/clean-workspace-desktop.png',fullPage:true});

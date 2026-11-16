@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 const drafts = new Set<HTMLElement>();
 
-export function confirmDiscardChanges(language: string, container?: Element | null) {
-  if (![...drafts].some(element => container === undefined || container?.contains(element))) return true;
+export function confirmDiscardChanges(language: string, container?: Element | null, retainWorkspace = false) {
+  if (![...drafts].some(element => (!retainWorkspace || !element.closest('[data-retained-workspace]')) && (container === undefined || container?.contains(element)))) return true;
   return window.confirm(language === 'zh'
     ? '还有修改未保存，继续操作会丢失这些内容。确定放弃修改吗？'
     : 'You have unsaved changes. Continue and discard them?');

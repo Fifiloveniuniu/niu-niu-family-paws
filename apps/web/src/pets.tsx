@@ -56,7 +56,7 @@ function PetPhoto({ pet }: { pet: Pet }) {
   if (!pet.photo) return <div className="pet-photo"><span>{t.noPhoto}</span></div>;
   return <div className="pet-photo">{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{t.loading}</span>}</div>;
 }
-export default function Pets({ customerId, title }: { customerId: string; title?: string }) {
+export default function Pets({ customerId, title, onReady }: { customerId: string; title?: string; onReady?:()=>void }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
   const headingId = React.useId();
   const [items, setItems] = React.useState<Pet[]>([]), [cursor, setCursor] = React.useState<string | null>(null);
@@ -81,6 +81,7 @@ export default function Pets({ customerId, title }: { customerId: string; title?
     finally { if (alive.current && version === generation.current) setLoading(false); }
   }
   React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++generation.current; }; }, [customerId]);
+  React.useEffect(()=>{if(!loading)onReady?.();},[loading,onReady]);
   function open(pet?: Pet) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
     setError(null); setSaved(false); setUncertain(false);

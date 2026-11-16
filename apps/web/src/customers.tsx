@@ -63,6 +63,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const alive = React.useRef(true);
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null), petsPanel = React.useRef<HTMLDivElement>(null), directoryPanel = React.useRef<HTMLDivElement>(null);
+  const revealPets=React.useCallback(()=>{if(window.matchMedia('(max-width: 800px)').matches&&petsPanel.current&&!petsPanel.current.closest('[hidden]')){petsPanel.current.focus({preventScroll:true});petsPanel.current.scrollIntoView({block:'start',behavior:'instant'});}},[]);
   function choosePets(customer: NonNullable<typeof petCustomer>) {
     if (customer.id === petCustomer?.id || confirmDiscardChanges(i18n.language, petsPanel.current)) {
       setPetCustomer(customer);
@@ -144,7 +145,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     {loading && <p role="status">{t.loading}</p>}
     {cursor && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
     </div>
-    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets key={petCustomer.id} customerId={petCustomer.id} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
+    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets key={petCustomer.id} customerId={petCustomer.id} onReady={revealPets} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
     </div>
   </section>;
 }
