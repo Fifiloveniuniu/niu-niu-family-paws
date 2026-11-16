@@ -1,5 +1,9 @@
 # Session handoff — 2026-10-22
 
+## Landing-page background match — 2026-11-16
+
+Owner corrected the yellow-background request: use the existing landing-page warm cream instead. No bright yellow was committed or deployed. Shared --page-background is #faf8f2, preserving the landing design and applying the same canvas to the whole local workspace and mobile sticky navigation. White content cards and status/availability colors remain legible. Production build passes; actual localhost Chrome confirmed the landing canvas RGB250/248/242. No business data, financial workflow or deployment changes. Separate style PR follows; existing WIP/dist-dev preserved.
+
 ## Integrated administrator navigation — 2026-11-16
 
 Owner requested full integration following the agreed ordered tabs with no ampersands: Calendar / Customers / Balances / Statement / Settings. Branch feat/integrated-workspace from merged statement PR #52 (178546c). One mounted development administrator shell now connects existing saved customer/pet tools, a full Balances page, sample calendar and statement, and Settings with houses/rooms and cancellation-policy entries. Calendar is the administrator entry view; personal profile is a secondary account link. Existing calendar balance/review dialogs remain available. Shared sample balances/plans/history survive tab changes; personal/customer drafts remain mounted, while balance/policy departure keeps discard guards. Role loss removes administrator customer tools and clears sample model state while retaining the same user's own profile draft. Mobile customer selection waits for loaded pet content before scrolling it into view.

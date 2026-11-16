@@ -1,7 +1,7 @@
 /* Calendar workspace and focused operational dialogs. */
 .hc {
   --ink:#213c38; --muted:#748681; --line:#e3eae6; --surface:#fff;
-  --brand:#2d6255; --soft:#eef5f1; --canvas:#f5f8f6;
+  --brand:#2d6255; --soft:#eef5f1; --canvas:var(--page-background);
   max-width:1600px; min-height:100vh; margin:auto; padding:22px 36px 32px;
   color:var(--ink); background:var(--canvas); font-family:Arial,"PingFang SC",sans-serif;
 }
@@ -176,4 +176,4 @@
 
 /* One navigation order across the local administrator workspace. */
 .hc-account{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:12px 0;color:#56635d;font-size:13px}.hc-account>span{overflow-wrap:anywhere;min-width:0}.hc-account .icon-button{width:40px;height:40px}.hc-work-nav{display:flex;gap:8px}.hc-work-nav a{flex:1;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center}.hc-balance-page{background:#fff;border:1px solid #dce3de;border-radius:12px;overflow:hidden}.hc-balance-page .hc-balance-layout{min-height:550px}.hc-settings-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.hc-settings-cards>section{padding:24px;background:#fff;border:1px solid #dce3de;border-radius:12px}.hc-settings-cards h2{font-size:20px}.hc-settings-cards p{color:#56635d;line-height:1.6}.hc .portal-admin .customer-section{margin-top:24px}.hc [hidden]{display:none!important}
-@media(max-width:600px){.hc-work-nav{gap:0;position:sticky;top:0;z-index:5;background:#f6f8f5}.hc-work-nav a{padding:12px 3px;font-size:12px;min-width:0}.hc-settings-cards{grid-template-columns:1fr}.hc-account{font-size:12px}.hc-balance-page .hc-balance-layout{min-height:0}}
+@media(max-width:600px){.hc-work-nav{gap:0;position:sticky;top:0;z-index:5;background:var(--page-background)}.hc-work-nav a{padding:12px 3px;font-size:12px;min-width:0}.hc-settings-cards{grid-template-columns:1fr}.hc-account{font-size:12px}.hc-balance-page .hc-balance-layout{min-height:0}}
