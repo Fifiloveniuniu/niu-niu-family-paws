@@ -175,7 +175,7 @@
 .hc-statement-filters .hc-filters-heading{flex-direction:row}.hc-statement-table-wrap{overflow-x:auto}.hc-statement-table{min-width:760px}@media(max-width:700px){.hc-statement-table{min-width:0}}
 
 /* One navigation order across the local administrator workspace. */
-.hc-account{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:12px 0;color:#56635d;font-size:13px}.hc-account>span{overflow-wrap:anywhere;min-width:0}.hc-account .icon-button{width:40px;height:40px}.hc-work-nav{display:flex;gap:8px}.hc-work-nav a{flex:1;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center}.hc-balance-page{background:#fff;border:1px solid #dce3de;border-radius:12px;overflow:hidden}.hc-balance-page .hc-balance-layout{min-height:550px}.hc-settings-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.hc-settings-cards>section{padding:24px;background:#fff;border:1px solid #dce3de;border-radius:12px}.hc-settings-cards h2{font-size:20px}.hc-settings-cards p{color:#56635d;line-height:1.6}.hc .portal-admin .customer-section{margin-top:24px}.hc [hidden]{display:none!important}
+.hc-account{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:12px 0;color:#56635d;font-size:13px}.hc-account>span{overflow-wrap:anywhere;min-width:0}.hc-account .icon-button{width:40px;height:40px}.hc-work-nav{display:flex;gap:8px}.hc-work-nav a{flex:1;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center}.hc-balance-page{background:#fff;border:1px solid #dce3de;border-radius:12px;overflow:hidden}.hc-balance-page .hc-balance-layout{min-height:550px}.hc-settings-cards{display:grid;grid-template-columns:minmax(0,640px);gap:20px}.hc-settings-cards>section{padding:24px;background:#fff;border:1px solid #dce3de;border-radius:12px}.hc-settings-cards h2{font-size:20px}.hc-settings-cards p{color:#56635d;line-height:1.6}.hc .portal-admin .customer-section{margin-top:24px}.hc [hidden]{display:none!important}
 @media(max-width:600px){.hc-work-nav{gap:0;position:sticky;top:0;z-index:5;background:#f6f8f5}.hc-work-nav a{padding:12px 3px;font-size:12px;min-width:0}.hc-settings-cards{grid-template-columns:1fr}.hc-account{font-size:12px}.hc-balance-page .hc-balance-layout{min-height:0}}
 
 /* Full balance page: comfortable selection, readable summary, focused edits. */
@@ -247,3 +247,9 @@
  .hc-balance-page .hc-balance-history>div>small{grid-column:2;margin:0;white-space:normal}
  .hc-balance-edit-dialog .hc-settings-actions{bottom:-20px}
 }
+
+.hc-balance-views{display:flex;gap:6px;width:max-content;max-width:100%;padding:4px;margin:0 0 24px;background:#eaf0eb;border-radius:9px;font-size:13px}
+.hc-balance-views a{display:flex;align-items:center;justify-content:center;min-height:40px;padding:9px 20px;border-radius:6px;color:#536c5e}
+.hc-balance-views a[aria-current=page]{background:#fff;color:#244f41;font-weight:600;box-shadow:0 1px 4px #244f4114}
+.hc-balances-workspace>.hc-statement-page>.hc-title h2{font-size:24px;font-weight:600;line-height:1.3;margin:0 0 8px}
+@media(max-width:600px){.hc-balance-views{width:100%;margin-bottom:20px}.hc-balance-views a{flex:1;font-size:13px;min-height:44px}}

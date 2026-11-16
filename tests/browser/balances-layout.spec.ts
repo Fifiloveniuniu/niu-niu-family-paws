@@ -11,6 +11,7 @@ test('balances page fits desktop and phones with focused edits and retained hist
  await page.getByLabel('Reason',{exact:true}).fill('[TEST] Initial boarding credit');
  page.once('dialog',d=>d.dismiss());await page.keyboard.press('Escape');await expect(editor).toBeVisible();await expect(page.getByLabel('Days',{exact:true})).toHaveValue('30');
  await editor.getByRole('button',{name:'Add balance',exact:true}).click();await expect(editor).toHaveCount(0);await expect(panel.getByRole('button',{name:'Add balance',exact:true})).toBeFocused();await expect(panel.locator('.hc-balance-metrics strong').first()).toHaveText('30');await expect(panel.locator('.hc-balance-history')).toContainText('[TEST] Initial boarding credit');
+ await page.getByRole('button',{name:'Balance: Miso',exact:true}).click();await page.getByRole('navigation',{name:'Balance views'}).getByRole('link',{name:'Statement',exact:true}).click();await page.getByRole('navigation',{name:'Balance views'}).getByRole('link',{name:'Overview',exact:true}).click();await expect(page.getByRole('button',{name:'Balance: Miso',exact:true})).toHaveAttribute('aria-pressed','true');await page.getByRole('button',{name:'Balance: Mochi',exact:true}).click();
  await page.screenshot({path:'test-results/balances-layout-desktop.png',fullPage:true});
  for(const width of [820,700,390,320]){
   await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
