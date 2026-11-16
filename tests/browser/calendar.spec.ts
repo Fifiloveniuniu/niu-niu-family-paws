@@ -1,13 +1,13 @@
 import {test,type Page} from '@playwright/test';
 async function coverStay(page:Page,days='10'){
- await page.getByRole('button',{name:'Set up balance',exact:true}).click();
- await page.getByRole('dialog').last().getByRole('button',{name:'Set up balance',exact:true}).click();
+ await page.getByRole('button',{name:'Add balance',exact:true}).click();
+ await page.getByRole('dialog').last().getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Days',{exact:true}).fill(days);await page.getByLabel('Reason',{exact:true}).fill('[TEST] preview credit');
  const dates=await page.evaluate(()=>{const year=new Date().getFullYear();return [year+'-01-01',(year+1)+'-12-31'];});
  await page.getByLabel('Valid from',{exact:true}).fill(dates[0]);await page.getByLabel('Valid through',{exact:true}).fill(dates[1]);
- await page.getByRole('button',{name:'Save preview balance',exact:true}).click();
+ await page.getByRole('dialog').last().getByRole('button',{name:'Add balance',exact:true}).click();
 }
-async function reviewDays(page:Page){await page.getByRole('combobox',{name:'Stay service',exact:true}).selectOption('daycare');await page.getByLabel('Required days',{exact:true}).fill('1');}
+async function reviewDays(page:Page){await page.getByLabel('Required days',{exact:true}).fill('1');}
 
 test('calendar prototype manages empty locations and time-aware pet placement',async({page:p})=>{
 await p.setViewportSize({width:1440,height:1100});p.setDefaultTimeout(7000);const errors:string[]=[];p.on('pageerror',e=>errors.push(e.message));
@@ -76,34 +76,34 @@ test('add-pet calendar selects available stays and grays out continuous unavaila
  await page.getByRole('button',{name:'添加宠物到房间',exact:true}).click();
  await page.getByRole('combobox',{name:'宠物',exact:true}).selectOption('Miso');
  await page.getByLabel('到店时间',{exact:true}).fill(dates[0]);await page.getByLabel('接回时间',{exact:true}).fill(dates[1]);
- await page.getByRole('combobox',{name:'托管服务',exact:true}).selectOption('daycare');await page.getByLabel('所需天数',{exact:true}).fill('1');await page.getByRole('button',{name:'选择房间',exact:true}).click();
+ await page.getByLabel('所需天数',{exact:true}).fill('1');await page.getByRole('button',{name:'选择房间',exact:true}).click();
  if(!await page.locator('.hc-time-unavailable').count())throw Error('Chinese blackouts missing');
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile page overflow');
  await page.getByRole('button',{name:'下一周',exact:true}).click();
  await page.screenshot({path:'test-results/add-pet-calendar-mobile-zh.png',fullPage:true});
 });
 
-test('per-pet balance history stays separate by pet/service and rejects invalid adjustments',async({page})=>{
- await page.goto('/#/house-calendar');await page.getByRole('button',{name:'Pet balances',exact:true}).click();
- await page.getByRole('button',{name:'Set up balance',exact:true}).click();
+test('boarding balance history stays separate by pet and rejects invalid adjustments',async({page})=>{
+ await page.goto('/#/house-calendar');await page.getByRole('button',{name:'Boarding balances',exact:true}).click();
+ await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Days',{exact:true}).fill('3');await page.getByLabel('Reason',{exact:true}).fill('[TEST] opening days');
  const dates=await page.evaluate(()=>{const y=new Date().getFullYear();return [y+'-01-01',(y+1)+'-12-31'];});
  await page.getByLabel('Valid from',{exact:true}).fill(dates[0]);await page.getByLabel('Valid through',{exact:true}).fill(dates[1]);
- await page.getByRole('button',{name:'Save preview balance',exact:true}).click();
+ await page.getByRole('button',{name:'Add balance',exact:true}).click();
  if(await page.locator('.hc-balance-metrics strong').first().textContent()!=='3')throw Error('Opening balance');
  await page.getByRole('button',{name:'Balance: Biscuit',exact:true}).click();
  if(await page.locator('.hc-balance-metrics strong').first().textContent()!=='—')throw Error('Borrowed another pet balance');
  await page.getByRole('button',{name:'Balance: Mochi',exact:true}).click();
- await page.getByRole('button',{name:'Boarding',exact:true}).click();
- if(await page.locator('.hc-balance-metrics strong').first().textContent()!=='—')throw Error('Borrowed another service balance');
- await page.getByRole('button',{name:'Daycare',exact:true}).click();await page.getByRole('button',{name:'Adjust balance',exact:true}).click();
+
+ if(await page.getByRole('button',{name:'Daycare',exact:true}).count())throw Error('Daycare must not be offered');
+ await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Adjustment',{exact:true}).selectOption('remove');await page.getByLabel('Days',{exact:true}).fill('4');await page.getByLabel('Reason',{exact:true}).fill('[TEST] invalid correction');
- await page.getByRole('button',{name:'Save preview balance',exact:true}).click();await page.getByRole('alert').waitFor();
+ await page.getByRole('button',{name:'Save adjustment',exact:true}).click();await page.getByRole('alert').waitFor();
  page.once('dialog',async d=>{await d.accept();});await page.getByRole('button',{name:'Cancel',exact:true}).click();
  if(await page.locator('.hc-balance-metrics strong').first().textContent()!=='3')throw Error('Invalid adjustment changed balance');
 
  if(await page.locator('.hc-balance-history>div').count()!==1)throw Error('Invalid adjustment added history');
- await page.getByRole('button',{name:'Close',exact:true}).click();await page.setViewportSize({width:390,height:844});await page.locator('.language-selector select').selectOption('zh');await page.getByRole('button',{name:'宠物余额',exact:true}).click();
+ await page.getByRole('button',{name:'Close',exact:true}).click();await page.setViewportSize({width:390,height:844});await page.locator('.language-selector select').selectOption('zh');await page.getByRole('button',{name:'寄养余额',exact:true}).click();
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Balance mobile overflow');
  await page.screenshot({path:'test-results/pet-balances-mobile-zh.png'});
 });
@@ -117,35 +117,35 @@ test('stay review blocks insufficient balance and tracks planned coverage after 
  if(!await page.getByRole('button',{name:'Add to preview',exact:true}).isDisabled())throw Error('Missing balance allowed stay');
  await coverStay(page,'1');await page.getByRole('heading',{name:'Not enough days for this stay',exact:true}).waitFor();
  if(!await page.getByRole('button',{name:'Add to preview',exact:true}).isDisabled())throw Error('Insufficient balance allowed stay');
- await page.getByRole('button',{name:'Manage pet balance',exact:true}).click();await page.getByRole('button',{name:'Adjust balance',exact:true}).click();await page.getByLabel('Days',{exact:true}).fill('2');await page.getByLabel('Reason',{exact:true}).fill('[TEST] add coverage');await page.getByRole('button',{name:'Save preview balance',exact:true}).click();
+ await page.getByRole('button',{name:'Manage pet balance',exact:true}).click();await page.getByRole('button',{name:'Add balance',exact:true}).click();await page.getByLabel('Days',{exact:true}).fill('2');await page.getByLabel('Reason',{exact:true}).fill('[TEST] add coverage');await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByRole('heading',{name:'Balance covers this stay',exact:true}).waitFor();await page.screenshot({path:'test-results/stay-balance-review.png'});await page.getByRole('button',{name:'Add to preview',exact:true}).click();
- await page.getByRole('button',{name:'Pet balances',exact:true}).click();await page.getByRole('button',{name:'Balance: Willow',exact:true}).click();
+ await page.getByRole('button',{name:'Boarding balances',exact:true}).click();await page.getByRole('button',{name:'Balance: Willow',exact:true}).click();
  const metrics=await page.locator('.hc-balance-metrics strong').allTextContents();if(metrics.join()!=='3,2,1')throw Error('Planned balance not tracked: '+metrics.join());
 });
 
 test('balance policy templates reuse dates without sharing credits and reasons are optional',async({page})=>{
  await page.setViewportSize({width:1440,height:1100});
- await page.goto('/#/house-calendar');await page.getByRole('button',{name:'Pet balances',exact:true}).click();
- await page.getByRole('button',{name:'Boarding',exact:true}).click();await page.getByRole('button',{name:'Set up balance',exact:true}).click();
+ await page.goto('/#/house-calendar');await page.getByRole('button',{name:'Boarding balances',exact:true}).click();
+ await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.locator('.hc-template-create summary').click();await page.getByRole('button',{name:'Save template',exact:true}).click();await page.getByRole('alert').waitFor();
  await page.getByLabel('Valid from',{exact:true}).fill('2026-01-01');await page.getByLabel('Valid through',{exact:true}).fill('2026-12-31');
  await page.getByLabel('New template name',{exact:true}).fill('Reviewed boarding dates');await page.getByRole('button',{name:'Save template',exact:true}).click();
  if(await page.getByText('Eligible months',{exact:true}).count())throw Error('Redundant month policy');
  await page.screenshot({path:'test-results/balance-policy-template-desktop.png'});
- await page.getByLabel('Days',{exact:true}).fill('10');await page.getByRole('button',{name:'Save preview balance',exact:true}).click();
- await page.getByRole('button',{name:'Balance: Biscuit',exact:true}).click();await page.getByRole('button',{name:'Set up balance',exact:true}).click();
+ await page.getByLabel('Days',{exact:true}).fill('10');await page.getByRole('button',{name:'Add balance',exact:true}).click();
+ await page.getByRole('button',{name:'Balance: Biscuit',exact:true}).click();await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Policy template',{exact:true}).selectOption({label:'Reviewed boarding dates'});
  if(await page.getByLabel('Valid through',{exact:true}).inputValue()!=='2026-12-31')throw Error('Template dates not copied');
- await page.getByLabel('Valid through',{exact:true}).fill('2026-11-30');await page.getByLabel('Days',{exact:true}).fill('5');await page.getByRole('button',{name:'Save preview balance',exact:true}).click();
- await page.getByRole('button',{name:'Close',exact:true}).click();await page.getByRole('button',{name:'Pet balances',exact:true}).click();await page.getByRole('button',{name:'Boarding',exact:true}).click();
+ await page.getByLabel('Valid through',{exact:true}).fill('2026-11-30');await page.getByLabel('Days',{exact:true}).fill('5');await page.getByRole('button',{name:'Add balance',exact:true}).click();
+ await page.getByRole('button',{name:'Close',exact:true}).click();await page.getByRole('button',{name:'Boarding balances',exact:true}).click();
  if(await page.locator('.hc-balance-metrics strong').first().textContent()!=='10')throw Error('Template shared credits');
  await page.getByText('2026-01-01 → 2026-12-31',{exact:true}).waitFor();
- await page.getByRole('button',{name:'Adjust balance',exact:true}).click();
+ await page.getByRole('button',{name:'Add balance',exact:true}).click();
  if(await page.locator('.hc-balance-policy').getAttribute('open')!==null)throw Error('Adjustment policy should be collapsed');
  await page.locator('.hc-balance-policy>summary').click();
  await page.getByLabel('Policy template',{exact:true}).selectOption({label:'Reviewed boarding dates'});
  await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.getByRole('button',{name:'Close',exact:true}).click();
- await page.setViewportSize({width:390,height:844});await page.locator('.language-selector select').selectOption('zh');await page.getByRole('button',{name:'宠物余额',exact:true}).click();await page.getByRole('button',{name:'设置余额',exact:true}).click();
+ await page.setViewportSize({width:390,height:844});await page.locator('.language-selector select').selectOption('zh');await page.getByRole('button',{name:'寄养余额',exact:true}).click();await page.getByRole('button',{name:'增加余额',exact:true}).click();
  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Setup mobile overflow');
  await page.screenshot({path:'test-results/balance-setup-mobile-zh.png'});
 });

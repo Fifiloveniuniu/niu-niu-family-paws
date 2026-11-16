@@ -54,7 +54,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 - Customer chooses the pet, service/house as applicable, and planned drop-off and pickup dates/times.
 - Customer can see availability suitable for the pet for the **whole requested period**. Do not expose other customers’ pets or private internal assignments.
 - Review booking details, required days, applicable holiday charges, package coverage and balance before submission.
-- Customer must prepay sufficient valid days before booking. Avoid spending the same days or reserving the same capacity twice.
+- Customer must prepay sufficient valid boarding balance before booking. A boarding booking costs balance; cancelling restores the amount determined automatically by cancellation date/policy. Avoid spending the same balance or reserving the same capacity twice. Exact refund cutoffs/unit details require the decisions below.
 - Maintain booking status and history; exact approval/hold lifecycle remains undecided.
 - Keep selected booking details when a package purchase is needed.
 - Do not advertise a working paid booking/refund flow before its dependencies and approved rules are implemented.
@@ -68,7 +68,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 - Latest owner simplification: balance setup uses one explicit valid-from/valid-through date range and reusable named policy templates. Remove the separate eligible-month selector/check; do not combine overlapping month and date policies. January–September was an earlier example, not a default.
 - The reviewed validity range must cover the whole stay, including extensions.
 - Display remaining days, activation/expiry, date coverage, price/weight band and relevant terms clearly.
-- Keep service/unit balances separate where relevant (for example daycare days versus boarding nights).
+- Only boarding balance is supported. Remove daycare from balance management and stay scheduling. Use Add balance, not Set up balance. Preserve per-pet isolation.
 - Admin manages package prices, terms and balance adjustments in the UI. Preserve adjustment history.
 - Customer balance management/validation is per pet and service. Adjustment reasons are optional. Show credit adjustments/history and coverage status in the scheduling review, without borrowing another pet or service’s days. Automatic counting and reservation/consumption rules remain unresolved; the current local prototype uses explicit staff-reviewed days and planning-only allocations.
 - Balance operations and usage must be atomic, concurrent-safe and idempotent. Usage references customer, pet, service/date, consumed units and recording actor.

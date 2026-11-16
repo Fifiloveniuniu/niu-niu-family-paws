@@ -143,14 +143,18 @@ Choose a pet and enter arrival/pickup. Gray bands show the actual unavailable ti
 
 ## Pet balances and the new scheduling flow (local preview)
 
-Add pet now guides you through **Stay details → Choose room → Review**. Choose the pet, service, planned times and staff-reviewed required days. Gray room ranges remain unavailable. The review shows this pet’s balance check, required days and planning remainder; missing or insufficient eligible days blocks Add. Open **Set up balance / Manage pet balance** from review without losing the stay draft.
+Add pet now guides you through **Stay details → Choose room → Review**. Choose the pet, service, planned times and staff-reviewed required days. Gray room ranges remain unavailable. The review shows this pet’s balance check, required days and planning remainder; missing or insufficient eligible days blocks Add. Open **Add balance / Manage pet balance** from review without losing the stay draft.
 
-Use **Pet balances** in the calendar header to select a customer, pet and Daycare/Boarding. Set up its sample day credits, reviewed coverage dates. Save a named Policy template to reuse those dates for another pet of the same service, or select Custom dates. Templates do not share balances and reset when leaving/reloading the preview. Each addition/removal of days may include an optional reason and retains an adjustment history. The same pet’s services remain separate, and different pets do not share credits. Recorded days / Planned here / Available to plan are planning figures for this page. No real payment, reservation, deduction or package activation is saved. Leaving/reloading this page resets the sample data. Real day-counting and balance lifecycle still need your decisions.
+Use **Boarding balances** in the calendar header to select a customer, pet for boarding. Set up its sample day credits, reviewed coverage dates. Save a named Policy template to reuse those dates for another pet of the same service, or select Custom dates. Templates do not share balances and reset when leaving/reloading the preview. Each addition/removal of days may include an optional reason and retains an adjustment history. Only boarding is supported; different pets do not share credits. Recorded days / Planned here / Available to plan are planning figures for this page. No real payment, reservation, deduction or package activation is saved. Leaving/reloading this page resets the sample data. Real day-counting and balance lifecycle still need your decisions.
 
-添加宠物分为“托管详情 → 选择房间 → 确认”：选择宠物、服务、时间并填写员工核对的天数。灰色时段不可用。确认页检查该宠物的余额、所需天数和计划后剩余，缺少余额或覆盖不足时不能添加。可直接打开“设置余额 / 管理宠物余额”，托管草稿会保留。日历顶部“宠物余额”可按客户、宠物及日间托管/寄养管理示例天数、核对后的覆盖日期。可保存并选择同一服务的“规则模板”重复使用日期，或使用“自定义日期”；模板不共享余额，离开或刷新预览后重置。增减天数可选填原因，并保留记录；宠物及服务之间不混用天数。数字仅用于当前页的计划预览，不保存实际付款、预留、扣减或套餐激活，离开或刷新页面后重置。实际天数计算及扣减时机仍需确定。
+添加宠物分为“托管详情 → 选择房间 → 确认”：选择宠物、服务、时间并填写员工核对的天数。灰色时段不可用。确认页检查该宠物的余额、所需天数和计划后剩余，缺少余额或覆盖不足时不能添加。可直接打开“增加余额 / 管理宠物余额”，托管草稿会保留。日历顶部“寄养余额”可按客户及宠物管理示例天数、核对后的覆盖日期。可保存并选择同一服务的“规则模板”重复使用日期，或使用“自定义日期”；模板不共享余额，离开或刷新预览后重置。增减天数可选填原因，并保留记录；仅支持寄养，宠物之间不混用天数。数字仅用于当前页的计划预览，不保存实际付款、预留、扣减或套餐激活，离开或刷新页面后重置。实际天数计算及扣减时机仍需确定。
 
 ## Pet photos in the calendar
 
 The calendar, Add pet review and balance pet list now show profile photos instead of initials. In the local prototype, fictional names are explicitly linked to saved demo profiles and labelled as samples. Sign in as the local administrator to view their private photos. If your session expires, choose Sign in for pet photos in the balance sidebar or below the calendar; the editor stays open. Missing photos show a neutral pet icon; if loading fails, use Retry profile photos. Expand Sample profile photos & credits below the calendar for source/license information.
 
 日历、添加宠物确认页和余额宠物列表使用档案照片，不再显示名字首字母。本地原型的示例名字明确关联至已有测试档案，照片标注为示例；使用本地管理员登录后可查看私密照片。登录过期时，可在余额侧栏或日历下方点击“登录查看照片”，编辑表单会保留。无照片时显示中性宠物图标，加载失败可点击“重试档案照片”。日历下方“示例档案照片与来源”可查看来源及许可。
+
+The latest boarding charge/cancellation workflow is still pending: the owner requested charging at booking and automatic policy-based restoration at cancellation. Confirm balance units and cancellation cutoffs before treating this preview as a working financial booking flow.
+
+最新要求是在寄养预约时扣减余额、取消时按政策自动返还；目前仍需确认余额单位和取消期限，预览尚不能作为实际财务预约流程。

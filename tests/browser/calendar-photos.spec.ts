@@ -22,7 +22,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
  await page.goto('/#/house-calendar');
  await expect(page.locator('.hc-avatar')).toHaveCount(9);expect(photoReads).toBe(0);expect(profileReads).toBe(0);
  await expect(page.getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
- await page.getByRole('button',{name:'Pet balances',exact:true}).click();await page.getByRole('button',{name:'Set up balance',exact:true}).click();await page.getByLabel('Days',{exact:true}).fill('7');await page.getByLabel('Reason',{exact:true}).fill('[TEST] retained photo access draft');
+ await page.getByRole('button',{name:'Boarding balances',exact:true}).click();await page.getByRole('button',{name:'Add balance',exact:true}).click();await page.getByLabel('Days',{exact:true}).fill('7');await page.getByLabel('Reason',{exact:true}).fill('[TEST] retained photo access draft');
  await expect(page.getByRole('dialog').getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
  await page.evaluate(async({email})=>{const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');await signInWithEmailAndPassword(auth,email,'emulator-only-password');},{email});
  await expect(page.getByRole('dialog').getByAltText('Mochi profile photo (sample)',{exact:true})).toBeVisible();await expect(page.getByLabel('Days',{exact:true})).toHaveValue('7');await expect(page.getByLabel('Reason',{exact:true})).toHaveValue('[TEST] retained photo access draft');
@@ -33,7 +33,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
  await expect(page.locator('.hc-pet').filter({has:page.getByRole('button',{name:'Remove placement: Biscuit',exact:true})}).locator('.hc-profile-photo')).toHaveAttribute('data-photo-state','missing');
  await expect(page.locator('.hc-pet').filter({has:page.getByRole('button',{name:'Remove placement: Coco',exact:true})}).locator('.hc-profile-photo')).toHaveAttribute('data-photo-state','failed');
  await page.getByText('Sample profile photos & credits',{exact:true}).click();await expect(page.locator('.hc-photo-credits a').first()).toHaveAttribute('href','https://example.test/source');
- await page.getByRole('button',{name:'Pet balances',exact:true}).click();
+ await page.getByRole('button',{name:'Boarding balances',exact:true}).click();
  const balancePhoto=page.getByRole('dialog').getByAltText('Mochi profile photo (sample)',{exact:true});
  await expect(balancePhoto).toBeVisible();await expect(balancePhoto).toHaveAttribute('src',source!);
  expect(anonymous).toBe(0);expect(profileReads).toBe(6);expect(photoReads).toBe(11);
