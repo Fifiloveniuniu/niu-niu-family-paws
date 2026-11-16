@@ -26,7 +26,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 ## 2. Pets, photos and weight — confirmed
 
 - A customer may have multiple pets. Supported species: **dog, cat and rabbit**.
-- Each pet has its own name, profile, calendar and visit history; maintain stable ownership/reference IDs.
+- Each pet has its own name, profile, calendar and visit history; maintain stable ownership/reference IDs. Use the pet’s saved profile photo rather than a first-letter avatar in the calendar, scheduling and balance views; preserve private access and neutral no-photo fallbacks.
 - Admin approves a pet’s weight or verifies it during drop-off; retain verification actor/date and distinguish entered from verified weight.
 - All test pets must have photos. Use cloud-sourced photos, not bundled/hardcoded pet images; preserve existing uploaded photos.
 - Downloaded test library: 300 licensed photos, 100 per species, in the private development GCS bucket. Local demo has 100 fake families and 300 photo-complete pets. Retain attribution/source/license metadata and label samples as test photos.

@@ -1,5 +1,15 @@
 # Session handoff — 2026-10-22
 
+## Profile-photo avatars replace initials — 2026-11-15
+
+Review record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/47. Implementation `94506d4` is GitHub Verified. Consult PR checks/state for merge status; no hosted deployment.
+
+Owner requested pet profile photos instead of first letters. Branch `feat/calendar-pet-profile-photos` starts from merged #46 (`5db2816`, Verified). Added an isolated-demo-only photo provider linking fictional calendar aliases explicitly to existing demo pet profile IDs; current profile metadata/photo is read through existing authenticated admin APIs. One page cache shares revocable blob URLs across calendar, scheduling steps/review and balance pet selectors. No image binaries/URLs are hardcoded or publicized, no seeder/reset/photo overwrites or business-data writes. Real production identities must use canonical pet IDs, not these explicit sample aliases.
+
+Missing/inaccessible photos use a neutral pet outline, never initials or another image. Failures offer Retry profile photos. Requests are gated on verified administrator claims and exact demo mode; state/URLs clear on identity/access change or unmount, and current access is refreshed on tab return. Sample credits/source/license links are available in the UI; screenshot attribution is recorded in docs/calendar-profile-photos.md.
+
+Build and all 17 browser tests pass; focused photo test also passed after retry handling. Coverage checks authenticated reads, six metadata queries/shared photo reuse across views, missing/failed images, retry, and removal of images/credits on role loss. Real local API smoke verified all nine calendar images and balance images from current saved profiles, without data writes. Actual native localhost Chrome visibly confirmed all calendar and balance profile photos. Screenshots: calendar-profile-photos-desktop.png, balance-profile-photos-desktop.png, calendar-profile-photos-mobile-zh.png. No deployment; saved local records/photos and WIP #41 preserved.
+
 ## Per-pet balance management and planning validation — 2026-11-15
 
 Review/merge record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/46. Implementation `6e9b699` is GitHub Verified. UI redesign record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/45 (merged). Consult PR state/checks for final status; no hosted deployment.

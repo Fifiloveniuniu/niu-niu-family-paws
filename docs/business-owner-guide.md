@@ -148,3 +148,9 @@ Add pet now guides you through **Stay details → Choose room → Review**. Choo
 Use **Pet balances** in the calendar header to select a customer, pet and Daycare/Boarding. Set up its sample day credits, reviewed coverage dates and eligible months. Each addition/removal of days needs a reason and retains an adjustment history. The same pet’s services remain separate, and different pets do not share credits. Recorded days / Planned here / Available to plan are planning figures for this page. No real payment, reservation, deduction or package activation is saved. Leaving/reloading this page resets the sample data. Real day-counting and balance lifecycle still need your decisions.
 
 添加宠物分为“托管详情 → 选择房间 → 确认”：选择宠物、服务、时间并填写员工核对的天数。灰色时段不可用。确认页检查该宠物的余额、所需天数和计划后剩余，缺少余额或覆盖不足时不能添加。可直接打开“设置余额 / 管理宠物余额”，托管草稿会保留。日历顶部“宠物余额”可按客户、宠物及日间托管/寄养管理示例天数、核对后的覆盖日期和可用月份。增减天数必须注明原因，并保留记录；宠物及服务之间不混用天数。数字仅用于当前页的计划预览，不保存实际付款、预留、扣减或套餐激活，离开或刷新页面后重置。实际天数计算及扣减时机仍需确定。
+
+## Pet photos in the calendar
+
+The calendar, Add pet review and balance pet list now show profile photos instead of initials. In the local prototype, fictional names are explicitly linked to saved demo profiles and labelled as samples. Sign in as the local administrator to view their private photos. Missing photos show a neutral pet icon; if loading fails, use Retry profile photos. Expand Sample profile photos & credits below the calendar for source/license information.
+
+日历、添加宠物确认页和余额宠物列表使用档案照片，不再显示名字首字母。本地原型的示例名字明确关联至已有测试档案，照片标注为示例；使用本地管理员登录后可查看私密照片。无照片时显示中性宠物图标，加载失败可点击“重试档案照片”。日历下方“示例档案照片与来源”可查看来源及许可。
