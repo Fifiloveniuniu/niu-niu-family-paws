@@ -24,7 +24,7 @@ export default function AssignmentDialog({houses,stays,pets,anchor,initial,onClo
  const dayCount=Number(requiredDays),detailsValid=valid&&!!service&&Number.isSafeInteger(dayCount)&&dayCount>0;
  const account=service?balances[balanceKey(pet,service)]:undefined;
  const coverage=service?validatePetCoverage(account,pet,service,dayCount,start.slice(0,10),end.slice(0,10),balancePlans):{code:'missing',available:0,after:0};
- const coverageMessages:Record<string,string>={ok:t('Balance covers this stay','余额可覆盖本次托管'),missing:t('Set up this pet’s balance','请设置此宠物的余额'),required:t('Enter staff-reviewed required days','请填写人工核对的所需天数'),dates:t('Check the stay dates','请检查托管日期'),coverage:t('Stay is outside the reviewed coverage dates','托管日期不在已核对的覆盖日期内'),months:t('This stay includes an ineligible month','托管安排包含不可用月份'),insufficient:t('Not enough days for this stay','可用天数不足以覆盖本次托管')};
+ const coverageMessages:Record<string,string>={ok:t('Balance covers this stay','余额可覆盖本次托管'),missing:t('Set up this pet’s balance','请设置此宠物的余额'),required:t('Enter staff-reviewed required days','请填写人工核对的所需天数'),dates:t('Check the stay dates','请检查托管日期'),coverage:t('Stay is outside the reviewed coverage dates','托管日期不在已核对的覆盖日期内'),insufficient:t('Not enough days for this stay','可用天数不足以覆盖本次托管')};
  const chosenHouse=houses.find(h=>String(h.id)===house),chosenRoom=chosenHouse?.rooms.find(r=>String(r.id)===room),problem=chosenHouse&&chosenRoom?issue(chosenHouse,chosenRoom):'dates';
  const calendarStart=Number.isFinite(new Date(start).getTime())?new Date(start):new Date(anchor);
  calendarStart.setHours(0,0,0,0);calendarStart.setDate(calendarStart.getDate()+week*7);
