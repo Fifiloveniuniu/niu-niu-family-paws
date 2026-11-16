@@ -5,6 +5,7 @@ import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
 import Customers from './customers';
 import Houses from './houses';
+const HouseCalendar=React.lazy(()=>import('./house-calendar'));
 import './workspace.css';
 import Profile from './profile';
 import LanguageSelector from './language-selector';
@@ -91,6 +92,13 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
     await setPersistence(auth, browserSessionPersistence);
     await signInWithPopup(auth, provider);
   }
+  const previewIdentity=React.useRef({adminUid:null as string|null,epoch:0});
+  if(previewIdentity.current.adminUid&&(access==='signed-out'||access==='denied'||access==='customer'||access==='employee'||(user&&user.uid!==previewIdentity.current.adminUid))){previewIdentity.current.epoch++;previewIdentity.current.adminUid=null;}
+  if(access==='admin')previewIdentity.current.adminUid=user?.uid||null;
+  const previewRoute=import.meta.env.DEV&&!['#/login','#/admin'].includes(window.location.hash.split('?')[0]);
+  const accountControls=<div className="hc-account"><span>{user?.email}</span><a className="hc-manage" href="#/personal">{chinese?'我的资料与宠物':'My profile and pets'}</a><button className="icon-button" aria-label={t.logout} title={t.logout} disabled={busy} onClick={()=>{if(confirmDiscardChanges(i18n.language))void run(()=>signOut(auth));}}><Icon name="logout"/></button></div>;
+  if(import.meta.env.DEV&&access==='admin')return <HouseCalendar identityEpoch={previewIdentity.current.epoch} onLanguageChange={onLanguageChange} account={accountControls} customers={<div className="portal-admin"><Customers refreshKey={directoryRefresh}/></div>} personal={<Profile onSaved={()=>setDirectoryRefresh(value=>value+1)}/>}/>;
+  if(previewRoute)return <HouseCalendar identityEpoch={previewIdentity.current.epoch} onLanguageChange={onLanguageChange} personal={user&&(access==='customer'||access==='employee')?<Profile onSaved={()=>setDirectoryRefresh(value=>value+1)}/>:undefined} account={<a className="hc-back" href="#/login">{chinese?'登录':'Sign in'}</a>} customers={<section><h1>{chinese?'客户':'Customers'}</h1><p>{chinese?'请使用管理员账号登录以管理客户和宠物。':'Sign in with an administrator account to manage customers and pets.'}</p><a className="hc-manage" href="#/login">{chinese?'登录':'Sign in'}</a></section>}/>;
   return <>
     {import.meta.env.MODE==='test' && <aside className="local-test-banner" role="note">{chinese?'本地测试 · 仅供测试的资料与示例照片':'LOCAL TEST · Demo records and sample photos only'}</aside>}
     <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>

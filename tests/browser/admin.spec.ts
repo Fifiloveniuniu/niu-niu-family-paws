@@ -44,10 +44,10 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
   await expect(page.getByRole('heading',{name:'Staff account',exact:true})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toHaveCount(0);
   await update({admin:true});
-  await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'House calendar',exact:true})).toBeVisible();
   await page.screenshot({path:'test-results/admin-dashboard-en.png',fullPage:true});
   await page.reload();
-  await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'House calendar',exact:true})).toBeVisible();
   await update({});
   await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();
   await expect(page.getByText('Manage your profile and pets below.', {exact:true})).toBeVisible();
@@ -86,6 +86,7 @@ test('administrator can add, edit and search customers in both languages on mobi
     const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
+  await page.getByRole('link',{name:'Customers',exact:true}).click();
   await page.getByRole('button',{name:'Add customer',exact:true}).click();
   await page.getByRole('textbox',{name:'Customer name'}).fill('Alice');
   await page.getByRole('textbox',{name:'Email (optional)',exact:true}).fill('alice@example.test');
@@ -119,7 +120,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin sample pet');
   await petSection.getByRole('button',{name:'Save pet',exact:true}).click();
   await expect(petSection.getByRole('heading',{name:'Admin sample pet',exact:true})).toBeVisible();
-  await page.getByText('Find a pet',{exact:true}).click();
+  await page.locator('summary').filter({hasText:/^Find a pet$/}).click();
   await page.getByRole('searchbox',{name:'Start of pet name',exact:true}).fill('Admin');
   await page.getByRole('button',{name:'Search pet names',exact:true}).click();
   await expect(page.getByText('Customer: Alice Chen',{exact:true})).toBeVisible();

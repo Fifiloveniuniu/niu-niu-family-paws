@@ -19,7 +19,7 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
     const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
-  await page.getByRole('link',{name:'House calendar · Prototype',exact:true}).click();
+  await page.getByRole('link',{name:'Calendar',exact:true}).click();
   await page.getByRole('button',{name:'Manage houses & rooms',exact:true}).click();
   const section=page.getByRole('region',{name:'Houses',exact:true});
   await expect(section.getByText('No houses yet. Add your first house.',{exact:true})).toBeVisible();

@@ -20,7 +20,8 @@ test('administrator switches to own profile and pets without losing drafts or by
     const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');
   },{email});
-  await expect(page.getByRole('button',{name:'Customer management',exact:true})).toHaveAttribute('aria-pressed','true');
+  await page.getByRole('link',{name:'Customers',exact:true}).click();
+  await expect(page.getByRole('link',{name:'Customers',exact:true})).toHaveAttribute('aria-current','page');
   await page.getByRole('button',{name:'Add customer',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'Add customer',exact:true})).toBeVisible();
   await expect(page.getByRole('textbox',{name:'Customer name',exact:true})).toBeFocused();
@@ -36,10 +37,10 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Add customer',exact:true})).toBeFocused();
-  await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
+  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();
   await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Unsaved personal draft');
-  await page.getByRole('button',{name:'Customer management',exact:true}).click();
-  await page.getByRole('button',{name:'My profile & pets',exact:true}).click();
+  await page.getByRole('link',{name:'Customers',exact:true}).click();
+  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
   await page.getByRole('button',{name:'Add pet',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'Add pet',exact:true})).toBeVisible();
@@ -55,7 +56,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.getByRole('button',{name:'Close',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
   await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
-  await expect(page.getByRole('button',{name:'My profile & pets',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toBeVisible();
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
   await page.setViewportSize({width:400,height:860});
   await page.getByRole('button',{name:'添加宠物',exact:true}).click();
@@ -65,7 +66,8 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.getByRole('dialog').screenshot({path:'test-results/pet-dialog-mobile-zh.png'});
   await claims(false);
   await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
-  await expect(page.locator('main>h1')).toHaveText('客户账号');
+  await expect(page.getByRole('heading',{name:'我的资料与宠物',exact:true})).toBeVisible();
+  await expect(page.locator('.customer-directory-panel')).toHaveCount(0);
   await expect(page.getByRole('textbox',{name:'宠物名字',exact:true})).toHaveValue('未保存的宠物');
   page.once('dialog',async dialog=>{expect(dialog.message()).toContain('确定放弃修改吗');await dialog.accept();});
   await page.getByRole('button',{name:'取消',exact:true}).click();
@@ -74,11 +76,11 @@ test('administrator switches to own profile and pets without losing drafts or by
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
   await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Discard on navigation');
   const keepDraft=page.waitForEvent('dialog').then(dialog=>dialog.dismiss());
-  await page.getByRole('link',{name:'← 返回首页',exact:true}).click();
+  await page.locator('.hc-top>a').click();
   await keepDraft;
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Discard on navigation');
   const discardDraft=page.waitForEvent('dialog').then(dialog=>dialog.accept());
-  await page.getByRole('link',{name:'← 返回首页',exact:true}).click();
+  await page.locator('.hc-top>a').click();
   await discardDraft;
   await page.getByRole('link',{name:'登录',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');

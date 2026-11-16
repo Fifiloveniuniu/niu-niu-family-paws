@@ -137,6 +137,7 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 - Preserve entered information through recoverable errors and uncertain-save retries; warn before discarding drafts.
 - Make times/house context, price/day calculations, balance changes and refund outcomes clear before confirmation.
 - Do not require hover or dragging. Use readable layouts and touch-friendly controls on phones.
+- Latest administrator navigation (2026-11-16): **Calendar / Customers / Balances / Statement / Settings**, ordered by importance, with no ampersands in tab names. Calendar is the administrator entry view. Customers includes pets; Settings contains houses/rooms and a cancellation-policy entry. Personal profile is a secondary account link. Integrate the existing local pages without claiming sample planning data is a real saved booking/balance system.
 - Suggested customer navigation: My pets / Calendar / Packages. Latest approved admin navigation: **House calendar** is the daily destination; **Manage houses & rooms** opens setup in a focused dialog, replacing the separate Houses tab. Room setup remains WIP until implemented and validated.
 
 ## 13. Existing separate workstreams
