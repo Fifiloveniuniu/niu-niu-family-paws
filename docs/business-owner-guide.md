@@ -151,6 +151,6 @@ Use **Pet balances** in the calendar header to select a customer, pet and Daycar
 
 ## Pet photos in the calendar
 
-The calendar, Add pet review and balance pet list now show profile photos instead of initials. In the local prototype, fictional names are explicitly linked to saved demo profiles and labelled as samples. Sign in as the local administrator to view their private photos. Missing photos show a neutral pet icon; if loading fails, use Retry profile photos. Expand Sample profile photos & credits below the calendar for source/license information.
+The calendar, Add pet review and balance pet list now show profile photos instead of initials. In the local prototype, fictional names are explicitly linked to saved demo profiles and labelled as samples. Sign in as the local administrator to view their private photos. If your session expires, choose Sign in for pet photos in the balance sidebar or below the calendar; the editor stays open. Missing photos show a neutral pet icon; if loading fails, use Retry profile photos. Expand Sample profile photos & credits below the calendar for source/license information.
 
-日历、添加宠物确认页和余额宠物列表使用档案照片，不再显示名字首字母。本地原型的示例名字明确关联至已有测试档案，照片标注为示例；使用本地管理员登录后可查看私密照片。无照片时显示中性宠物图标，加载失败可点击“重试档案照片”。日历下方“示例档案照片与来源”可查看来源及许可。
+日历、添加宠物确认页和余额宠物列表使用档案照片，不再显示名字首字母。本地原型的示例名字明确关联至已有测试档案，照片标注为示例；使用本地管理员登录后可查看私密照片。登录过期时，可在余额侧栏或日历下方点击“登录查看照片”，编辑表单会保留。无照片时显示中性宠物图标，加载失败可点击“重试档案照片”。日历下方“示例档案照片与来源”可查看来源及许可。
