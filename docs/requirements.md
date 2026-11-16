@@ -71,6 +71,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 - Only boarding balance is supported. Remove daycare from balance management and stay scheduling. Use Add balance, not Set up balance. Preserve per-pet isolation.
 - Admin manages package prices, terms and balance adjustments in the UI. Preserve adjustment history.
 - Customer balance management/validation is per pet and service. Adjustment reasons are optional. Show credit adjustments/history and coverage status in the scheduling review, without borrowing another pet or service’s days. Automatic counting and reservation/consumption rules remain unresolved; the current local prototype uses explicit staff-reviewed days and planning-only allocations.
+- Provide a Transactions / Statement page with customer/pet/date/activity filters, per-entry balance after the change, detail dialogs and filtered CSV export. Show only recorded activity; no invented booking charges/refunds.
 - Balance operations and usage must be atomic, concurrent-safe and idempotent. Usage references customer, pet, service/date, consumed units and recording actor.
 
 Proposed UX, not a resolved deduction policy: show **available**, **reserved for upcoming stays**, and **used** days. Preserve historical purchase/booking terms by default; effective dates and retroactive changes need approval.

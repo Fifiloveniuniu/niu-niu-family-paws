@@ -5,6 +5,7 @@ import Houses from './houses';
 import CalendarSettingsDialog,{type CalendarSettings} from './calendar-settings';
 import Icon from './icons';
 import AssignmentDialog from './calendar-assignment';
+import BoardingStatement from './boarding-statement-page';
 import CancellationPolicyPage,{initialCancellationPolicy} from './cancellation-policy';
 import PetBalances from './pet-balances';
 import type {BalancePolicyTemplate} from './pet-balance';
@@ -34,7 +35,7 @@ const initialStays:SampleStay[]=[
 const DAY=86400000;
 export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang:'en'|'zh')=>void}){
  const {i18n}=useTranslation(),zh=i18n.language==='zh',t=(en:string,cn:string)=>zh?cn:en;
- const view=window.location.hash==='#/cancellation-policy'?'policy':'calendar';
+ const route=window.location.hash,view=route.split('?')[0]==='#/cancellation-policy'?'policy':route.split('?')[0]==='#/transactions'?'statement':'calendar';
  const [cancellationPolicy,setCancellationPolicy]=React.useState(initialCancellationPolicy);
  const [stays,setStays]=React.useState<Stay[]>(()=>initialStays.map((s,i)=>({...s,id:'sample-'+i,units:1})));
  const [locations,setLocations]=React.useState([{id:1,rooms:[1,2,3]},{id:2,rooms:[1,2]}]);
@@ -58,7 +59,7 @@ export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang
  const anchor=React.useRef(new Date(new Date().setHours(0,0,0,0))).current;
  const [scale,setScale]=React.useState<Scale>('week'),[offset,setOffset]=React.useState(0),[house,setHouse]=React.useState('all'),[query,setQuery]=React.useState(''),[collapsed,setCollapsed]=React.useState<string[]>([]),[selected,setSelected]=React.useState<Stay|null>(null);
  const dialog=React.useRef<HTMLDialogElement>(null);
- React.useEffect(()=>{setBalanceView(null);setAssignment(false);setSettings(null);setManage(false);setSelected(null);dialog.current?.close();},[view]);
+ React.useEffect(()=>{setBalanceView(null);setAssignment(false);setSettings(null);setManage(false);setSelected(null);dialog.current?.close();},[route]);
  React.useEffect(()=>{if(selected)dialog.current?.showModal();},[selected]);
  const span={day:1,week:14,month:35,year:365}[scale],before={day:0,week:3,month:7,year:30}[scale];
  const from=new Date(anchor.getTime()+(offset*span-before)*DAY),to=new Date(from.getTime()+span*DAY);
@@ -86,7 +87,8 @@ export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang
  <div className="hc-top"><a href="#">✿ <strong>NIU NIU</strong> <span>FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></div>
  <a className="hc-back" href="#/login">← {t('Back to workspace','返回工作区')}</a>
  <p className="hc-demo">{t('Prototype · Changes stay on this page · Existing sample stays use 1 illustrative capacity unit','原型 · 修改仅保留在本页 · 现有示例托管各使用 1 示例容量单位')}</p>
- <nav className="hc-work-nav" aria-label={t('Boarding workspace','寄养工作区')}><a href="#/house-calendar" aria-current={view==='calendar'?'page':undefined}>{t('House calendar','房屋日历')}</a><a href="#/cancellation-policy" aria-current={view==='policy'?'page':undefined}>{t('Cancellation policy','取消政策')}</a></nav>
+ <nav className="hc-work-nav" aria-label={t('Boarding workspace','寄养工作区')}><a href="#/house-calendar" aria-current={view==='calendar'?'page':undefined}>{t('House calendar','房屋日历')}</a><a href="#/cancellation-policy" aria-current={view==='policy'?'page':undefined}>{t('Cancellation policy','取消政策')}</a><a href="#/transactions" aria-current={view==='statement'?'page':undefined}>{t('Statement','交易明细')}</a></nav>
+ {view==='statement'&&<BoardingStatement key={route} accounts={balances} pets={roster} initialPet={new URLSearchParams(route.split('?')[1]||'').get('pet')||undefined} onManageBalance={pet=>setBalanceView({pet,service:'boarding'})}/>}
  {view==='policy'&&<CancellationPolicyPage policy={cancellationPolicy} onSave={setCancellationPolicy}/>}
  <div hidden={view!=='calendar'}>
  <div className="hc-title"><div><h1>{t('House calendar','房屋日历')}</h1><p>{t('Stays and check-ins, by room.','按房间查看托管与入住。')}</p></div><div className="hc-title-actions"><div className="hc-main-actions"><button className="hc-manage" onClick={()=>setBalanceView({pet:'',service:'boarding'})}>{t('Boarding balances','寄养余额')}</button><button className="hc-apply hc-add-placement" onClick={()=>setAssignment(null)}><Icon name="plus"/>{t('Add pet to room','添加宠物到房间')}</button><button className="hc-manage hc-add-house" title={t('Add house','添加房屋')} aria-label={t('Add house','添加房屋')} onClick={()=>setSettings({house:nextId.current++,creating:true})}><Icon name="plus"/>{t('Add house','添加房屋')}</button>{admin?<button className="hc-settings hc-top-icon" title={t('Manage houses & rooms','管理房屋与房间')} aria-label={t('Manage houses & rooms','管理房屋与房间')} onClick={()=>setManage(true)}><Icon name="settings"/></button>:<a className="hc-manage" href="#/login">{t('Sign in to manage houses','登录以管理房屋')}</a>}</div><div className="hc-live"><span/> {t('Local time','当地时间')} · {now.toLocaleTimeString(locale,{hour:'2-digit',minute:'2-digit'})}<small>{t('Sample timezone','示例时区')}: {Intl.DateTimeFormat().resolvedOptions().timeZone}</small></div></div></div>
