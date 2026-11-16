@@ -65,12 +65,12 @@ Canonical requirements, consolidated from owner instructions through 2026-11-15.
 - Package prices depend on **pet type and weight range**, not a per-exact-weight multiplication.
 - Customers prepay days before booking. Actual payment method/confirmation remains undecided.
 - Packages last **three months from first use**, not purchase or booking creation. First use refers to the first day of care covered by the package; exact activation/expiry boundaries still need decisions.
-- Packages are usable only in configured service months. January–September is an example, not a universal approved calendar.
-- Both the expiry rule and eligible-month rule apply to each covered service date, including extensions.
-- Display remaining days, activation/expiry, eligible months, price/weight band and relevant terms clearly.
+- Latest owner simplification: balance setup uses one explicit valid-from/valid-through date range and reusable named policy templates. Remove the separate eligible-month selector/check; do not combine overlapping month and date policies. January–September was an earlier example, not a default.
+- The reviewed validity range must cover the whole stay, including extensions.
+- Display remaining days, activation/expiry, date coverage, price/weight band and relevant terms clearly.
 - Keep service/unit balances separate where relevant (for example daycare days versus boarding nights).
 - Admin manages package prices, terms and balance adjustments in the UI. Preserve adjustment history.
-- Customer balance management/validation is per pet and service. Show credit adjustments/history and coverage status in the scheduling review, without borrowing another pet or service’s days. Automatic counting and reservation/consumption rules remain unresolved; the current local prototype uses explicit staff-reviewed days and planning-only allocations.
+- Customer balance management/validation is per pet and service. Adjustment reasons are optional. Show credit adjustments/history and coverage status in the scheduling review, without borrowing another pet or service’s days. Automatic counting and reservation/consumption rules remain unresolved; the current local prototype uses explicit staff-reviewed days and planning-only allocations.
 - Balance operations and usage must be atomic, concurrent-safe and idempotent. Usage references customer, pet, service/date, consumed units and recording actor.
 
 Proposed UX, not a resolved deduction policy: show **available**, **reserved for upcoming stays**, and **used** days. Preserve historical purchase/booking terms by default; effective dates and retroactive changes need approval.
@@ -94,7 +94,7 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 ## 8. Extensions — confirmed
 
 - Customer can extend sitting time if suitable room capacity is available for the additional period.
-- Respect one-species occupancy, capacity group/override usage, package validity/eligible months and holiday rules.
+- Respect one-species occupancy, capacity group/override usage, package validity and holiday rules.
 - Show additional days/charges and require sufficient prepayment before acceptance.
 - Leave the original booking intact if an extension fails or is unavailable.
 - Update accepted time/capacity/balance changes together; approval and cancellation treatment for extension days remain undecided.
@@ -121,7 +121,7 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 
 ## 11. Admin settings and customer preview — confirmed
 
-- Configure business rules in UI rather than code: package prices/weight bands, eligible months/validity, holidays, cancellation/refund rules, booking/extension rules, room capacities and pet capacity groups/overrides, applicable constraints, and employee access.
+- Configure business rules in UI rather than code: package prices/weight bands, validity templates, holidays, cancellation/refund rules, booking/extension rules, room capacities and pet capacity groups/overrides, applicable constraints, and employee access.
 - Validate contradictory ranges/rules and show a clear preview before applying changes. Record who changed rules and when.
 - Admin can confirm a customer’s view. Plan read-only preview separately from acting on behalf of a customer.
 - Acting as a customer requires server-authorized scoped impersonation, a persistent target banner and obvious exit, current admin-access checks, and actual-admin/effective-customer audit identities.

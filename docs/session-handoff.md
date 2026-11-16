@@ -1,5 +1,11 @@
 # Session handoff — 2026-10-22
 
+## Simplified balance setup and policy templates — 2026-11-15
+
+Owner explicitly removed redundant eligible months alongside valid-from/through and made reason optional. Local balance model/validation now uses one full-stay reviewed date range. Set up balance focuses on starting days and optional reason; editing hides metrics and initial Add selector. Coverage policy is open for initial setup and collapsed for adjustments, with automatic expansion on invalid fields. Service-scoped named templates copy reviewed dates into another pet’s balance; Custom dates permits exceptions, template changes never share credits/retroactively change accounts. Templates persist only across modal close/open within the calendar page, like all other preview state. No built-in business dates or inferred expiry rules.
+
+Owner also wrote “boarding and beatify balance”; beauty/grooming interpretation and unit (sessions or money) remain unanswered. Do not silently relabel existing daycare day credits as grooming or infer its units. Actual localhost Chrome walkthrough confirmed optional reason, template controls and absence of month grid; saved records/photos, earlier draft tabs and WIP #41 preserved. No deployment or real balance changes. Build and 26 unit tests pass. Full 18-browser suite passed after starting missing local Auth emulator (existing Firestore untouched); final template-disclosure test rerun passed. Desktop/mobile Chinese screenshots saved in docs/screenshots/balance-policy-template-desktop.png and balance-setup-mobile-zh.png. Local frontend4180/API8081/Auth9099 are running; restarting Auth requires re-sign-in. Review record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/48. Implementation d198efa is GitHub Verified; consult PR checks/state for merge status.
+
 ## Profile-photo avatars replace initials — 2026-11-15
 
 Review record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/47. Implementation `94506d4` is GitHub Verified. Consult PR checks/state for merge status; no hosted deployment.
