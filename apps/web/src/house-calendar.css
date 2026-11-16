@@ -164,3 +164,5 @@
 .hc-balance-policy>label{display:grid;gap:7px;margin-bottom:14px;font-size:12px}.hc-template-save{display:flex;align-items:end;gap:10px;margin-top:16px}.hc-template-save label{display:grid;gap:7px;flex:1;min-width:0;font-size:12px}.hc-template-save button{flex-shrink:0}@media(max-width:500px){.hc-template-save{align-items:stretch;flex-direction:column}}
 
 .hc-template-create{margin-top:16px}.hc-template-create summary{font-size:11px}.hc-template-create[open] summary{margin-bottom:0}
+
+.hc-photo-access{padding:12px;border:1px solid var(--line);border-radius:8px;background:#f8fbf5;margin-bottom:12px}.hc-photo-access p{font-size:11px;line-height:1.6;color:#607557;margin:0 0 8px}.hc-photo-access button{font-size:11px}

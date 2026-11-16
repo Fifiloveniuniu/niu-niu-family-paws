@@ -1,5 +1,13 @@
 # Session handoff — 2026-10-22
 
+## Boarding-only balance direction — 2026-11-15
+
+Latest owner clarification: rename Set up balance to Add balance; only boarding, no daycare balance. Booking costs deduct balance and cancellation restores credits automatically based on cancellation date. Asked whether approved cutoffs are ≥14 days 100%, 7–13 days 50%, <7 days 0%, and whether units are prepaid days (including half-day refunds) or money; answers pending. Do not infer under-seven-day refund, rounding, money currency/rates or automatic stay counting. Proceed with independent boarding-only UI while financial decisions remain pending.
+
+## Photo access recovery — 2026-11-15
+
+Owner reported missing avatars after local Auth restart. Photos/cache and profile records were intact; signed-out/expired tab had neutral placeholders. Reconnected existing local-admin through normal Google emulator popup and verified all twelve balance photos in actual localhost Chrome. Added bilingual in-place Sign in for pet photos in calendar and balance sidebar, clearer sign-in placeholders and denied-admin explanation, popup errors/retry. Uses existing Google session persistence and API authorization; no public photos or role bypass. Login recovers images without leaving the editor. Build passes; browser test records draft survival across auth recovery and renewed access action after role loss. No deployment or saved record changes. Review record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/49; implementation 9075bc3 is GitHub Verified.
+
 ## Simplified balance setup and policy templates — 2026-11-15
 
 Owner explicitly removed redundant eligible months alongside valid-from/through and made reason optional. Local balance model/validation now uses one full-stay reviewed date range. Set up balance focuses on starting days and optional reason; editing hides metrics and initial Add selector. Coverage policy is open for initial setup and collapsed for adjustments, with automatic expansion on invalid fields. Service-scoped named templates copy reviewed dates into another pet’s balance; Custom dates permits exceptions, template changes never share credits/retroactively change accounts. Templates persist only across modal close/open within the calendar page, like all other preview state. No built-in business dates or inferred expiry rules.

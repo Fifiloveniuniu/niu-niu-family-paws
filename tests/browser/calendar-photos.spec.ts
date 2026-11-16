@@ -21,7 +21,12 @@ test('calendar uses authenticated profile photos consistently and clears them on
  });
  await page.goto('/#/house-calendar');
  await expect(page.locator('.hc-avatar')).toHaveCount(9);expect(photoReads).toBe(0);expect(profileReads).toBe(0);
+ await expect(page.getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Pet balances',exact:true}).click();await page.getByRole('button',{name:'Set up balance',exact:true}).click();await page.getByLabel('Days',{exact:true}).fill('7');await page.getByLabel('Reason',{exact:true}).fill('[TEST] retained photo access draft');
+ await expect(page.getByRole('dialog').getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
  await page.evaluate(async({email})=>{const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');await signInWithEmailAndPassword(auth,email,'emulator-only-password');},{email});
+ await expect(page.getByRole('dialog').getByAltText('Mochi profile photo (sample)',{exact:true})).toBeVisible();await expect(page.getByLabel('Days',{exact:true})).toHaveValue('7');await expect(page.getByLabel('Reason',{exact:true})).toHaveValue('[TEST] retained photo access draft');
+ page.once('dialog',async d=>{await d.accept();});await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.getByRole('button',{name:'Close',exact:true}).click();
  const main=page.locator('.hc-pet').filter({has:page.getByRole('button',{name:'Remove placement: Mochi',exact:true})}).getByAltText('Mochi profile photo (sample)',{exact:true});
  await expect(main).toBeVisible();await expect(main).toHaveJSProperty('naturalWidth',1);
  const source=await main.getAttribute('src');
@@ -37,6 +42,6 @@ test('calendar uses authenticated profile photos consistently and clears them on
  await expect(page.getByAltText('Coco profile photo (sample)',{exact:true})).toBeVisible();
  await claims(false);await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
  await expect(page.locator('.hc-profile-photo img')).toHaveCount(0);
- await expect(page.locator('.hc-photo-credits')).toHaveCount(0);
+ await expect(page.locator('.hc-photo-credits')).toHaveCount(0);await expect(page.getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
  expect(await page.locator('.hc-profile-photo').first().textContent()).toBe('');
 });
