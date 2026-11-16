@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 
-test('five ordered tabs connect customer records, balance preview, statement and settings',async({page,request})=>{
+test('four ordered tabs connect customer records, balance preview, statement and settings',async({page,request})=>{
  const email=`integrated-${Date.now()}@example.test`;
  const signup=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key',{data:{email,password:'emulator-only-password',returnSecureToken:true}});
  const {localId}=await signup.json();
@@ -11,7 +11,7 @@ test('five ordered tabs connect customer records, balance preview, statement and
  await page.goto('/#/login');
  await page.evaluate(async({email})=>{const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');await signInWithEmailAndPassword(auth,email,'emulator-only-password');},{email});
  const nav=page.getByRole('navigation',{name:'Workspace',exact:true});
- await expect(nav.getByRole('link')).toHaveText(['Calendar','Customers','Balances','Statement','Settings']);
+ await expect(nav.getByRole('link')).toHaveText(['Calendar','Customers','Balances','Settings']);
  await expect(nav.getByRole('link',{name:'Calendar',exact:true})).toHaveAttribute('aria-current','page');
  await nav.getByRole('link',{name:'Balances',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Balances',exact:true})).toBeVisible();
@@ -23,15 +23,15 @@ test('five ordered tabs connect customer records, balance preview, statement and
  await page.getByRole('dialog').getByRole('button',{name:'Add balance',exact:true}).click();
  await nav.getByRole('link',{name:'Customers',exact:true}).click();await expect(page.getByRole('button',{name:'Add customer',exact:true})).toBeVisible();
  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Retained draft');
- await nav.getByRole('link',{name:'Settings',exact:true}).click();await page.getByRole('link',{name:'Cancellation policy',exact:true}).click();
+ await nav.getByRole('link',{name:'Settings',exact:true}).click();await expect(page.getByRole('heading',{name:'Houses and rooms',exact:true})).toHaveCount(0);await page.getByRole('link',{name:'Cancellation policy',exact:true}).click();
  await expect(nav.getByRole('link',{name:'Settings',exact:true})).toHaveAttribute('aria-current','page');
- await nav.getByRole('link',{name:'Statement',exact:true}).click();await expect(page.locator('.hc-statement-row')).toHaveCount(1);await expect(page.locator('.hc-statement-row')).toContainText('12 days');
+ await nav.getByRole('link',{name:'Balances',exact:true}).click();await page.getByRole('navigation',{name:'Balance views',exact:true}).getByRole('link',{name:'Statement',exact:true}).click();await expect(page.locator('.hc-statement-row')).toHaveCount(1);await expect(page.locator('.hc-statement-row')).toContainText('12 days');
  await nav.getByRole('link',{name:'Balances',exact:true}).click();await expect(page.locator('.hc-balance-metrics strong').first()).toHaveText('12');
  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Retained draft');
  await page.getByRole('textbox',{name:'Your name',exact:true}).fill('');
  await page.setViewportSize({width:1440,height:1000});await nav.getByRole('link',{name:'Settings',exact:true}).click();await page.screenshot({path:'test-results/integrated-workspace-desktop.png',fullPage:true});
  await page.setViewportSize({width:390,height:844});await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
- await expect(page.getByRole('navigation').getByRole('link')).toHaveText(['日历','客户','寄养余额','交易明细','设置']);
+ await expect(page.getByRole('navigation').getByRole('link')).toHaveText(['日历','客户','寄养余额','设置']);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.screenshot({path:'test-results/integrated-workspace-mobile-zh.png',fullPage:true});
 });

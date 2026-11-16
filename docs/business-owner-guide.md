@@ -188,3 +188,9 @@ Tab changes keep saved preview adjustments, the statement and calendar plans in 
 On the local Balances page, choose a customer and pet in the left sidebar. The selected pet’s photo, recorded days, planned days, available days, coverage dates and adjustment history appear on the right. On phones, swipe the pet row or use the customer filter; balance figures stack into readable rows. Add balance opens a focused dialog; Save records the preview adjustment, and Cancel, Close or Escape protect unsaved edits. Existing calendar balance dialogs still work. This remains a planning preview, with no new real financial operations.
 
 本地寄养余额页面在左侧选择客户与宠物，右侧显示所选宠物照片、记录天数、已计划天数、可计划天数、有效日期及调整记录。手机可横向滑动宠物列表或筛选客户，余额数字逐行显示。“增加余额”打开独立弹窗；取消、关闭或 Esc 会保护未保存修改。日历中的原有余额弹窗仍可使用，目前仍为规划预览。
+
+## Latest navigation — 2026-11-16
+
+The four main tabs are now **Calendar / Customers / Balances / Settings**. Open **Balances → Overview** to manage pet credits, or **Balances → Statement** for transaction filters, details and CSV export. A pet’s View statement shortcut opens this same statement view filtered to that pet. Returning to Overview retains the selected pet. Settings contains Cancellation policy; Houses and rooms has been removed from Settings. House management remains in the Calendar’s gear action. This replaces the earlier five-tab navigation instructions; all planning and financial limitations still apply.
+
+主导航现为 **日历 / 客户 / 寄养余额 / 设置**。在“寄养余额 → 余额概览”管理宠物额度，在“寄养余额 → 交易明细”筛选、查看及导出记录。宠物的“查看交易明细”进入同一视图并筛选该宠物，返回概览保留宠物选择。设置中保留取消政策，不再显示房屋与房间；房屋管理仍可从日历的齿轮入口打开。此说明取代之前的五个主标签说明，规划预览与财务功能限制不变。
