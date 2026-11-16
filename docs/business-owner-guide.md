@@ -158,3 +158,9 @@ The calendar, Add pet review and balance pet list now show profile photos instea
 The latest boarding charge/cancellation workflow is still pending: the owner requested charging at booking and automatic policy-based restoration at cancellation. Confirm balance units and cancellation cutoffs before treating this preview as a working financial booking flow.
 
 最新要求是在寄养预约时扣减余额、取消时按政策自动返还；目前仍需确认余额单位和取消期限，预览尚不能作为实际财务预约流程。
+
+## Cancellation policy page (local preview)
+
+Use Cancellation policy in the boarding workspace navigation or balance sidebar. Edit policy opens a focused draft form for notice days, short-notice restoration and calculation method. Blank rules remain pending. Save policy draft keeps changes while navigating within this workspace; reload/exit resets preview data. This does not activate automatic booking charges/refunds.
+
+在寄养工作区导航或余额侧栏点击“取消政策”。“编辑政策”弹窗可调整提前天数、临近到店返还比例及计算方式，空白规则保持待确认。“保存政策草稿”后可在工作区内切换而保留内容；刷新或退出后预览数据重置，不会启用自动扣费或返还。

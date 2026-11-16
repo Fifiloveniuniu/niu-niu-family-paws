@@ -84,6 +84,8 @@ Proposed UX, not a resolved deduction policy: show **available**, **reserved for
 
 ## 7. Cancellations and refunds — confirmed policy, unresolved details
 
+- Provide a dedicated Cancellation policy page and a separate Transactions / Statement page with navigation from the calendar and balance management. Policy edits use a focused dialog; unresolved rules stay unconfigured, and no draft activates financial operations.
+
 - Cancellation 14 days ahead receives a **full refund**.
 - Cancellation seven days ahead receives a **half refund**.
 - Show exact deadline and refund consequences before the customer confirms cancellation.

@@ -63,3 +63,7 @@ The dev-only calendar keeps sample PetBalance records and adjustment history in 
 ## Simplified balance policy templates (local preview)
 
 Per latest owner instruction, a balance uses one reviewed date range rather than a second eligible-month restriction. Named, service-scoped templates copy this range into setup; they never share credits or retroactively alter other accounts. Templates and balances remain page-local React state, not persisted financial configuration. Adjustment reason is optional; amount/version/operation/history and planned-stay protections remain. No automatic package activation or expiry rule is inferred from these manually entered dates.
+
+## Local boarding workspace pages
+
+Development-only hash routes keep one mounted calendar workspace so navigating between calendar and cancellation policy retains preview balances, location edits, stays and templates. Leaving an editor is protected by the shared draft guard before changing the route. Cancellation policy uses a page-local draft in the workspace; the 14-day/full and 7-day/half terms are known, while short-notice percentages and cutoff calculations start unconfigured. Saving the draft does not activate refunds or change historical bookings. Production routing/API/data are unchanged.
