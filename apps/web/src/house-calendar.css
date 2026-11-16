@@ -177,3 +177,73 @@
 /* One navigation order across the local administrator workspace. */
 .hc-account{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:12px 0;color:#56635d;font-size:13px}.hc-account>span{overflow-wrap:anywhere;min-width:0}.hc-account .icon-button{width:40px;height:40px}.hc-work-nav{display:flex;gap:8px}.hc-work-nav a{flex:1;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center}.hc-balance-page{background:#fff;border:1px solid #dce3de;border-radius:12px;overflow:hidden}.hc-balance-page .hc-balance-layout{min-height:550px}.hc-settings-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.hc-settings-cards>section{padding:24px;background:#fff;border:1px solid #dce3de;border-radius:12px}.hc-settings-cards h2{font-size:20px}.hc-settings-cards p{color:#56635d;line-height:1.6}.hc .portal-admin .customer-section{margin-top:24px}.hc [hidden]{display:none!important}
 @media(max-width:600px){.hc-work-nav{gap:0;position:sticky;top:0;z-index:5;background:#f6f8f5}.hc-work-nav a{padding:12px 3px;font-size:12px;min-width:0}.hc-settings-cards{grid-template-columns:1fr}.hc-account{font-size:12px}.hc-balance-page .hc-balance-layout{min-height:0}}
+
+/* Full balance page: comfortable selection, readable summary, focused edits. */
+.hc-balance-page .hc-balance-layout{grid-template-columns:280px minmax(0,1fr);gap:0;min-height:600px;align-items:stretch}
+.hc-balance-page .hc-balance-sidebar{padding:24px;background:#fafcf9}
+.hc-balance-sidebar-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.hc-balance-sidebar-heading h2{font-size:17px;font-weight:600;margin:0;line-height:1.4}
+.hc-balance-sidebar-heading>span{font-size:12px;color:#5d7167;background:#edf3ee;border-radius:20px;padding:3px 9px}
+.hc-balance-page .hc-balance-sidebar>label{font-size:12px;color:#52675d;gap:8px}
+.hc-balance-page .hc-balance-sidebar select{font-size:13px;min-height:44px;padding:10px 12px;color:#344e44}
+.hc-balance-page .hc-balance-pets{max-height:480px;gap:6px;margin-top:16px;scrollbar-width:thin}
+.hc-balance-page .hc-balance-pets>button{min-height:64px;padding:10px;gap:12px;background:transparent;color:#435d51}
+.hc-balance-page .hc-balance-pets>button[aria-pressed=true]{background:#edf5ee;border-color:#a9c5b4;box-shadow:inset 3px 0 #2d6255}
+.hc-balance-page .hc-balance-pets .hc-guest-avatar{width:40px;height:40px;flex-shrink:0}
+.hc-balance-page .hc-balance-pets>button>span{min-width:0;overflow-wrap:anywhere}
+.hc-balance-page .hc-balance-pets strong{font-size:14px;font-weight:600}
+.hc-balance-page .hc-balance-pets small{font-size:11px;color:#66776d}
+.hc-balance-sidebar-footer{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:18px;margin-top:20px}
+.hc-balance-sidebar-footer .hc-finance-link{font-size:12px;margin:0;line-height:1.6}
+.hc-balance-sidebar-footer .hc-photo-access{margin:0}
+.hc-balance-page .hc-balance-content{padding:32px;min-width:0}
+.hc-balance-pet-heading{display:flex;align-items:center;gap:14px;min-width:0}
+.hc-balance-selected-photo{display:grid;place-items:center;width:56px;height:56px;flex-shrink:0;border-radius:14px;overflow:hidden;background:#eef4ed;color:#6f8b70}
+.hc-balance-selected-photo img{width:100%;height:100%;object-fit:cover}
+.hc-balance-selected-photo svg{width:28px;height:28px}
+.hc-balance-page .hc-balance-title p{font-size:12px;margin-bottom:6px}
+.hc-balance-page .hc-balance-title h3{font-size:28px;font-weight:600;overflow-wrap:anywhere}
+.hc-balance-page .hc-balance-title .hc-apply{min-height:44px;flex-shrink:0;font-size:13px;padding:11px 18px}
+.hc-balance-page .hc-balance-preview{font-size:12px;line-height:1.7;margin:20px 0;color:#5c7064}
+.hc-balance-page .hc-balance-metrics{margin:24px 0;background:#fff}
+.hc-balance-page .hc-balance-metrics>div{padding:22px 20px}
+.hc-balance-page .hc-balance-metrics small{font-size:12px;color:#5d7166;line-height:1.5}
+.hc-balance-page .hc-balance-metrics strong{font-size:32px;font-weight:600}
+.hc-balance-page .hc-balance-terms{padding:0 0 24px}
+.hc-balance-page .hc-balance-terms span{font-size:12px;gap:7px}
+.hc-balance-page .hc-balance-terms strong{font-size:14px;color:#3e594c}
+.hc-balance-page .hc-balance-empty{padding:32px 24px;border:1px dashed #cbd9cf;border-radius:10px;background:#fafcf9;text-align:center}
+.hc-balance-page .hc-balance-empty h4{font-size:17px;font-weight:600;color:#3d594c}
+.hc-balance-page .hc-balance-empty p{font-size:13px;max-width:420px;margin:auto}
+.hc-balance-page .hc-balance-history{margin-top:28px}
+.hc-balance-page .hc-balance-history h4{font-size:16px;font-weight:600;margin-bottom:16px}
+.hc-balance-page .hc-balance-history>div{gap:16px;padding:18px 0;align-items:flex-start}
+.hc-balance-page .hc-balance-history strong,.hc-balance-page .hc-balance-history>div>span{font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.hc-balance-page .hc-balance-history>div>div{min-width:0}
+.hc-balance-page .hc-balance-history small{font-size:11px;line-height:1.6}
+.hc-balance-edit-dialog .hc-balance-editor{border:0;padding:0;margin:0}
+.hc-balance-edit-dialog .hc-balance-editor-heading{display:none}
+.hc-balance-edit-dialog .unsaved-notice{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.hc-balance-edit-dialog .hc-settings-actions{position:sticky;bottom:-26px;background:#fff;padding:16px 0 0;border-top:1px solid var(--line)}
+@media(max-width:1000px){.hc-balance-page .hc-balance-layout{grid-template-columns:240px minmax(0,1fr)}.hc-balance-page .hc-balance-sidebar{padding:20px}.hc-balance-page .hc-balance-content{padding:24px}.hc-balance-page .hc-balance-metrics>div{padding:18px 12px}}
+@media(max-width:700px){
+ .hc-balance-page .hc-balance-layout{grid-template-columns:minmax(0,1fr);min-height:0}
+ .hc-balance-page .hc-balance-sidebar{padding:18px;border-right:0;border-bottom:1px solid var(--line)}
+ .hc-balance-sidebar-heading{margin-bottom:14px}
+ .hc-balance-page .hc-balance-pets{display:flex;max-height:none;overflow-x:auto;gap:8px;padding:3px 2px 8px;scroll-snap-type:x proximity}
+ .hc-balance-page .hc-balance-pets>button{min-width:148px;max-width:180px;min-height:66px;scroll-snap-align:start;flex-shrink:0}
+ .hc-balance-sidebar-footer{display:flex;flex-wrap:wrap;gap:12px 20px;padding-top:14px;margin-top:12px}
+ .hc-balance-sidebar-footer .hc-photo-access{flex-basis:100%}
+ .hc-balance-page .hc-balance-content{padding:22px 18px}
+ .hc-balance-page .hc-balance-title{align-items:flex-start;flex-wrap:wrap;gap:16px}
+ .hc-balance-selected-photo{width:48px;height:48px;border-radius:12px}
+ .hc-balance-page .hc-balance-title h3{font-size:24px}
+ .hc-balance-page .hc-balance-title .hc-apply{font-size:13px!important;padding:11px 16px}
+ .hc-balance-page .hc-balance-metrics{margin:20px 0;grid-template-columns:minmax(0,1fr)}
+ .hc-balance-page .hc-balance-metrics>div{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;border-right:0;border-bottom:1px solid var(--line)}
+ .hc-balance-page .hc-balance-metrics strong{font-size:26px;margin:0}
+ .hc-balance-page .hc-balance-empty{padding:26px 16px}
+ .hc-balance-page .hc-balance-history>div{display:grid;grid-template-columns:70px minmax(0,1fr);gap:6px 12px}
+ .hc-balance-page .hc-balance-history>div>small{grid-column:2;margin:0;white-space:normal}
+ .hc-balance-edit-dialog .hc-settings-actions{bottom:-20px}
+}

@@ -182,3 +182,9 @@ The local administrator preview now opens on Calendar and uses five tabs in this
 Tab changes keep saved preview adjustments, the statement and calendar plans in the current session. Personal-profile and customer drafts stay mounted when switching tabs; leaving a balance or policy editor asks before discarding edits. Refreshing/leaving resets sample planning data. Customer and pet saves still use the connected API and its normal permissions. Sample calendar names are not canonical customer bookings. Nothing new is deployed yet, and automatic charges/refunds remain pending the business decisions in requirements.
 
 本地管理员预览默认打开日历，按重要性排列为：**日历 / 客户 / 寄养余额 / 交易明细 / 设置**。客户页面包含已保存的客户与宠物工具；余额独立成页，日历中的快捷入口仍打开弹窗。设置包含房屋管理及取消政策；顶部账号旁可打开自己的资料与宠物。页面切换保留当前预览中的余额调整、明细及日历计划；个人资料草稿也会保留。离开余额或政策编辑器前会询问是否放弃修改。刷新或退出会重置示例计划数据。客户与宠物的保存仍使用已连接的接口及原有权限。尚未部署，也未启用实际预约扣减或取消返还。
+
+## Balances page layout — 2026-11-16
+
+On the local Balances page, choose a customer and pet in the left sidebar. The selected pet’s photo, recorded days, planned days, available days, coverage dates and adjustment history appear on the right. On phones, swipe the pet row or use the customer filter; balance figures stack into readable rows. Add balance opens a focused dialog; Save records the preview adjustment, and Cancel, Close or Escape protect unsaved edits. Existing calendar balance dialogs still work. This remains a planning preview, with no new real financial operations.
+
+本地寄养余额页面在左侧选择客户与宠物，右侧显示所选宠物照片、记录天数、已计划天数、可计划天数、有效日期及调整记录。手机可横向滑动宠物列表或筛选客户，余额数字逐行显示。“增加余额”打开独立弹窗；取消、关闭或 Esc 会保护未保存修改。日历中的原有余额弹窗仍可使用，目前仍为规划预览。
