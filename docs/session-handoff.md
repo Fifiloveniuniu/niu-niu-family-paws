@@ -2,6 +2,8 @@
 
 ## Profile-photo avatars replace initials — 2026-11-15
 
+Review record: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/47. Implementation `94506d4` is GitHub Verified. Consult PR checks/state for merge status; no hosted deployment.
+
 Owner requested pet profile photos instead of first letters. Branch `feat/calendar-pet-profile-photos` starts from merged #46 (`5db2816`, Verified). Added an isolated-demo-only photo provider linking fictional calendar aliases explicitly to existing demo pet profile IDs; current profile metadata/photo is read through existing authenticated admin APIs. One page cache shares revocable blob URLs across calendar, scheduling steps/review and balance pet selectors. No image binaries/URLs are hardcoded or publicized, no seeder/reset/photo overwrites or business-data writes. Real production identities must use canonical pet IDs, not these explicit sample aliases.
 
 Missing/inaccessible photos use a neutral pet outline, never initials or another image. Failures offer Retry profile photos. Requests are gated on verified administrator claims and exact demo mode; state/URLs clear on identity/access change or unmount, and current access is refreshed on tab return. Sample credits/source/license links are available in the UI; screenshot attribution is recorded in docs/calendar-profile-photos.md.
