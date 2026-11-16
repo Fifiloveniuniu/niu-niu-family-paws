@@ -253,3 +253,45 @@
 .hc-balance-views a[aria-current=page]{background:#fff;color:#244f41;font-weight:600;box-shadow:0 1px 4px #244f4114}
 .hc-balances-workspace>.hc-statement-page>.hc-title h2{font-size:24px;font-weight:600;line-height:1.3;margin:0 0 8px}
 @media(max-width:600px){.hc-balance-views{width:100%;margin-bottom:20px}.hc-balance-views a{flex:1;font-size:13px;min-height:44px}}
+
+/* Shared app shell. Marketing keeps its own layout. */
+.hc{max-width:none;padding:24px 32px 48px 252px;min-height:100dvh}
+.hc-top{min-height:60px;padding-bottom:18px}
+.hc-top>a{font-size:15px}
+.hc-work-nav{position:fixed;inset:0 auto 0 0;width:220px;padding:32px 18px;display:flex;flex-direction:column;justify-content:flex-start;gap:8px;background:#fff;border:0;border-right:1px solid var(--line);z-index:10;margin:0}
+.hc-nav-brand{font-size:21px;letter-spacing:1px;font-weight:700;color:var(--ink);padding:4px 14px 34px}
+.hc-nav-brand small{display:block;font-size:9px;letter-spacing:2px;font-weight:500;margin-top:6px;color:var(--muted)}
+.hc-work-nav a{flex:none;justify-content:flex-start;text-align:left;gap:12px;min-height:48px;padding:12px 14px;font-size:14px;font-weight:500;border:1px solid transparent;border-radius:8px;color:#596f63}
+.hc-work-nav a[aria-current=page]{background:#edf5ef;border-color:#d4e4d9;color:#244f41;font-weight:600}
+.hc-work-nav a svg{flex-shrink:0}
+.hc-account-menu{position:absolute;right:224px;top:32px;z-index:12;padding:0;border:0;font-size:13px}
+.hc-account-menu>summary{display:flex;align-items:center;gap:8px;min-height:40px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);list-style:none}
+.hc-account-menu>summary::-webkit-details-marker{display:none}
+.hc-account-menu>div{position:absolute;right:0;top:48px;width:260px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 35px #213c381c;display:grid;gap:4px}
+.hc-account-menu p{margin:0 0 8px;padding:8px;font-size:12px;overflow-wrap:anywhere;color:#61766a}
+.hc-account-menu a,.hc-account-menu button{display:flex;align-items:center;gap:10px;padding:11px 10px;font:inherit;border:0;border-radius:6px;background:transparent;text-align:left;color:var(--ink);min-height:44px}
+.hc-account-menu a:hover,.hc-account-menu button:hover{background:var(--soft)}
+.hc .hc-title{margin-top:24px}
+.hc .profile-section{max-width:840px;padding:28px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-top:24px}
+.hc .profile-section h2{font-size:22px;font-weight:600;margin:0 0 12px}
+.hc .profile-section p{font-size:13px;line-height:1.7}
+.hc .customer-form input,.hc .customer-form select{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:7px;padding:10px 12px;color:var(--ink)}
+.hc .button{margin-top:0;background:var(--brand);border:1px solid var(--brand);border-radius:7px;min-height:44px;padding:11px 18px;gap:8px;color:#fff;font-size:13px}
+.hc .language{border-radius:7px;min-height:40px;font-size:12px}
+.hc-settings-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+@media(max-width:1000px){.hc{padding:20px 24px 40px 212px}.hc-work-nav{width:188px;padding:28px 12px}.hc-nav-brand{font-size:19px}.hc-account-menu{right:210px;top:27px}}
+@media(max-width:700px){
+ .hc{padding:18px 16px calc(94px + env(safe-area-inset-bottom));min-height:100dvh}
+ .hc-top{padding-bottom:14px;min-height:70px;align-items:flex-start}
+ .hc-top>a{font-size:14px}.hc-top>a>span{display:none}
+ .hc-work-nav{inset:auto 0 0;width:auto;flex-direction:row;gap:4px;justify-content:space-around;padding:7px 8px calc(7px + env(safe-area-inset-bottom));border:0;border-top:1px solid var(--line);background:#fff;box-shadow:0 -4px 20px #244f4108}
+ .hc-nav-brand{display:none}
+ .hc-work-nav a{flex:1;flex-direction:column;justify-content:center;gap:4px;padding:7px 2px;min-height:58px;font-size:11px;border:0;border-radius:7px;line-height:1.4}
+ .hc-work-nav a svg{width:21px;height:21px}
+ .hc-account-menu{position:relative;top:auto;right:auto;display:table;margin:10px 0 14px auto}
+ .hc-account-menu>div{right:0;max-width:calc(100vw - 32px)}
+ .hc .profile-section{padding:20px}
+ .hc .hc-title{margin-top:20px}
+}
+
+.hc-statement-table-wrap{position:relative;min-width:0}

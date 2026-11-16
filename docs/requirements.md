@@ -1,6 +1,6 @@
 # Product requirements
 
-Canonical requirements, consolidated from owner instructions through 2026-11-15. Later explicit owner decisions supersede earlier proposals in historical handoff entries. “Confirmed” describes requested behavior, not implementation status. Do not invent unresolved business rules or treat example numbers as real rates/capacities.
+Canonical requirements, consolidated from owner instructions through 2026-11-16. Later explicit owner decisions supersede earlier proposals in historical handoff entries. “Confirmed” describes requested behavior, not implementation status. Do not invent unresolved business rules or treat example numbers as real rates/capacities.
 
 ## Current focus and delivery
 
@@ -131,6 +131,17 @@ Proposed cutoff interpretation, awaiting confirmation: at least 14 days before s
 - No exposure of passwords, Google-credential changes or silent role grants.
 
 ## 12. UX requirements
+
+Latest approved clean design (2026-11-16; supersedes earlier navigation proposals):
+- Four destinations: Calendar, Customers, Balances, Settings. Compact sidebar on desktop, bottom navigation on phones; account menu and language selector in the header.
+- Calendar is the visual standard for the entire app. Keep the marketing design distinct, while sharing branding, sign-in and language preference.
+- Calendar has a compact filter section and one primary scheduling action. Remove its global Boarding balances button; preserve pet-specific shortcuts. Stay details use a side panel on desktop, with accessible mobile/keyboard behavior.
+- Customers has customer/pet filters and an Only my pets ownership filter, customer list at left, selected details and pet cards at right; phone list/detail navigation and focused editing dialogs.
+- Balances uses one shared customer/pet filter section, balance summary followed directly by statement; preserve context, details and CSV export. Do not add a separate Statement destination.
+- Settings groups locations, timezones, policy and account preferences. My profile belongs to the account menu; My pets belongs to Customers. Saved house-local timezones remain authoritative; preview timezone preferences must not alter financial or booking rules.
+- Contextual links preserve canonical customer/pet selection. Current fictional planning records may link only through the explicit isolated-demo fixture mapping; never infer identity from editable names or claim real financial integration.
+- Public cancellation policy belongs on the marketing site with contextual app links. Publish known approved terms with unresolved details explicit; never publish an administrator's temporary policy draft as approved policy.
+
 
 - Keep common tasks intuitive, with plain English/Chinese, clear primary actions, sensible non-business defaults and contextual details.
 - Use focused dialogs for edits and linking; recognizable secondary icons need tooltips and accessible names.
