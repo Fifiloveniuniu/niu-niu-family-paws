@@ -1,5 +1,11 @@
 # Session handoff — 2026-10-22
 
+## Clean app design: Customers workspace — 2026-11-16
+
+Second approved-design milestone adds Calendar-style Customers filters and list/detail surfaces. Customer prefix search and pet prefix search are always visible in a dedicated Filters section, with clear/reset and Only my pets. Ownership uses GET /api/profile canonical ID, never email/name matching; profile loading/empty/error/retry and draft guards are handled. Profile edits remain in Account → My profile, with administrator pet management moved into Customers' ownership filter. Ordinary customer/staff personal pages retain existing pet access.
+
+Build and all22 browser tests pass, including owner-filter pet draft protection and role refresh; actual native localhost Chrome normal Google emulator sign-in → Customers → Only my pets visibly showed canonical test Family001 and its three private photo-complete pets. No writes/reseed. Restored only documented demo Auth identities after tests stopped Auth; permanent emulator/API/frontend run again. Screenshot customer workspace updated. Shell PR#57 merged as16e76f0 (Verified). No deployment; financial preview boundaries and room WIP remain. Next: combined balance/statement controls and contextual pet links, then public policy/marketing entry integration.
+
 ## Clean app design: navigation shell — 2026-11-16
 
 Owner approved the proposed four-destination clean design: desktop sidebar, mobile bottom navigation, account menu, Calendar styling across the app, customer ownership filters, balance/history together, grouped Settings and integrated public policy. Recorded in requirements; this supersedes earlier three-tab/merged-Customers proposals. First focused PR adds shell/icons/account menu and grouped location/timezone Settings using existing saved house dialogs. App and marketing backgrounds unchanged.
