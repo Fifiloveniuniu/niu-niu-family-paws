@@ -37,10 +37,10 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button',{name:'Add customer',exact:true})).toBeFocused();
-  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();
+  await page.locator('.hc-account-menu>summary').click();await page.getByRole('link',{name:'My profile and pets',exact:true}).click();
   await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Unsaved personal draft');
   await page.getByRole('link',{name:'Customers',exact:true}).click();
-  await page.getByRole('link',{name:'My profile and pets',exact:true}).click();
+  await page.locator('.hc-account-menu>summary').click();await page.getByRole('link',{name:'My profile and pets',exact:true}).click();
   await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
   await page.getByRole('button',{name:'Add pet',exact:true}).click();
   await expect(page.getByRole('dialog',{name:'Add pet',exact:true})).toBeVisible();

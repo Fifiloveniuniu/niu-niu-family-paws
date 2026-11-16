@@ -1,5 +1,11 @@
 # Session handoff — 2026-10-22
 
+## Clean app design: navigation shell — 2026-11-16
+
+Owner approved the proposed four-destination clean design: desktop sidebar, mobile bottom navigation, account menu, Calendar styling across the app, customer ownership filters, balance/history together, grouped Settings and integrated public policy. Recorded in requirements; this supersedes earlier three-tab/merged-Customers proposals. First focused PR adds shell/icons/account menu and grouped location/timezone Settings using existing saved house dialogs. App and marketing backgrounds unchanged.
+
+Build passes; 20 browser cases passed full run, then the two corrected statement/tablet and shell/mobile cases passed focused rerun. Account-menu profile/draft behavior passes. Fixed positioned screen-reader table label escaping tablet scroll container. Actual native Chrome localhost walkthrough opened Settings and clicked Calendar; remote-debugging prompt was cancelled and native app automation used. Synthetic shell screenshots updated. No deployment/business writes/data reset; room WIP/dist-dev preserved. Remaining design milestones: Customers filters/style/ownership and context links; combined balance/statement filters; marketing policy and shared entry/account styling.
+
 ## Statement merged into Balances; Settings simplified — 2026-11-16
 
 Latest owner request: remove Houses and rooms from Settings and merge Statement into Balances. Branch feat/balances-statement-navigation starts from merged layout PR#55 (e262b2a, GitHub Verified). Main navigation is now Calendar / Customers / Balances / Settings. Balances has Overview and Statement subviews; internal statement links use #/balances?view=statement with optional pet query. Existing #/transactions links still open the same nested statement and select Balances. Overview retains selected pet across subviews without narrowing the page customer list; pet-scoped calendar balance dialogs remain unchanged. Shared balances/history, statement filters/detail dialogs/CSV and draft guards remain. Settings now contains only Cancellation policy; saved house management is retained on Calendar. No background, business rule, API, photo or persisted ledger change.
