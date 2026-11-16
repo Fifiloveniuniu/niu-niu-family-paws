@@ -1,5 +1,5 @@
 /** In-memory planning records only. No payment, purchase, reservation or deduction API. */
-export type BalanceService='daycare'|'boarding';
+export type BalanceService='boarding';
 export type BalanceHistory={id:string;delta:number;reason:string;at:string;after:number;signature:string};
 export type PetBalance={pet:string;service:BalanceService;days:number;validFrom:string;validThrough:string;version:number;history:BalanceHistory[]};
 export type PlannedCoverage={id:string;pet:string;service:BalanceService;days:number;startDate:string;endDate:string};

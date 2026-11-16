@@ -1,4 +1,4 @@
-export type Placement={id:string;name:string;species:string;house:number;room:number;start:number;end:number;status:'in'|'upcoming'|'out';overdue?:boolean;units:number;coverage?:{service:'daycare'|'boarding';days:number}};
+export type Placement={id:string;name:string;species:string;house:number;room:number;start:number;end:number;status:'in'|'upcoming'|'out';overdue?:boolean;units:number;coverage?:{service:'boarding';days:number}};
 export type PlacementIssue='dates'|'duplicate'|'species'|'overdue'|'boundary'|'capacity'|'unconfigured'|null;
 // Prototype only: offsets are days from the sample anchor. No booking or payment writes.
 export function placementIssue(stays:Placement[],pet:string,species:string,start:number,end:number,house:number,room:number,maximum:number,units:number):PlacementIssue{
