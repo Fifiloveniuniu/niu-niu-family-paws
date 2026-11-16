@@ -5,6 +5,7 @@ import Houses from './houses';
 import CalendarSettingsDialog,{type CalendarSettings} from './calendar-settings';
 import Icon from './icons';
 import AssignmentDialog from './calendar-assignment';
+import CancellationPolicyPage,{initialCancellationPolicy} from './cancellation-policy';
 import PetBalances from './pet-balances';
 import type {BalancePolicyTemplate} from './pet-balance';
 import {CalendarPhotoProvider,PetProfileAvatar,CalendarPhotoCredits} from './calendar-pet-photos';
@@ -33,6 +34,8 @@ const initialStays:SampleStay[]=[
 const DAY=86400000;
 export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang:'en'|'zh')=>void}){
  const {i18n}=useTranslation(),zh=i18n.language==='zh',t=(en:string,cn:string)=>zh?cn:en;
+ const view=window.location.hash==='#/cancellation-policy'?'policy':'calendar';
+ const [cancellationPolicy,setCancellationPolicy]=React.useState(initialCancellationPolicy);
  const [stays,setStays]=React.useState<Stay[]>(()=>initialStays.map((s,i)=>({...s,id:'sample-'+i,units:1})));
  const [locations,setLocations]=React.useState([{id:1,rooms:[1,2,3]},{id:2,rooms:[1,2]}]);
  const [assignment,setAssignment]=React.useState<{house:number;room:number}|null|false>(false);
@@ -55,6 +58,7 @@ export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang
  const anchor=React.useRef(new Date(new Date().setHours(0,0,0,0))).current;
  const [scale,setScale]=React.useState<Scale>('week'),[offset,setOffset]=React.useState(0),[house,setHouse]=React.useState('all'),[query,setQuery]=React.useState(''),[collapsed,setCollapsed]=React.useState<string[]>([]),[selected,setSelected]=React.useState<Stay|null>(null);
  const dialog=React.useRef<HTMLDialogElement>(null);
+ React.useEffect(()=>{setBalanceView(null);setAssignment(false);setSettings(null);setManage(false);setSelected(null);dialog.current?.close();},[view]);
  React.useEffect(()=>{if(selected)dialog.current?.showModal();},[selected]);
  const span={day:1,week:14,month:35,year:365}[scale],before={day:0,week:3,month:7,year:30}[scale];
  const from=new Date(anchor.getTime()+(offset*span-before)*DAY),to=new Date(from.getTime()+span*DAY);
@@ -82,6 +86,9 @@ export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang
  <div className="hc-top"><a href="#">✿ <strong>NIU NIU</strong> <span>FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></div>
  <a className="hc-back" href="#/login">← {t('Back to workspace','返回工作区')}</a>
  <p className="hc-demo">{t('Prototype · Changes stay on this page · Existing sample stays use 1 illustrative capacity unit','原型 · 修改仅保留在本页 · 现有示例托管各使用 1 示例容量单位')}</p>
+ <nav className="hc-work-nav" aria-label={t('Boarding workspace','寄养工作区')}><a href="#/house-calendar" aria-current={view==='calendar'?'page':undefined}>{t('House calendar','房屋日历')}</a><a href="#/cancellation-policy" aria-current={view==='policy'?'page':undefined}>{t('Cancellation policy','取消政策')}</a></nav>
+ {view==='policy'&&<CancellationPolicyPage policy={cancellationPolicy} onSave={setCancellationPolicy}/>}
+ <div hidden={view!=='calendar'}>
  <div className="hc-title"><div><h1>{t('House calendar','房屋日历')}</h1><p>{t('Stays and check-ins, by room.','按房间查看托管与入住。')}</p></div><div className="hc-title-actions"><div className="hc-main-actions"><button className="hc-manage" onClick={()=>setBalanceView({pet:'',service:'boarding'})}>{t('Boarding balances','寄养余额')}</button><button className="hc-apply hc-add-placement" onClick={()=>setAssignment(null)}><Icon name="plus"/>{t('Add pet to room','添加宠物到房间')}</button><button className="hc-manage hc-add-house" title={t('Add house','添加房屋')} aria-label={t('Add house','添加房屋')} onClick={()=>setSettings({house:nextId.current++,creating:true})}><Icon name="plus"/>{t('Add house','添加房屋')}</button>{admin?<button className="hc-settings hc-top-icon" title={t('Manage houses & rooms','管理房屋与房间')} aria-label={t('Manage houses & rooms','管理房屋与房间')} onClick={()=>setManage(true)}><Icon name="settings"/></button>:<a className="hc-manage" href="#/login">{t('Sign in to manage houses','登录以管理房屋')}</a>}</div><div className="hc-live"><span/> {t('Local time','当地时间')} · {now.toLocaleTimeString(locale,{hour:'2-digit',minute:'2-digit'})}<small>{t('Sample timezone','示例时区')}: {Intl.DateTimeFormat().resolvedOptions().timeZone}</small></div></div></div>
  {notice&&<p className="hc-notice" role="status">{notice}</p>}
  <section className="hc-filters" aria-label={t('Filters','筛选')}><div className="hc-filters-heading"><h2>{t('Filters','筛选')}</h2><button className="hc-clear" title={t('Clear filters','清除筛选')} aria-label={t('Clear filters','清除筛选')} disabled={house==='all'&&roomFilter==='all'&&speciesFilter==='all'&&statusFilter==='all'&&customerFilter==='all'&&!query} onClick={()=>{setHouse('all');setRoomFilter('all');setSpeciesFilter('all');setStatusFilter('all');setCustomerFilter('all');setQuery('');}}><Icon name="reset"/></button></div><div className="hc-filter-fields">
@@ -102,6 +109,7 @@ export default function HouseCalendar({onLanguageChange}:{onLanguageChange:(lang
  </div></div><div className="hc-legend"><span><i className="in"/>{t('Checked in','已入住')}</span><span><i className="upcoming"/>{t('Upcoming · not checked in','即将到来 · 未入住')}</span><span><i className="out"/>{t('Checked out','已离店')}</span><span><i className="overdue"/>{t('Pickup overdue · still in care','接回逾期 · 仍在店')}</span></div></section>
  <p className="hc-foot">{t('Select a stay for details. Dates are planned; check-in status shows actual presence.','点击托管条查看详情。日期为计划时间，入住状态表示实际在店情况。')}</p>
  <CalendarPhotoCredits/>
+ </div>
  {assignment!==false&&<AssignmentDialog houses={locations.map(h=>({id:h.id,name:houseName(h.id),rooms:h.rooms.map(r=>({id:r,name:roomName(h.id,r),capacity:config[h.id+'-'+r]?.capacity||'',costs:config[h.id+'-'+r]?.costs}))}))} stays={stays} pets={roster} balances={balances} balancePlans={balancePlans} onManageBalance={(pet,service)=>setBalanceView({pet,service,fromStay:true})} anchor={anchor} initial={assignment||undefined} onClose={()=>setAssignment(false)} onApply={stay=>{if(!stay.coverage||validatePetCoverage(balances[balanceKey(stay.name,stay.coverage.service)],stay.name,stay.coverage.service,stay.coverage.days,dateKey(when(stay.start)),dateKey(when(stay.end)),balancePlans).code!=='ok'){setNotice(t('Review this pet’s balance before adding the stay.','请先核对该宠物的余额。'));return;}setStays(previous=>[...previous,stay]);setHouse('all');setRoomFilter('all');setSpeciesFilter('all');setStatusFilter('all');setCustomerFilter('all');setQuery('');setCollapsed(previous=>previous.filter(key=>key!==stay.house+'-'+stay.room));setAssignment(false);setNotice(t('Pet added to the preview schedule.','宠物已添加至预览日程。'));}}/>}
  {balanceView&&<PetBalances templates={balanceTemplates} onSaveTemplate={item=>setBalanceTemplates(previous=>[...previous,item])} pets={roster} accounts={balances} plans={balancePlans} initial={balanceView} onClose={()=>setBalanceView(null)} onSave={saveBalance}/>}
  {settings&&settingValue&&<CalendarSettingsDialog key={settingKey} minimumCapacity={settings.room?Math.max(0,...stays.filter(s=>s.house===settings.house&&s.room===settings.room&&s.status!=='out').map(s=>stays.filter(p=>p.house===s.house&&p.room===s.room&&p.status!=='out'&&p.start<=s.start&&(p.overdue||p.end>s.start)).reduce((sum,p)=>sum+p.units,0))):0} creating={settings.creating} onRemove={settings.creating?undefined:()=>{setLocations(previous=>settings.room?previous.map(h=>h.id===settings.house?{...h,rooms:h.rooms.filter(r=>r!==settings.room)}:h):previous.filter(h=>h.id!==settings.house));setHouse('all');setRoomFilter('all');setSettings(null);}} removeReason={settings.room?(stays.some(s=>s.house===settings.house&&s.room===settings.room)?t('Remove placements first. In-care pets cannot be removed.','请先移除安排。在店宠物不能移除。'):undefined):(locations.find(h=>h.id===settings.house)?.rooms.length?t('Remove this house’s rooms first.','请先移除此房屋的房间。'):undefined)} room={!!settings.room} houseName={houseName(settings.house)} value={settingValue} onClose={()=>setSettings(null)} onApply={value=>{if(settings.creating)setLocations(previous=>settings.room?previous.map(h=>h.id===settings.house?{...h,rooms:[...h.rooms,settings.room!]}:h):[...previous,{id:settings.house,rooms:[]}]);setConfig(previous=>({...previous,[settingKey]:value}));setSettings(null);}}/>}
