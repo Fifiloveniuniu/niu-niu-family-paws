@@ -164,3 +164,13 @@ The latest boarding charge/cancellation workflow is still pending: the owner req
 Use Cancellation policy in the boarding workspace navigation or balance sidebar. Edit policy opens a focused draft form for notice days, short-notice restoration and calculation method. Blank rules remain pending. Save policy draft keeps changes while navigating within this workspace; reload/exit resets preview data. This does not activate automatic booking charges/refunds.
 
 在寄养工作区导航或余额侧栏点击“取消政策”。“编辑政策”弹窗可调整提前天数、临近到店返还比例及计算方式，空白规则保持待确认。“保存政策草稿”后可在工作区内切换而保留内容；刷新或退出后预览数据重置，不会启用自动扣费或返还。
+
+## Transactions / Statement (local preview)
+
+Choose Statement in the calendar workspace, or View statement in a pet’s boarding balance to start with that pet selected. Filter by customer, pet, date range and activity. Added / Removed by corrections / Net change summarize the filtered rows; each row’s balance after remains that pet’s original recorded balance. View opens its reference, note and before/after details. Export CSV downloads only matching entries. On phones, rows become cards; wider tables can scroll within their own panel.
+
+Only current preview balance additions, corrections and policy updates appear. Booking charges/cancellation restorations will appear when the financial workflow is implemented. Navigating between these three pages keeps preview data; leaving the workspace/reloading resets it. No real financial statements or payments are created.
+
+在日历工作区选择“交易明细”，或在宠物寄养余额中点击“查看交易明细”，即可默认筛选该宠物。可按客户、宠物、日期及类型筛选；合计显示筛选后的增加、更正减少及净变动，每行余额仍是该宠物当时的原始记录。点击“查看”可看流水号、备注及变动前后余额；“导出 CSV”仅下载符合筛选的记录。手机以卡片展示，较宽表格可在面板内滚动。
+
+当前仅显示预览中的余额增加、更正及规则更新，预约扣减和取消返还尚未接入。在三个工作区页面间切换会保留预览数据，退出或刷新后重置，不创建正式财务明细或付款。
