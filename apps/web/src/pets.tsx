@@ -130,7 +130,7 @@ export default function Pets({ customerId, title, onReady }: { customerId: strin
     {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && <div className="portal-actions">{(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={blocked || loading} onClick={() => void load()}>{t.reload}</button>}{cursor && <button className="language" disabled={blocked || loading} onClick={() => void load(cursor)}>{t.more}</button>}</div>}
   </section>;
 }
-export function PetSearch({ onChoose }: { onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void }) {
+export function PetSearch({ onChoose,customerScope }: { customerScope?:string;onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
   const [search, setSearch] = React.useState(''), [active, setActive] = React.useState(''), [loading, setLoading] = React.useState(false), [error, setError] = React.useState(false);
   const [page, setPage] = React.useState<components['schemas']['PetSearchPage'] | null>(null);
@@ -144,11 +144,12 @@ export function PetSearch({ onChoose }: { onChoose: (customer: { id: string; nam
     } catch { if (current === generation.current) setError(true); }
     finally { if (current === generation.current) setLoading(false); }
   }
+  const matches=page?.items.filter(item=>!customerScope||item.customer.id===customerScope);
   return <div className="pet-search"><form className="customer-search" role="search" onSubmit={event => { event.preventDefault(); void load(search.trim()); }}>
     <label>{t.searchHint}<input type="search" required maxLength={120} value={search} onChange={event => setSearch(event.target.value)}/></label><button className="language" disabled={loading || !search.trim()}>{t.search}</button>
   </form>{error && <p role="alert">{t.error}</p>}{loading && <p role="status">{t.loading}</p>}
-    {page && !loading && !page.items.length && <p>{t.noMatches}</p>}
-    <ul className="customer-list">{page?.items.map(({ pet, customer }) => <li key={pet.customerId + '/' + pet.id}><div><h4>{pet.name}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
+    {page && !loading && !matches?.length && <p>{t.noMatches}</p>}
+    <ul className="customer-list">{matches?.map(({ pet, customer }) => <li key={pet.customerId + '/' + pet.id}><div><h4>{pet.name}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
     {page?.nextCursor && <button className="language" disabled={loading} onClick={() => void load(active, page.nextCursor!)}>{t.more}</button>}
   </div>;
 }

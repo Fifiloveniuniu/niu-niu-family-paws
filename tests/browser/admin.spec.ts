@@ -120,7 +120,6 @@ test('administrator can add, edit and search customers in both languages on mobi
   await petSection.getByRole('textbox',{name:'Pet name',exact:true}).fill('Admin sample pet');
   await petSection.getByRole('button',{name:'Save pet',exact:true}).click();
   await expect(petSection.getByRole('heading',{name:'Admin sample pet',exact:true})).toBeVisible();
-  await page.locator('summary').filter({hasText:/^Find a pet$/}).click();
   await page.getByRole('searchbox',{name:'Start of pet name',exact:true}).fill('Admin');
   await page.getByRole('button',{name:'Search pet names',exact:true}).click();
   await expect(page.getByText('Customer: Alice Chen',{exact:true})).toBeVisible();

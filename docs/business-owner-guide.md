@@ -194,3 +194,9 @@ On the local Balances page, choose a customer and pet in the left sidebar. The s
 The four main tabs are now **Calendar / Customers / Balances / Settings**. Open **Balances → Overview** to manage pet credits, or **Balances → Statement** for transaction filters, details and CSV export. A pet’s View statement shortcut opens this same statement view filtered to that pet. Returning to Overview retains the selected pet. Settings contains Cancellation policy; Houses and rooms has been removed from Settings. House management remains in the Calendar’s gear action. This replaces the earlier five-tab navigation instructions; all planning and financial limitations still apply.
 
 主导航现为 **日历 / 客户 / 寄养余额 / 设置**。在“寄养余额 → 余额概览”管理宠物额度，在“寄养余额 → 交易明细”筛选、查看及导出记录。宠物的“查看交易明细”进入同一视图并筛选该宠物，返回概览保留宠物选择。设置中保留取消政策，不再显示房屋与房间；房屋管理仍可从日历的齿轮入口打开。此说明取代之前的五个主标签说明，规划预览与财务功能限制不变。
+
+## Customer filters and your own pets
+
+Customers now has a Filters panel for customer and pet prefix searches. Only my pets selects the customer record linked to your Google identity, including when it is outside the currently loaded directory page. Clear customer filters resets both searches and ownership scope. My profile is in the Account menu; administrators manage their pets through Customers instead of a duplicate pet page.
+
+客户页面顶部的筛选区域支持按客户或宠物名字开头搜索。“只看我的宠物”使用当前 Google 账号关联的客户档案，清除筛选会重置搜索及归属范围。管理员在账号菜单编辑个人资料，在客户页面管理自己的宠物。

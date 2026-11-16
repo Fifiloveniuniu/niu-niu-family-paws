@@ -79,3 +79,38 @@
 @media(max-width:800px){.portal-admin .back-to-customers{display:inline-flex;align-items:center;min-height:44px;border:0;border-radius:6px;background:transparent;color:#31594c;padding:0 8px;margin:0 0 12px -8px;font-size:13px}}
 
 .house-filter{display:flex;flex-direction:column;gap:8px;max-width:420px;margin:20px 0}.house-filter select{font:inherit;padding:12px;border:1px solid #899887;border-radius:6px;max-width:100%;background:white;color:#303c33}.house-list{list-style:none;margin:20px 0;padding:0;display:grid;gap:16px}.house-list li{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border:1px solid #deddd3;border-radius:12px;padding:20px;overflow-wrap:anywhere}.house-list li>div{min-width:0}.house-list h3{margin:0 0 8px}.house-list p{white-space:pre-wrap;margin:6px 0}
+
+/* Customer filters and the app's list/detail workspace share Calendar controls. */
+.customer-filters{padding:18px 20px;margin:24px 0;background:#fff;border:1px solid #e3eae6;border-radius:10px}
+.customer-filters>.hc-filters-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.customer-filters>.hc-filters-heading h2{font:600 14px/1.4 Arial,"PingFang SC",sans-serif;margin:0;color:#2d6255;letter-spacing:0}
+.customer-filter-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
+.customer-filter-fields .customer-search,.portal-admin .customer-filter-fields .customer-search{display:grid;gap:8px;margin:0;padding:0;background:transparent}
+.customer-filter-fields .portal-actions{margin:0;gap:8px;display:flex;align-items:center}
+.customer-filter-fields label{font-size:12px;color:#596f63}
+.customer-filter-fields input{width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid #dce5de;border-radius:7px;font:inherit;color:#213c38}
+.customer-filter-fields .pet-search,.portal-admin .customer-filter-fields .pet-search{margin:0}
+.customer-filter-fields .pet-search>.customer-search{grid-template-columns:minmax(0,1fr) auto;align-items:end}
+.customer-filter-fields .pet-search label{display:grid;gap:8px}
+.customer-filter-fields .pet-search>.customer-search>button{min-height:44px;margin:0}
+.customer-ownership-filter{display:flex;align-items:center;gap:9px;width:max-content;max-width:100%;font-size:13px;margin-top:18px;color:#405d4e;cursor:pointer;min-height:36px}
+.customer-ownership-filter input{width:18px;height:18px;accent-color:#2d6255}
+.hc .portal-admin .customer-section{margin-top:24px;padding-top:0;border:0}
+.hc .customer-heading h2{font-size:28px!important;font-weight:600;letter-spacing:-.5px}
+.hc .customer-pet-layout{grid-template-columns:minmax(260px,.65fr) minmax(0,1.35fr);gap:24px;margin-top:24px}
+.hc .customer-directory-panel{padding:18px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.hc .directory-toolbar{border:0;padding:0 0 12px}.hc .directory-toolbar p{font-size:12px;color:#61766a}
+.hc .customer-directory-panel>.customer-list{max-height:620px;padding:2px;margin:0;scrollbar-width:thin}
+.hc .customer-list>li{border:1px solid transparent;border-radius:8px;padding:16px!important;margin:0 0 6px;transition:background .12s}
+.hc .customer-list>li:hover{background:#f6f9f5}
+.hc .customer-list>li.selected-customer{background:#edf5ef;border-color:#c6dccd;box-shadow:inset 3px 0 #2d6255}
+.hc .customer-name{font-size:15px!important;font-weight:600}.hc .customer-list p{font-size:12px;line-height:1.7;overflow-wrap:anywhere;color:#61766a}
+.hc .customer-pet-layout>.admin-pets{padding:26px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:0}
+.hc .pet-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:18px}
+.hc .pet-card{border-color:var(--line);box-shadow:none;border-radius:10px}
+.hc .pet-card .pet-photo{aspect-ratio:4/3;background:#eef3ec}
+.hc .pet-card h4{font-size:17px!important;font-weight:600}.hc .selected-customer-heading h3{font-size:23px!important;font-weight:600}
+.hc .customer-row-actions{gap:8px}.hc .icon-button{min-width:38px;min-height:38px;border-radius:7px}
+.hc .customer-filters .customer-list{margin:14px 0 0;padding:0}
+@media(max-width:1000px){.hc .customer-pet-layout{grid-template-columns:minmax(0,1fr)}.hc .customer-directory-panel>.customer-list{max-height:340px}.hc .customer-pet-layout>.admin-pets{scroll-margin-top:18px}.hc .back-to-customers{display:inline-flex}}
+@media(max-width:700px){.customer-filters{padding:16px;margin:20px 0}.customer-filter-fields{grid-template-columns:minmax(0,1fr);gap:18px}.hc .customer-pet-layout>.admin-pets{padding:20px}.customer-filter-fields .portal-actions{flex-direction:row!important}.customer-filter-fields .portal-actions input{flex:1}.customer-filter-fields .portal-actions button{flex-shrink:0}.hc .customer-heading h2{font-size:26px!important}}

@@ -43,7 +43,7 @@ async function profileRequest(input?: ProfileWrite): Promise<Customer | null> {
   if (!response.ok) throw new ProfileError(response.status);
   return response.status === 204 ? null : response.json();
 }
-export default function Profile({ onSaved }: { onSaved: () => void }) {
+export default function Profile({ onSaved,showPets=true }: { onSaved: () => void;showPets?:boolean }) {
   const { i18n } = useTranslation();
   const t = i18n.language === 'zh' ? zh : en;
   const [profile, setProfile] = React.useState<Customer | null>(null);
@@ -108,7 +108,7 @@ export default function Profile({ onSaved }: { onSaved: () => void }) {
         </fieldset>
         <button className="button" disabled={saving || loading || error === 'conflict' || error === 'forbidden'} type="submit">{saving ? t.saving : uncertain ? t.retry : t.save}</button>
       </form>
-      {profile && <Pets key={profile.id} customerId={profile.id}/>}
+      {profile && showPets && <Pets key={profile.id} customerId={profile.id}/>}
     </>}
     {(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={loading || saving || uncertain} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) void load(); }}>{t.reload}</button>}
   </section>;
