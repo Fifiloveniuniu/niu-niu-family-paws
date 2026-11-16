@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Modal from './modal';
+import {DemoBalanceLink} from './calendar-pet-photos';
 import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
@@ -56,7 +57,7 @@ function PetPhoto({ pet }: { pet: Pet }) {
   if (!pet.photo) return <div className="pet-photo"><span>{t.noPhoto}</span></div>;
   return <div className="pet-photo">{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{t.loading}</span>}</div>;
 }
-export default function Pets({ customerId, title, onReady }: { customerId: string; title?: string; onReady?:()=>void }) {
+export default function Pets({ customerId, title, onReady,selectedPetId }: { customerId: string; title?: string;selectedPetId?:string; onReady?:()=>void }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
   const headingId = React.useId();
   const [items, setItems] = React.useState<Pet[]>([]), [cursor, setCursor] = React.useState<string | null>(null);
@@ -125,7 +126,7 @@ export default function Pets({ customerId, title, onReady }: { customerId: strin
       {editor.preview && <><img className="pet-preview" src={editor.preview} alt={editor.input.name}/><p>{t.selected}</p></>}
       <div className="portal-actions"><button className="button" type="submit" disabled={saving || reading || loading || error === 'conflict' || error === 'forbidden' || error === 'invalid'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={blocked} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
     </form></Modal>}
-    <div className="pet-grid">{items.map(pet => <article className="pet-card" key={pet.id}><PetPhoto pet={pet}/><div><h4>{pet.name}</h4>{pet.photoCredit && <p className="pet-photo-credit">{i18n.language==='zh'?'测试示例照片':'Test sample photo'} · {pet.photoCredit.creator} · <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">{i18n.language==='zh'?'来源':'Source'}</a> · <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">{pet.photoCredit.license}</a></p>}<button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}><Icon name="edit"/></button></div></article>)}</div>
+    <div className="pet-grid">{items.map(pet => <article className={'pet-card'+(pet.id===selectedPetId?' pet-card-selected':'')} key={pet.id}><PetPhoto pet={pet}/><div><h4>{pet.name}</h4>{pet.photoCredit && <p className="pet-photo-credit">{i18n.language==='zh'?'测试示例照片':'Test sample photo'} · {pet.photoCredit.creator} · <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">{i18n.language==='zh'?'来源':'Source'}</a> · <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">{pet.photoCredit.license}</a></p>}<DemoBalanceLink customerId={pet.customerId} petId={pet.id}/><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}><Icon name="edit"/></button></div></article>)}</div>
     {loading ? <p role="status">{t.loading}</p> : !items.length && !error ? <p>{t.empty}</p> : null}
     {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && <div className="portal-actions">{(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={blocked || loading} onClick={() => void load()}>{t.reload}</button>}{cursor && <button className="language" disabled={blocked || loading} onClick={() => void load(cursor)}>{t.more}</button>}</div>}
   </section>;

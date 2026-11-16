@@ -200,3 +200,9 @@ The four main tabs are now **Calendar / Customers / Balances / Settings**. Open 
 Customers now has a Filters panel for customer and pet prefix searches. Only my pets selects the customer record linked to your Google identity, including when it is outside the currently loaded directory page. Clear customer filters resets both searches and ownership scope. My profile is in the Account menu; administrators manage their pets through Customers instead of a duplicate pet page.
 
 客户页面顶部的筛选区域支持按客户或宠物名字开头搜索。“只看我的宠物”使用当前 Google 账号关联的客户档案，清除筛选会重置搜索及归属范围。管理员在账号菜单编辑个人资料，在客户页面管理自己的宠物。
+
+## Combined balance and statement preview
+
+Balances now has one shared customer/pet/date/activity filter panel. A selected pet’s current credits appear above its statement; choose All pets for separate per-pet summary cards. No credits are pooled. Calendar stay details link to a pet’s balance; the Calendar header no longer has a global balance button. In the isolated demo, linked test profiles can open their explicitly mapped balance preview and return to the canonical customer/pet profile. These links do not connect real customers to sample credit records.
+
+余额与明细使用同一组客户、宠物、日期及类型筛选。所选宠物的当前额度显示在明细上方，选择全部宠物可逐只查看余额卡片，不合并宠物额度。日历详情可查看该宠物余额，日历顶部不再显示全局余额按钮。本地示例中的档案链接仅通过明确的测试档案对应关系连接，不会把真实客户与示例额度混用。

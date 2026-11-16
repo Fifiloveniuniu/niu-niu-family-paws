@@ -114,3 +114,4 @@
 .hc .customer-filters .customer-list{margin:14px 0 0;padding:0}
 @media(max-width:1000px){.hc .customer-pet-layout{grid-template-columns:minmax(0,1fr)}.hc .customer-directory-panel>.customer-list{max-height:340px}.hc .customer-pet-layout>.admin-pets{scroll-margin-top:18px}.hc .back-to-customers{display:inline-flex}}
 @media(max-width:700px){.customer-filters{padding:16px;margin:20px 0}.customer-filter-fields{grid-template-columns:minmax(0,1fr);gap:18px}.hc .customer-pet-layout>.admin-pets{padding:20px}.customer-filter-fields .portal-actions{flex-direction:row!important}.customer-filter-fields .portal-actions input{flex:1}.customer-filter-fields .portal-actions button{flex-shrink:0}.hc .customer-heading h2{font-size:26px!important}}
+.hc .pet-card-selected{outline:2px solid #2d6255;outline-offset:3px}.hc .pet-card .language{display:inline-flex;align-items:center;margin-right:8px;margin-top:8px}.hc-balance-title>a{margin-left:auto}
