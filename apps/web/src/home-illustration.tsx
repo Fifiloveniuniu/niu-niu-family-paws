@@ -1,3 +1,4 @@
+import PetExpressionDetails from './pet-expression-details';
 import { useTranslation } from 'react-i18next';
 
 export default function HomeIllustration() {
@@ -24,23 +25,35 @@ export default function HomeIllustration() {
       />
       <path d="M181 415q-27-141 88-151 96-4 100 149" fill="#c98656" />
       <path d="M240 310q-45 84-25 114h110q8-72-38-114" fill="#f6ead4" />
-      <path
-        className="pet-ears"
-        d="M188 263q-64-81-44-105 33-26 94 21m78 0q69-45 91-16 18 31-50 105"
-        fill="#875338"
-      />
-      <path d="M178 228q-3-84 92-88 98-5 103 91 13 90-99 94-108-1-96-97" fill="#d49764" />
-      <path d="M234 150q36-13 64 0l-8 73 29 32q-10 48-47 48-38 0-49-46l27-35z" fill="#fcf0d9" />
-      <ellipse className="pet-eye" cx="230" cy="225" rx="7" ry="9" fill="#382f29" />
-      <ellipse className="pet-eye" cx="316" cy="225" rx="7" ry="9" fill="#382f29" />
-      <path d="M257 255q16-9 31 0-4 18-15 18-12-2-16-18" fill="#382f29" />
-      <path
-        d="M273 272v10m-18 0q18 18 36 0"
-        fill="none"
-        stroke="#382f29"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
+      <g className="pet-face">
+        <path
+          className="pet-ears"
+          d="M188 263q-64-81-44-105 33-26 94 21m78 0q69-45 91-16 18 31-50 105"
+          fill="#875338"
+        />
+        <path
+          className="pet-head"
+          d="M178 228q-3-84 92-88 98-5 103 91 13 90-99 94-108-1-96-97"
+          fill="#d49764"
+        />
+        <path
+          className="pet-muzzle"
+          d="M234 150q36-13 64 0l-8 73 29 32q-10 48-47 48-38 0-49-46l27-35z"
+          fill="#fcf0d9"
+        />
+        <ellipse className="pet-eye" cx="230" cy="225" rx="7" ry="9" fill="#382f29" />
+        <ellipse className="pet-eye" cx="316" cy="225" rx="7" ry="9" fill="#382f29" />
+        <path className="pet-nose" d="M257 255q16-9 31 0-4 18-15 18-12-2-16-18" fill="#382f29" />
+        <path
+          className="pet-mouth"
+          d="M273 272v10m-18 0q18 18 36 0"
+          fill="none"
+          stroke="#382f29"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <PetExpressionDetails hero />
+      </g>
       <path d="M194 317q75 31 154-5" fill="none" stroke="#31594c" strokeWidth="14" />
       <circle cx="274" cy="334" r="12" fill="#ddb754" />
       <rect x="177" y="405" width="70" height="25" rx="12" fill="#d49764" />

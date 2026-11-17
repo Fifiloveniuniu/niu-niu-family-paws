@@ -42,9 +42,15 @@ export default function useMarketingMotion(
           const progress = (sticky ? -bounds.top : viewport - bounds.top) / distance;
           return Math.max(0, Math.min(1, progress));
         });
-        scenes.forEach((scene, index) =>
-          scene.style.setProperty('--scroll', String(positions[index])),
-        );
+        scenes.forEach((scene, index) => {
+          const progress = positions[index];
+          scene.style.setProperty('--scroll', String(progress));
+          scene.style.setProperty('--sway', String(Math.sin(progress * Math.PI * 2)));
+          scene.style.setProperty(
+            '--blink',
+            String(1 - 0.85 * Math.exp(-(((progress - 0.55) / 0.045) ** 2))),
+          );
+        });
       }
       function schedule() {
         if (!frame) frame = requestAnimationFrame(update);
@@ -60,7 +66,10 @@ export default function useMarketingMotion(
         window.removeEventListener('scroll', schedule);
         window.removeEventListener('resize', schedule);
         element.removeAttribute('data-scroll-enabled');
-        scenes.forEach((scene) => scene.style.removeProperty('--scroll'));
+        scenes.forEach((scene) => {
+          for (const property of ['--scroll', '--sway', '--blink'])
+            scene.style.removeProperty(property);
+        });
       };
     }
     configure();

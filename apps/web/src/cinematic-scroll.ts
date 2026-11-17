@@ -9,12 +9,12 @@ const chapterColors = [
 ];
 
 const landscapePoses = [
-  [770, 700, 760, 95],
-  [730, 790, 700, 85],
-  [790, 710, 790, 70],
-  [720, 790, 730, 55],
-  [770, 700, 780, 35],
-  [730, 770, 710, 22],
+  [770, 700, 760],
+  [730, 790, 700],
+  [790, 710, 790],
+  [720, 790, 730],
+  [770, 700, 780],
+  [730, 770, 710],
 ];
 
 /** A single, reversible timeline. Every pose is derived from scroll geometry. */
@@ -26,8 +26,9 @@ export function installCinematicStory(story: HTMLElement) {
   const counter = story.querySelector<HTMLElement>('[data-cinema-count]');
   const next = story.querySelector<HTMLAnchorElement>('[data-cinema-next]');
   const landscape = story.querySelector('.story-landscape');
-  const orb = landscape?.querySelector('[data-journey-orb]');
-  const moon = landscape?.querySelector('[data-journey-moon]');
+  const sun = story.querySelector<SVGSVGElement>('.story-sun');
+  const moonCutout = sun?.querySelector('[data-journey-moon]');
+  const rail = story.querySelector<HTMLElement>('.cinema-rail');
   const seed = landscape?.querySelector('[data-journey-seed]');
   const backHill = landscape?.querySelector('[data-journey-hill="back"]');
   const frontHill = landscape?.querySelector('[data-journey-hill="front"]');
@@ -44,6 +45,8 @@ export function installCinematicStory(story: HTMLElement) {
     frame = 0;
     const bounds = story.getBoundingClientRect();
     const stageHeight = stage.clientHeight;
+    const stageWidth = stage.clientWidth;
+    const sunSize = sun?.getBoundingClientRect().width ?? 0;
     const headerHeight =
       Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--marketing-header-height'),
@@ -62,19 +65,32 @@ export function installCinematicStory(story: HTMLElement) {
     story.dataset.activeChapter = String(active);
     // One continuous landscape morphs underneath all six compositions.
     const blend = mix * mix * (3 - 2 * mix);
-    const [leftHill, middleHill, rightHill, moonOffset] = landscapePoses[from].map(
+    const [leftHill, middleHill, rightHill] = landscapePoses[from].map(
       (value, index) => value + (landscapePoses[to][index] - value) * blend,
     );
     const spread = innerWidth <= 760 ? 0.24 : 1;
     // One skyward arc across the whole story, not repeated side-to-side chapter hops.
     const sunProgress = progress * progress * (3 - 2 * progress);
-    const sunScale = innerWidth <= 760 ? 0.78 : 1;
     const flowerScale = innerWidth <= 760 ? 0.5 : 0.65;
-    orb?.setAttribute(
-      'transform',
-      `translate(${720 + 520 * spread * (1 - 2 * sunProgress)} ${100 - Math.sin(sunProgress * Math.PI) * 20}) scale(${sunScale})`,
-    );
-    moon?.setAttribute('cx', String(moonOffset));
+    if (sun) {
+      const inset = innerWidth <= 760 ? 18 : 28;
+      sun.style.left = `${inset + Math.max(0, stageWidth - sunSize - inset * 2) * (1 - sunProgress)}px`;
+      sun.style.top = `${18 + (1 - Math.sin(sunProgress * Math.PI)) * 18}px`;
+    }
+    const morphProgress = clamp((progress - 0.15) / 0.7);
+    const morph = morphProgress * morphProgress * (3 - 2 * morphProgress);
+    moonCutout?.setAttribute('cx', String(115 - morph * 93));
+    story.style.setProperty('--celestial-morph', String(morph));
+    // A single marker travels continuously between the actual chapter button centers.
+    if (rail && chapterLinks.length) {
+      const first = chapterLinks[from];
+      const last = chapterLinks[to];
+      const center =
+        first.offsetTop +
+        first.offsetHeight / 2 +
+        (last.offsetTop + last.offsetHeight / 2 - first.offsetTop - first.offsetHeight / 2) * mix;
+      rail.style.setProperty('--rail-offset', `${center - 11.5}px`);
+    }
     seed?.setAttribute(
       'transform',
       `translate(${720 - 590 * spread} ${750 - progress * 15}) rotate(${chapter * 8}) scale(${flowerScale})`,
@@ -102,6 +118,7 @@ export function installCinematicStory(story: HTMLElement) {
       // Quadratic ease-in builds speed with scroll distance, without trailing timers.
       const motionProgress = clamp(distance / 0.65);
       panel.style.setProperty('--scroll', String(motionProgress ** 2));
+      panel.style.setProperty('--expression', String(clamp((distance + 0.25) / 0.75)));
       panel.style.setProperty('--care-progress', String(clamp(distance + 0.5)));
       panel.style.setProperty('--arrival', String(clamp(distance + 1)));
       panel.style.setProperty('--sway', String(Math.sin(distance * Math.PI * 2)));
@@ -146,6 +163,8 @@ export function installCinematicStory(story: HTMLElement) {
     story.style.removeProperty('--cinema-progress');
     story.style.removeProperty('--cinema-color');
     story.style.removeProperty('--journey-turn');
+    story.style.removeProperty('--celestial-morph');
+    rail?.style.removeProperty('--rail-offset');
     markers.forEach((marker) => marker.removeAttribute('id'));
     panels.forEach((panel, index) => {
       if (panelIds[index]) panel.id = panelIds[index];
@@ -158,6 +177,7 @@ export function installCinematicStory(story: HTMLElement) {
         '--sway',
         '--blink',
         '--care-progress',
+        '--expression',
       ])
         panel.style.removeProperty(property);
     });

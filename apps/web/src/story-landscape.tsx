@@ -4,35 +4,43 @@ import { useId } from 'react';
 export default function StoryLandscape() {
   const mask = useId();
   return (
-    <svg
-      className="story-landscape"
-      viewBox="0 0 1440 900"
-      preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <mask id={mask}>
-          <circle r="54" fill="white" />
-          <circle data-journey-moon cx="95" cy="-16" r="46" fill="black" />
-        </mask>
-      </defs>
-      <path data-journey-hill="back" fill="#c9cfb5" opacity=".17" />
-      <path data-journey-hill="front" fill="#cbbca3" opacity=".16" />
-      <path data-journey-thread fill="none" stroke="#a28a67" strokeWidth="1.5" opacity=".3" />
-      <g data-journey-orb>
-        <g className="journey-rays" stroke="#bba26e" strokeWidth="2" opacity=".45">
-          {Array.from({ length: 12 }, (_, index) => (
-            <path key={index} d="M0-67v-14" transform={`rotate(${index * 30})`} />
-          ))}
+    <>
+      <svg
+        className="story-landscape"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path data-journey-hill="back" fill="#c9cfb5" opacity=".17" />
+        <path data-journey-hill="front" fill="#cbbca3" opacity=".16" />
+        <path data-journey-thread fill="none" stroke="#a28a67" strokeWidth="1.5" opacity=".3" />
+        <g data-journey-seed fill="none" stroke="#9a8263" strokeWidth="2" opacity=".4">
+          <path d="M0 0Q-15-40 0-62Q15-40 0 0ZM0 0Q-40-15-62 0Q-40 15 0 0ZM0 0Q15 40 0 62Q-15 40 0 0ZM0 0Q40 15 62 0Q40-15 0 0Z" />
+          <circle r="9" fill="#d9bd85" stroke="none" />
         </g>
-        <circle r="54" fill="#d9bd85" opacity=".3" mask={`url(#${mask})`} />
-      </g>
-      <g data-journey-seed fill="none" stroke="#9a8263" strokeWidth="2" opacity=".4">
-        <path d="M0 0Q-15-40 0-62Q15-40 0 0ZM0 0Q-40-15-62 0Q-40 15 0 0ZM0 0Q15 40 0 62Q-15 40 0 0ZM0 0Q40 15 62 0Q40-15 0 0Z" />
-        <circle r="9" fill="#d9bd85" stroke="none" />
-      </g>
-    </svg>
+      </svg>
+      <svg className="story-sun" viewBox="0 0 180 180" aria-hidden="true" focusable="false">
+        <defs>
+          <mask id={mask} maskUnits="userSpaceOnUse" x="-90" y="-90" width="180" height="180">
+            <circle r="54" fill="white" />
+            <circle data-journey-moon cx="115" cy="-16" r="50" fill="black" />
+          </mask>
+        </defs>
+        <g data-journey-orb transform="translate(90 90)">
+          <g className="journey-rays" stroke="#bba26e" strokeWidth="2" opacity=".45">
+            {Array.from({ length: 12 }, (_, index) => (
+              <path key={index} d="M0-67v-14" transform={`rotate(${index * 30})`} />
+            ))}
+          </g>
+          <circle data-celestial-body r="54" fill="#d9bd85" opacity=".4" mask={`url(#${mask})`} />
+          <g className="journey-stars" fill="#bba26e" opacity=".55">
+            <path d="m66-60 3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" />
+            <circle cx="72" cy="9" r="3" />
+          </g>
+        </g>
+      </svg>
+    </>
   );
 }
 
