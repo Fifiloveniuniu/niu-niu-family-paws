@@ -387,3 +387,121 @@
     padding-bottom: 88px;
   }
 }
+
+/* One living garden underneath every chapter; nothing restarts at a boundary. */
+.story-landscape {
+  display: none;
+}
+.care-symbol {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.trust-symbol .care-symbol {
+  width: 32px;
+  height: 32px;
+}
+.home-story.cinematic-story[data-cinema-enabled] .story-landscape {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-cinematic-panel] {
+  z-index: 1;
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-cinematic-panel][aria-hidden='false'] {
+  z-index: 2;
+}
+.home-story.cinematic-story[data-cinema-enabled] .journey-rays {
+  transform: rotate(var(--journey-turn, 0deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path {
+  transform-box: fill-box;
+  transform-origin: 80% 90%;
+  transform: rotate(calc(var(--sway, 0) * 9deg)) scale(calc(0.92 + var(--arrival, 1) * 0.08));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path:nth-child(even) {
+  transform-origin: 10% 90%;
+  transform: rotate(calc(var(--sway, 0) * -12deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-petal {
+  transform-origin: 80px 80px;
+  transform: scaleX(calc(0.75 + var(--arrival, 1) * 0.25 + var(--scroll) * 0.2))
+    scaleY(calc(0.85 + var(--arrival, 1) * 0.15 - var(--scroll) * 0.2));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(calc(1 + var(--sway, 0) * 0.1));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-sun {
+  transform: translate(calc(var(--scroll) * -45px), calc(var(--scroll) * -30px));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-hill-back {
+  transform: translateX(calc(var(--scroll) * -24px));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-hill-front {
+  transform: translateX(calc(var(--scroll) * 32px));
+}
+.home-story.cinematic-story[data-cinema-enabled] .pet-tail,
+.home-story.cinematic-story[data-cinema-enabled] .pet-ears,
+.home-story.cinematic-story[data-cinema-enabled] .pet-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.home-story.cinematic-story[data-cinema-enabled] .pet-tail {
+  transform-origin: right bottom;
+  transform: rotate(calc(var(--sway, 0) * 22deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .pet-ears {
+  transform: rotate(calc(var(--sway, 0) * 5deg)) scaleY(calc(1 + var(--sway, 0) * 0.08));
+}
+.home-story.cinematic-story[data-cinema-enabled] .pet-eye {
+  transform: scaleY(var(--blink, 1));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-rays,
+.home-story.cinematic-story[data-cinema-enabled] .symbol-disc,
+.home-story.cinematic-story[data-cinema-enabled] .symbol-star,
+.home-story.cinematic-story[data-cinema-enabled] .symbol-orbit,
+.home-story.cinematic-story[data-cinema-enabled] .symbol-crescent,
+.home-story.cinematic-story[data-cinema-enabled] .symbol-heart {
+  transform-origin: 50px 50px;
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-rays {
+  transform: rotate(calc(var(--scroll) * 65deg)) scale(calc(0.8 + var(--arrival, 1) * 0.2));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-disc {
+  transform: scale(calc(1 + var(--sway, 0) * 0.12));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-star {
+  transform-origin: 76px 33px;
+  transform: rotate(calc(var(--scroll) * 140deg)) scale(calc(0.7 + var(--arrival, 1) * 0.3));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-crescent {
+  transform: rotate(calc(var(--sway, 0) * -12deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-heart {
+  transform: scale(calc(1 + var(--sway, 0) * 0.08));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-orbit {
+  transform: rotate(calc(var(--scroll) * 150deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-orbit.reverse {
+  transform: rotate(calc(var(--scroll) * -110deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-ring,
+.home-story.cinematic-story[data-cinema-enabled] .symbol-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc((1 - var(--arrival, 1)) * 0.7 + var(--scroll) * 0.15);
+}
+.home-story.cinematic-story[data-cinema-enabled] .service-path {
+  border-radius: calc(32px + var(--scroll) * 35px) calc(32px + var(--scroll) * 12px) 32px 32px;
+}
+.home-story.cinematic-story[data-cinema-enabled] .experience-pet {
+  border-radius: calc(50% - var(--scroll) * 12%) calc(50% - var(--scroll) * 4%) 42% 42%;
+}

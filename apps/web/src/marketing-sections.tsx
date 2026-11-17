@@ -7,7 +7,7 @@ export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) 
       <circle cx="120" cy="102" r="85" fill="currentColor" opacity=".14" />
       <path d="M39 173q81-15 162 0" fill="none" stroke="currentColor" opacity=".35" />
       {species === 'rabbit' ? (
-        <g fill="#e9dcc6" stroke="#86745e" strokeWidth="2">
+        <g className="pet-ears" fill="#e9dcc6" stroke="#86745e" strokeWidth="2">
           <ellipse cx="95" cy="65" rx="18" ry="51" transform="rotate(-12 95 65)" />
           <ellipse cx="145" cy="65" rx="18" ry="51" transform="rotate(12 145 65)" />
           <path
@@ -19,6 +19,7 @@ export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) 
         </g>
       ) : species === 'cat' ? (
         <path
+          className="pet-ears"
           d="M65 109 62 39 111 75m18 0 49-36-3 70"
           fill="#bd8765"
           stroke="#876047"
@@ -26,7 +27,11 @@ export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) 
           strokeLinejoin="round"
         />
       ) : (
-        <path d="M83 72q-54-29-43 36t43 11m74-47q54-29 43 36t-43 11" fill="#86583e" />
+        <path
+          className="pet-ears"
+          d="M83 72q-54-29-43 36t43 11m74-47q54-29 43 36t-43 11"
+          fill="#86583e"
+        />
       )}
       <path
         d="M63 116q0-53 57-53t57 53q0 49-57 49t-57-49"
@@ -34,8 +39,8 @@ export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) 
       />
       <path d="M108 69h24l-6 45q25 14 19 28-25 24-50 0-6-14 19-28z" fill="#faf1df" />
       <g fill="#3e3b31">
-        <ellipse cx="91" cy="112" rx="4" ry="6" />
-        <ellipse cx="149" cy="112" rx="4" ry="6" />
+        <ellipse className="pet-eye" cx="91" cy="112" rx="4" ry="6" />
+        <ellipse className="pet-eye" cx="149" cy="112" rx="4" ry="6" />
         <path d="m112 129 8-3 8 3-8 9z" />
       </g>
       <path

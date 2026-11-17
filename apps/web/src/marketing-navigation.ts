@@ -48,7 +48,9 @@ export function scrollMarketingTarget(hash: string, animated = false) {
   window.addEventListener('touchstart', cancel, { passive: true });
   window.addEventListener('keydown', handleKey);
   void (async () => {
-    animation = stage.animate(
+    const outgoing =
+      stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ?? stage;
+    animation = outgoing.animate(
       [
         { opacity: 1, transform: 'translateY(0)' },
         { opacity: 0, transform: 'translateY(-24px)' },
@@ -61,7 +63,9 @@ export function scrollMarketingTarget(hash: string, animated = false) {
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     if (cancelled) return;
     animation.cancel();
-    animation = stage.animate(
+    const incoming =
+      stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ?? stage;
+    animation = incoming.animate(
       [
         { opacity: 0, transform: 'translateY(28px)' },
         { opacity: 1, transform: 'translateY(0)' },

@@ -304,3 +304,59 @@ test('navbar follows manual scroll and chapter buttons animate with rapid-click 
     '/home/#services',
   );
 });
+
+test('one persistent landscape and internal SVG shapes morph continuously and reverse exactly', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  async function scenePose(chapter: number) {
+    await page.evaluate((value) => {
+      const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+      const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          story.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((story.clientHeight - stage.clientHeight) * value) / 5,
+        behavior: 'instant',
+      });
+    }, chapter);
+    await expect
+      .poll(() =>
+        page
+          .locator('[data-cinematic-story]')
+          .evaluate((element) =>
+            Number((element as HTMLElement).style.getPropertyValue('--cinema-progress')),
+          ),
+      )
+      .toBeCloseTo(chapter / 5, 2);
+    return page.evaluate(() => ({
+      hill: document.querySelector('[data-journey-hill="back"]')!.getAttribute('d'),
+      orb: document.querySelector('[data-journey-orb]')!.getAttribute('transform'),
+      moon: document.querySelector('[data-journey-moon]')!.getAttribute('cx'),
+      petal: getComputedStyle(document.querySelector('.garden-petal')!).transform,
+      tail: getComputedStyle(document.querySelector('.pet-tail')!).transform,
+      rays: getComputedStyle(document.querySelector('.symbol-rays')!).transform,
+    }));
+  }
+  await expect(page.locator('.story-landscape')).toHaveCount(1);
+  const first = await scenePose(0.15);
+  const later = await scenePose(0.4);
+  expect(later.hill).not.toBe(first.hill);
+  expect(later.orb).not.toBe(first.orb);
+  expect(later.petal).not.toBe(first.petal);
+  expect(later.tail).not.toBe(first.tail);
+  const beforeBoundary = await scenePose(0.999);
+  const afterBoundary = await scenePose(1.001);
+  expect(Math.abs(Number(beforeBoundary.moon) - Number(afterBoundary.moon))).toBeLessThan(0.1);
+  expect(await scenePose(0.15)).toEqual(first);
+  const service = await scenePose(3.15);
+  expect((await scenePose(3.4)).rays).not.toBe(service.rays);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.story-landscape')).toBeHidden();
+  await expect(page.locator('.garden-petal').first()).toHaveCSS('transform', 'none');
+  await expect(page.locator('.pet-tail')).toHaveCSS('transform', 'none');
+});

@@ -199,3 +199,8 @@ Keep the compact marketing navbar visible throughout the public site. Cinematic 
 ## Animated marketing navigation clarification — 2026-11-16
 
 Latest direction replaces instant-only clicks: navbar and right-side chapter/next controls animate briefly to their destination, without a long replay of intervening chapters. Navbar indicates the actually visible section during manual scroll too. Keep the header visible; avoid red backgrounds (services now uses neutral cream). Reduced motion uses direct jumps. Retain accelerating reversible scroll-linked artwork.
+
+
+## Integrated continuous artwork — 2026-11-16
+
+Treat the marketing chapters as one continuous illustrated piece. Allow shapes inside SVGs/icons to change with scroll, with shared artwork that carries through scene boundaries. Retain readability, full-screen composition below the visible navbar, brief animated navigation, active-section indication, neutral service background, exact reversible motion and static/reduced-motion access.
