@@ -9,7 +9,10 @@ const publicPages = [
   ['/services/', 'Services'],
   ['/about/', 'About us'],
   ['/faqs/', 'FAQs'],
-  ['/cancellation-policy/', 'Cancellation policy'],
+  ['/pricing/', 'Pricing'],
+  ['/spaces/', 'Our Spaces'],
+  ['/academy/', 'Grooming Academy'],
+  ['/contact/', 'Contact us'],
   ['/404/', 'Page not found'],
 ];
 

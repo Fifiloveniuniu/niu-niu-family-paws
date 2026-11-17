@@ -9,13 +9,14 @@ import {
 } from './marketing-navigation';
 import useMarketingMotion from './use-marketing-motion';
 import useMarketingHeader from './use-marketing-header';
-import SiteAccountLink from './site-account-link';
+import { MarketingHeader, MarketingFooter } from './marketing-shell';
+import { ServicesPage, PricingPage, ContactPage, SpacesPage, AcademyPage } from './marketing-pages';
 import React from 'react';
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import './style.css';
 import './marketing.css';
-import LanguageSelector from './language-selector';
+import './marketing-system.css';
 const Portal = React.lazy(() => import('./portal'));
 
 void i18n.use(initReactI18next).init({
@@ -55,7 +56,10 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
       services: t('services'),
       about: t('approach'),
       faqs: t('questions'),
-      policy: chinese ? '取消政策' : 'Cancellation policy',
+      pricing: chinese ? '价格' : 'Pricing',
+      contact: t('contact'),
+      spaces: chinese ? '我们的小天地' : 'Our Spaces',
+      academy: chinese ? '美容师成长课堂' : 'Grooming Academy',
       calendar: chinese ? '日历' : 'Calendar',
       customers: chinese ? '客户' : 'Customers',
       balances: chinese ? '寄养余额' : 'Balances',
@@ -107,72 +111,14 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
           <a className="skip" href="#main">
             {t('skip')}
           </a>
-          <header className="marketing-header">
-            <a className="brand" href="/home/" aria-label="Niu Niu Family Paws">
-              <span className="paw" aria-hidden="true">
-                ✿
-              </span>
-              <span>
-                NIU NIU<span className="brand-sub">FAMILY PAWS</span>
-              </span>
-            </a>
-            <nav aria-label={chinese ? '主导航' : 'Main navigation'}>
-              <a href="/home/" aria-current={page === 'home' ? 'page' : undefined}>
-                {t('home')}
-              </a>
-              <a href="/services/" aria-current={page === 'services' ? 'page' : undefined}>
-                {t('services')}
-              </a>
-              <a href="/about/" aria-current={page === 'about' ? 'page' : undefined}>
-                {t('approach')}
-              </a>
-              <a href="/faqs/" aria-current={page === 'faqs' ? 'page' : undefined}>
-                {t('questions')}
-              </a>
-            </nav>
-            <div className="header-actions">
-              <SiteAccountLink />
-              <LanguageSelector onChange={setLanguage} />
-            </div>
-          </header>
+          <MarketingHeader page={page} onLanguageChange={setLanguage} />
           <main
             ref={marketingRoot}
             id="main"
             className={'marketing-site' + (page !== 'home' ? ' public-page' : '')}
           >
             {page === 'home' && <MarketingHome />}
-            {page === 'services' && (
-              <section data-scroll-scene id="services" className="services">
-                <div className="section-heading">
-                  <p className="eyebrow">{t('servicesLabel')}</p>
-                  <SectionHeading>{t('services')}</SectionHeading>
-                  <p>{t('servicesIntro')}</p>
-                </div>
-                <div className="cards">
-                  {['day', 'night'].map((key, index) => (
-                    <article
-                      id={key === 'night' ? 'boarding' : 'daycare'}
-                      data-scroll-object="rise"
-                      className={'service service-' + index}
-                      key={key}
-                    >
-                      <div className="service-top">
-                        <span className="service-number">0{index + 1}</span>
-                        <span aria-hidden="true">{index === 0 ? '☀' : '☾'}</span>
-                      </div>
-                      <p className="eyebrow">{t(key + 'Tag')}</p>
-                      <h3>{t(key)}</h3>
-                      <p>{t(key + 'Description')}</p>
-                      <p className="service-detail">{t(key + 'Detail')}</p>
-                      <a className="text-link" href="/services/#prepare">
-                        {t('prepareLink')} <span aria-hidden="true">↗</span>
-                      </a>
-                      <p className="price">{t('price')}</p>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            )}
+            {page === 'services' && <ServicesPage />}
             {page === 'services' && <PetCareStories />}
             {page === 'about' && (
               <section data-scroll-scene id="about" className="about">
@@ -213,39 +159,10 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                 </div>
               </section>
             )}
-            {page === 'policy' && (
-              <section data-scroll-scene className="public-policy">
-                <p className="eyebrow">{chinese ? '托管前先了解' : 'BEFORE A STAY'}</p>
-                <h1>{chinese ? '取消政策' : 'Cancellation policy'}</h1>
-                <p>
-                  {chinese
-                    ? '以下是已确认的寄养取消条款。'
-                    : 'These are the confirmed boarding cancellation terms.'}
-                </p>
-                <div data-scroll-object="rise" className="public-policy-terms">
-                  <article>
-                    <h2>{chinese ? '提前 14 天' : '14 days ahead'}</h2>
-                    <p>
-                      {chinese ? '取消可获得全额返还。' : 'Cancellation receives a full refund.'}
-                    </p>
-                  </article>
-                  <article>
-                    <h2>{chinese ? '提前 7 天' : '7 days ahead'}</h2>
-                    <p>
-                      {chinese ? '取消可获得一半返还。' : 'Cancellation receives a half refund.'}
-                    </p>
-                  </article>
-                </div>
-                <p className="public-policy-pending">
-                  {chinese
-                    ? '具体截止时间、少于 7 天或未到店的处理方式，以及返还形式等细节尚未公布。预约前请先确认完整条款，目前网站尚未开放实际付费预约。'
-                    : 'Exact deadlines, shorter-notice and no-show terms, and the form of refund have not yet been published. Confirm the complete terms before booking; paid bookings are not available through this website yet.'}
-                </p>
-                <a href="/home/#services" className="button">
-                  {t('services')}
-                </a>
-              </section>
-            )}
+            {page === 'pricing' && <PricingPage />}
+            {page === 'contact' && <ContactPage />}
+            {page === 'spaces' && <SpacesPage />}
+            {page === 'academy' && <AcademyPage />}
             {page === 'not-found' && (
               <section data-scroll-scene className="public-policy">
                 <h1>{chinese ? '未找到页面' : 'Page not found'}</h1>
@@ -260,12 +177,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               </section>
             )}
           </main>
-          <footer>
-            <span>{t('footer')}</span>
-            <span>{t('footerNote')}</span>
-            <a href="/cancellation-policy/">{chinese ? '取消政策' : 'Cancellation policy'}</a>
-            <a href="/home/#contact">{t('contact')} ↗</a>
-          </footer>
+          <MarketingFooter />
         </>
       )}
     </>

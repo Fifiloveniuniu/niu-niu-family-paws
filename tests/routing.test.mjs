@@ -39,3 +39,14 @@ test('sign-in return destinations remain in known app routes', () => {
   ])
     assert.equal(safeReturnTo(value), null);
 });
+test('marketing destinations and legacy cancellation links resolve to their dedicated pages', () => {
+  for (const [path, kind] of [
+    ['/pricing/', 'pricing'],
+    ['/spaces/', 'spaces'],
+    ['/academy/', 'academy'],
+    ['/contact/', 'contact'],
+  ])
+    assert.equal(parseRoute(path).kind, kind);
+  assert.equal(canonicalUrl('/cancellation-policy/'), '/pricing/#cancellation-policy');
+  assert.equal(canonicalUrl('/#/cancellation-policy'), '/pricing/#cancellation-policy');
+});

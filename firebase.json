@@ -113,6 +113,42 @@
             "value": "no-cache"
           }
         ]
+      },
+      {
+        "source": "/pricing/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/spaces/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/academy/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "/contact/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ],
     "rewrites": [
@@ -137,6 +173,11 @@
       {
         "source": "/",
         "destination": "/home/",
+        "type": 301
+      },
+      {
+        "source": "/cancellation-policy{,/**}",
+        "destination": "/pricing/#cancellation-policy",
         "type": 301
       }
     ]

@@ -3,7 +3,10 @@ export type RouteKind =
   | 'services'
   | 'about'
   | 'faqs'
-  | 'policy'
+  | 'pricing'
+  | 'spaces'
+  | 'academy'
+  | 'contact'
   | 'login'
   | 'calendar'
   | 'customers'
@@ -22,7 +25,16 @@ export type AppRoute = {
   locationId?: string;
   locations?: boolean;
 };
-export const publicPaths = ['/home/', '/services/', '/about/', '/faqs/', '/cancellation-policy/'];
+export const publicPaths = [
+  '/home/',
+  '/services/',
+  '/about/',
+  '/faqs/',
+  '/pricing/',
+  '/spaces/',
+  '/academy/',
+  '/contact/',
+];
 const legacyPaths: Record<string, string> = {
   '/login': '/app/sign-in/',
   '/admin': '/app/sign-in/',
@@ -32,13 +44,15 @@ const legacyPaths: Record<string, string> = {
   '/transactions': '/app/balances/',
   '/settings': '/app/settings/',
   '/personal': '/app/account/profile/',
-  '/cancellation-policy': '/cancellation-policy/',
+  '/cancellation-policy': '/pricing/#cancellation-policy',
 };
 export function canonicalUrl(input: string) {
   const url = new URL(input, 'https://family-paws.invalid');
   const hash = url.hash.slice(1);
   const [old, query] = hash.split('?');
   if (legacyPaths[old]) return legacyPaths[old] + (query ? '?' + query : '');
+  if (url.pathname.replace(/\/+$/, '') === '/cancellation-policy')
+    return '/pricing/' + url.search + '#cancellation-policy';
   const path = url.pathname === '/' ? '/' : url.pathname.replace(/\/+$/, '') + '/';
   return (
     (path === '/' ? '/home/' : path === '/app/' ? '/app/calendar/' : path) + url.search + url.hash
@@ -54,7 +68,10 @@ export function parseRoute(input: string): AppRoute {
     '/services/': 'services',
     '/about/': 'about',
     '/faqs/': 'faqs',
-    '/cancellation-policy/': 'policy',
+    '/pricing/': 'pricing',
+    '/spaces/': 'spaces',
+    '/academy/': 'academy',
+    '/contact/': 'contact',
     '/app/sign-in/': 'login',
     '/app/': 'calendar',
     '/app/calendar/': 'calendar',
