@@ -10,30 +10,31 @@ export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) 
       <g className="pet-face">
         {species === 'rabbit' ? (
           <g className="pet-ears" fill="#e9dcc6" stroke="#86745e" strokeWidth="2">
-            <ellipse cx="95" cy="65" rx="18" ry="51" transform="rotate(-12 95 65)" />
-            <ellipse cx="145" cy="65" rx="18" ry="51" transform="rotate(12 145 65)" />
-            <path
-              d="M91 32l8 56m50-56-8 56"
-              stroke="#cda99a"
-              strokeWidth="10"
-              strokeLinecap="round"
-            />
+            <g className="pet-ear pet-ear-left">
+              <ellipse cx="95" cy="65" rx="18" ry="51" transform="rotate(-12 95 65)" />
+              <path d="m91 32 8 56" stroke="#cda99a" strokeWidth="10" strokeLinecap="round" />
+            </g>
+            <g className="pet-ear pet-ear-right">
+              <ellipse cx="145" cy="65" rx="18" ry="51" transform="rotate(12 145 65)" />
+              <path d="m149 32-8 56" stroke="#cda99a" strokeWidth="10" strokeLinecap="round" />
+            </g>
           </g>
         ) : species === 'cat' ? (
-          <path
+          <g
             className="pet-ears"
-            d="M65 109 62 39 111 75m18 0 49-36-3 70"
             fill="#bd8765"
             stroke="#876047"
             strokeWidth="3"
             strokeLinejoin="round"
-          />
+          >
+            <path className="pet-ear pet-ear-left" d="M65 109 62 39 111 75Z" />
+            <path className="pet-ear pet-ear-right" d="M129 75 178 39 175 109Z" />
+          </g>
         ) : (
-          <path
-            className="pet-ears"
-            d="M83 72q-54-29-43 36t43 11m74-47q54-29 43 36t-43 11"
-            fill="#86583e"
-          />
+          <g className="pet-ears" fill="#86583e">
+            <path className="pet-ear pet-ear-left" d="M83 72q-54-29-43 36t43 11" />
+            <path className="pet-ear pet-ear-right" d="M157 72q54-29 43 36t-43 11" />
+          </g>
         )}
         <path
           className="pet-head"
