@@ -1,5 +1,12 @@
 # Session handoff — 2026-10-22
 
+## Direct marketing navigation — 2026-11-16
+
+Owner reported that navbar clicks replayed too much of the long scroll story and Home partially hid the navbar. Explicit marketing anchor navigation now jumps instantly; native wheel/touch scrolling retains reversible animation. Home/brand/restart return to document top, including repeated same-hash clicks, direct URLs and cross-page links. Public CSS removes smooth native anchor scrolling; routing explicitly handles same-page marketing destinations and uses the shared instant-scroll helper. App draft guards and routing remain unchanged.
+
+Owner subsequently said “undo color”; all attempted palette/artwork changes were restored before commit. The previous green/cream/clay palette is preserved. No data/API changes or deployment; WIP#41, dist-dev and temporary Firebase config preserved. Node24 build, all34 unit tests, formatting and four focused Chrome browser cases passed. New regression checks direct section arrival within two render frames, repeat Home, direct and cross-page Home and full header visibility in English/Chinese; existing cases cover mobile, reduced motion, exact reverse poses, deep links and history. Native localhost4180 Chrome visibly showed the whole navbar on Home and jumped to Services. A subsequent offscreen Home click timed out; do not claim that extra native return. Merge authorized after required checks and signature verification. Deployment remains deferred.
+
+
 ## Natural marketing rhythm — 2026-11-16
 
 Owner requested removing the repeated leftward scene movement, shortening the navbar and making the whole public site consistent. Branch feat/natural-marketing-design replaces horizontal chapter travel with bounded 24px vertical settling and a restrained dissolve/scale. Pet, foliage, flower and copy motion is gentler and remains exactly scroll-linked/reversible. Six chapters, direct anchors, distinct public guides and reduced-motion/static access remain.

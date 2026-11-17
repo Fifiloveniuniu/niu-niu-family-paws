@@ -158,3 +158,43 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
   await page.locator('#services').scrollIntoViewIfNeeded();
   await expect(page.locator('.service-path').first()).toBeInViewport();
 });
+
+test('marketing links jump directly and Home restores the complete header', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  for (const language of ['en', 'zh']) {
+    await page.locator('select').selectOption(language);
+    for (const anchor of ['services', 'about', 'faq', 'main', 'main']) {
+      // A direct click should land within two rendering frames, without playing intervening scenes.
+      await page.locator(`.marketing-header nav a[href="/home/#${anchor}"]`).evaluate((link) => {
+        (link as HTMLAnchorElement).click();
+      });
+      await page.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      );
+      if (anchor === 'main') {
+        expect(await page.evaluate(() => scrollY)).toBe(0);
+        await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
+      } else {
+        const chapter = { services: '3', about: '2', faq: '4' }[anchor];
+        await expect(page.locator('[data-cinematic-story]')).toHaveAttribute(
+          'data-active-chapter',
+          chapter!,
+        );
+        const targetTop = await page
+          .locator(`#${anchor}`)
+          .evaluate((element) => element.getBoundingClientRect().top);
+        expect(Math.abs(targetTop - 25)).toBeLessThan(2);
+      }
+    }
+  }
+  await page.goto('/about/');
+  await page.locator('.marketing-header nav a[href="/home/#main"]').click();
+  await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+  await page.goto('/home/#main');
+  await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
+});

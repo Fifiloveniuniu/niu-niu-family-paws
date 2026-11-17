@@ -1,4 +1,5 @@
 import React from 'react';
+import { scrollMarketingTarget } from './marketing-navigation';
 import { canonicalUrl, parseRoute, routeUrl, navigate } from './routing';
 import { confirmDiscardChanges } from './unsaved-changes';
 export default function useRoute(language: string, initialPath = '/') {
@@ -90,8 +91,13 @@ export default function useRoute(language: string, initialPath = '/') {
         url.search === location.search &&
         url.hash &&
         !url.hash.startsWith('#/')
-      )
+      ) {
+        if (!document.querySelector('.marketing-header')) return;
+        event.preventDefault();
+        navigate(url.href);
+        scrollMarketingTarget(url.hash);
         return;
+      }
       event.preventDefault();
       navigate(url.href);
     };

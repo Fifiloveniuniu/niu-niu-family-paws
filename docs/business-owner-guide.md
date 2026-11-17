@@ -227,3 +227,10 @@ Home now plays as one continuous six-chapter story: welcome, experience, trust, 
 The marketing navbar is shorter, with sign-in and language side by side. Scroll chapters now gently fade and settle vertically. The pets and plants move more subtly, and the public pages share softer cream, sage and clay colors. Scroll upward to retrace the story; Reduce Motion still shows ordinary readable sections. Preview locally at http://localhost:4180/home/. This update is not deployed yet.
 
 营销网站的导航栏更紧凑，登录和语言选择并排显示。滚动章节现在轻柔淡入并上下微移，宠物与植物的动作更克制，各公开页面统一使用柔和的奶油色、鼠尾草绿与陶土色。向上滚动可以回看；开启“减少动态效果”后仍以普通页面显示。当前仅在本地预览，尚未上线。
+
+
+## Faster marketing navigation — 2026-11-16
+
+The top links and chapter controls now go directly to their destination. Home returns to the very top with the whole navbar visible. Scrolling by hand still plays the story forward and backward. The previous colors are preserved. This is a local preview, awaiting the final combined deployment.
+
+顶部导航和章节控件现在直接跳转至目标位置，不再播放沿途章节动画。“首页”会回到页面最顶部，完整显示导航栏。手动滚动仍可推进或回看故事。保留原来的配色，目前仅在本地预览，等待最终统一上线。
