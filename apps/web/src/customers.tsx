@@ -120,6 +120,10 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       if (alive.current) { report(e); setUncertain(!(e instanceof ApiError) || e.status >= 500); }
     } finally { if (alive.current) setSaving(false); }
   }
+  const route=window.location.hash;
+  React.useEffect(()=>{const params=new URLSearchParams(route.split('?')[1]||''),customer=params.get('customer'),pet=params.get('pet'),lookup=params.get('lookup');if(!customer||!pet||!lookup)return;let active=true;
+    void (async()=>{try{const token=await auth.currentUser?.getIdToken();if(!token)return;const response=await fetch('/api/pet-search?'+new URLSearchParams({search:lookup}),{cache:'no-store',headers:{Authorization:`Bearer ${token}`}});if(!response.ok)throw new Error('lookup');const result:components['schemas']['PetSearchPage']=await response.json();const match=result.items.find(item=>item.customer.id===customer&&item.pet.id===pet);if(active){if(match){setOnlyMine(false);setPetCustomer(match.customer);}else setError('error');}}catch{if(active)setError('error');}})();return()=>{active=false;};
+  },[route]);
   async function mine(next:boolean){
     if(!confirmDiscardChanges(i18n.language,petsPanel.current))return;
     const generation=++ownGeneration.current;setOnlyMine(next);setOwnCustomer(null);setOwnError(false);setOwnLoading(false);setPetCustomer(null);
@@ -161,7 +165,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     {loading && <p role="status">{t.loading}</p>}
     {cursor && !onlyMine && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
     </div>
-    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets key={petCustomer.id} customerId={petCustomer.id} onReady={revealPets} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
+    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets selectedPetId={new URLSearchParams(route.split('?')[1]||'').get('pet')||undefined} key={petCustomer.id} customerId={petCustomer.id} onReady={revealPets} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
     </div>
   </section>;
 }

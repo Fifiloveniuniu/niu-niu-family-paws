@@ -89,3 +89,15 @@ export function CalendarPhotoCredits(){
 
  return <div className="hc-photo-info"><PhotoSignIn/>{failed&&<button className="hc-photo-retry" type="button" onClick={retry}>{zh?'重试档案照片':'Retry profile photos'}</button>}{credited.length>0&&<details className="hc-photo-credits"><summary>{zh?'示例档案照片与来源':'Sample profile photos & credits'}</summary><p>{zh?'日历示例名字关联到本地测试档案照片，不代表真实客户的宠物。':'Calendar sample names use linked local demo profile photos, not real customer pets.'}</p><ul>{credited.map(([alias,{profile}])=>{const credit=profile!.photoCredit!;return <li key={alias}><strong>{alias}</strong> · {profile!.name} · {credit.creator} · <a href={safeLink(credit.sourcePage)} target="_blank" rel="noopener noreferrer">{zh?'来源':'Source'}</a> · <a href={safeLink(credit.licenseUrl)} target="_blank" rel="noopener noreferrer">{credit.license}</a></li>;})}</ul></details>}</div>;
 }
+
+export function CalendarProfileLink({name}:{name:string}){
+ const {i18n}=useTranslation(),profile=React.useContext(Photos)[name]?.profile;
+ if(!profile||import.meta.env.MODE!=='test'||auth.app.options.projectId!=='demo-niu-niu')return null;
+ const params=new URLSearchParams({customer:profile.customerId,pet:profile.id,lookup:profile.name});
+ return <a className="hc-manage" href={'#/customers?'+params}>{i18n.language==='zh'?'查看宠物档案':'View pet profile'}</a>;
+}
+export function DemoBalanceLink({customerId,petId}:{customerId:string;petId:string}){
+ const {i18n}=useTranslation(),[alias,setAlias]=React.useState('');
+ React.useEffect(()=>{let active=true;if(import.meta.env.MODE==='test'&&auth.app.options.projectId==='demo-niu-niu')void Promise.all(calendarPhotoFixtures.map(async item=>({name:item.name,customer:await demoProfileId('local-photo-customer-'+item.family),pet:await demoProfileId('local-photo-'+item.species+'-'+item.family)}))).then(links=>{if(active)setAlias(links.find(item=>item.customer===customerId&&item.pet===petId)?.name||'');});return()=>{active=false;};},[customerId,petId]);
+ return alias?<a className="language" href={'#/balances?pet='+encodeURIComponent(alias)}>{i18n.language==='zh'?'查看余额预览':'View balance preview'}</a>:null;
+}
