@@ -7,7 +7,13 @@ export function GardenBranch({ mirrored = false }: { mirrored?: boolean }) {
       focusable="false"
       style={mirrored ? { scale: '-1 1' } : undefined}
     >
-      <path d="M94 391Q171 214 77 21" fill="none" stroke="#597b68" strokeWidth="3" />
+      <path
+        className="garden-stem"
+        d="M94 391Q171 214 77 21"
+        fill="none"
+        stroke="#597b68"
+        strokeWidth="3"
+      />
       <g className="garden-leaves" fill="#8ca58a">
         <path d="M108 326Q9 322 28 245q79 12 80 81" />
         <path d="M124 275q87-3 75-81-72 12-75 81" />
@@ -15,7 +21,7 @@ export function GardenBranch({ mirrored = false }: { mirrored?: boolean }) {
         <path d="M119 165q74-13 60-75-61 13-60 75" />
         <path d="M99 101Q33 80 49 27q56 17 50 74" />
       </g>
-      <g fill="none" stroke="#597b68" strokeWidth="1" opacity=".6">
+      <g className="garden-veins" fill="none" stroke="#597b68" strokeWidth="1" opacity=".6">
         <path d="m106 321-52-49m72-3 50-50m-51-7-46-48m40-6 39-44M99 95 65 49" />
       </g>
     </svg>

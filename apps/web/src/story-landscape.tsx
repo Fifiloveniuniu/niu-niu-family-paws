@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { GardenBlossom } from './garden-art';
 
 /** A single landscape carries through every chapter rather than restarting per scene. */
 export default function StoryLandscape() {
@@ -15,11 +16,10 @@ export default function StoryLandscape() {
         <path data-journey-hill="back" fill="#c9cfb5" opacity=".17" />
         <path data-journey-hill="front" fill="#cbbca3" opacity=".16" />
         <path data-journey-thread fill="none" stroke="#a28a67" strokeWidth="1.5" opacity=".3" />
-        <g data-journey-seed fill="none" stroke="#9a8263" strokeWidth="2" opacity=".4">
-          <path d="M0 0Q-15-40 0-62Q15-40 0 0ZM0 0Q-40-15-62 0Q-40 15 0 0ZM0 0Q15 40 0 62Q-15 40 0 0ZM0 0Q40 15 62 0Q40-15 0 0Z" />
-          <circle r="9" fill="#d9bd85" stroke="none" />
-        </g>
       </svg>
+      <div className="shared-flower" aria-hidden="true">
+        <GardenBlossom />
+      </div>
       <svg className="story-sun" viewBox="0 0 180 180" aria-hidden="true" focusable="false">
         <defs>
           <mask id={mask} maskUnits="userSpaceOnUse" x="-90" y="-90" width="180" height="180">
@@ -28,13 +28,19 @@ export default function StoryLandscape() {
           </mask>
         </defs>
         <g data-journey-orb transform="translate(90 90)">
-          <g className="journey-rays" stroke="#bba26e" strokeWidth="2" opacity=".45">
+          <g className="journey-rays" stroke="currentColor" strokeWidth="2" opacity=".45">
             {Array.from({ length: 12 }, (_, index) => (
               <path key={index} d="M0-67v-14" transform={`rotate(${index * 30})`} />
             ))}
           </g>
-          <circle data-celestial-body r="54" fill="#d9bd85" opacity=".4" mask={`url(#${mask})`} />
-          <g className="journey-stars" fill="#bba26e" opacity=".55">
+          <circle
+            data-celestial-body
+            r="54"
+            fill="currentColor"
+            opacity="var(--orb-strength, .4)"
+            mask={`url(#${mask})`}
+          />
+          <g className="journey-stars" fill="currentColor" opacity="var(--orb-strength, .55)">
             <path d="m66-60 3 8 8 3-8 3-3 8-3-8-8-3 8-3Z" />
             <circle cx="72" cy="9" r="3" />
           </g>

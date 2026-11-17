@@ -104,8 +104,9 @@ export const englishMessages = {
   scrollHint: 'A little more to discover',
   cinemaExperience: 'The experience',
   cinemaChapters: 'Story chapters',
-  cinemaNext: 'Continue the story',
-  cinemaRestart: 'Back to the beginning',
+  cinemaNext: 'Next chapter',
+  cinemaPrevious: 'Previous chapter',
+  cinemaRestart: 'Restart story',
   homeEyebrow: 'SMALL PAWS. THOUGHTFUL PLANS.',
   homeTitle: 'Little paws.\nA whole lot of love.',
   homeIntro:
@@ -249,8 +250,9 @@ export const chineseMessages: typeof englishMessages = {
   scrollHint: '往下看看，了解更多',
   cinemaExperience: '托管体验',
   cinemaChapters: '故事章节',
-  cinemaNext: '继续这段故事',
-  cinemaRestart: '回到故事开头',
+  cinemaNext: '下一章',
+  cinemaPrevious: '上一章',
+  cinemaRestart: '重新开始',
   homeEyebrow: '小小爪印，用心安排',
   homeTitle: '小小的爪印，\n满满的关爱。',
   homeIntro:
