@@ -1,5 +1,12 @@
 # Session handoff — 2026-10-22
 
+## Navbar destination entrance fix — 2026-11-16
+
+Owner still saw no navbar transition. Chrome frame sampling reproduced the actual bug: after the jump, the entrance animation selected the previous aria-visible panel before the scroll timeline updated; it then animated the hidden hero while Services appeared instantly. Fixed by resolving the destination directly from the chapter marker order, creating and pausing its entrance before jumping, waiting two animation frames for the timeline, then playing that entrance. The outgoing scene stays hidden until the new pose is ready. Cleanup cancels both animations, preserving rapid-click/manual-input/reduced-motion behavior.
+
+Made the transition more legible:180ms accelerating40px exit,360ms64px settling entrance plus frame synchronization. Navbar and right-side chapters share this fix; persistent landscape remains visible, colors and layouts unchanged. Build, all34 unit tests, formatting and all7 marketing Chrome cases pass. New regression inspects the destination's actual running animation, visible aria state, intermediate opacity/translation and settled cleanup, including a right-side chapter click. Native localhost4180 Chrome clicked navbar About from Services and visibly reached the correct destination. No screenshots needed for a timing-only bug fix. No deployment/API/data changes. Preserve concurrent owner .gitignore edit, WIP#41, dist-dev and temporary Firebase config. Review: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/71. Implementationf4fb989 is GitHub Verified (valid); merge authorized after required checks. Consult PR for final status. Deployment remains deferred.
+
+
 ## Continuous living garden and changing SVG shapes — 2026-11-16
 
 Latest owner requested creative movement inside SVGs/icons and one integrated continuous piece. PR#70 now has one persistent landscape shared by all six chapters: two smoothly morphing hills, an evolving connecting path, a travelling four-petal seed and an orbiting sun that becomes a moon. Adjacent chapter poses interpolate with continuous smoothstep geometry; the landscape stays present during brief click transitions, which now animate chapter content instead of the whole stage.

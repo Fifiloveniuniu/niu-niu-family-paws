@@ -20,10 +20,10 @@ export function scrollMarketingTarget(hash: string, animated = false) {
     return;
   }
   let cancelled = false;
-  let animation: Animation | undefined;
+  const animations: Animation[] = [];
   const cancel = () => {
     cancelled = true;
-    animation?.cancel();
+    animations.forEach((animation) => animation.cancel());
     main.removeAttribute('data-marketing-transition');
     window.removeEventListener('wheel', cancel);
     window.removeEventListener('touchstart', cancel);
@@ -50,29 +50,45 @@ export function scrollMarketingTarget(hash: string, animated = false) {
   void (async () => {
     const outgoing =
       stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ?? stage;
-    animation = outgoing.animate(
+    const exit = outgoing.animate(
       [
         { opacity: 1, transform: 'translateY(0)' },
-        { opacity: 0, transform: 'translateY(-24px)' },
+        { opacity: 0, transform: 'translateY(-40px)' },
       ],
-      { duration: 140, easing: 'cubic-bezier(.55,.05,.9,.5)', fill: 'forwards' },
+      { duration: 180, easing: 'cubic-bezier(.55,.05,.9,.5)', fill: 'forwards' },
     );
-    await animation.finished.catch(() => {});
+    animations.push(exit);
+    await exit.finished.catch(() => {});
     if (cancelled) return;
+    // Select the requested chapter, not the still-active chapter from before the jump.
+    const story = stage.closest('[data-cinematic-story]');
+    const anchors = [
+      'main',
+      ...Array.from(story?.querySelectorAll<HTMLElement>('[data-cinema-anchor]') ?? []).map(
+        (marker) => marker.dataset.cinemaAnchor,
+      ),
+    ];
+    const panels = stage.querySelectorAll<HTMLElement>('[data-cinematic-panel]');
+    const incoming = panels[anchors.indexOf(hash.slice(1))] ?? stage;
+    const entrance = incoming.animate(
+      [
+        { opacity: 0, transform: 'translateY(64px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      { duration: 360, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' },
+    );
+    animations.push(entrance);
+    // Hold the destination invisible until the scroll timeline has updated its pose.
+    entrance.pause();
+    entrance.currentTime = 0;
     jump();
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-    if (cancelled) return;
-    animation.cancel();
-    const incoming =
-      stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ?? stage;
-    animation = incoming.animate(
-      [
-        { opacity: 0, transform: 'translateY(28px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ],
-      { duration: 220, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' },
+    await new Promise<void>((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
     );
-    await animation.finished.catch(() => {});
+    if (cancelled) return;
+    exit.cancel();
+    entrance.play();
+    await entrance.finished.catch(() => {});
     if (!cancelled) cancel();
   })();
 }

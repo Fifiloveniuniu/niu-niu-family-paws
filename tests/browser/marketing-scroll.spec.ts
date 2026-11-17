@@ -360,3 +360,52 @@ test('one persistent landscape and internal SVG shapes morph continuously and re
   await expect(page.locator('.garden-petal').first()).toHaveCSS('transform', 'none');
   await expect(page.locator('.pet-tail')).toHaveCSS('transform', 'none');
 });
+
+test('navbar entrance visibly animates the destination rather than the hidden outgoing panel', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await expect
+    .poll(
+      () =>
+        page.locator('.home-services').evaluate((element) => {
+          const entrance = element
+            .getAnimations()
+            .find((animation) => animation.playState === 'running');
+          const transform = new DOMMatrixReadOnly(getComputedStyle(element).transform);
+          return (
+            element.getAttribute('aria-hidden') === 'false' &&
+            !!entrance &&
+            transform.m42 > 1 &&
+            Number(getComputedStyle(element).opacity) < 1
+          );
+        }),
+      { intervals: [20], timeout: 900 },
+    )
+    .toBe(true);
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('.home-services')).toHaveAttribute('aria-hidden', 'false');
+  expect(
+    await page.evaluate(
+      () =>
+        document.getAnimations().filter((animation) => animation.playState === 'running').length,
+    ),
+  ).toBe(0);
+  await page.locator('.cinema-rail a[href="#about"]').click();
+  await expect
+    .poll(
+      () =>
+        page
+          .locator('.home-trust')
+          .evaluate(
+            (element) =>
+              element.getAttribute('aria-hidden') === 'false' &&
+              element.getAnimations().some((animation) => animation.playState === 'running'),
+          ),
+      { intervals: [20], timeout: 900 },
+    )
+    .toBe(true);
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+});
