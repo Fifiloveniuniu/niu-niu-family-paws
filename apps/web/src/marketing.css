@@ -1219,3 +1219,91 @@ html:has(.marketing-header) {
     --marketing-header-height: 107px;
   }
 }
+
+/* Expressions live inside the portraits; the same progress also works on Services. */
+.marketing-site[data-scroll-enabled]
+  :is(
+    .pet-face,
+    .pet-head,
+    .pet-muzzle,
+    .pet-nose,
+    .pet-mouth,
+    .pet-whiskers,
+    .pet-eye,
+    .pet-ears
+  ) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.marketing-site[data-scroll-enabled] .pet-face {
+  transform: translate(calc(var(--sway, 0) * 1.5%), calc(var(--sway, 0) * -1%))
+    rotate(calc(var(--sway, 0) * 2deg)) scale(calc(1 + var(--scroll) * 0.025));
+}
+.marketing-site[data-scroll-enabled] .pet-head {
+  transform: scaleX(calc(1 + var(--sway, 0) * 0.025)) scaleY(calc(1 - var(--sway, 0) * 0.02));
+}
+.marketing-site[data-scroll-enabled] .pet-muzzle {
+  transform: translateY(calc(var(--sway, 0) * 1.5px)) scaleX(calc(1 + var(--scroll) * 0.035));
+}
+.marketing-site[data-scroll-enabled] .pet-nose {
+  transform: translateX(calc(var(--sway, 0) * 1px)) scale(calc(1 + var(--scroll) * 0.05));
+}
+.marketing-site[data-scroll-enabled] .pet-mouth {
+  transform: translateY(calc(var(--sway, 0) * 1px)) scaleX(calc(1 + var(--sway, 0) * 0.12))
+    scaleY(calc(1 + var(--scroll) * 0.3));
+}
+.marketing-site[data-scroll-enabled] .pet-eye {
+  transform: translateX(calc(var(--sway, 0) * 1.5px)) scaleX(calc(1 + var(--scroll) * 0.12))
+    scaleY(var(--blink, 1));
+}
+.marketing-site[data-scroll-enabled] .pet-whiskers {
+  transform: rotate(calc(var(--sway, 0) * 4deg)) scaleX(calc(1 + var(--scroll) * 0.07));
+}
+.marketing-site[data-scroll-enabled] .pet-ears {
+  transform: rotate(calc(var(--sway, 0) * 5deg)) scaleY(calc(1 + var(--sway, 0) * 0.08));
+}
+
+/* Fur contours and expressions reshape independently, without moving the copy. */
+.marketing-site[data-scroll-enabled]
+  :is(
+    .pet-eyebrows,
+    .pet-cheeks,
+    .pet-jawline,
+    .pet-chin,
+    .pet-forehead,
+    .pet-hairline,
+    .pet-lips
+  ) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.marketing-site[data-scroll-enabled] .pet-eyebrows {
+  transform: translateY(calc(var(--expression, var(--scroll)) * -4px))
+    rotate(calc(-3deg + var(--expression, var(--scroll)) * 6deg));
+}
+.marketing-site[data-scroll-enabled] .pet-cheeks {
+  transform: translateY(calc(var(--expression, var(--scroll)) * -2px))
+    scaleX(calc(1 + var(--expression, var(--scroll)) * 0.08))
+    scaleY(calc(1 - var(--expression, var(--scroll)) * 0.15));
+}
+.marketing-site[data-scroll-enabled] .pet-jawline {
+  transform: scaleX(calc(1 - var(--expression, var(--scroll)) * 0.06))
+    scaleY(calc(1 + var(--expression, var(--scroll)) * 0.12));
+}
+.marketing-site[data-scroll-enabled] .pet-chin {
+  transform: translateY(calc(var(--expression, var(--scroll)) * 2px))
+    scaleX(calc(1 - var(--expression, var(--scroll)) * 0.12));
+}
+.marketing-site[data-scroll-enabled] .pet-forehead {
+  transform: scaleX(calc(1 + var(--expression, var(--scroll)) * 0.14))
+    scaleY(calc(1 - var(--expression, var(--scroll)) * 0.18));
+}
+.marketing-site[data-scroll-enabled] .pet-hairline {
+  transform: translateY(calc(var(--expression, var(--scroll)) * -2px))
+    skewX(calc(var(--expression, var(--scroll)) * 8deg));
+}
+.marketing-site[data-scroll-enabled] .pet-lips {
+  transform: translateY(calc(var(--expression, var(--scroll)) * 1px))
+    scaleX(calc(1 + var(--expression, var(--scroll)) * 0.2))
+    scaleY(calc(0.8 + var(--expression, var(--scroll)) * 0.4));
+}

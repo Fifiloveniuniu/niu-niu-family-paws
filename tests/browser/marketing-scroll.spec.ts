@@ -365,7 +365,7 @@ test('one persistent landscape and internal SVG shapes morph continuously and re
       .toBeCloseTo(chapter / 5, 2);
     return page.evaluate(() => ({
       hill: document.querySelector('[data-journey-hill="back"]')!.getAttribute('d'),
-      orb: document.querySelector('[data-journey-orb]')!.getAttribute('transform'),
+      orb: (document.querySelector('.story-sun') as SVGSVGElement).style.left,
       moon: document.querySelector('[data-journey-moon]')!.getAttribute('cx'),
       petal: getComputedStyle(document.querySelector('.garden-petal')!).transform,
       tail: getComputedStyle(document.querySelector('.pet-tail')!).transform,
@@ -480,20 +480,18 @@ test('scenes move without fading; sun follows one arc and resizing serves the co
     const sample = await page.evaluate(() => {
       const panels = [...document.querySelectorAll<HTMLElement>('[data-cinematic-panel]')];
       const positions = panels.map((element) => element.getBoundingClientRect());
-      const orb = (
-        document.querySelector('[data-journey-orb]') as SVGGraphicsElement
-      ).transform.baseVal.consolidate()!.matrix;
+      const orb = document.querySelector('.story-sun')!.getBoundingClientRect();
       const seed = (
         document.querySelector('[data-journey-seed]') as SVGGraphicsElement
       ).transform.baseVal.consolidate()!.matrix;
       return {
         opacity: panels.map((element) => getComputedStyle(element).opacity),
         gaps: positions.slice(1).map((position, index) => position.top - positions[index].bottom),
-        orbX: orb.e,
-        orbY: orb.f,
+        orbX: orb.left,
+        orbY: orb.top,
         seedX: seed.e,
         seedY: seed.f,
-        orbScale: Math.hypot(orb.a, orb.b),
+        orbScale: orb.width,
         seedScale: Math.hypot(seed.a, seed.b),
         archScale: new DOMMatrixReadOnly(
           getComputedStyle(document.querySelector('.garden-arch')!).transform,
@@ -512,7 +510,7 @@ test('scenes move without fading; sun follows one arc and resizing serves the co
   expect(new Set(samples.map((sample) => sample.orbScale)).size).toBe(1);
   for (const sample of samples) expect(sample.seedScale).toBeCloseTo(samples[0].seedScale, 5);
   expect(samples[3].archScale).toBeLessThan(samples[0].archScale);
-  expect(samples.every((sample) => sample.orbY >= 80 && sample.orbY <= 100)).toBe(true);
+  expect(samples.every((sample) => sample.orbY >= 69 && sample.orbY <= 130)).toBe(true);
   expect(
     samples.every((sample, index) => index === 0 || sample.seedY <= samples[index - 1].seedY),
   ).toBe(true);
@@ -542,10 +540,121 @@ test('sun and flower size adapts to phone composition instead of growing through
           ).transform.baseVal.consolidate()!.matrix;
           return Math.hypot(matrix.a, matrix.b);
         };
-        return { sun: scale('[data-journey-orb]'), flower: scale('[data-journey-seed]') };
+        return {
+          sun: document.querySelector('.story-sun')!.getBoundingClientRect().width,
+          flower: scale('[data-journey-seed]'),
+        };
       }),
     );
   }
   expect(sizes[1].sun).toBeLessThan(sizes[0].sun);
   expect(sizes[1].flower).toBeLessThan(sizes[0].flower);
+});
+
+test('single sun becomes a moon, the rail marker scrubs both ways and all facial features transform', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const selectors = [
+    '.pet-eye',
+    '.pet-eyebrows',
+    '.pet-nose',
+    '.pet-mouth',
+    '.pet-lips',
+    '.pet-cheeks',
+    '.pet-jawline',
+    '.pet-chin',
+    '.pet-forehead',
+    '.pet-hairline',
+    '.pet-ears',
+  ];
+  async function pose(chapter: number) {
+    await page.evaluate(async (value) => {
+      const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+      const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          story.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((story.clientHeight - stage.clientHeight) * value) / 5,
+        behavior: 'instant',
+      });
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      );
+    }, chapter);
+    return page.evaluate(
+      (parts) => ({
+        cutout: Number(document.querySelector('[data-journey-moon]')!.getAttribute('cx')),
+        marker: new DOMMatrixReadOnly(
+          getComputedStyle(document.querySelector('.cinema-rail')!, '::before').transform,
+        ).m42,
+        rays: getComputedStyle(document.querySelector('.journey-rays')!).transform,
+        faces: [...document.querySelectorAll('.experience-portraits .pet-face')].map((face) =>
+          parts.map((part) => getComputedStyle(face.querySelector(part)!).transform),
+        ),
+      }),
+      selectors,
+    );
+  }
+  await expect(page.locator('[data-celestial-body]')).toHaveCount(1);
+  await expect(page.locator('.story-moon')).toHaveCount(0);
+  await expect(page.locator('.story-sun mask')).toHaveCount(1);
+  const sun = await pose(0);
+  const first = await pose(1.1);
+  const second = await pose(1.35);
+  for (let pet = 0; pet < 3; pet++) {
+    for (let part = 0; part < selectors.length; part++) {
+      expect(second.faces[pet][part], selectors[part]).not.toBe(first.faces[pet][part]);
+    }
+  }
+  expect(second.marker).toBeGreaterThan(first.marker);
+  const moon = await pose(5);
+  expect(moon.cutout).toBe(22);
+  expect(sun.cutout).toBe(115);
+  expect(moon.rays).not.toBe(sun.rays);
+  expect(moon.marker).toBeGreaterThan(second.marker);
+  expect(await pose(1.1)).toEqual(first);
+  expect(await pose(0)).toEqual(sun);
+  for (const width of [320, 390, 800, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    for (const language of ['en', 'zh']) {
+      await page.locator('select').selectOption(language);
+      for (const chapter of [0, 2.5, 5]) {
+        await pose(chapter);
+        const fit = await page.evaluate(() => {
+          const sun = document.querySelector('.story-sun')!.getBoundingClientRect();
+          const stage = document.querySelector('.cinematic-stage')!.getBoundingClientRect();
+          const rail = document.querySelector('.cinema-rail')!;
+          const indicator = new DOMMatrixReadOnly(getComputedStyle(rail, '::before').transform).m42;
+          return (
+            sun.left >= stage.left &&
+            sun.right <= stage.right &&
+            sun.top >= stage.top &&
+            sun.bottom <= stage.bottom &&
+            (getComputedStyle(rail).display === 'none' ||
+              (indicator >= 0 && indicator + 23 <= rail.clientHeight)) &&
+            document.documentElement.scrollWidth <= innerWidth
+          );
+        });
+        expect(fit).toBe(true);
+        await expect(page.locator('.cinema-rail')).toHaveCSS(
+          'background-color',
+          'rgba(0, 0, 0, 0)',
+        );
+        await expect(page.locator('.cinema-rail')).toHaveCSS('border-width', '0px');
+      }
+    }
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-cinema-enabled]')).toHaveCount(0);
+  await expect(page.locator('.story-sun')).toBeHidden();
+  for (const selector of selectors)
+    await expect(page.locator('.experience-portraits').locator(selector).first()).toHaveCSS(
+      'transform',
+      'none',
+    );
 });
