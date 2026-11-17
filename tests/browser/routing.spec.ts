@@ -19,13 +19,14 @@ test('public pages have direct paths, distinct content and working history', asy
     .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name: 'Services', exact: true })
     .click();
-  await expect(page).toHaveURL(/\/services\/$/);
+  await expect(page).toHaveURL(/\/home\/#services$/);
   await page.goBack();
   await expect(page.getByRole('heading', { name: 'Cancellation policy', level: 1 })).toBeVisible();
   await page.goForward();
-  await expect(page.getByRole('heading', { name: 'Services', level: 1 })).toBeVisible();
+  await expect(page.locator('#services')).toBeInViewport();
   await page.goto('/#faq');
-  await expect(page).toHaveURL(/\/faqs\/$/);
+  await expect(page).toHaveURL(/\/home\/#faq$/);
+  await expect(page.locator('#faq')).toBeInViewport();
   await page.goto('/#/house-calendar');
   await expect(page).toHaveURL(/\/app\/calendar\/$/);
   await expect(page.getByRole('heading', { name: 'House calendar', level: 1 })).toBeVisible();

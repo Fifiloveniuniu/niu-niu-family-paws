@@ -60,7 +60,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
         document.getElementById(location.hash.slice(1))?.scrollIntoView(),
       );
     else window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [page, route.path, chinese]);
+  }, [page, route.path, route.hash, chinese]);
   function setLanguage(lang: 'en' | 'zh') {
     void i18n.changeLanguage(lang);
     try {
@@ -92,7 +92,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
             {t('skip')}
           </a>
           <header>
-            <a className="brand" href="/home/" aria-label="Niu Niu Family Paws">
+            <a className="brand" href="/home/#main" aria-label="Niu Niu Family Paws">
               <span className="paw" aria-hidden="true">
                 ✿
               </span>
@@ -101,16 +101,44 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               </span>
             </a>
             <nav aria-label={chinese ? '主导航' : 'Main navigation'}>
-              <a href="/home/" aria-current={page === 'home' ? 'page' : undefined}>
+              <a
+                href="/home/#main"
+                aria-current={
+                  page === 'home' && (!route.hash || route.hash === '#main')
+                    ? 'location'
+                    : undefined
+                }
+              >
                 {t('home')}
               </a>
-              <a href="/services/" aria-current={page === 'services' ? 'page' : undefined}>
+              <a
+                href="/home/#services"
+                aria-current={
+                  page === 'services' || (page === 'home' && route.hash === '#services')
+                    ? 'location'
+                    : undefined
+                }
+              >
                 {t('services')}
               </a>
-              <a href="/about/" aria-current={page === 'about' ? 'page' : undefined}>
+              <a
+                href="/home/#about"
+                aria-current={
+                  page === 'about' || (page === 'home' && route.hash === '#about')
+                    ? 'location'
+                    : undefined
+                }
+              >
                 {t('approach')}
               </a>
-              <a href="/faqs/" aria-current={page === 'faqs' ? 'page' : undefined}>
+              <a
+                href="/home/#faq"
+                aria-current={
+                  page === 'faqs' || (page === 'home' && route.hash === '#faq')
+                    ? 'location'
+                    : undefined
+                }
+              >
                 {t('questions')}
               </a>
             </nav>
@@ -130,7 +158,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                   <p className="eyebrow">{t('eyebrow')}</p>
                   <h1>{t('title')}</h1>
                   <p className="intro">{t('intro')}</p>
-                  <a className="button" href="/services/">
+                  <a className="button" href="/home/#services">
                     {t('explore')} <span aria-hidden="true">↗</span>
                   </a>
                   <p className="handwritten">{t('note')}</p>
@@ -167,7 +195,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                       <h3>{t(key)}</h3>
                       <p>{t(key + 'Description')}</p>
                       <p className="service-detail">{t(key + 'Detail')}</p>
-                      <a className="text-link" href="/services/#prepare">
+                      <a className="text-link" href="/home/#prepare">
                         {t('prepareLink')} <span aria-hidden="true">↗</span>
                       </a>
                       <p className="price">{t('price')}</p>
@@ -248,7 +276,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                     ? '具体截止时间、少于 7 天或未到店的处理方式，以及返还形式等细节尚未公布。预约前请先确认完整条款，目前网站尚未开放实际付费预约。'
                     : 'Exact deadlines, shorter-notice and no-show terms, and the form of refund have not yet been published. Confirm the complete terms before booking; paid bookings are not available through this website yet.'}
                 </p>
-                <a href="/services/" className="button">
+                <a href="/home/#services" className="button">
                   {t('services')}
                 </a>
               </section>

@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { canonicalUrl, parseRoute, safeReturnTo } from '../apps/web/src/routing.ts';
 test('canonical routes upgrade old public and app links without losing pet scope', () => {
   assert.equal(canonicalUrl('/#/balances?pet=Mochi'), '/app/balances/?pet=Mochi');
-  assert.equal(canonicalUrl('/#services'), '/services/');
+  assert.equal(canonicalUrl('/#services'), '/home/#services');
+  assert.equal(canonicalUrl('/home/#about'), '/home/#about');
+  assert.equal(parseRoute('/home/#faq').hash, '#faq');
   assert.equal(canonicalUrl('/'), '/home/');
   assert.equal(parseRoute('/home/').kind, 'home');
   assert.equal(canonicalUrl('/#/login'), '/app/sign-in/');

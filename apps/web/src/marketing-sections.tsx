@@ -102,7 +102,7 @@ export function CareStory() {
         <h2 id="care-story-title">{t('storyTitle')}</h2>
         <p>{t('storyBody')}</p>
       </div>
-      <a className="text-link" href="/services/#prepare" data-reveal>
+      <a className="text-link" href="/home/#prepare" data-reveal>
         {t('prepareLink')} <span aria-hidden="true">↗</span>
       </a>
     </section>

@@ -1,5 +1,12 @@
 # Session handoff — 2026-10-22
 
+## Marketing navigation scrolls to sections — 2026-11-16
+
+Owner requested marketing links scroll to sections. Home/brand, Services, About us and FAQs now target /home/#main, #services, #about and #faq. Hero/service/preparation links likewise target home sections. Existing standalone public paths and app paths remain available. Removed the legacy bare-hash conversion that incorrectly redirected #services/#about/#faq to separate pages. Route parsing retains fragments, so cross-page links, refresh and history trigger the correct section scroll. Same-page anchors keep native repeated-click behavior. Active navigation uses aria-current=location; reduced motion still removes smooth scrolling.
+
+Node24 build, all34 unit tests and formatting passed. Updated routing unit/browser regression expectations; public routing/history browser case passed, including legacy app record routing. Additional Chrome checks passed desktop390/1440, all nav destinations and active states, direct root FAQ link, refresh, Back/Forward, Chinese, cross-page/preparation links and smooth scrolling without page errors. Actual native Chrome localhost4180 clicked Services and visibly showed the service section and /home/#services URL. No deployment, business-data writes or emulator changes. Preserve existing WIP/dist-dev/temporary config. Review: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/64. Implementation 3d3d714 is GitHub Verified (valid). Consult PR for current merge/check status; routine merge authorized after checks pass.
+
+
 ## Richer marketing and scroll entrances — 2026-11-16
 
 Latest owner correction replaces parallax with scrolling animation and requests richer content. Removed all parallax scroll/resize handlers and illustration transforms. Public sections now reveal once as they enter view, with staggered text/cards, scale/rotate illustrated entrances and a line reveal; reduced motion cancels/disables animation. Static content remains visible without animation and production prerender works without JavaScript.
