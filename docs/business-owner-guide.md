@@ -312,3 +312,10 @@ Sample photos are clearly marked and do not show our actual spaces, students or 
 首页现在包含九个相连章节，展示四类服务、空间预览、数字区域及家长故事。“上一章 / 下一章 / 重新开始”会同时移动共用花朵、太阳与月亮、内部图形及侧边指示条。开启减少动态效果或使用较矮屏幕时，显示普通页面布局。关于页面展示完整家长故事，课堂页面展示学员照片与故事区域。点击图库照片可放大，关闭或按 Esc 返回。深绿色页脚与整站保持一致。
 
 示例照片均有明确标注，不代表本店空间、学员或作品。实际价格、联系方式、课程信息、获准公开的评价、真实照片及核实后的数字仍待提供。当前数字留空，并非零，也尚未接入实际业务记录。可直接用中文或英文告诉 Codex 要改什么，无需编辑文件或使用终端。当前为本地预览，尚未发布新版本。
+
+
+## More expressive artwork — 2026-11-17
+
+The shared flower can now leave either side of the scene and return later. Icons turn more noticeably. Animal ears move independently, noses tilt/reshape and mouths visibly open into a smile as you scroll or choose a chapter. The numbers section now has a paw, scissors and learning-book illustration for its three items. Reduce Motion keeps static artwork. Real totals remain pending, and nothing new has been deployed.
+
+共用花朵现在可以从场景左右两侧离开，随后再次出现。图标旋转更加明显；动物左右耳朵分别摆动，鼻子倾斜并改变形状，嘴巴随滚动或章节切换张开微笑。数字区域的三个项目分别配有爪印、剪刀和学习书本插画。“减少动态效果”保留静态插画。真实数字仍待核实，尚未部署新版本。

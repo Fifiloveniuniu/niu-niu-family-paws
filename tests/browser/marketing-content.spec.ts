@@ -76,3 +76,33 @@ test('only approved public totals and stories appear, and refresh without exposi
   );
   await expect(page.locator('body')).not.toContainText('Unapproved fixture');
 });
+
+test('each number item has its own illustrated icon and independently moving shapes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/#numbers');
+  const icons = page.locator('.number-grid .metric-art');
+  await expect(icons).toHaveCount(3);
+  await expect(page.locator('.number-grid .metric-paw')).toHaveCount(1);
+  await expect(page.locator('.number-grid .grooming-blade')).toHaveCount(2);
+  await expect(page.locator('.number-grid .academy-book')).toHaveCount(1);
+  const sample = () =>
+    icons.evaluateAll((elements) =>
+      elements.map((element) => getComputedStyle(element.querySelector('svg')!).transform),
+    );
+  const first = await sample();
+  await page.mouse.wheel(0, 250);
+  await expect.poll(async () => JSON.stringify(await sample())).not.toBe(JSON.stringify(first));
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/home/#numbers');
+    for (const icon of await icons.all()) await expect(icon).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+  for (const value of await sample()) expect(value).toBe('none');
+});
