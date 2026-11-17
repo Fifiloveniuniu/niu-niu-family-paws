@@ -276,3 +276,10 @@ Navbar and right-side chapter clicks now animate the chosen scene reliably. The 
 Scenes now move into and out of the screen without fading. The sun and flower stay on their own sides with slow drift and gradual size changes. Arches, petals, portraits and illustrated frames grow or contract with the scroll. Navbar and chapter clicks move forward/up or backward/down as appropriate. Reduce Motion keeps ordinary static sections. This is locally validated and awaits the final combined deployment.
 
 场景现在通过移入和移出屏幕切换，不再淡入淡出。太阳和花朵固定在各自一侧，只缓慢漂移并逐渐改变大小。拱门、花瓣、宠物插画及边框会随滚动舒展或收缩。导航及章节按钮根据方向向上或向下移动内容。“减少动态效果”模式保留普通静态页面。当前本地验证完成，等待最终统一上线。
+
+
+## A travelling sun and purposeful scale — 2026-11-16
+
+The sun now travels along one gentle arc through the whole story, rather than bouncing between sides or staying fixed. Sun and flower sizes adapt to the screen; they do not grow continually as you scroll. Other resizing supports perspective and scene departures. Movement-only transitions, the visible/current navbar and Reduce Motion remain. This is locally validated and awaits the final combined deployment.
+
+太阳现在沿一条柔和的弧线贯穿整个故事，不再左右反复跳动，也不再固定不动。太阳与花朵的大小根据屏幕调整，不会随着滚动不断变大；其他缩放用于表现透视与场景离开。继续保留无淡入淡出的移动切换、始终可见并标记当前章节的导航，以及“减少动态效果”模式。目前本地验证完成，等待最终统一上线。

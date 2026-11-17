@@ -507,10 +507,3 @@
   border-radius: calc(50% - var(--scroll) * 18%) calc(50% - var(--scroll) * 8%)
     calc(8px + var(--scroll) * 60px) calc(8px + var(--scroll) * 32px);
 }
-.home-story.cinematic-story[data-cinema-enabled] .service-path .care-symbol {
-  transform-origin: center;
-  transform: scale(calc(1 - var(--scroll) * 0.18));
-}
-.home-story.cinematic-story[data-cinema-enabled] .symbol-disc {
-  transform: scale(calc(1 + var(--scroll) * 0.16));
-}

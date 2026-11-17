@@ -1,5 +1,12 @@
 # Session handoff — 2026-10-22
 
+## Purposeful resizing and a travelling sun — 2026-11-16
+
+Owner clarified “Shape should resize as need. Sun should move.” Sun now follows one smooth global right-to-left sky arc over the whole story, easing into/out of travel without repeated chapter zigzags. Its size stays constant within a viewport, with a smaller phone composition. Flower remains on its own side and likewise uses a phone-specific scale rather than automatic growth. Removed arbitrary service-glyph shrinking and sun-disc growing; perspective/exit resizing on the hero, arch, portraits and question frame remains purposeful. No scene fades, palette changes, scroll interception or app/API/data changes.
+
+Validation: Node24 build, formatting, all34 unit tests and10 Chrome cases passed (9 marketing plus public routing/history). Regression verifies one-way sun travel, a bounded gentle vertical arc, stable sun/flower size during scrolling, smaller sizes for both on phones, real arch resizing and no-opacity scene movement. Additional EN/ZH320/390/760/1024/1440×844 copy checks passed. Actual localhost4180 Chrome tab opened via Chrome DevTools in a separate background context, walked Home → Services, scrolled farther (sun position changed smoothly), then Home with full header and scroll0. Owner's active tab was not taken over. Updated animated-navigation and persistent-nav screenshots show the current composition. Preserve owner .gitignore edit, WIP#41, dist-dev and temporary Firebase config. Review: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/73. Implementationbfee61e is GitHub Verified (valid); routine merge authorized after required checks. Consult PR for final status. Deployment remains deferred.
+
+
 ## Movement-only scenes, calm ornaments and resizing shapes — 2026-11-16
 
 Owner requested calming the sun/flower side-to-side bouncing, no opacity for scene changes, natural movement with offscreen exits allowed, then explicitly added shape resizing. Replaced panel/copy dissolves with full-height edge-to-edge vertical travel driven by a smooth acceleration/settling curve. Adjacent panels meet without gaps; active navigation follows the dominant scene. Navbar/rail/next clicks now move content fully outside/inside the viewport, upward for forward destinations and downward for backward destinations, with no opacity keyframes. Short/static screens choose the visible section for their exit rather than moving the entire long page.

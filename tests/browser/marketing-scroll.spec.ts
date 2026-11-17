@@ -410,7 +410,7 @@ test('navbar moves the visible destination without fading or animating a hidden 
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
 });
 
-test('scenes move edge to edge without fading and landscape ornaments stay anchored', async ({
+test('scenes move without fading; sun follows one arc and resizing serves the composition', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 950 });
@@ -474,23 +474,15 @@ test('scenes move edge to edge without fading and landscape ornaments stay ancho
     expect(sample.gaps.every((gap) => Math.abs(gap) < 2)).toBe(true);
     samples.push(sample);
   }
-  expect(new Set(samples.map((sample) => sample.orbX)).size).toBe(1);
+  expect(samples[0].orbX - samples.at(-1)!.orbX).toBeGreaterThan(1000);
+  expect(
+    samples.every((sample, index) => index === 0 || sample.orbX < samples[index - 1].orbX),
+  ).toBe(true);
   expect(new Set(samples.map((sample) => sample.seedX)).size).toBe(1);
-  expect(samples.at(-1)!.orbScale).toBeGreaterThan(samples[0].orbScale);
-  expect(samples.at(-1)!.seedScale).toBeGreaterThan(samples[0].seedScale);
+  expect(new Set(samples.map((sample) => sample.orbScale)).size).toBe(1);
+  for (const sample of samples) expect(sample.seedScale).toBeCloseTo(samples[0].seedScale, 5);
   expect(samples[3].archScale).toBeLessThan(samples[0].archScale);
-  expect(
-    samples.every((sample, index) => index === 0 || sample.orbScale >= samples[index - 1].orbScale),
-  ).toBe(true);
-  expect(
-    samples.every(
-      (sample, index) => index === 0 || sample.seedScale >= samples[index - 1].seedScale,
-    ),
-  ).toBe(true);
-
-  expect(
-    samples.every((sample, index) => index === 0 || sample.orbY >= samples[index - 1].orbY),
-  ).toBe(true);
+  expect(samples.every((sample) => sample.orbY >= 80 && sample.orbY <= 100)).toBe(true);
   expect(
     samples.every((sample, index) => index === 0 || sample.seedY <= samples[index - 1].seedY),
   ).toBe(true);
@@ -503,4 +495,27 @@ test('scenes move edge to edge without fading and landscape ornaments stay ancho
   expect(keyframes.length).toBeGreaterThan(0);
   expect(keyframes.every((keyframe) => !('opacity' in keyframe))).toBe(true);
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+});
+
+test('sun and flower size adapts to phone composition instead of growing through the story', async ({
+  page,
+}) => {
+  const sizes: Array<{ sun: number; flower: number }> = [];
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/home/');
+    sizes.push(
+      await page.evaluate(() => {
+        const scale = (selector: string) => {
+          const matrix = (
+            document.querySelector(selector) as SVGGraphicsElement
+          ).transform.baseVal.consolidate()!.matrix;
+          return Math.hypot(matrix.a, matrix.b);
+        };
+        return { sun: scale('[data-journey-orb]'), flower: scale('[data-journey-seed]') };
+      }),
+    );
+  }
+  expect(sizes[1].sun).toBeLessThan(sizes[0].sun);
+  expect(sizes[1].flower).toBeLessThan(sizes[0].flower);
 });

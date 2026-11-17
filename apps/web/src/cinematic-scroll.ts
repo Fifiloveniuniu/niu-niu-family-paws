@@ -66,15 +66,18 @@ export function installCinematicStory(story: HTMLElement) {
       (value, index) => value + (landscapePoses[to][index] - value) * blend,
     );
     const spread = innerWidth <= 760 ? 0.24 : 1;
-    // Quiet anchors: the sun and flower no longer cross the composition or bounce.
+    // One skyward arc across the whole story, not repeated side-to-side chapter hops.
+    const sunProgress = progress * progress * (3 - 2 * progress);
+    const sunScale = innerWidth <= 760 ? 0.78 : 1;
+    const flowerScale = innerWidth <= 760 ? 0.5 : 0.65;
     orb?.setAttribute(
       'transform',
-      `translate(${720 + 520 * spread} ${125 + progress * 20}) scale(${1 + progress * 0.16})`,
+      `translate(${720 + 520 * spread * (1 - 2 * sunProgress)} ${100 - Math.sin(sunProgress * Math.PI) * 20}) scale(${sunScale})`,
     );
     moon?.setAttribute('cx', String(moonOffset));
     seed?.setAttribute(
       'transform',
-      `translate(${720 - 590 * spread} ${750 - progress * 15}) rotate(${chapter * 8}) scale(${0.6 + progress * 0.12})`,
+      `translate(${720 - 590 * spread} ${750 - progress * 15}) rotate(${chapter * 8}) scale(${flowerScale})`,
     );
     backHill?.setAttribute(
       'd',
