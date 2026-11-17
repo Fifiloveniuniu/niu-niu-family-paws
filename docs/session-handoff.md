@@ -1,5 +1,12 @@
 # Session handoff — 2026-10-22
 
+## Accelerating downward story motion — 2026-11-16
+
+Owner requested acceleration when moving down. Cinematic artwork progress now uses quadratic ease-in: equal scroll distances move objects progressively farther, with signed quadratic settling for the scene. Scroll remains native; no momentum timers, wheel interception or delayed motion after stopping. Earlier reverse poses are exact. Sticky navbar, instant explicit navigation, colors, layouts and reduced-motion/short-screen fallbacks remain.
+
+Node24 production build, formatting, all34 unit tests and all4 marketing Chrome cases pass. New browser assertion measures progressively larger artwork travel over equal scroll distances; reverse/stopped pose, bilingual responsive copy fit, header bounds, direct anchors and history continue passing. Native localhost4180 Chrome opened Home and accepted an initial scroll; a further native scroll timed out and reconnect showed the user's current Services page, so do not claim full native acceleration verification. Automated Chrome verifies it. No screenshots needed for this timing-only refinement. No deployment/API/data changes. Preserve WIP#41, dist-dev, temporary Firebase config and the concurrent owner edit to .gitignore. Required PR/signature/check validation follows; deployment remains deferred.
+
+
 ## Persistent marketing navbar and fuller artwork motion — 2026-11-16
 
 Owner asked for full-screen scenes, less restricted animation and an always-visible navbar. Public navbar now stays at the top on every public page with an opaque full-width surface. ResizeObserver measures the actual localized header height and cleans up on app entry; cinematic stage fills exactly the remaining viewport. Scroll geometry and marker offsets account for the header, preserving direct jumps, Home, rail/next, refresh/history and reverse poses. Header controls remain accessible throughout the story. Colors remain unchanged per “undo color.”

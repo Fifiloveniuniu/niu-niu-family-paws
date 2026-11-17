@@ -29,6 +29,21 @@ test('one cinematic timeline scrubs across chapters and restores exact earlier p
       .locator('[data-scroll-object="hero-pet"]')
       .evaluate((element) => getComputedStyle(element).transform);
   }
+  // Equal scroll distances should move the artwork progressively farther.
+  const artworkOffsets: number[] = [];
+  for (const chapter of [0, 0.15, 0.3, 0.45]) {
+    await pose(chapter);
+    artworkOffsets.push(
+      await page
+        .locator('[data-scroll-object="hero-pet"]')
+        .evaluate((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42),
+    );
+  }
+  const distances = artworkOffsets
+    .slice(1)
+    .map((offset, index) => Math.abs(offset - artworkOffsets[index]));
+  expect(distances[1]).toBeGreaterThan(distances[0] * 1.5);
+  expect(distances[2]).toBeGreaterThan(distances[1] * 1.2);
   const first = await pose(0.2);
   const middle = await pose(0.5);
   for (const panel of await page.locator('[data-cinematic-panel]').all()) {

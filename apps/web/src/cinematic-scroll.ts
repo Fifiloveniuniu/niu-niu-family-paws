@@ -53,10 +53,13 @@ export function installCinematicStory(story: HTMLElement) {
       panel.style.setProperty('--panel-opacity', String(opacity));
       panel.style.setProperty('--copy-opacity', String(copyOpacity));
       // Settle vertically into each composition instead of pushing every scene left.
-      const travel = Math.max(-1, Math.min(1, distance));
+      const linearTravel = Math.max(-1, Math.min(1, distance));
+      const travel = Math.sign(linearTravel) * linearTravel ** 2;
       panel.style.setProperty('--panel-shift', `${-travel * 24}px`);
       panel.style.setProperty('--panel-scale', String(1 - Math.abs(travel) * 0.012));
-      panel.style.setProperty('--scroll', String(clamp(distance / 0.65)));
+      // Quadratic ease-in builds speed with scroll distance, without trailing timers.
+      const motionProgress = clamp(distance / 0.65);
+      panel.style.setProperty('--scroll', String(motionProgress ** 2));
       panel.inert = index !== active || copyOpacity < 0.15;
       panel.setAttribute('aria-hidden', String(index !== active || copyOpacity < 0.15));
     });

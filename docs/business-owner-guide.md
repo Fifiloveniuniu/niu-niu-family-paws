@@ -241,3 +241,10 @@ The top links and chapter controls now go directly to their destination. Home re
 The compact navbar stays visible while you read or scroll. Each story scene fills the screen below it; use the top links to jump directly at any time. Artwork has more movement while the text stays steady. Short screens and Reduce Motion use ordinary page sections. Colors are unchanged. This is locally complete and awaits the final combined deployment.
 
 精简导航栏在阅读或滚动时始终可见，每个故事场景填满导航栏下方的屏幕空间。随时点击顶部链接即可直接跳转。插画动作更丰富，文字保持稳定。较矮的屏幕和“减少动态效果”模式使用普通页面布局。配色保持不变；当前本地完成，等待最终统一上线。
+
+
+## Acceleration while scrolling — 2026-11-16
+
+The story artwork starts gently and moves faster as you scroll farther into each scene. Stop scrolling to hold the pose; scroll upward to retrace it. Navbar clicks still jump directly, and colors are unchanged. This is a local update awaiting the final combined deployment.
+
+故事插画在每个场景开始时轻柔移动，随着继续向下滚动逐渐加速。停止滚动即可停留在当前画面，向上滚动可沿原轨迹回看。导航点击仍直接跳转，配色保持不变。目前为本地更新，等待最终统一上线。
