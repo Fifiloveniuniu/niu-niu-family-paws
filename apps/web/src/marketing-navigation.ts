@@ -1,3 +1,5 @@
+import { animateCinematicTarget, jumpCinematicTarget } from './cinematic-scroll';
+
 let transition: { hash: string; cancel: () => void } | undefined;
 
 export function cancelMarketingTransition() {
@@ -9,6 +11,8 @@ export function scrollMarketingTarget(hash: string, animated = false) {
   if (transition?.hash === hash) return;
   transition?.cancel();
   const jump = () => {
+    const story = document.querySelector<HTMLElement>('[data-cinema-enabled]');
+    if (story && jumpCinematicTarget(story, hash)) return;
     if (!hash || hash === '#main') window.scrollTo({ top: 0, behavior: 'instant' });
     else document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
   };
@@ -18,6 +22,16 @@ export function scrollMarketingTarget(hash: string, animated = false) {
   if (!animated || !main || !stage || preference.matches) {
     jump();
     return;
+  }
+  const story = main.querySelector<HTMLElement>('[data-cinema-enabled]');
+  if (story) {
+    const movement = animateCinematicTarget(story, hash, () => {
+      transition = undefined;
+    });
+    if (movement) {
+      transition = { hash, cancel: movement.cancel };
+      return;
+    }
   }
   let cancelled = false;
   const animations: Animation[] = [];

@@ -14,18 +14,7 @@ export default function PetExpressionDetails({ hero = false }: { hero?: boolean 
           opacity=".45"
         />
         <path className="pet-chin" d="M106 155q14 5 28 0-3 8-14 8t-14-8Z" opacity=".7" />
-        <path className="pet-forehead" d="m110 83 10 5 10-5-5 12h-10Z" opacity=".65" />
       </g>
-      <path
-        className="pet-hairline"
-        d="m105 74 5-7 7 5 5-8 6 8 7-4"
-        fill="none"
-        stroke="#71513c"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity=".45"
-      />
     </g>
   );
 }

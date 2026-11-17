@@ -100,7 +100,7 @@ export function ServiceSymbol({ kind }: { kind: 'day' | 'night' | 'grooming' | '
         ) : (
           <>
             <path
-              className="academy-page"
+              className="academy-book"
               d="M50 30q-15-13-34-8v52q20-4 34 8 14-12 34-8V22q-19-5-34 8v52"
             />
             <path className="academy-lines" d="m25 36 15 5m-15 8 15 5m20-13 15-5m-15 18 15-5" />

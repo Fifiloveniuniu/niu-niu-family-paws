@@ -641,3 +641,99 @@
   background: transparent;
   opacity: 0.5;
 }
+
+/* The same flower head travels between compositions; static layouts keep local blossoms. */
+.shared-flower {
+  display: none;
+}
+.home-story.cinematic-story[data-cinema-enabled] .shared-flower {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  color: #c98b68;
+  pointer-events: none;
+  transform-origin: center;
+}
+.shared-flower svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.home-story.cinematic-story[data-cinema-enabled]
+  :is(.hero-flower, .question-flower, .contact-bloom) {
+  visibility: hidden;
+}
+.home-story.cinematic-story[data-cinema-enabled] .shared-flower .garden-petal {
+  transform: translateY(calc(var(--petal-spread, 0) * -6px))
+    scaleX(calc(0.8 + var(--scroll) * 0.25)) scaleY(calc(1.1 - var(--scroll) * 0.2));
+}
+.home-story.cinematic-story[data-cinema-enabled] .shared-flower .garden-core {
+  transform: scale(calc(0.8 + var(--scroll) * 0.3));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path {
+  transform: translateX(calc(var(--side-entry, 0) * -150px + var(--side-exit, 0) * -25px))
+    rotate(calc(var(--sway, 0) * 10deg)) scaleX(calc(0.9 + var(--arrival, 1) * 0.1));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path:nth-child(even) {
+  transform: translateX(calc(var(--side-entry, 0) * 150px + var(--side-exit, 0) * 25px))
+    rotate(calc(var(--sway, 0) * -12deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-stem {
+  transform-origin: 50% 100%;
+  transform: skewX(calc(var(--sway, 0) * 3deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-veins {
+  transform: translateY(calc(var(--scroll) * 4px));
+}
+.marketing-site[data-scroll-enabled] .grooming-blade {
+  transform-origin: 50px 48px;
+  transform: rotate(calc(var(--sway, 0) * 12deg));
+}
+.marketing-site[data-scroll-enabled] .grooming-blade.reverse {
+  transform: rotate(calc(var(--sway, 0) * -12deg));
+}
+.marketing-site[data-scroll-enabled] .academy-book {
+  transform-origin: 50px 50px;
+  transform: scaleX(calc(0.9 + var(--scroll) * 0.1));
+}
+.marketing-site[data-scroll-enabled] .academy-lines {
+  transform: translateY(calc(var(--scroll) * -4px));
+}
+.cinema-controls [hidden] {
+  display: none !important;
+}
+.home-story.cinematic-story[data-cinema-enabled] .cinema-controls {
+  gap: 20px;
+}
+.cinematic-story[data-active-chapter] .home-contact {
+  color: #fffaf0;
+}
+.cinematic-story .home-contact :is(h2, p, .contact-status, .eyebrow) {
+  color: #fffaf0;
+}
+.cinematic-story .home-contact .contact-status {
+  border-color: #fffaf060;
+}
+.cinematic-story[data-dark-scene='true'] :is(.cinema-controls, .cinema-rail) {
+  color: #fffaf0;
+}
+@media (max-width: 760px) {
+  .home-story.cinematic-story[data-cinema-enabled] .cinema-controls {
+    gap: 12px;
+    font-size: 9px;
+  }
+  .cinema-controls .cinema-progress {
+    min-width: 18px;
+  }
+}
+.home-story.cinematic-story[data-cinema-enabled] .journey-stars > path {
+  transform-origin: 66px -49px;
+  transform: rotate(calc(var(--cinema-progress) * 80deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .journey-stars > circle {
+  transform: translate(calc(var(--cinema-progress) * 5px), calc(var(--cinema-progress) * -6px));
+}
+.marketing-site[data-scroll-enabled] .contact-page-flower .garden-petal {
+  transform-origin: 80px 80px;
+  transform: scaleX(calc(0.85 + var(--scroll) * 0.2)) scaleY(calc(1.1 - var(--scroll) * 0.2));
+}

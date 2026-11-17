@@ -279,6 +279,9 @@ export default function MarketingHome() {
           <span className="cinema-progress" aria-hidden="true">
             <span />
           </span>
+          <a href="#main" data-cinema-previous hidden>
+            {t('cinemaPrevious')} ↑
+          </a>
           <a
             href="#experience"
             data-cinema-next
