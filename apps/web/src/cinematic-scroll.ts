@@ -2,8 +2,8 @@ const clamp = (value: number) => Math.max(0, Math.min(1, value));
 const chapterColors = [
   [250, 248, 242],
   [231, 237, 224],
-  [250, 248, 242],
   [245, 242, 233],
+  [250, 248, 242],
   [245, 242, 232],
   [43, 79, 61],
 ];

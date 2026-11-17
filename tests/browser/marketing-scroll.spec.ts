@@ -79,27 +79,27 @@ test('one cinematic timeline scrubs across chapters and restores exact earlier p
     .getByRole('navigation', { name: 'Story chapters' })
     .getByRole('link', { name: 'Services', exact: true })
     .click();
-  await expect(story).toHaveAttribute('data-active-chapter', '3');
+  await expect(story).toHaveAttribute('data-active-chapter', '2');
   await expect
     .poll(() =>
       story.evaluate((element) => Number(element.style.getPropertyValue('--cinema-progress'))),
     )
-    .toBeCloseTo(0.6, 3);
-  await expect(page.locator('.cinema-count')).toHaveText('04 / 06');
+    .toBeCloseTo(0.4, 3);
+  await expect(page.locator('.cinema-count')).toHaveText('03 / 06');
   await expect(
     page.getByRole('heading', { name: 'For a day. For a little longer.' }),
   ).toBeVisible();
   await page.reload();
-  await expect(story).toHaveAttribute('data-active-chapter', '3');
+  await expect(story).toHaveAttribute('data-active-chapter', '2');
   await expect
     .poll(() =>
       story.evaluate((element) => Number(element.style.getPropertyValue('--cinema-progress'))),
     )
-    .toBeCloseTo(0.6, 3);
+    .toBeCloseTo(0.4, 3);
   await page.locator('[data-cinema-next]').click();
-  await expect(story).toHaveAttribute('data-active-chapter', '4');
-  await page.goBack();
   await expect(story).toHaveAttribute('data-active-chapter', '3');
+  await page.goBack();
+  await expect(story).toHaveAttribute('data-active-chapter', '2');
 });
 
 test('public pages own distinct content and chapter links open detailed guides', async ({
@@ -120,8 +120,7 @@ test('public pages own distinct content and chapter links open detailed guides',
     );
     await expect(page.locator('h1')).toHaveCount(1);
   }
-  await page.locator('nav a[href="/home/#services"]').click();
-  await expect(page.locator('#services')).toBeInViewport();
+  await page.locator('.marketing-header nav a[href="/home/"]').click();
   await page.locator('.service-path').nth(1).click();
   await expect(page).toHaveURL(/\/services\/#boarding$/);
   await expect(page.locator('#boarding')).toBeInViewport();
@@ -213,7 +212,7 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
   await expect(page.locator('.service-path').first()).toBeInViewport();
 });
 
-test('marketing links animate briefly without replaying intervening chapters and Home restores the header', async ({
+test('Home chapter controls animate without replaying intervening chapters and Home restores the header', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 950 });
@@ -221,7 +220,7 @@ test('marketing links animate briefly without replaying intervening chapters and
   for (const language of ['en', 'zh']) {
     await page.locator('select').selectOption(language);
     for (const anchor of ['services', 'about', 'faq', 'main', 'main']) {
-      await page.locator(`.marketing-header nav a[href="/home/#${anchor}"]`).click();
+      await page.locator(`.cinema-rail a[href="#${anchor}"]`).click();
       await expect(page.locator('.marketing-site')).toHaveAttribute(
         'data-marketing-transition',
         '',
@@ -234,7 +233,7 @@ test('marketing links animate briefly without replaying intervening chapters and
         expect(await page.evaluate(() => scrollY)).toBe(0);
         await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
       } else {
-        const chapter = { services: '3', about: '2', faq: '4' }[anchor];
+        const chapter = { services: '2', about: '3', faq: '4' }[anchor];
         await expect(page.locator('[data-cinematic-story]')).toHaveAttribute(
           'data-active-chapter',
           chapter!,
@@ -250,59 +249,90 @@ test('marketing links animate briefly without replaying intervening chapters and
     }
   }
   await page.goto('/about/');
-  await page.locator('.marketing-header nav a[href="/home/#main"]').click();
+  await page.locator('.marketing-header nav a[href="/home/"]').click();
   await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
   expect(await page.evaluate(() => scrollY)).toBe(0);
   await page.goto('/home/#main');
   await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
 });
 
-test('navbar follows manual scroll and chapter buttons animate with rapid-click recovery', async ({
+test('Home scrolling leaves navbar selection and position unchanged; navbar opens separate pages', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1440, height: 950 });
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/home/');
+    for (const language of ['en', 'zh']) {
+      await page.locator('select').selectOption(language);
+      const header = page.locator('.marketing-header');
+      const initialBox = await header.boundingBox();
+      for (const chapter of [0, 2, 3, 4, 5]) {
+        await page.evaluate((value) => {
+          const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+          const height = document
+            .querySelector('.marketing-header')!
+            .getBoundingClientRect().height;
+          const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+          scrollTo({
+            top:
+              story.getBoundingClientRect().top +
+              scrollY -
+              height +
+              ((story.clientHeight - stage.clientHeight) * value) / 5,
+            behavior: 'instant',
+          });
+        }, chapter);
+        await expect(page.locator('[data-cinematic-story]')).toHaveAttribute(
+          'data-active-chapter',
+          String(chapter),
+        );
+        await expect(header.locator('nav a[aria-current="page"]')).toHaveAttribute(
+          'href',
+          '/home/',
+        );
+        expect(await header.boundingBox()).toEqual(initialBox);
+      }
+      for (const path of ['/services/', '/about/', '/faqs/', '/home/']) {
+        await header.locator(`nav a[href="${path}"]`).click();
+        await expect(page).toHaveURL(new RegExp(path + '$'));
+        await expect(page.locator('.marketing-site')).toHaveAttribute(
+          'data-marketing-transition',
+          '',
+        );
+        await expect(page.locator('.marketing-site')).not.toHaveAttribute(
+          'data-marketing-transition',
+        );
+        await expect(header.locator('nav a[aria-current="page"]')).toHaveAttribute('href', path);
+        await expect(page.locator('main h1')).toHaveCount(1);
+        expect(await page.evaluate(() => scrollY)).toBe(0);
+        if (path !== '/home/') await expect(page.locator('[data-cinematic-story]')).toHaveCount(0);
+      }
+    }
+  }
+});
+
+test('page navigation handles rapid clicks, history, repeated Home and reduced motion', async ({
+  page,
+}) => {
   await page.goto('/home/');
-  await page.evaluate(() => {
-    const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
-    const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
-    const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
-    scrollTo({
-      top:
-        story.getBoundingClientRect().top +
-        scrollY -
-        header +
-        (story.clientHeight - stage.clientHeight) * 0.6,
-      behavior: 'instant',
-    });
-  });
-  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
-    'href',
-    '/home/#services',
-  );
-  await page.locator('.cinema-rail a[href="#faq"]').click();
-  await expect(page.locator('.marketing-site')).toHaveAttribute('data-marketing-transition', '');
+  await page.locator('.marketing-header nav a[href="/services/"]').click();
+  await page.locator('.marketing-header nav a[href="/about/"]').click();
+  await expect(page).toHaveURL(/\/about\/$/);
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
-  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+  await page.goBack();
+  await expect(page).toHaveURL(/\/services\/$/);
+  await expect(page.locator('.marketing-header nav [aria-current="page"]')).toHaveAttribute(
     'href',
-    '/home/#faq',
+    '/services/',
   );
-  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
-  await page.locator('.marketing-header nav a[href="/home/#about"]').click();
-  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
-  await expect(page.locator('[data-cinematic-story]')).toHaveAttribute('data-active-chapter', '2');
-  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
-    'href',
-    '/home/#about',
-  );
-  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
-  await expect(page.locator('.marketing-site')).toHaveAttribute('data-marketing-transition', '');
+  await page.goForward();
+  await expect(page).toHaveURL(/\/about\/$/);
   await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.locator('.marketing-header nav a[href="/home/"]').click();
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await page.locator('.marketing-header nav a[href="/home/"]').click();
+  expect(await page.evaluate(() => scrollY)).toBe(0);
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
-  await expect(page.locator('#services')).toBeInViewport();
-  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
-    'href',
-    '/home/#services',
-  );
 });
 
 test('one persistent landscape and internal SVG shapes morph continuously and reverse exactly', async ({
@@ -353,20 +383,20 @@ test('one persistent landscape and internal SVG shapes morph continuously and re
   const afterBoundary = await scenePose(1.001);
   expect(Math.abs(Number(beforeBoundary.moon) - Number(afterBoundary.moon))).toBeLessThan(0.1);
   expect(await scenePose(0.15)).toEqual(first);
-  const service = await scenePose(3.15);
-  expect((await scenePose(3.4)).rays).not.toBe(service.rays);
+  const service = await scenePose(2.15);
+  expect((await scenePose(2.4)).rays).not.toBe(service.rays);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('.story-landscape')).toBeHidden();
   await expect(page.locator('.garden-petal').first()).toHaveCSS('transform', 'none');
   await expect(page.locator('.pet-tail')).toHaveCSS('transform', 'none');
 });
 
-test('navbar moves the visible destination without fading or animating a hidden panel', async ({
+test('chapter buttons move the visible destination without fading or animating a hidden panel', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 950 });
   await page.goto('/home/');
-  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await page.locator('.cinema-rail a[href="#services"]').click();
   await expect
     .poll(
       () =>
@@ -486,7 +516,7 @@ test('scenes move without fading; sun follows one arc and resizing serves the co
   expect(
     samples.every((sample, index) => index === 0 || sample.seedY <= samples[index - 1].seedY),
   ).toBe(true);
-  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await page.locator('.cinema-rail a[href="#services"]').click();
   const keyframes = await page.evaluate(() =>
     document
       .getAnimations()

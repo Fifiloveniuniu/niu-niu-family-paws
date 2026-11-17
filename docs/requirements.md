@@ -214,3 +214,8 @@ Latest owner direction supersedes opacity-based scene changes: use movement into
 ## Purposeful scale and sun movement — 2026-11-16
 
 Owner clarification: shapes resize when needed by the composition; the sun should move. Use one continuous, gentle sun journey rather than repeated chapter zigzags. Avoid automatic ornament growth for its own sake; adapt their size for screen fit while retaining useful perspective/exit resizing and movement-only scene changes.
+
+
+## Marketing page navigation clarification — 2026-11-17
+
+Latest owner direction: main navbar items open their dedicated pages in order Home / Services / About us / FAQs. Navbar active state belongs to the current page and must not change or move as Home scrolls. Home owns the cinematic scroll story and separate chapter controls; order its Services introduction before About to match the navigation. Page entry remains aligned to the top, with restrained movement-only animation and reduced-motion access. Preserve existing Home section deep links and detailed content.

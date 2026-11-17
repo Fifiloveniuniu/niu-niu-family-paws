@@ -283,3 +283,10 @@ Scenes now move into and out of the screen without fading. The sun and flower st
 The sun now travels along one gentle arc through the whole story, rather than bouncing between sides or staying fixed. Sun and flower sizes adapt to the screen; they do not grow continually as you scroll. Other resizing supports perspective and scene departures. Movement-only transitions, the visible/current navbar and Reduce Motion remain. This is locally validated and awaits the final combined deployment.
 
 太阳现在沿一条柔和的弧线贯穿整个故事，不再左右反复跳动，也不再固定不动。太阳与花朵的大小根据屏幕调整，不会随着滚动不断变大；其他缩放用于表现透视与场景离开。继续保留无淡入淡出的移动切换、始终可见并标记当前章节的导航，以及“减少动态效果”模式。目前本地验证完成，等待最终统一上线。
+
+
+## Navbar opens pages; Home is the scroll story — 2026-11-17
+
+Use the top navbar to open Home, Services, About us or FAQs as separate pages. Each opens at the top and highlights its own navbar item. Home remains the animated scroll story: scrolling its chapters keeps Home selected and the navbar steady. Use the right-side chapter dots/Continue links to move within Home. Its Services introduction now comes before About, matching the navbar order. This is locally validated and awaits the final combined deployment.
+
+顶部导航分别打开首页、服务项目、关于我们及常见问题页面；每页从顶部开始，并标记相应导航项。首页仍是动画滚动故事，滚动章节时导航栏保持稳定，始终选中“首页”。右侧章节圆点和“继续”链接用于首页内部跳转。首页中的服务介绍现在位于关于我们之前，与顶部导航顺序一致。当前本地验证完成，等待最终统一上线。

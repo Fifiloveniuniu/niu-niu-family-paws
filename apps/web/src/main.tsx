@@ -2,10 +2,13 @@ import { englishMessages, chineseMessages } from './marketing-messages';
 import MarketingHome from './marketing-home';
 import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
 import useRoute from './use-route';
-import { scrollMarketingTarget, cancelMarketingTransition } from './marketing-navigation';
+import {
+  scrollMarketingTarget,
+  cancelMarketingTransition,
+  animateMarketingPageEntry,
+} from './marketing-navigation';
 import useMarketingMotion from './use-marketing-motion';
 import useMarketingHeader from './use-marketing-header';
-import useMarketingSection from './use-marketing-section';
 import SiteAccountLink from './site-account-link';
 import React from 'react';
 import i18n from 'i18next';
@@ -31,8 +34,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
   useMarketingHeader(!appVisible);
   useMarketingMotion(marketingRoot, route.path, i18n.language);
-  const activeSection = useMarketingSection(marketingRoot, page);
-  const initialNavigation = React.useRef(true);
+  const previousDestination = React.useRef(route.path + (route.hash ?? ''));
   React.useEffect(() => () => cancelMarketingTransition(), [route.path]);
   const [visitedApp, setVisitedApp] = React.useState(appVisible);
   React.useEffect(() => {
@@ -65,13 +67,15 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
     document.title = names[page] + ' · Niu Niu Family Paws';
   }, [page, route.path, chinese, t]);
   React.useEffect(() => {
-    const animated = !initialNavigation.current;
-    initialNavigation.current = false;
+    const destination = route.path + (route.hash ?? '');
+    const animated = previousDestination.current !== destination;
+    previousDestination.current = destination;
     if (location.hash && !location.hash.startsWith('#/')) {
       const hash = location.hash;
       const frame = requestAnimationFrame(() => scrollMarketingTarget(hash, animated));
       return () => cancelAnimationFrame(frame);
-    } else window.scrollTo({ top: 0, behavior: 'instant' });
+    } else if (!appVisible && animated) animateMarketingPageEntry();
+    else window.scrollTo({ top: 0, behavior: 'instant' });
   }, [page, route.path, route.hash]);
   function setLanguage(lang: 'en' | 'zh') {
     void i18n.changeLanguage(lang);
@@ -104,7 +108,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
             {t('skip')}
           </a>
           <header className="marketing-header">
-            <a className="brand" href="/home/#main" aria-label="Niu Niu Family Paws">
+            <a className="brand" href="/home/" aria-label="Niu Niu Family Paws">
               <span className="paw" aria-hidden="true">
                 ✿
               </span>
@@ -113,40 +117,16 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               </span>
             </a>
             <nav aria-label={chinese ? '主导航' : 'Main navigation'}>
-              <a
-                href="/home/#main"
-                aria-current={page === 'home' && activeSection === 'main' ? 'location' : undefined}
-              >
+              <a href="/home/" aria-current={page === 'home' ? 'page' : undefined}>
                 {t('home')}
               </a>
-              <a
-                href="/home/#services"
-                aria-current={
-                  page === 'services' || (page === 'home' && activeSection === 'services')
-                    ? 'location'
-                    : undefined
-                }
-              >
+              <a href="/services/" aria-current={page === 'services' ? 'page' : undefined}>
                 {t('services')}
               </a>
-              <a
-                href="/home/#about"
-                aria-current={
-                  page === 'about' || (page === 'home' && activeSection === 'about')
-                    ? 'location'
-                    : undefined
-                }
-              >
+              <a href="/about/" aria-current={page === 'about' ? 'page' : undefined}>
                 {t('approach')}
               </a>
-              <a
-                href="/home/#faq"
-                aria-current={
-                  page === 'faqs' || (page === 'home' && activeSection === 'faq')
-                    ? 'location'
-                    : undefined
-                }
-              >
+              <a href="/faqs/" aria-current={page === 'faqs' ? 'page' : undefined}>
                 {t('questions')}
               </a>
             </nav>
