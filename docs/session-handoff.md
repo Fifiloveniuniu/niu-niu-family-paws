@@ -1,5 +1,14 @@
 # Session handoff — 2026-10-22
 
+## Project readability refactor — 2026-11-16
+
+Owner requested a whole-project helper/naming cleanup. Refactor covers handwritten frontend/backend TypeScript, React, styles, JavaScript utility scripts, tests and root configuration; generated contracts/builds, data, Python photo collection and WIP #41 are preserved. Added shared authenticated API transport (JSON/204/blob, status errors, captured token and cancellation), canonical customer lookup helpers, strict date/local-date helpers, sample calendar time/data modules, backend identity/schema/text-validation helpers and separated marketing copy/illustration. Replaced ambiguous local names with domain names and expanded compressed source; one variable declaration per statement. Added pinned Prettier, format/format:check scripts, CI formatting check and docs/code-maintenance.md.
+
+Preserved payload fields, API routes, identity checks, transaction/retry/audit semantics, bilingual text and UI. Regression testing exposed hidden Customers filter synchronization navigating away from Profile after access refresh; now runs only on the Customers route. Firestore tests use a fresh integration database per invocation to prevent leftover fixture collisions; default owner/demo database untouched. Node24 production build/API typecheck and all34 unit tests passed; all6 store integration tests passed. Initial browser run24/25, focused draft/profile rerun passed after filter guard; final full run all25 Chrome browser tests passed. Native Chrome localhost4180 walked Home → Services → Home and visibly confirmed original content/navigation. No business writes, photo overwrite, emulator reset or deployment. Background frontend4180/API8081/Auth9099 and original Firestore8085 preserved.
+
+Prior path-routing commit9349cec was GitHub Verified and merged via PR#60 (https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/60), squash5bad0df. Refactor review: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/61. Local validation complete; consult PR for current GitHub checks/signature/merge status. Routine merge is authorized after GitHub verification and required checks pass. Temporary .firebase-routing-preview.json and dist-dev remain untracked.
+
+
 ## Path routing commit — 2026-11-16
 
 Owner requested committing the current work. Fixed undefined routable reference in PetSearch; search results link directly to canonical pet paths. Node 24 production build and all 32 unit tests pass; all three routing browser tests pass (public pages/history/reload, shared filters, authenticated record/location deep links). Commit includes existing path-based routing source/config/tests and bilingual Home navigation. Generated dist-dev and temporary .firebase-routing-preview.json remain untracked. Frontend4180/API8081/Auth9099 started as detached background processes; Firestore8085 preserved. Logs in /tmp/niu-niu-family-paws-servers/. No deployment.

@@ -1,93 +1,779 @@
+import { localDateTimeValue } from './date-utils';
+import { sampleDateAtOffset, sampleDayOffset } from './calendar-time';
 import React from 'react';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import Modal from './modal';
-import {PetProfileAvatar} from './calendar-pet-photos';
-import UnsavedChanges,{confirmDiscardChanges} from './unsaved-changes';
-import {balanceKey,validatePetCoverage,type PetBalance,type BalanceService,type PlannedCoverage} from './pet-balance';
-import {placementIssue,unavailableRanges,type Placement,type PlacementIssue} from './calendar-placement';
-export type PlacementHouse={id:number;name:string;rooms:{id:number;name:string;capacity:string;costs?:Record<string,string>}[]};
-export default function AssignmentDialog({houses,stays,pets,anchor,initial,onClose,onApply,balances,balancePlans,onManageBalance}:{houses:PlacementHouse[];stays:Placement[];pets:{name:string;species:string}[];anchor:Date;initial?:{house:number;room:number};onClose:()=>void;onApply:(stay:Placement)=>void;balances:Record<string,PetBalance>;balancePlans:PlannedCoverage[];onManageBalance:(pet:string,service:BalanceService)=>void}){
- const {i18n}=useTranslation(),zh=i18n.language==='zh',t=(en:string,cn:string)=>zh?cn:en;
- const local=(d:Date)=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);
- const [pet,setPet]=React.useState(''),[start,setStart]=React.useState(local(new Date(anchor.getTime()+9*3600000))),[end,setEnd]=React.useState(''),[house,setHouse]=React.useState(initial?String(initial.house):''),[room,setRoom]=React.useState(initial?String(initial.room):''),[override,setOverride]=React.useState('');
- const service:BalanceService='boarding';const [requiredDays,setRequiredDays]=React.useState('');
- const [step,setStep]=React.useState(1);
- const [week,setWeek]=React.useState(0),[feedback,setFeedback]=React.useState('');
+import { PetProfileAvatar } from './calendar-pet-photos';
+import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
+import {
+  balanceKey,
+  validatePetCoverage,
+  type PetBalance,
+  type BalanceService,
+  type PlannedCoverage,
+} from './pet-balance';
+import {
+  placementIssue,
+  unavailableRanges,
+  type Placement,
+  type PlacementIssue,
+} from './calendar-placement';
+export type PlacementHouse = {
+  id: number;
+  name: string;
+  rooms: { id: number; name: string; capacity: string; costs?: Record<string, string> }[];
+};
+export default function AssignmentDialog({
+  houses,
+  stays,
+  pets,
+  anchor,
+  initial,
+  onClose,
+  onApply,
+  balances,
+  balancePlans,
+  onManageBalance,
+}: {
+  houses: PlacementHouse[];
+  stays: Placement[];
+  pets: { name: string; species: string }[];
+  anchor: Date;
+  initial?: { house: number; room: number };
+  onClose: () => void;
+  onApply: (stay: Placement) => void;
+  balances: Record<string, PetBalance>;
+  balancePlans: PlannedCoverage[];
+  onManageBalance: (pet: string, service: BalanceService) => void;
+}) {
+  const { i18n } = useTranslation();
+  const isChinese = i18n.language === 'zh';
+  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+  const [pet, setPet] = React.useState('');
+  const [start, setStart] = React.useState(localDateTimeValue(sampleDateAtOffset(anchor, 0)));
+  const [end, setEnd] = React.useState('');
+  const [house, setHouse] = React.useState(initial ? String(initial.house) : '');
+  const [room, setRoom] = React.useState(initial ? String(initial.room) : '');
+  const [override, setOverride] = React.useState('');
+  const service: BalanceService = 'boarding';
+  const [requiredDays, setRequiredDays] = React.useState('');
+  const [step, setStep] = React.useState(1);
+  const [week, setWeek] = React.useState(0);
+  const [feedback, setFeedback] = React.useState('');
 
- React.useEffect(()=>setWeek(0),[start]);
- const [dirty,setDirty]=React.useState(false),form=React.useRef<HTMLFormElement>(null);
- const selected=pets.find(p=>p.name===pet),offset=(s:string)=>(new Date(s).getTime()-anchor.getTime()-9*3600000)/86400000;
- const begin=offset(start),finish=offset(end),valid=!!selected&&Number.isFinite(begin)&&Number.isFinite(finish)&&finish>begin;
- const issue=(h:PlacementHouse,r:PlacementHouse['rooms'][number])=>!valid?'dates':placementIssue(stays,pet,selected!.species,begin,finish,h.id,r.id,Number(r.capacity),Number(override||r.costs?.[selected!.species]));
- const reasons:Record<Exclude<PlacementIssue,null>,string>={dates:t('Choose a pet and valid times first','请先选择宠物和有效时间'),duplicate:t('Pet already has a stay at this time','该宠物在此时段已有安排'),species:t('Another species is staying here','此时段有其他种类的宠物'),overdue:t('Overdue pickup · availability needs review','接回逾期 · 可用性需核实'),boundary:t('Back-to-back stay · turnover rule needed','相邻时段 · 需确认周转规则'),capacity:t('Not enough capacity for the whole stay','整个托管时段内容量不足'),unconfigured:t('Configure room capacity and pet usage','请配置房间容量和宠物用量')};
- const rangeReasons={...reasons,capacity:t('At capacity','容量已满'),species:t('Different pet type','其他种类宠物'),duplicate:t('Pet already scheduled','宠物已有安排'),unconfigured:t('Setup needed','需要配置'),overdue:t('Pickup overdue','接回逾期')};
- const dayCount=Number(requiredDays),detailsValid=valid&&!!service&&Number.isSafeInteger(dayCount)&&dayCount>0;
- const account=service?balances[balanceKey(pet,service)]:undefined;
- const coverage=service?validatePetCoverage(account,pet,service,dayCount,start.slice(0,10),end.slice(0,10),balancePlans):{code:'missing',available:0,after:0};
- const coverageMessages:Record<string,string>={ok:t('Balance covers this stay','余额可覆盖本次托管'),missing:t('Add boarding balance for this pet','请增加此宠物的寄养余额'),required:t('Enter staff-reviewed required days','请填写人工核对的所需天数'),dates:t('Check the stay dates','请检查托管日期'),coverage:t('Stay is outside the reviewed coverage dates','托管日期不在已核对的覆盖日期内'),insufficient:t('Not enough days for this stay','可用天数不足以覆盖本次托管')};
- const chosenHouse=houses.find(h=>String(h.id)===house),chosenRoom=chosenHouse?.rooms.find(r=>String(r.id)===room),problem=chosenHouse&&chosenRoom?issue(chosenHouse,chosenRoom):'dates';
- const calendarStart=Number.isFinite(new Date(start).getTime())?new Date(start):new Date(anchor);
- calendarStart.setHours(0,0,0,0);calendarStart.setDate(calendarStart.getDate()+week*7);
- const days=Array.from({length:7},(_,i)=>{const day=new Date(calendarStart);day.setDate(day.getDate()+i);return day;});
- const locale=zh?'zh-CN':'en-US';
- const calendarEnd=new Date(calendarStart);calendarEnd.setDate(calendarEnd.getDate()+7);
- const viewFrom=offset(local(calendarStart)),viewTo=offset(local(calendarEnd)),viewLength=viewTo-viewFrom;
- const position=(value:number)=>(value-viewFrom)/viewLength*100;
- const timeFor=(value:number)=>new Date(anchor.getTime()+9*3600000+value*86400000);
- const rangeLabel=(a:number,b:number)=>timeFor(a).toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})+' – '+timeFor(b).toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
- function chooseRange(h:PlacementHouse,r:PlacementHouse['rooms'][number],arrival=begin,pickup=finish){
-   if(!valid){setFeedback(reasons.dates);return;}
-   const reason=placementIssue(stays,pet,selected!.species,arrival,pickup,h.id,r.id,Number(r.capacity),Number(override||r.costs?.[selected!.species]));
-   if(reason){setFeedback(reasons[reason]);return;}
-   setStart(local(timeFor(arrival)));setEnd(local(timeFor(pickup)));setHouse(String(h.id));setRoom(String(r.id));setDirty(true);setFeedback('');
- }
- function chooseTime(event:React.MouseEvent<HTMLDivElement>,h:PlacementHouse,r:PlacementHouse['rooms'][number]){
-   if(!valid){setFeedback(reasons.dates);return;}
-   const rect=event.currentTarget.getBoundingClientRect();
-   const arrival=Math.round((viewFrom+(event.clientX-rect.left)/rect.width*viewLength)*1440)/1440;
-   chooseRange(h,r,arrival,arrival+(finish-begin));
- }
- const close=()=>{if(confirmDiscardChanges(i18n.language,form.current))onClose();};
- const invalidate=()=>{setDirty(true);setHouse('');setRoom('');setFeedback('');};
- return <Modal className={'hc-assignment-dialog hc-wizard-stage-'+step} title={t('Add booking','添加预约')} onClose={close}><form ref={form} className="hc-settings-form" onSubmit={e=>{e.preventDefault();if(step===1){if(detailsValid)setStep(2);return;}if(step===2){if(chosenRoom&&!problem)setStep(3);return;}if(!selected||!chosenHouse||!chosenRoom||problem||!service||coverage.code!=='ok')return;onApply({id:crypto.randomUUID(),name:pet,species:selected.species,house:chosenHouse.id,room:chosenRoom.id,start:begin,end:finish,status:'upcoming',units:Number(override||chosenRoom.costs?.[selected.species]),coverage:{service,days:dayCount}});}}>
- <ol className="hc-wizard-progress" aria-label={t('Scheduling steps','安排步骤')}>{[t('Stay details','托管详情'),t('Choose room','选择房间'),t('Review','确认')].map((label,index)=><li key={index} aria-current={step===index+1?'step':undefined} className={step>index+1?'complete':''}><span>{step>index+1?'✓':index+1}</span>{label}</li>)}</ol>
- <UnsavedChanges active={dirty}/><p className="hc-wizard-caption">{t('Local preview · Times shown in your browser’s time zone.','本地预览 · 时间按浏览器当地时区显示。')}</p>
- <section className="hc-wizard-step" hidden={step!==1} aria-label={t('Stay details','托管详情')}><div className="hc-step-intro"><h3>{t('Who’s staying, and when?','哪只宠物，何时托管？')}</h3><p>{t('Choose your guest and their planned arrival and pickup.','选择宠物及计划到店、接回时间。')}</p></div>
- <label>{t('Pet','宠物')}<select aria-label={t('Pet','宠物')} required value={pet} onChange={e=>{setPet(e.target.value);invalidate();}}><option value="">{t('Select a pet','选择宠物')}</option>{pets.map(p=><option key={p.name} value={p.name}>{p.name} · {t(p.species,{dog:'狗',cat:'猫',rabbit:'兔'}[p.species]||p.species)}</option>)}</select></label>
- <div className="hc-time-fields"><label>{t('Arrival','到店时间')}<input type="datetime-local" required value={start} onChange={e=>{setStart(e.target.value);invalidate();}}/></label><label>{t('Pickup','接回时间')}<input type="datetime-local" required value={end} onChange={e=>{setEnd(e.target.value);invalidate();}}/></label></div>
- <div className="hc-time-fields"><label>{t('Required days','所需天数')}<input type="number" required min="1" step="1" value={requiredDays} placeholder={t('Enter reviewed days','填写已核对天数')} onChange={e=>{setRequiredDays(e.target.value);setDirty(true);}}/></label></div><p className="hc-manual-days-note">{t('Enter the days reviewed by staff. Automatic day counting is awaiting your business rule.','请填写员工核对的天数，自动天数计算需先确定业务规则。')}</p>
- {end&&finish<=begin&&<p className="hc-range-feedback" role="alert">{t('Pickup must be after arrival.','接回时间必须晚于到店时间。')}</p>}</section>
- <section className="hc-wizard-step" hidden={step!==2} aria-label={t('Choose room','选择房间')}><div className="hc-step-stay"><PetProfileAvatar name={pet} className="hc-guest-avatar"/><div><strong>{pet}</strong><span>{valid?rangeLabel(begin,finish):''}</span></div><button type="button" className="hc-text-button" onClick={()=>setStep(1)}>{t('Edit','修改')}</button></div>
- <section className="hc-schedule-picker" aria-label={t('Room availability calendar','房间可用日历')}>
- <div className="hc-schedule-heading"><h3>{t('Choose a room on the calendar','在日历上选择房间')}</h3><div><button type="button" title={t('Previous week','上一周')} aria-label={t('Previous week','上一周')} onClick={()=>setWeek(week-1)}>‹</button><span>{days[0].toLocaleDateString(locale,{month:'short',day:'numeric'})} – {days[6].toLocaleDateString(locale,{month:'short',day:'numeric'})}</span><button type="button" title={t('Next week','下一周')} aria-label={t('Next week','下一周')} onClick={()=>setWeek(week+1)}>›</button></div></div>
- <p className="hc-setup-note">{t('Gray bands show unavailable time ranges. Enter arrival and pickup, then choose a room or tap a free starting time. The full stay must fit.','灰色条表示不可用时段。填写到店和接回时间后，选择房间或点击空白处选开始时间。整个托管时段都必须可用。')}</p>
- <div className="hc-schedule-scroll" tabIndex={0} aria-label={t('Scroll room availability calendar','滚动房间可用日历')}><div className="hc-range-calendar">
- <div className="hc-range-axis"><div>{t('House / room','房屋 / 房间')}</div><div className="hc-range-dates">{days.map(day=><div key={day.toISOString()} style={{left:`${position(offset(local(day)))}%`}}><small>{day.toLocaleDateString(locale,{weekday:'short'})}</small>{day.toLocaleDateString(locale,{month:'numeric',day:'numeric'})}</div>)}</div></div>
- {houses.map(h=><React.Fragment key={h.id}><div className="hc-range-house">{h.name}</div>{!h.rooms.length&&<p className="hc-room-empty">{t('No rooms yet','暂无房间')}</p>}{h.rooms.map(r=>{const unavailable=selected?unavailableRanges(stays,pet,selected.species,viewFrom,viewTo,h.id,r.id,Number(r.capacity),Number(override||r.costs?.[selected.species])):[];
- const problem=issue(h,r),picked=String(h.id)===house&&String(r.id)===room;
- const left=Math.max(0,position(begin)),right=Math.min(100,position(finish));
- return <div className="hc-range-room" key={r.id}><div className="hc-range-room-name"><strong>{r.name}</strong><button type="button" disabled={!!problem} title={problem?reasons[problem]:t('Choose this room for the entered times','选择此房间及已填写的时段')} aria-label={`${t('Choose','选择')} ${h.name} · ${r.name}`} onClick={()=>chooseRange(h,r)}>{picked&&!problem?t('Selected','已选择'):t('Choose room','选择房间')}</button></div>
- <div className={'hc-time-track'+(!selected?' pending':'')} aria-label={`${h.name} · ${r.name}`} onClick={event=>chooseTime(event,h,r)}>
- {selected&&unavailable.map((range,i)=><button key={i} type="button" disabled className="hc-time-unavailable" style={{left:`${position(range.start)}%`,width:`${position(range.end)-position(range.start)}%`}} title={`${rangeLabel(range.start,range.end)} · ${reasons[range.reason]}`} aria-label={`${h.name} · ${r.name} · ${rangeLabel(range.start,range.end)} · ${reasons[range.reason]}`}><span>{rangeReasons[range.reason]}</span></button>)}
- {valid&&!problem&&right>left&&<button type="button" className={'hc-time-request'+(picked?' picked':'')} style={{left:`${left}%`,width:`${right-left}%`}} aria-label={`${t('Choose','选择')} ${h.name} · ${r.name} · ${rangeLabel(begin,finish)}`} aria-pressed={picked} onClick={event=>{event.stopPropagation();chooseRange(h,r);}}>{picked?t('Selected','已选择'):t('Choose','选择')}</button>}
- {!selected&&<span className="hc-time-placeholder">{t('Select a pet to see availability','选择宠物以查看可用时段')}</span>}
- </div></div>;})}</React.Fragment>)}
- </div></div>
- <div className="hc-schedule-legend"><span><i/>{t('Available time','可用时段')}</span><span><i className="unavailable"/>{t('Unavailable time range','不可用时段')}</span></div>
- {feedback&&<p className="hc-range-feedback" role="alert">{feedback}</p>}
+  React.useEffect(() => setWeek(0), [start]);
+  const [dirty, setDirty] = React.useState(false);
+  const form = React.useRef<HTMLFormElement>(null);
+  const selected = pets.find((petProfile) => petProfile.name === pet);
+  const dayOffset = (dateValue: string) => sampleDayOffset(anchor, new Date(dateValue));
+  const begin = dayOffset(start);
+  const finish = dayOffset(end);
+  const valid = !!selected && Number.isFinite(begin) && Number.isFinite(finish) && finish > begin;
+  const roomIssue = (
+    candidateHouse: PlacementHouse,
+    candidateRoom: PlacementHouse['rooms'][number],
+  ) =>
+    !valid
+      ? 'dates'
+      : placementIssue(
+          stays,
+          pet,
+          selected!.species,
+          begin,
+          finish,
+          candidateHouse.id,
+          candidateRoom.id,
+          Number(candidateRoom.capacity),
+          Number(override || candidateRoom.costs?.[selected!.species]),
+        );
+  const reasons: Record<Exclude<PlacementIssue, null>, string> = {
+    dates: translate('Choose a pet and valid times first', '请先选择宠物和有效时间'),
+    duplicate: translate('Pet already has a stay at this time', '该宠物在此时段已有安排'),
+    species: translate('Another species is staying here', '此时段有其他种类的宠物'),
+    overdue: translate('Overdue pickup · availability needs review', '接回逾期 · 可用性需核实'),
+    boundary: translate('Back-to-back stay · turnover rule needed', '相邻时段 · 需确认周转规则'),
+    capacity: translate('Not enough capacity for the whole stay', '整个托管时段内容量不足'),
+    unconfigured: translate('Configure room capacity and pet usage', '请配置房间容量和宠物用量'),
+  };
+  const rangeReasons = {
+    ...reasons,
+    capacity: translate('At capacity', '容量已满'),
+    species: translate('Different pet type', '其他种类宠物'),
+    duplicate: translate('Pet already scheduled', '宠物已有安排'),
+    unconfigured: translate('Setup needed', '需要配置'),
+    overdue: translate('Pickup overdue', '接回逾期'),
+  };
+  const dayCount = Number(requiredDays);
+  const detailsValid = valid && !!service && Number.isSafeInteger(dayCount) && dayCount > 0;
+  const account = service ? balances[balanceKey(pet, service)] : undefined;
+  const coverage = service
+    ? validatePetCoverage(
+        account,
+        pet,
+        service,
+        dayCount,
+        start.slice(0, 10),
+        end.slice(0, 10),
+        balancePlans,
+      )
+    : { code: 'missing', available: 0, after: 0 };
+  const coverageMessages: Record<string, string> = {
+    ok: translate('Balance covers this stay', '余额可覆盖本次托管'),
+    missing: translate('Add boarding balance for this pet', '请增加此宠物的寄养余额'),
+    required: translate('Enter staff-reviewed required days', '请填写人工核对的所需天数'),
+    dates: translate('Check the stay dates', '请检查托管日期'),
+    coverage: translate(
+      'Stay is outside the reviewed coverage dates',
+      '托管日期不在已核对的覆盖日期内',
+    ),
+    insufficient: translate('Not enough days for this stay', '可用天数不足以覆盖本次托管'),
+  };
+  const chosenHouse = houses.find((candidateHouse) => String(candidateHouse.id) === house);
+  const chosenRoom = chosenHouse?.rooms.find((candidateRoom) => String(candidateRoom.id) === room);
+  const problem = chosenHouse && chosenRoom ? roomIssue(chosenHouse, chosenRoom) : 'dates';
+  const calendarStart = Number.isFinite(new Date(start).getTime())
+    ? new Date(start)
+    : new Date(anchor);
+  calendarStart.setHours(0, 0, 0, 0);
+  calendarStart.setDate(calendarStart.getDate() + week * 7);
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const day = new Date(calendarStart);
+    day.setDate(day.getDate() + i);
+    return day;
+  });
+  const locale = isChinese ? 'zh-CN' : 'en-US';
+  const calendarEnd = new Date(calendarStart);
+  calendarEnd.setDate(calendarEnd.getDate() + 7);
+  const viewFrom = dayOffset(localDateTimeValue(calendarStart));
+  const viewTo = dayOffset(localDateTimeValue(calendarEnd));
+  const viewLength = viewTo - viewFrom;
+  const position = (value: number) => ((value - viewFrom) / viewLength) * 100;
+  const timeFor = (value: number) => sampleDateAtOffset(anchor, value);
+  const rangeLabel = (a: number, b: number) =>
+    timeFor(a).toLocaleString(locale, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }) +
+    ' – ' +
+    timeFor(b).toLocaleString(locale, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  function chooseRange(
+    candidateHouse: PlacementHouse,
+    candidateRoom: PlacementHouse['rooms'][number],
+    arrival = begin,
+    pickup = finish,
+  ) {
+    if (!valid) {
+      setFeedback(reasons.dates);
+      return;
+    }
+    const reason = placementIssue(
+      stays,
+      pet,
+      selected!.species,
+      arrival,
+      pickup,
+      candidateHouse.id,
+      candidateRoom.id,
+      Number(candidateRoom.capacity),
+      Number(override || candidateRoom.costs?.[selected!.species]),
+    );
+    if (reason) {
+      setFeedback(reasons[reason]);
+      return;
+    }
+    setStart(localDateTimeValue(timeFor(arrival)));
+    setEnd(localDateTimeValue(timeFor(pickup)));
+    setHouse(String(candidateHouse.id));
+    setRoom(String(candidateRoom.id));
+    setDirty(true);
+    setFeedback('');
+  }
+  function chooseTime(
+    event: React.MouseEvent<HTMLDivElement>,
+    candidateHouse: PlacementHouse,
+    candidateRoom: PlacementHouse['rooms'][number],
+  ) {
+    if (!valid) {
+      setFeedback(reasons.dates);
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const arrival =
+      Math.round((viewFrom + ((event.clientX - rect.left) / rect.width) * viewLength) * 1440) /
+      1440;
+    chooseRange(candidateHouse, candidateRoom, arrival, arrival + (finish - begin));
+  }
+  const close = () => {
+    if (confirmDiscardChanges(i18n.language, form.current)) onClose();
+  };
+  const invalidate = () => {
+    setDirty(true);
+    setHouse('');
+    setRoom('');
+    setFeedback('');
+  };
+  return (
+    <Modal
+      className={'hc-assignment-dialog hc-wizard-stage-' + step}
+      title={translate('Add booking', '添加预约')}
+      onClose={close}
+    >
+      <form
+        ref={form}
+        className="hc-settings-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (step === 1) {
+            if (detailsValid) setStep(2);
+            return;
+          }
+          if (step === 2) {
+            if (chosenRoom && !problem) setStep(3);
+            return;
+          }
+          if (
+            !selected ||
+            !chosenHouse ||
+            !chosenRoom ||
+            problem ||
+            !service ||
+            coverage.code !== 'ok'
+          )
+            return;
+          onApply({
+            id: crypto.randomUUID(),
+            name: pet,
+            species: selected.species,
+            house: chosenHouse.id,
+            room: chosenRoom.id,
+            start: begin,
+            end: finish,
+            status: 'upcoming',
+            units: Number(override || chosenRoom.costs?.[selected.species]),
+            coverage: { service, days: dayCount },
+          });
+        }}
+      >
+        <ol className="hc-wizard-progress" aria-label={translate('Scheduling steps', '安排步骤')}>
+          {[
+            translate('Stay details', '托管详情'),
+            translate('Choose room', '选择房间'),
+            translate('Review', '确认'),
+          ].map((label, index) => (
+            <li
+              key={index}
+              aria-current={step === index + 1 ? 'step' : undefined}
+              className={step > index + 1 ? 'complete' : ''}
+            >
+              <span>{step > index + 1 ? '✓' : index + 1}</span>
+              {label}
+            </li>
+          ))}
+        </ol>
+        <UnsavedChanges active={dirty} />
+        <p className="hc-wizard-caption">
+          {translate(
+            'Local preview · Times shown in your browser’s time zone.',
+            '本地预览 · 时间按浏览器当地时区显示。',
+          )}
+        </p>
+        <section
+          className="hc-wizard-step"
+          hidden={step !== 1}
+          aria-label={translate('Stay details', '托管详情')}
+        >
+          <div className="hc-step-intro">
+            <h3>{translate('Who’s staying, and when?', '哪只宠物，何时托管？')}</h3>
+            <p>
+              {translate(
+                'Choose your guest and their planned arrival and pickup.',
+                '选择宠物及计划到店、接回时间。',
+              )}
+            </p>
+          </div>
+          <label>
+            {translate('Pet', '宠物')}
+            <select
+              aria-label={translate('Pet', '宠物')}
+              required
+              value={pet}
+              onChange={(event) => {
+                setPet(event.target.value);
+                invalidate();
+              }}
+            >
+              <option value="">{translate('Select a pet', '选择宠物')}</option>
+              {pets.map((petProfile) => (
+                <option key={petProfile.name} value={petProfile.name}>
+                  {petProfile.name} ·{' '}
+                  {translate(
+                    petProfile.species,
+                    { dog: '狗', cat: '猫', rabbit: '兔' }[petProfile.species] ||
+                      petProfile.species,
+                  )}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="hc-time-fields">
+            <label>
+              {translate('Arrival', '到店时间')}
+              <input
+                type="datetime-local"
+                required
+                value={start}
+                onChange={(event) => {
+                  setStart(event.target.value);
+                  invalidate();
+                }}
+              />
+            </label>
+            <label>
+              {translate('Pickup', '接回时间')}
+              <input
+                type="datetime-local"
+                required
+                value={end}
+                onChange={(event) => {
+                  setEnd(event.target.value);
+                  invalidate();
+                }}
+              />
+            </label>
+          </div>
+          <div className="hc-time-fields">
+            <label>
+              {translate('Required days', '所需天数')}
+              <input
+                type="number"
+                required
+                min="1"
+                step="1"
+                value={requiredDays}
+                placeholder={translate('Enter reviewed days', '填写已核对天数')}
+                onChange={(event) => {
+                  setRequiredDays(event.target.value);
+                  setDirty(true);
+                }}
+              />
+            </label>
+          </div>
+          <p className="hc-manual-days-note">
+            {translate(
+              'Enter the days reviewed by staff. Automatic day counting is awaiting your business rule.',
+              '请填写员工核对的天数，自动天数计算需先确定业务规则。',
+            )}
+          </p>
+          {end && finish <= begin && (
+            <p className="hc-range-feedback" role="alert">
+              {translate('Pickup must be after arrival.', '接回时间必须晚于到店时间。')}
+            </p>
+          )}
+        </section>
+        <section
+          className="hc-wizard-step"
+          hidden={step !== 2}
+          aria-label={translate('Choose room', '选择房间')}
+        >
+          <div className="hc-step-stay">
+            <PetProfileAvatar name={pet} className="hc-guest-avatar" />
+            <div>
+              <strong>{pet}</strong>
+              <span>{valid ? rangeLabel(begin, finish) : ''}</span>
+            </div>
+            <button type="button" className="hc-text-button" onClick={() => setStep(1)}>
+              {translate('Edit', '修改')}
+            </button>
+          </div>
+          <section
+            className="hc-schedule-picker"
+            aria-label={translate('Room availability calendar', '房间可用日历')}
+          >
+            <div className="hc-schedule-heading">
+              <h3>{translate('Choose a room on the calendar', '在日历上选择房间')}</h3>
+              <div>
+                <button
+                  type="button"
+                  title={translate('Previous week', '上一周')}
+                  aria-label={translate('Previous week', '上一周')}
+                  onClick={() => setWeek(week - 1)}
+                >
+                  ‹
+                </button>
+                <span>
+                  {days[0].toLocaleDateString(locale, { month: 'short', day: 'numeric' })} –{' '}
+                  {days[6].toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                </span>
+                <button
+                  type="button"
+                  title={translate('Next week', '下一周')}
+                  aria-label={translate('Next week', '下一周')}
+                  onClick={() => setWeek(week + 1)}
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+            <p className="hc-setup-note">
+              {translate(
+                'Gray bands show unavailable time ranges. Enter arrival and pickup, then choose a room or tap a free starting time. The full stay must fit.',
+                '灰色条表示不可用时段。填写到店和接回时间后，选择房间或点击空白处选开始时间。整个托管时段都必须可用。',
+              )}
+            </p>
+            <div
+              className="hc-schedule-scroll"
+              tabIndex={0}
+              aria-label={translate('Scroll room availability calendar', '滚动房间可用日历')}
+            >
+              <div className="hc-range-calendar">
+                <div className="hc-range-axis">
+                  <div>{translate('House / room', '房屋 / 房间')}</div>
+                  <div className="hc-range-dates">
+                    {days.map((day) => (
+                      <div
+                        key={day.toISOString()}
+                        style={{ left: `${position(dayOffset(localDateTimeValue(day)))}%` }}
+                      >
+                        <small>{day.toLocaleDateString(locale, { weekday: 'short' })}</small>
+                        {day.toLocaleDateString(locale, { month: 'numeric', day: 'numeric' })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {houses.map((candidateHouse) => (
+                  <React.Fragment key={candidateHouse.id}>
+                    <div className="hc-range-house">{candidateHouse.name}</div>
+                    {!candidateHouse.rooms.length && (
+                      <p className="hc-room-empty">{translate('No rooms yet', '暂无房间')}</p>
+                    )}
+                    {candidateHouse.rooms.map((candidateRoom) => {
+                      const unavailable = selected
+                        ? unavailableRanges(
+                            stays,
+                            pet,
+                            selected.species,
+                            viewFrom,
+                            viewTo,
+                            candidateHouse.id,
+                            candidateRoom.id,
+                            Number(candidateRoom.capacity),
+                            Number(override || candidateRoom.costs?.[selected.species]),
+                          )
+                        : [];
+                      const problem = roomIssue(candidateHouse, candidateRoom);
+                      const picked =
+                        String(candidateHouse.id) === house && String(candidateRoom.id) === room;
+                      const left = Math.max(0, position(begin));
+                      const right = Math.min(100, position(finish));
+                      return (
+                        <div className="hc-range-room" key={candidateRoom.id}>
+                          <div className="hc-range-room-name">
+                            <strong>{candidateRoom.name}</strong>
+                            <button
+                              type="button"
+                              disabled={!!problem}
+                              title={
+                                problem
+                                  ? reasons[problem]
+                                  : translate(
+                                      'Choose this room for the entered times',
+                                      '选择此房间及已填写的时段',
+                                    )
+                              }
+                              aria-label={`${translate('Choose', '选择')} ${candidateHouse.name} · ${candidateRoom.name}`}
+                              onClick={() => chooseRange(candidateHouse, candidateRoom)}
+                            >
+                              {picked && !problem
+                                ? translate('Selected', '已选择')
+                                : translate('Choose room', '选择房间')}
+                            </button>
+                          </div>
+                          <div
+                            className={'hc-time-track' + (!selected ? ' pending' : '')}
+                            aria-label={`${candidateHouse.name} · ${candidateRoom.name}`}
+                            onClick={(event) => chooseTime(event, candidateHouse, candidateRoom)}
+                          >
+                            {selected &&
+                              unavailable.map((range, i) => (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  disabled
+                                  className="hc-time-unavailable"
+                                  style={{
+                                    left: `${position(range.start)}%`,
+                                    width: `${position(range.end) - position(range.start)}%`,
+                                  }}
+                                  title={`${rangeLabel(range.start, range.end)} · ${reasons[range.reason]}`}
+                                  aria-label={`${candidateHouse.name} · ${candidateRoom.name} · ${rangeLabel(range.start, range.end)} · ${reasons[range.reason]}`}
+                                >
+                                  <span>{rangeReasons[range.reason]}</span>
+                                </button>
+                              ))}
+                            {valid && !problem && right > left && (
+                              <button
+                                type="button"
+                                className={'hc-time-request' + (picked ? ' picked' : '')}
+                                style={{ left: `${left}%`, width: `${right - left}%` }}
+                                aria-label={`${translate('Choose', '选择')} ${candidateHouse.name} · ${candidateRoom.name} · ${rangeLabel(begin, finish)}`}
+                                aria-pressed={picked}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  chooseRange(candidateHouse, candidateRoom);
+                                }}
+                              >
+                                {picked
+                                  ? translate('Selected', '已选择')
+                                  : translate('Choose', '选择')}
+                              </button>
+                            )}
+                            {!selected && (
+                              <span className="hc-time-placeholder">
+                                {translate(
+                                  'Select a pet to see availability',
+                                  '选择宠物以查看可用时段',
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+            <div className="hc-schedule-legend">
+              <span>
+                <i />
+                {translate('Available time', '可用时段')}
+              </span>
+              <span>
+                <i className="unavailable" />
+                {translate('Unavailable time range', '不可用时段')}
+              </span>
+            </div>
+            {feedback && (
+              <p className="hc-range-feedback" role="alert">
+                {feedback}
+              </p>
+            )}
 
- {chosenHouse&&chosenRoom&&!problem&&<p className="hc-schedule-selection" role="status">{chosenHouse.name} · {chosenRoom.name} · {new Date(start).toLocaleString(locale)} → {new Date(end).toLocaleString(locale)}</p>}
- </section>
- <details className="hc-placement-options"><summary>{t('Capacity override & manual selection','容量覆盖值与手动选择')}</summary>
- <label>{t('Pet capacity override (optional)','宠物容量覆盖值（选填）')}<input type="number" min="0.01" step="0.01" value={override} placeholder={t('Use room pet-type rule','使用房间宠物种类规则')} onChange={e=>{setOverride(e.target.value);invalidate();}}/></label>
- <label>{t('House','房屋')}<select aria-label={t('House','房屋')} value={house} onChange={e=>{setHouse(e.target.value);setRoom('');setDirty(true);}}><option value="">{t('Select an available house','选择可用房屋')}</option>{houses.map(h=>{const available=valid&&h.rooms.some(r=>!issue(h,r));return <option key={h.id} value={h.id} disabled={!available}>{h.name}{!available?' · '+t('No suitable rooms','无合适房间'):''}</option>;})}</select></label>
- <label>{t('Room','房间')}<select aria-label={t('Room','房间')} value={room} onChange={e=>{setRoom(e.target.value);setDirty(true);}}><option value="">{t('Select an available room','选择可用房间')}</option>{chosenHouse?.rooms.map(r=>{const reason=issue(chosenHouse,r);return <option key={r.id} value={r.id} disabled={!!reason}>{r.name}{reason?' · '+reasons[reason]:''}</option>;})}</select></label>
- </details>
- {valid&&chosenRoom&&problem&&<p className="hc-setup-note" role="alert">{reasons[problem]}</p>}
-
- </section>
- <section className="hc-wizard-step" hidden={step!==3} aria-label={t('Review stay','确认托管')}><div className="hc-step-intro"><h3>{t('Everything ready for their stay?','托管安排确认好了吗？')}</h3><p>{t('Review the details before adding this stay to the preview calendar.','添加到预览日历前，请核对以下详情。')}</p></div><div className="hc-review-card"><div className="hc-review-guest"><PetProfileAvatar name={pet} className="hc-guest-avatar"/><div><strong>{pet}</strong><small>{selected?t(selected.species,{dog:'狗',cat:'猫',rabbit:'兔'}[selected.species]||selected.species):''}</small></div></div><dl><div><dt>{t('Arrival','到店时间')}</dt><dd>{valid?new Date(start).toLocaleString(locale):'—'}</dd></div><div><dt>{t('Pickup','接回时间')}</dt><dd>{valid?new Date(end).toLocaleString(locale):'—'}</dd></div><div><dt>{t('House & room','房屋与房间')}</dt><dd>{chosenHouse?.name} · {chosenRoom?.name}</dd></div></dl></div><div className={'hc-coverage-card '+(coverage.code==='ok'?'covered':'needs-review')} aria-live="polite"><div><span>{coverage.code==='ok'?'✓':'!'}</span><h4>{coverageMessages[coverage.code]}</h4></div><dl><div><dt>{t('Available to plan','可计划天数')}</dt><dd>{account?coverage.available:'—'}</dd></div><div><dt>{t('This stay','本次托管')}</dt><dd>{dayCount} {t('days','天')}</dd></div><div><dt>{t('After planning','计划后剩余')}</dt><dd>{account?coverage.after:'—'}</dd></div></dl><button className="hc-text-button" type="button" onClick={()=>onManageBalance(pet,service as BalanceService)}>{account?t('Manage pet balance','管理宠物余额'):t('Add balance','增加余额')}</button><p>{t('Planning validation only. No days are deducted or reserved.','仅进行规划验证，不扣减或预留天数。')}</p></div><p className="hc-review-note">{t('Preview only. This does not create a paid booking or record a check-in.','仅供预览，不创建付费预约或记录入住。')}</p></section>
- <div className="hc-wizard-footer"><div className="hc-wizard-secondary">{step>1&&<button className="hc-manage" type="button" onClick={()=>setStep(step-1)}>← {t('Back','返回')}</button>}<button className="hc-manage" type="button" onClick={close}>{t('Cancel','取消')}</button></div><span>{t('Step','第')} {step} {t('of 3','步，共 3 步')}</span><button className="hc-apply" disabled={step===1?!detailsValid:step===2?!chosenRoom||!!problem:!chosenRoom||!!problem||coverage.code!=='ok'}>{step===1?t('Choose a room','选择房间'):step===2?t('Review stay','确认托管'):t('Add to preview','添加到预览')} <span aria-hidden="true">{step===3?'✓':'→'}</span></button></div>
-
- </form></Modal>;
+            {chosenHouse && chosenRoom && !problem && (
+              <p className="hc-schedule-selection" role="status">
+                {chosenHouse.name} · {chosenRoom.name} · {new Date(start).toLocaleString(locale)} →{' '}
+                {new Date(end).toLocaleString(locale)}
+              </p>
+            )}
+          </section>
+          <details className="hc-placement-options">
+            <summary>
+              {translate('Capacity override & manual selection', '容量覆盖值与手动选择')}
+            </summary>
+            <label>
+              {translate('Pet capacity override (optional)', '宠物容量覆盖值（选填）')}
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                value={override}
+                placeholder={translate('Use room pet-type rule', '使用房间宠物种类规则')}
+                onChange={(event) => {
+                  setOverride(event.target.value);
+                  invalidate();
+                }}
+              />
+            </label>
+            <label>
+              {translate('House', '房屋')}
+              <select
+                aria-label={translate('House', '房屋')}
+                value={house}
+                onChange={(event) => {
+                  setHouse(event.target.value);
+                  setRoom('');
+                  setDirty(true);
+                }}
+              >
+                <option value="">{translate('Select an available house', '选择可用房屋')}</option>
+                {houses.map((candidateHouse) => {
+                  const available =
+                    valid &&
+                    candidateHouse.rooms.some(
+                      (candidateRoom) => !roomIssue(candidateHouse, candidateRoom),
+                    );
+                  return (
+                    <option key={candidateHouse.id} value={candidateHouse.id} disabled={!available}>
+                      {candidateHouse.name}
+                      {!available ? ' · ' + translate('No suitable rooms', '无合适房间') : ''}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+            <label>
+              {translate('Room', '房间')}
+              <select
+                aria-label={translate('Room', '房间')}
+                value={room}
+                onChange={(event) => {
+                  setRoom(event.target.value);
+                  setDirty(true);
+                }}
+              >
+                <option value="">{translate('Select an available room', '选择可用房间')}</option>
+                {chosenHouse?.rooms.map((candidateRoom) => {
+                  const reason = roomIssue(chosenHouse, candidateRoom);
+                  return (
+                    <option key={candidateRoom.id} value={candidateRoom.id} disabled={!!reason}>
+                      {candidateRoom.name}
+                      {reason ? ' · ' + reasons[reason] : ''}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+          </details>
+          {valid && chosenRoom && problem && (
+            <p className="hc-setup-note" role="alert">
+              {reasons[problem]}
+            </p>
+          )}
+        </section>
+        <section
+          className="hc-wizard-step"
+          hidden={step !== 3}
+          aria-label={translate('Review stay', '确认托管')}
+        >
+          <div className="hc-step-intro">
+            <h3>{translate('Everything ready for their stay?', '托管安排确认好了吗？')}</h3>
+            <p>
+              {translate(
+                'Review the details before adding this stay to the preview calendar.',
+                '添加到预览日历前，请核对以下详情。',
+              )}
+            </p>
+          </div>
+          <div className="hc-review-card">
+            <div className="hc-review-guest">
+              <PetProfileAvatar name={pet} className="hc-guest-avatar" />
+              <div>
+                <strong>{pet}</strong>
+                <small>
+                  {selected
+                    ? translate(
+                        selected.species,
+                        { dog: '狗', cat: '猫', rabbit: '兔' }[selected.species] ||
+                          selected.species,
+                      )
+                    : ''}
+                </small>
+              </div>
+            </div>
+            <dl>
+              <div>
+                <dt>{translate('Arrival', '到店时间')}</dt>
+                <dd>{valid ? new Date(start).toLocaleString(locale) : '—'}</dd>
+              </div>
+              <div>
+                <dt>{translate('Pickup', '接回时间')}</dt>
+                <dd>{valid ? new Date(end).toLocaleString(locale) : '—'}</dd>
+              </div>
+              <div>
+                <dt>{translate('House & room', '房屋与房间')}</dt>
+                <dd>
+                  {chosenHouse?.name} · {chosenRoom?.name}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div
+            className={'hc-coverage-card ' + (coverage.code === 'ok' ? 'covered' : 'needs-review')}
+            aria-live="polite"
+          >
+            <div>
+              <span>{coverage.code === 'ok' ? '✓' : '!'}</span>
+              <h4>{coverageMessages[coverage.code]}</h4>
+            </div>
+            <dl>
+              <div>
+                <dt>{translate('Available to plan', '可计划天数')}</dt>
+                <dd>{account ? coverage.available : '—'}</dd>
+              </div>
+              <div>
+                <dt>{translate('This stay', '本次托管')}</dt>
+                <dd>
+                  {dayCount} {translate('days', '天')}
+                </dd>
+              </div>
+              <div>
+                <dt>{translate('After planning', '计划后剩余')}</dt>
+                <dd>{account ? coverage.after : '—'}</dd>
+              </div>
+            </dl>
+            <button
+              className="hc-text-button"
+              type="button"
+              onClick={() => onManageBalance(pet, service as BalanceService)}
+            >
+              {account
+                ? translate('Manage pet balance', '管理宠物余额')
+                : translate('Add balance', '增加余额')}
+            </button>
+            <p>
+              {translate(
+                'Planning validation only. No days are deducted or reserved.',
+                '仅进行规划验证，不扣减或预留天数。',
+              )}
+            </p>
+          </div>
+          <p className="hc-review-note">
+            {translate(
+              'Preview only. This does not create a paid booking or record a check-in.',
+              '仅供预览，不创建付费预约或记录入住。',
+            )}
+          </p>
+        </section>
+        <div className="hc-wizard-footer">
+          <div className="hc-wizard-secondary">
+            {step > 1 && (
+              <button className="hc-manage" type="button" onClick={() => setStep(step - 1)}>
+                ← {translate('Back', '返回')}
+              </button>
+            )}
+            <button className="hc-manage" type="button" onClick={close}>
+              {translate('Cancel', '取消')}
+            </button>
+          </div>
+          <span>
+            {translate('Step', '第')} {step} {translate('of 3', '步，共 3 步')}
+          </span>
+          <button
+            className="hc-apply"
+            disabled={
+              step === 1
+                ? !detailsValid
+                : step === 2
+                  ? !chosenRoom || !!problem
+                  : !chosenRoom || !!problem || coverage.code !== 'ok'
+            }
+          >
+            {step === 1
+              ? translate('Choose a room', '选择房间')
+              : step === 2
+                ? translate('Review stay', '确认托管')
+                : translate('Add to preview', '添加到预览')}{' '}
+            <span aria-hidden="true">{step === 3 ? '✓' : '→'}</span>
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
 }

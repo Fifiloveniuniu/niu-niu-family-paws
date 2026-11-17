@@ -1,3 +1,5 @@
+import { englishMessages, chineseMessages } from './marketing-messages';
+import HomeIllustration from './home-illustration';
 import useRoute from './use-route';
 import SiteAccountLink from './site-account-link';
 import React from 'react';
@@ -7,40 +9,258 @@ import './style.css';
 import LanguageSelector from './language-selector';
 const Portal = React.lazy(() => import('./portal'));
 
-const en = {
-  home:'Home', skip:'Skip to content', services:'Services', approach:'About us', questions:'FAQs', contact:'Contact us', signIn:'Sign in',
-  eyebrow:'NIU NIU FAMILY PAWS SITTING LLC', title:'Little paws.\nA whole lot of love.', intro:'Planning care for your pet? Learn about daycare and overnight stays at Niu Niu Family Paws.', explore:'Explore our services', note:'Part of your family. Close to our hearts.',
-  servicesLabel:'TIME TOGETHER', servicesTitle:'For the days you’re away.', servicesIntro:'Start with the kind of stay you need. Confirm availability, care arrangements, and pricing before making plans.',
-  day:'Daycare', dayTag:'FOR THEIR DAY', dayDescription:'Need care during the day? Check available dates and discuss your pet’s routine and care needs before booking.', night:'Boarding', nightTag:'FOR THEIR STAY', nightDescription:'Heading away overnight? Check availability and talk through your pet’s routine before their stay.', price:'Prices and package details will be added once confirmed.',
-  aboutLabel:'GETTING TO KNOW YOUR PET', aboutTitle:'A little planning.\nA more comfortable stay.', aboutBody:'Tell us about your pet’s routine, the dates you need, and what helps them feel at home. Confirm the care arrangements before their stay.',
-  step1:'Tell us about your pet', step1Body:'Prepare their name, age, daily routine, and any care requirements.', step2:'Plan the stay', step2Body:'Have your preferred dates and daycare or overnight needs ready.', step3:'Confirm the details', step3Body:'Confirm availability, pricing, and handoff arrangements before a visit.',
-  faqLabel:'BEFORE THEIR FIRST VISIT', faqTitle:'Questions before a stay?', q1:'How do I arrange a stay?', a1:'Have your pet’s details and preferred dates ready. Contact details will be posted here once confirmed. We aren’t accepting bookings through this website yet.', q2:'Where can I find prices and packages?', a2:'Prices and package terms haven’t been confirmed yet. We’ll add them here when they’re ready.', q3:'What should I share about my pet?', a3:'Tell us about their daily routine, feeding instructions, medication, and any special care needs. Please confirm specific care arrangements before booking.',
-  contactLabel:'LET’S PLAN THEIR NEXT STAY', contactTitle:'Good days start\nwith a hello.', contactBody:'Public contact details and service location will be added here once confirmed.', pending:'Contact details coming soon', footer:'Niu Niu Family Paws Sitting LLC', footerNote:'Made for the ones with paws.', illustration:'An illustration of a dog relaxing beside a plant',
-};
-const zh: typeof en = {
-  home:'首页', skip:'跳至正文', services:'服务项目', approach:'关于我们', questions:'常见问题', contact:'联系我们', signIn:'登录',
-  eyebrow:'NIU NIU FAMILY PAWS SITTING LLC', title:'小小的爪印，\n满满的关爱。', intro:'准备为毛孩子安排托管？了解 Niu Niu Family Paws 的日间托管和寄养服务。', explore:'了解服务', note:'是您的家人，也是我们的牵挂。',
-  servicesLabel:'日间托管与寄养', servicesTitle:'您安心出门，\n它也有好安排。', servicesIntro:'先了解服务，再确认日期、照护安排和费用。',
-  day:'日间托管', dayTag:'白天的陪伴', dayDescription:'白天需要有人照顾宠物？请先确认可安排的日期，并沟通它的日常习惯和照护需求。', night:'过夜寄养', nightTag:'过夜的安排', nightDescription:'需要出门过夜？请提前确认寄养日期，并沟通宠物的作息和照护安排。', price:'价格和套餐详情确认后会在这里公布。',
-  aboutLabel:'了解您的毛孩子', aboutTitle:'多了解一点，\n住得更安心。', aboutBody:'每只宠物都有自己的习惯。请告诉我们托管日期、日常作息，以及能让它放松的小细节，并在托管前确认好照护安排。',
-  step1:'介绍您的宠物', step1Body:'准备好宠物的名字、年龄、日常习惯和照护需求。', step2:'计划托管时间', step2Body:'想好托管日期，以及需要白天照护还是过夜寄养。', step3:'确认具体安排', step3Body:'托管前，请确认日期、费用和交接安排。',
-  faqLabel:'托管前先了解', faqTitle:'常见问题', q1:'如何安排托管？', a1:'请先准备宠物资料和希望托管的日期。联系方式确认后会在这里公布，目前还不能通过网站预约。', q2:'在哪里查看价格与套餐？', a2:'价格和套餐规则还在确认中，确定后会在这里公布。', q3:'需要提供哪些宠物资料？', a3:'请告诉我们宠物的日常作息、喂食习惯、用药情况和特殊照护需求，并在预约前确认具体安排。',
-  contactLabel:'联系我们', contactTitle:'下次托管，\n从这里开始。', contactBody:'联系方式和服务地点确认后，会在这里公布。', pending:'联系方式待公布', footer:'Niu Niu Family Paws Sitting LLC', footerNote:'用心陪伴每一个小爪印。', illustration:'一只小狗在植物旁休息的插画',
-};
-void i18n.use(initReactI18next).init({resources:{en:{translation:en},zh:{translation:zh}},lng:'en',fallbackLng:'en',interpolation:{escapeValue:false}});
+void i18n.use(initReactI18next).init({
+  resources: { en: { translation: englishMessages }, zh: { translation: chineseMessages } },
+  lng: 'en',
+  fallbackLng: 'en',
+  interpolation: { escapeValue: false },
+});
 
-function Dog(){const {t}=useTranslation();return <svg viewBox="0 0 600 540" role="img" aria-label={t('illustration')}><circle cx="302" cy="268" r="224" fill="#e9d9bb"/><path d="M58 443 Q300 393 551 443" fill="none" stroke="#baaa87" strokeWidth="2"/><path d="M446 424v-157m0 81q-75-20-56-72 58 9 56 72m0-28q68-34 61-85-58 13-61 85m0-55q-47-26-31-64 45 14 31 64" fill="#63836a" stroke="#4c6e58" strokeWidth="6"/><path d="M408 406h74l-12 49h-49z" fill="#bd7455"/><ellipse cx="272" cy="433" rx="138" ry="18" fill="#cebd9d"/><path d="M201 365q-73-68-75-5-4 30 56 39" fill="none" stroke="#b66c43" strokeWidth="26" strokeLinecap="round"/><path d="M181 415q-27-141 88-151 96-4 100 149" fill="#c98656"/><path d="M240 310q-45 84-25 114h110q8-72-38-114" fill="#f6ead4"/><path d="M188 263q-64-81-44-105 33-26 94 21m78 0q69-45 91-16 18 31-50 105" fill="#875338"/><path d="M178 228q-3-84 92-88 98-5 103 91 13 90-99 94-108-1-96-97" fill="#d49764"/><path d="M234 150q36-13 64 0l-8 73 29 32q-10 48-47 48-38 0-49-46l27-35z" fill="#fcf0d9"/><ellipse cx="230" cy="225" rx="7" ry="9" fill="#382f29"/><ellipse cx="316" cy="225" rx="7" ry="9" fill="#382f29"/><path d="M257 255q16-9 31 0-4 18-15 18-12-2-16-18" fill="#382f29"/><path d="M273 272v10m-18 0q18 18 36 0" fill="none" stroke="#382f29" strokeWidth="4" strokeLinecap="round"/><path d="M194 317q75 31 154-5" fill="none" stroke="#31594c" strokeWidth="14"/><circle cx="274" cy="334" r="12" fill="#ddb754"/><rect x="177" y="405" width="70" height="25" rx="12" fill="#d49764"/><rect x="305" y="405" width="69" height="25" rx="12" fill="#d49764"/><path d="M99 125l5-18m-24 18-11-9m45 28 16-6" stroke="#b87855" strokeWidth="5" strokeLinecap="round"/></svg>}
-export function App({initialPath='/'}:{initialPath?:string}={}){const {t}=useTranslation();const chinese=i18n.language==='zh',route=useRoute(i18n.language,initialPath);const page=route.kind;const appVisible=route.path.startsWith('/app/')&&page!=='not-found';const [visitedApp,setVisitedApp]=React.useState(appVisible);React.useEffect(()=>{if(appVisible)setVisitedApp(true);},[appVisible]);const SectionHeading=page==='home'?'h2':'h1';
-React.useEffect(()=>{try{if(localStorage.getItem('language')==='zh')void i18n.changeLanguage('zh');}catch{/* optional */}},[]);
-React.useEffect(()=>{document.documentElement.lang=chinese?'zh-Hans':'en';const names:Record<string,string>={home:chinese?'首页':'Home',services:t('services'),about:t('approach'),faqs:t('questions'),policy:chinese?'取消政策':'Cancellation policy',calendar:chinese?'日历':'Calendar',customers:chinese?'客户':'Customers',balances:chinese?'寄养余额':'Balances',settings:chinese?'设置':'Settings',personal:chinese?'我的资料':'My profile',login:chinese?'登录':'Sign in','not-found':chinese?'未找到页面':'Page not found'};document.title=names[page]+' · Niu Niu Family Paws';if(location.hash&&!location.hash.startsWith('#/'))requestAnimationFrame(()=>document.getElementById(location.hash.slice(1))?.scrollIntoView());else window.scrollTo({top:0,behavior:'instant'});},[page,route.path,chinese]);
-function setLanguage(lang:'en'|'zh'){void i18n.changeLanguage(lang);try{localStorage.setItem('language',lang);}catch{/* optional */}}
-const portal=(appVisible||visitedApp)?<div hidden={!appVisible} className="app-route-root"><React.Suspense fallback={<main className="portal" role="status">{chinese?'正在加载…':'Loading…'}</main>}><Portal active={appVisible} onLanguageChange={setLanguage}/></React.Suspense></div>:null;
-return <>{portal}{!appVisible&&<><a className="skip" href="#main">{t('skip')}</a><header><a className="brand" href="/home/" aria-label="Niu Niu Family Paws"><span className="paw" aria-hidden="true">✿</span><span>NIU NIU<span className="brand-sub">FAMILY PAWS</span></span></a><nav aria-label={chinese?'主导航':'Main navigation'}><a href="/home/" aria-current={page==='home'?'page':undefined}>{t('home')}</a><a href="/services/" aria-current={page==='services'?'page':undefined}>{t('services')}</a><a href="/about/" aria-current={page==='about'?'page':undefined}>{t('approach')}</a><a href="/faqs/" aria-current={page==='faqs'?'page':undefined}>{t('questions')}</a></nav><div className="header-actions"><SiteAccountLink/><LanguageSelector onChange={setLanguage}/></div></header>
-<main id="main" className={page!=='home'?'public-page':undefined}>{page==='home'&&<section className="hero"><div><p className="eyebrow">{t('eyebrow')}</p><h1>{t('title')}</h1><p className="intro">{t('intro')}</p><a className="button" href="/services/">{t('explore')} <span aria-hidden="true">↗</span></a><p className="handwritten">{t('note')}</p></div><div className="hero-art"><Dog/><span className="art-label">NIU NIU · FAMILY PAWS</span></div></section>}
-{(page==='home'||page==='services')&&<section id="services" className="services"><div className="section-heading"><p className="eyebrow">{t('servicesLabel')}</p><SectionHeading>{page==='home'?t('servicesTitle'):t('services')}</SectionHeading><p>{t('servicesIntro')}</p></div><div className="cards">{['day','night'].map((key,index)=><article className={'service service-'+index} key={key}><div className="service-top"><span className="service-number">0{index+1}</span><span aria-hidden="true">{index===0?'☀':'☾'}</span></div><p className="eyebrow">{t(key+'Tag')}</p><h3>{t(key)}</h3><p>{t(key+'Description')}</p><p className="price">{t('price')}</p></article>)}</div></section>}
-{(page==='home'||page==='about')&&<section id="about" className="about"><div><p className="eyebrow">{t('aboutLabel')}</p><SectionHeading>{page==='home'?t('aboutTitle'):t('approach')}</SectionHeading><p>{t('aboutBody')}</p></div><ol>{[1,2,3].map(n=><li key={n}><span>0{n}</span><div><h3>{t('step'+n)}</h3><p>{t('step'+n+'Body')}</p></div></li>)}</ol></section>}
-{(page==='home'||page==='faqs')&&<section id="faq" className="faq"><div><p className="eyebrow">{t('faqLabel')}</p><SectionHeading>{page==='home'?t('faqTitle'):t('questions')}</SectionHeading></div><div>{[1,2,3].map(n=><details key={n}><summary>{t('q'+n)}</summary><p>{t('a'+n)}</p></details>)}</div></section>}
-{page==='policy'&&<section className="public-policy"><p className="eyebrow">{chinese?'托管前先了解':'BEFORE A STAY'}</p><h1>{chinese?'取消政策':'Cancellation policy'}</h1><p>{chinese?'以下是已确认的寄养取消条款。':'These are the confirmed boarding cancellation terms.'}</p><div className="public-policy-terms"><article><h2>{chinese?'提前 14 天':'14 days ahead'}</h2><p>{chinese?'取消可获得全额返还。':'Cancellation receives a full refund.'}</p></article><article><h2>{chinese?'提前 7 天':'7 days ahead'}</h2><p>{chinese?'取消可获得一半返还。':'Cancellation receives a half refund.'}</p></article></div><p className="public-policy-pending">{chinese?'具体截止时间、少于 7 天或未到店的处理方式，以及返还形式等细节尚未公布。预约前请先确认完整条款，目前网站尚未开放实际付费预约。':'Exact deadlines, shorter-notice and no-show terms, and the form of refund have not yet been published. Confirm the complete terms before booking; paid bookings are not available through this website yet.'}</p><a href="/services/" className="button">{t('services')}</a></section>}
-{page==='not-found'&&<section className="public-policy"><h1>{chinese?'未找到页面':'Page not found'}</h1><p>{chinese?'请检查链接或返回首页。':'Check the link or return to the home page.'}</p><a className="button" href="/home/">{chinese?'返回首页':'Back to home'}</a></section>}
-{page==='home'&&<section id="contact" className="contact"><p className="eyebrow">{t('contactLabel')}</p><h2>{t('contactTitle')}</h2><p>{t('contactBody')}</p><span className="pending">{t('pending')}</span></section>}</main><footer><span>{t('footer')}</span><span>{t('footerNote')}</span><a href="/cancellation-policy/">{chinese?'取消政策':'Cancellation policy'}</a><a href="/home/#contact">{t('contact')} ↗</a></footer></>}</>}
-
+export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
+  const { t } = useTranslation();
+  const chinese = i18n.language === 'zh';
+  const route = useRoute(i18n.language, initialPath);
+  const page = route.kind;
+  const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
+  const [visitedApp, setVisitedApp] = React.useState(appVisible);
+  React.useEffect(() => {
+    if (appVisible) setVisitedApp(true);
+  }, [appVisible]);
+  const SectionHeading = page === 'home' ? 'h2' : 'h1';
+  React.useEffect(() => {
+    try {
+      if (localStorage.getItem('language') === 'zh') void i18n.changeLanguage('zh');
+    } catch {
+      /* optional */
+    }
+  }, []);
+  React.useEffect(() => {
+    document.documentElement.lang = chinese ? 'zh-Hans' : 'en';
+    const names: Record<string, string> = {
+      home: chinese ? '首页' : 'Home',
+      services: t('services'),
+      about: t('approach'),
+      faqs: t('questions'),
+      policy: chinese ? '取消政策' : 'Cancellation policy',
+      calendar: chinese ? '日历' : 'Calendar',
+      customers: chinese ? '客户' : 'Customers',
+      balances: chinese ? '寄养余额' : 'Balances',
+      settings: chinese ? '设置' : 'Settings',
+      personal: chinese ? '我的资料' : 'My profile',
+      login: chinese ? '登录' : 'Sign in',
+      'not-found': chinese ? '未找到页面' : 'Page not found',
+    };
+    document.title = names[page] + ' · Niu Niu Family Paws';
+    if (location.hash && !location.hash.startsWith('#/'))
+      requestAnimationFrame(() =>
+        document.getElementById(location.hash.slice(1))?.scrollIntoView(),
+      );
+    else window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [page, route.path, chinese]);
+  function setLanguage(lang: 'en' | 'zh') {
+    void i18n.changeLanguage(lang);
+    try {
+      localStorage.setItem('language', lang);
+    } catch {
+      /* optional */
+    }
+  }
+  const portal =
+    appVisible || visitedApp ? (
+      <div hidden={!appVisible} className="app-route-root">
+        <React.Suspense
+          fallback={
+            <main className="portal" role="status">
+              {chinese ? '正在加载…' : 'Loading…'}
+            </main>
+          }
+        >
+          <Portal active={appVisible} onLanguageChange={setLanguage} />
+        </React.Suspense>
+      </div>
+    ) : null;
+  return (
+    <>
+      {portal}
+      {!appVisible && (
+        <>
+          <a className="skip" href="#main">
+            {t('skip')}
+          </a>
+          <header>
+            <a className="brand" href="/home/" aria-label="Niu Niu Family Paws">
+              <span className="paw" aria-hidden="true">
+                ✿
+              </span>
+              <span>
+                NIU NIU<span className="brand-sub">FAMILY PAWS</span>
+              </span>
+            </a>
+            <nav aria-label={chinese ? '主导航' : 'Main navigation'}>
+              <a href="/home/" aria-current={page === 'home' ? 'page' : undefined}>
+                {t('home')}
+              </a>
+              <a href="/services/" aria-current={page === 'services' ? 'page' : undefined}>
+                {t('services')}
+              </a>
+              <a href="/about/" aria-current={page === 'about' ? 'page' : undefined}>
+                {t('approach')}
+              </a>
+              <a href="/faqs/" aria-current={page === 'faqs' ? 'page' : undefined}>
+                {t('questions')}
+              </a>
+            </nav>
+            <div className="header-actions">
+              <SiteAccountLink />
+              <LanguageSelector onChange={setLanguage} />
+            </div>
+          </header>
+          <main id="main" className={page !== 'home' ? 'public-page' : undefined}>
+            {page === 'home' && (
+              <section className="hero">
+                <div>
+                  <p className="eyebrow">{t('eyebrow')}</p>
+                  <h1>{t('title')}</h1>
+                  <p className="intro">{t('intro')}</p>
+                  <a className="button" href="/services/">
+                    {t('explore')} <span aria-hidden="true">↗</span>
+                  </a>
+                  <p className="handwritten">{t('note')}</p>
+                </div>
+                <div className="hero-art">
+                  <HomeIllustration />
+                  <span className="art-label">NIU NIU · FAMILY PAWS</span>
+                </div>
+              </section>
+            )}
+            {(page === 'home' || page === 'services') && (
+              <section id="services" className="services">
+                <div className="section-heading">
+                  <p className="eyebrow">{t('servicesLabel')}</p>
+                  <SectionHeading>
+                    {page === 'home' ? t('servicesTitle') : t('services')}
+                  </SectionHeading>
+                  <p>{t('servicesIntro')}</p>
+                </div>
+                <div className="cards">
+                  {['day', 'night'].map((key, index) => (
+                    <article className={'service service-' + index} key={key}>
+                      <div className="service-top">
+                        <span className="service-number">0{index + 1}</span>
+                        <span aria-hidden="true">{index === 0 ? '☀' : '☾'}</span>
+                      </div>
+                      <p className="eyebrow">{t(key + 'Tag')}</p>
+                      <h3>{t(key)}</h3>
+                      <p>{t(key + 'Description')}</p>
+                      <p className="price">{t('price')}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
+            {(page === 'home' || page === 'about') && (
+              <section id="about" className="about">
+                <div>
+                  <p className="eyebrow">{t('aboutLabel')}</p>
+                  <SectionHeading>
+                    {page === 'home' ? t('aboutTitle') : t('approach')}
+                  </SectionHeading>
+                  <p>{t('aboutBody')}</p>
+                </div>
+                <ol>
+                  {[1, 2, 3].map((n) => (
+                    <li key={n}>
+                      <span>0{n}</span>
+                      <div>
+                        <h3>{t('step' + n)}</h3>
+                        <p>{t('step' + n + 'Body')}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+            {(page === 'home' || page === 'faqs') && (
+              <section id="faq" className="faq">
+                <div>
+                  <p className="eyebrow">{t('faqLabel')}</p>
+                  <SectionHeading>
+                    {page === 'home' ? t('faqTitle') : t('questions')}
+                  </SectionHeading>
+                </div>
+                <div>
+                  {[1, 2, 3].map((n) => (
+                    <details key={n}>
+                      <summary>{t('q' + n)}</summary>
+                      <p>{t('a' + n)}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
+            {page === 'policy' && (
+              <section className="public-policy">
+                <p className="eyebrow">{chinese ? '托管前先了解' : 'BEFORE A STAY'}</p>
+                <h1>{chinese ? '取消政策' : 'Cancellation policy'}</h1>
+                <p>
+                  {chinese
+                    ? '以下是已确认的寄养取消条款。'
+                    : 'These are the confirmed boarding cancellation terms.'}
+                </p>
+                <div className="public-policy-terms">
+                  <article>
+                    <h2>{chinese ? '提前 14 天' : '14 days ahead'}</h2>
+                    <p>
+                      {chinese ? '取消可获得全额返还。' : 'Cancellation receives a full refund.'}
+                    </p>
+                  </article>
+                  <article>
+                    <h2>{chinese ? '提前 7 天' : '7 days ahead'}</h2>
+                    <p>
+                      {chinese ? '取消可获得一半返还。' : 'Cancellation receives a half refund.'}
+                    </p>
+                  </article>
+                </div>
+                <p className="public-policy-pending">
+                  {chinese
+                    ? '具体截止时间、少于 7 天或未到店的处理方式，以及返还形式等细节尚未公布。预约前请先确认完整条款，目前网站尚未开放实际付费预约。'
+                    : 'Exact deadlines, shorter-notice and no-show terms, and the form of refund have not yet been published. Confirm the complete terms before booking; paid bookings are not available through this website yet.'}
+                </p>
+                <a href="/services/" className="button">
+                  {t('services')}
+                </a>
+              </section>
+            )}
+            {page === 'not-found' && (
+              <section className="public-policy">
+                <h1>{chinese ? '未找到页面' : 'Page not found'}</h1>
+                <p>
+                  {chinese
+                    ? '请检查链接或返回首页。'
+                    : 'Check the link or return to the home page.'}
+                </p>
+                <a className="button" href="/home/">
+                  {chinese ? '返回首页' : 'Back to home'}
+                </a>
+              </section>
+            )}
+            {page === 'home' && (
+              <section id="contact" className="contact">
+                <p className="eyebrow">{t('contactLabel')}</p>
+                <h2>{t('contactTitle')}</h2>
+                <p>{t('contactBody')}</p>
+                <span className="pending">{t('pending')}</span>
+              </section>
+            )}
+          </main>
+          <footer>
+            <span>{t('footer')}</span>
+            <span>{t('footerNote')}</span>
+            <a href="/cancellation-policy/">{chinese ? '取消政策' : 'Cancellation policy'}</a>
+            <a href="/home/#contact">{t('contact')} ↗</a>
+          </footer>
+        </>
+      )}
+    </>
+  );
+}
