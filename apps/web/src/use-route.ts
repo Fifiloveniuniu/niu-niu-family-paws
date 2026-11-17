@@ -1,5 +1,5 @@
 import React from 'react';
-import { scrollMarketingTarget } from './marketing-navigation';
+import { scrollMarketingTarget, animateMarketingPageEntry } from './marketing-navigation';
 import { canonicalUrl, parseRoute, routeUrl, navigate } from './routing';
 import { confirmDiscardChanges } from './unsaved-changes';
 export default function useRoute(language: string, initialPath = '/') {
@@ -86,6 +86,17 @@ export default function useRoute(language: string, initialPath = '/') {
       if (!anchor || anchor.target || anchor.hasAttribute('download')) return;
       const url = new URL(anchor.href, location.href);
       if (url.origin !== location.origin) return;
+      if (
+        url.pathname === location.pathname &&
+        url.search === location.search &&
+        !url.hash &&
+        anchor.closest('.marketing-header')
+      ) {
+        event.preventDefault();
+        animateMarketingPageEntry();
+        return;
+      }
+
       if (
         url.pathname === location.pathname &&
         url.search === location.search &&

@@ -19,7 +19,7 @@ test('public pages have direct paths, distinct content and working history', asy
     .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name: 'Services', exact: true })
     .click();
-  await expect(page).toHaveURL(/\/home\/#services$/);
+  await expect(page).toHaveURL(/\/services\/$/);
   await page.goBack();
   await expect(page.getByRole('heading', { name: 'Cancellation policy', level: 1 })).toBeVisible();
   await page.goForward();
@@ -40,6 +40,7 @@ test('public pages have direct paths, distinct content and working history', asy
   await page.reload();
   await expect(page.getByRole('dialog', { name: 'Mochi', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/calendar\/$/);
   await page.goto('/app/calendar/bookings/missing/');
   await expect(page.getByRole('alert')).toHaveText('Booking not found.');
   await page.goto('/app/unknown/');

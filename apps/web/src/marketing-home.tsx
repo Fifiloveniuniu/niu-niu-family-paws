@@ -11,8 +11,8 @@ export default function MarketingHome() {
   const chapters = [
     { anchor: 'main', label: t('home') },
     { anchor: 'experience', label: t('cinemaExperience') },
-    { anchor: 'about', label: t('approach') },
     { anchor: 'services', label: t('services') },
+    { anchor: 'about', label: t('approach') },
     { anchor: 'faq', label: t('questions') },
     { anchor: 'contact', label: t('contact') },
   ];
@@ -147,35 +147,6 @@ export default function MarketingHome() {
         </section>
 
         <section
-          id="about"
-          className="home-trust"
-          data-cinematic-panel
-          data-scroll-scene
-          aria-labelledby="trust-title"
-        >
-          <div className="home-section-intro" data-scroll-object="rise">
-            <p className="eyebrow">{t('trustLabel')}</p>
-            <h2 id="trust-title">{t('trustTitle')}</h2>
-            <a className="text-link" href="/about/">
-              {t('trustLink')} <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-          <div className="trust-principles">
-            {[1, 2, 3].map((number) => (
-              <article key={number} data-scroll-object="rise">
-                <span className="trust-symbol" aria-hidden="true">
-                  <CareSymbol kind={(['heart', 'orbit', 'check'] as const)[number - 1]} />
-                </span>
-                <div>
-                  <h3>{t('trust' + number)}</h3>
-                  <p>{t('trust' + number + 'Body')}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section
           id="services"
           className="home-services"
           data-cinematic-panel
@@ -213,6 +184,35 @@ export default function MarketingHome() {
               ↗
             </span>
           </a>
+        </section>
+
+        <section
+          id="about"
+          className="home-trust"
+          data-cinematic-panel
+          data-scroll-scene
+          aria-labelledby="trust-title"
+        >
+          <div className="home-section-intro" data-scroll-object="rise">
+            <p className="eyebrow">{t('trustLabel')}</p>
+            <h2 id="trust-title">{t('trustTitle')}</h2>
+            <a className="text-link" href="/about/">
+              {t('trustLink')} <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <div className="trust-principles">
+            {[1, 2, 3].map((number) => (
+              <article key={number} data-scroll-object="rise">
+                <span className="trust-symbol" aria-hidden="true">
+                  <CareSymbol kind={(['heart', 'orbit', 'check'] as const)[number - 1]} />
+                </span>
+                <div>
+                  <h3>{t('trust' + number)}</h3>
+                  <p>{t('trust' + number + 'Body')}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section
