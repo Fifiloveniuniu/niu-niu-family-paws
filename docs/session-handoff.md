@@ -1,5 +1,14 @@
 # Session handoff — 2026-10-22
 
+## Animated section navigation and active navbar — 2026-11-16
+
+Latest owner clarification supersedes instant-only clicks: navbar, right-side chapters and next/restart controls should animate, navbar should indicate the actual section, and no red background. PR#70 now includes accelerating manual artwork plus a short360ms destination transition (140ms accelerating exit, instant destination change,220ms settling entrance), skipping intervening chapters. Repeated/rapid clicks replace pending transitions. Manual wheel/touch/navigation keys cancel the transition; reduced-motion changes cancel and land directly. Route cleanup removes animation/listeners; initial direct URLs remain unanimated. Skip links retain direct behavior.
+
+Navbar current-location state follows the actual cinematic chapter via a scoped observer and native-scroll positions in static/reduced-motion mode, independently of stale hash URLs. Experience belongs to Home. Service scene and public service surface use neutral cream instead of the former reddish peach; no other palette redesign. Sticky header, direct/deep links, history, reversible manual animation, short-screen/static access and bilingual content remain.
+
+Validation: Node24 production build, formatting, all34 unit tests and6 Chrome cases pass (5 marketing plus public routing/history). Cases cover acceleration, reverse/stopped poses, animated clicks, current-section state from manual scrolling, rapid clicks, live reduced-motion cancellation, bilingual responsive copy/header fit, Home, refresh and history. Actual localhost4180 Chrome clicked navbar Services then right-side FAQs; Services visibly showed the neutral surface and active navbar. Screenshots: docs/screenshots/animated-navigation-services.png and animated-navigation-mobile.png. No API/data changes or deployment. Preserve owner .gitignore edit, WIP#41, dist-dev and temporary Firebase config. Review remains https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/70; final signed changes/checks and authorized merge follow. Deployment deferred.
+
+
 ## Accelerating downward story motion — 2026-11-16
 
 Owner requested acceleration when moving down. Cinematic artwork progress now uses quadratic ease-in: equal scroll distances move objects progressively farther, with signed quadratic settling for the scene. Scroll remains native; no momentum timers, wheel interception or delayed motion after stopping. Earlier reverse poses are exact. Sticky navbar, instant explicit navigation, colors, layouts and reduced-motion/short-screen fallbacks remain.

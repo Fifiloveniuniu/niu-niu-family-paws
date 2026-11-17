@@ -2,9 +2,10 @@ import { englishMessages, chineseMessages } from './marketing-messages';
 import MarketingHome from './marketing-home';
 import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
 import useRoute from './use-route';
-import { scrollMarketingTarget } from './marketing-navigation';
+import { scrollMarketingTarget, cancelMarketingTransition } from './marketing-navigation';
 import useMarketingMotion from './use-marketing-motion';
 import useMarketingHeader from './use-marketing-header';
+import useMarketingSection from './use-marketing-section';
 import SiteAccountLink from './site-account-link';
 import React from 'react';
 import i18n from 'i18next';
@@ -30,6 +31,9 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
   useMarketingHeader(!appVisible);
   useMarketingMotion(marketingRoot, route.path, i18n.language);
+  const activeSection = useMarketingSection(marketingRoot, page);
+  const initialNavigation = React.useRef(true);
+  React.useEffect(() => () => cancelMarketingTransition(), [route.path]);
   const [visitedApp, setVisitedApp] = React.useState(appVisible);
   React.useEffect(() => {
     if (appVisible) setVisitedApp(true);
@@ -61,9 +65,13 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
     document.title = names[page] + ' · Niu Niu Family Paws';
   }, [page, route.path, chinese, t]);
   React.useEffect(() => {
-    if (location.hash && !location.hash.startsWith('#/'))
-      requestAnimationFrame(() => scrollMarketingTarget(location.hash));
-    else window.scrollTo({ top: 0, behavior: 'instant' });
+    const animated = !initialNavigation.current;
+    initialNavigation.current = false;
+    if (location.hash && !location.hash.startsWith('#/')) {
+      const hash = location.hash;
+      const frame = requestAnimationFrame(() => scrollMarketingTarget(hash, animated));
+      return () => cancelAnimationFrame(frame);
+    } else window.scrollTo({ top: 0, behavior: 'instant' });
   }, [page, route.path, route.hash]);
   function setLanguage(lang: 'en' | 'zh') {
     void i18n.changeLanguage(lang);
@@ -107,18 +115,14 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
             <nav aria-label={chinese ? '主导航' : 'Main navigation'}>
               <a
                 href="/home/#main"
-                aria-current={
-                  page === 'home' && (!route.hash || route.hash === '#main')
-                    ? 'location'
-                    : undefined
-                }
+                aria-current={page === 'home' && activeSection === 'main' ? 'location' : undefined}
               >
                 {t('home')}
               </a>
               <a
                 href="/home/#services"
                 aria-current={
-                  page === 'services' || (page === 'home' && route.hash === '#services')
+                  page === 'services' || (page === 'home' && activeSection === 'services')
                     ? 'location'
                     : undefined
                 }
@@ -128,7 +132,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               <a
                 href="/home/#about"
                 aria-current={
-                  page === 'about' || (page === 'home' && route.hash === '#about')
+                  page === 'about' || (page === 'home' && activeSection === 'about')
                     ? 'location'
                     : undefined
                 }
@@ -138,7 +142,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               <a
                 href="/home/#faq"
                 aria-current={
-                  page === 'faqs' || (page === 'home' && route.hash === '#faq')
+                  page === 'faqs' || (page === 'home' && activeSection === 'faq')
                     ? 'location'
                     : undefined
                 }

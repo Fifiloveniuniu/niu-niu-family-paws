@@ -248,3 +248,10 @@ The compact navbar stays visible while you read or scroll. Each story scene fill
 The story artwork starts gently and moves faster as you scroll farther into each scene. Stop scrolling to hold the pose; scroll upward to retrace it. Navbar clicks still jump directly, and colors are unchanged. This is a local update awaiting the final combined deployment.
 
 故事插画在每个场景开始时轻柔移动，随着继续向下滚动逐渐加速。停止滚动即可停留在当前画面，向上滚动可沿原轨迹回看。导航点击仍直接跳转，配色保持不变。目前为本地更新，等待最终统一上线。
+
+
+## Animated section buttons and active navigation — 2026-11-16
+
+Click the top navbar or right-side chapter controls for a short animated change to the chosen section. It skips the scenes in between. The navbar highlights the section you are reading, including when you scroll by hand. Services now uses a neutral cream background. Reduce Motion keeps direct jumps. This is locally validated and awaits the final combined deployment.
+
+点击顶部导航或右侧章节控件，会以短暂动画切换到所选章节，跳过中间场景。导航栏会标记当前阅读的章节，手动滚动时也会更新。服务章节改为中性的奶油色背景。“减少动态效果”模式保持直接跳转。当前本地验证完成，等待最终统一上线。

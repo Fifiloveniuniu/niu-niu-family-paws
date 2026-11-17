@@ -213,19 +213,22 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
   await expect(page.locator('.service-path').first()).toBeInViewport();
 });
 
-test('marketing links jump directly and Home restores the complete header', async ({ page }) => {
+test('marketing links animate briefly without replaying intervening chapters and Home restores the header', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 950 });
   await page.goto('/home/');
   for (const language of ['en', 'zh']) {
     await page.locator('select').selectOption(language);
     for (const anchor of ['services', 'about', 'faq', 'main', 'main']) {
-      // A direct click should land within two rendering frames, without playing intervening scenes.
       await page.locator(`.marketing-header nav a[href="/home/#${anchor}"]`).click();
-      await page.evaluate(
-        () =>
-          new Promise<void>((resolve) =>
-            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-          ),
+      await expect(page.locator('.marketing-site')).toHaveAttribute(
+        'data-marketing-transition',
+        '',
+      );
+      await expect(page.locator('.marketing-site')).not.toHaveAttribute(
+        'data-marketing-transition',
+        { timeout: 900 },
       );
       if (anchor === 'main') {
         expect(await page.evaluate(() => scrollY)).toBe(0);
@@ -252,4 +255,52 @@ test('marketing links jump directly and Home restores the complete header', asyn
   expect(await page.evaluate(() => scrollY)).toBe(0);
   await page.goto('/home/#main');
   await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
+});
+
+test('navbar follows manual scroll and chapter buttons animate with rapid-click recovery', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  await page.evaluate(() => {
+    const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+    const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+    const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+    scrollTo({
+      top:
+        story.getBoundingClientRect().top +
+        scrollY -
+        header +
+        (story.clientHeight - stage.clientHeight) * 0.6,
+      behavior: 'instant',
+    });
+  });
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#services',
+  );
+  await page.locator('.cinema-rail a[href="#faq"]').click();
+  await expect(page.locator('.marketing-site')).toHaveAttribute('data-marketing-transition', '');
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#faq',
+  );
+  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await page.locator('.marketing-header nav a[href="/home/#about"]').click();
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('[data-cinematic-story]')).toHaveAttribute('data-active-chapter', '2');
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#about',
+  );
+  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await expect(page.locator('.marketing-site')).toHaveAttribute('data-marketing-transition', '');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('#services')).toBeInViewport();
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#services',
+  );
 });
