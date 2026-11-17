@@ -1529,3 +1529,46 @@ header nav [aria-current='page'] {
     margin-top: 0;
   }
 }
+
+/* Motion is confined to public marketing pages; the app keeps its own behavior. */
+.marketing-site .hero-art svg {
+  transform: translateY(var(--art-travel, 0px));
+}
+.marketing-site .illustration-halo {
+  transform: translateY(var(--halo-travel, 0px));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .marketing-site .button {
+    transition:
+      background 180ms ease,
+      box-shadow 180ms ease,
+      translate 180ms ease;
+  }
+  .marketing-site .button:hover {
+    translate: 0 -3px;
+    box-shadow: 0 8px 20px #293f3520;
+  }
+  .marketing-site .service {
+    transition:
+      translate 240ms ease,
+      box-shadow 240ms ease;
+  }
+  .marketing-site .service:focus-within {
+    box-shadow: 0 12px 28px #293f3510;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .marketing-site .service:hover {
+    translate: 0 -6px;
+    box-shadow: 0 12px 28px #293f3510;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marketing-site .hero-art svg,
+  .marketing-site .illustration-halo {
+    transform: none;
+  }
+}
