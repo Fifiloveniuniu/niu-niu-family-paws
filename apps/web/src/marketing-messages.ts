@@ -102,6 +102,10 @@ export const englishMessages = {
   q6: 'What should I bring?',
   a6: 'Prepare feeding instructions, care notes and details of any familiar belongings. Confirm what is appropriate to bring and any specific requirements before your visit.',
   scrollHint: 'A little more to discover',
+  cinemaExperience: 'The experience',
+  cinemaChapters: 'Story chapters',
+  cinemaNext: 'Continue the story',
+  cinemaRestart: 'Back to the beginning',
   homeEyebrow: 'SMALL PAWS. THOUGHTFUL PLANS.',
   homeTitle: 'Little paws.\nA whole lot of love.',
   homeIntro:
@@ -243,6 +247,10 @@ export const chineseMessages: typeof englishMessages = {
   q6: '需要带些什么？',
   a6: '请准备喂食说明、照护注意事项，以及熟悉物品的信息。到店前先确认适合携带的物品和具体要求。',
   scrollHint: '往下看看，了解更多',
+  cinemaExperience: '托管体验',
+  cinemaChapters: '故事章节',
+  cinemaNext: '继续这段故事',
+  cinemaRestart: '回到故事开头',
   homeEyebrow: '小小爪印，用心安排',
   homeTitle: '小小的爪印，\n满满的关爱。',
   homeIntro:
