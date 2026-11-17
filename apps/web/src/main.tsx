@@ -1,5 +1,5 @@
 import { englishMessages, chineseMessages } from './marketing-messages';
-import HomeIllustration from './home-illustration';
+import MarketingHome from './marketing-home';
 import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
 import useRoute from './use-route';
 import useMarketingMotion from './use-marketing-motion';
@@ -8,6 +8,7 @@ import React from 'react';
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import './style.css';
+import './marketing.css';
 import LanguageSelector from './language-selector';
 const Portal = React.lazy(() => import('./portal'));
 
@@ -30,7 +31,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   React.useEffect(() => {
     if (appVisible) setVisitedApp(true);
   }, [appVisible]);
-  const SectionHeading = page === 'home' ? 'h2' : 'h1';
+  const SectionHeading = 'h1';
   React.useEffect(() => {
     try {
       if (localStorage.getItem('language') === 'zh') void i18n.changeLanguage('zh');
@@ -91,7 +92,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
           <a className="skip" href="#main">
             {t('skip')}
           </a>
-          <header>
+          <header className="marketing-header">
             <a className="brand" href="/home/#main" aria-label="Niu Niu Family Paws">
               <span className="paw" aria-hidden="true">
                 ✿
@@ -152,41 +153,22 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
             id="main"
             className={'marketing-site' + (page !== 'home' ? ' public-page' : '')}
           >
-            {page === 'home' && (
-              <section className="hero">
-                <div>
-                  <p className="eyebrow">{t('eyebrow')}</p>
-                  <h1>{t('title')}</h1>
-                  <p className="intro">{t('intro')}</p>
-                  <a className="button" href="/home/#services">
-                    {t('explore')} <span aria-hidden="true">↗</span>
-                  </a>
-                  <p className="handwritten">{t('note')}</p>
-                </div>
-                <div className="hero-art" data-reveal="art">
-                  <HomeIllustration />
-                  <span className="art-label">NIU NIU · FAMILY PAWS</span>
-                </div>
-              </section>
-            )}
-            {page === 'home' && (
-              <a className="scroll-invitation" href="#services">
-                <span aria-hidden="true">↓</span>
-                {t('scrollHint')}
-              </a>
-            )}
-            {(page === 'home' || page === 'services') && (
-              <section id="services" className="services">
+            {page === 'home' && <MarketingHome />}
+            {page === 'services' && (
+              <section data-scroll-scene id="services" className="services">
                 <div className="section-heading">
                   <p className="eyebrow">{t('servicesLabel')}</p>
-                  <SectionHeading>
-                    {page === 'home' ? t('servicesTitle') : t('services')}
-                  </SectionHeading>
+                  <SectionHeading>{t('services')}</SectionHeading>
                   <p>{t('servicesIntro')}</p>
                 </div>
                 <div className="cards">
                   {['day', 'night'].map((key, index) => (
-                    <article className={'service service-' + index} key={key}>
+                    <article
+                      id={key === 'night' ? 'boarding' : 'daycare'}
+                      data-scroll-object="rise"
+                      className={'service service-' + index}
+                      key={key}
+                    >
                       <div className="service-top">
                         <span className="service-number">0{index + 1}</span>
                         <span aria-hidden="true">{index === 0 ? '☀' : '☾'}</span>
@@ -195,7 +177,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                       <h3>{t(key)}</h3>
                       <p>{t(key + 'Description')}</p>
                       <p className="service-detail">{t(key + 'Detail')}</p>
-                      <a className="text-link" href="/home/#prepare">
+                      <a className="text-link" href="/services/#prepare">
                         {t('prepareLink')} <span aria-hidden="true">↗</span>
                       </a>
                       <p className="price">{t('price')}</p>
@@ -204,19 +186,17 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                 </div>
               </section>
             )}
-            {(page === 'home' || page === 'services') && <PetCareStories />}
-            {(page === 'home' || page === 'about') && (
-              <section id="about" className="about">
+            {page === 'services' && <PetCareStories />}
+            {page === 'about' && (
+              <section data-scroll-scene id="about" className="about">
                 <div>
                   <p className="eyebrow">{t('aboutLabel')}</p>
-                  <SectionHeading>
-                    {page === 'home' ? t('aboutTitle') : t('approach')}
-                  </SectionHeading>
+                  <SectionHeading>{t('approach')}</SectionHeading>
                   <p>{t('aboutBody')}</p>
                 </div>
                 <ol>
                   {[1, 2, 3].map((n) => (
-                    <li key={n}>
+                    <li data-scroll-object="rise" key={n}>
                       <span>0{n}</span>
                       <div>
                         <h3>{t('step' + n)}</h3>
@@ -227,20 +207,18 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                 </ol>
               </section>
             )}
-            {(page === 'home' || page === 'about') && <CareStory />}
-            {(page === 'home' || page === 'services' || page === 'about') && <VisitPreparation />}
-            {(page === 'home' || page === 'services' || page === 'about') && <StayPlanning />}
-            {(page === 'home' || page === 'faqs') && (
-              <section id="faq" className="faq">
+            {page === 'about' && <CareStory />}
+            {page === 'services' && <VisitPreparation />}
+            {page === 'services' && <StayPlanning />}
+            {page === 'faqs' && (
+              <section data-scroll-scene id="faq" className="faq">
                 <div>
                   <p className="eyebrow">{t('faqLabel')}</p>
-                  <SectionHeading>
-                    {page === 'home' ? t('faqTitle') : t('questions')}
-                  </SectionHeading>
+                  <SectionHeading>{t('questions')}</SectionHeading>
                 </div>
                 <div>
                   {[1, 2, 3, 4, 5, 6].map((n) => (
-                    <details key={n}>
+                    <details data-scroll-object="rise" key={n}>
                       <summary>{t('q' + n)}</summary>
                       <p>{t('a' + n)}</p>
                     </details>
@@ -249,7 +227,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               </section>
             )}
             {page === 'policy' && (
-              <section className="public-policy">
+              <section data-scroll-scene className="public-policy">
                 <p className="eyebrow">{chinese ? '托管前先了解' : 'BEFORE A STAY'}</p>
                 <h1>{chinese ? '取消政策' : 'Cancellation policy'}</h1>
                 <p>
@@ -257,7 +235,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                     ? '以下是已确认的寄养取消条款。'
                     : 'These are the confirmed boarding cancellation terms.'}
                 </p>
-                <div className="public-policy-terms">
+                <div data-scroll-object="rise" className="public-policy-terms">
                   <article>
                     <h2>{chinese ? '提前 14 天' : '14 days ahead'}</h2>
                     <p>
@@ -282,7 +260,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               </section>
             )}
             {page === 'not-found' && (
-              <section className="public-policy">
+              <section data-scroll-scene className="public-policy">
                 <h1>{chinese ? '未找到页面' : 'Page not found'}</h1>
                 <p>
                   {chinese
@@ -292,14 +270,6 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                 <a className="button" href="/home/">
                   {chinese ? '返回首页' : 'Back to home'}
                 </a>
-              </section>
-            )}
-            {page === 'home' && (
-              <section id="contact" className="contact">
-                <p className="eyebrow">{t('contactLabel')}</p>
-                <h2>{t('contactTitle')}</h2>
-                <p>{t('contactBody')}</p>
-                <span className="pending">{t('pending')}</span>
               </section>
             )}
           </main>

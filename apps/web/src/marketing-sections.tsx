@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 /** Decorative, original vector portraits; never presented as customer photos. */
-function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) {
+export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) {
   return (
     <svg viewBox="0 0 240 200" aria-hidden="true" focusable="false">
       <circle cx="120" cy="102" r="85" fill="currentColor" opacity=".14" />
@@ -66,7 +66,7 @@ function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) {
 export function PetCareStories() {
   const { t } = useTranslation();
   return (
-    <section className="pet-stories" aria-labelledby="pet-stories-title">
+    <section data-scroll-scene className="pet-stories" aria-labelledby="pet-stories-title">
       <div className="section-heading">
         <p className="eyebrow">{t('petsLabel')}</p>
         <h2 id="pet-stories-title">{t('petsTitle')}</h2>
@@ -74,8 +74,12 @@ export function PetCareStories() {
       </div>
       <div className="pet-story-grid">
         {(['dog', 'cat', 'rabbit'] as const).map((species, index) => (
-          <article className={'pet-story pet-story-' + species} data-reveal key={species}>
-            <div className="pet-portrait" data-reveal="art">
+          <article
+            className={'pet-story pet-story-' + species}
+            data-scroll-object="rise"
+            key={species}
+          >
+            <div className="pet-portrait" data-scroll-object="portrait">
               <PetPortrait species={species} />
             </div>
             <p className="eyebrow">
@@ -93,16 +97,16 @@ export function PetCareStories() {
 export function CareStory() {
   const { t } = useTranslation();
   return (
-    <section className="care-story" aria-labelledby="care-story-title">
-      <span className="story-flower" aria-hidden="true" data-reveal="art">
+    <section data-scroll-scene className="care-story" aria-labelledby="care-story-title">
+      <span className="story-flower" aria-hidden="true" data-scroll-object="portrait">
         ✿
       </span>
-      <div data-reveal>
+      <div data-scroll-object="rise">
         <p className="eyebrow">{t('storyLabel')}</p>
         <h2 id="care-story-title">{t('storyTitle')}</h2>
         <p>{t('storyBody')}</p>
       </div>
-      <a className="text-link" href="/home/#prepare" data-reveal>
+      <a className="text-link" href="/services/#prepare" data-scroll-object="rise">
         {t('prepareLink')} <span aria-hidden="true">↗</span>
       </a>
     </section>
@@ -112,7 +116,12 @@ export function CareStory() {
 export function VisitPreparation() {
   const { t } = useTranslation();
   return (
-    <section id="prepare" className="visit-preparation" aria-labelledby="prepare-title">
+    <section
+      data-scroll-scene
+      id="prepare"
+      className="visit-preparation"
+      aria-labelledby="prepare-title"
+    >
       <div className="section-heading">
         <p className="eyebrow">{t('prepareLabel')}</p>
         <h2 id="prepare-title">{t('prepareTitle')}</h2>
@@ -120,7 +129,7 @@ export function VisitPreparation() {
       </div>
       <ol className="preparation-list">
         {[1, 2, 3, 4].map((number) => (
-          <li data-reveal key={number}>
+          <li data-scroll-object="rise" key={number}>
             <span className="preparation-number" aria-hidden="true">
               0{number}
             </span>
@@ -141,18 +150,18 @@ export function VisitPreparation() {
 export function StayPlanning() {
   const { t } = useTranslation();
   return (
-    <section className="stay-planning" aria-labelledby="planning-title">
-      <div data-reveal>
+    <section data-scroll-scene className="stay-planning" aria-labelledby="planning-title">
+      <div data-scroll-object="rise">
         <p className="eyebrow">{t('planningLabel')}</p>
         <h2 id="planning-title">{t('planningTitle')}</h2>
       </div>
-      <div data-reveal>
+      <div data-scroll-object="rise">
         <p>{t('planningBody')}</p>
         <a className="text-link" href="/cancellation-policy/">
           {t('planningLink')} <span aria-hidden="true">↗</span>
         </a>
       </div>
-      <span className="planning-rule" data-reveal="line" aria-hidden="true" />
+      <span className="planning-rule" data-scroll-object="line" aria-hidden="true" />
     </section>
   );
 }
