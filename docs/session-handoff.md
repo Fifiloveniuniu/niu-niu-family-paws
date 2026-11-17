@@ -1,5 +1,14 @@
 # Session handoff — 2026-10-22
 
+## Persistent marketing navbar and fuller artwork motion — 2026-11-16
+
+Owner asked for full-screen scenes, less restricted animation and an always-visible navbar. Public navbar now stays at the top on every public page with an opaque full-width surface. ResizeObserver measures the actual localized header height and cleans up on app entry; cinematic stage fills exactly the remaining viewport. Scroll geometry and marker offsets account for the header, preserving direct jumps, Home, rail/next, refresh/history and reverse poses. Header controls remain accessible throughout the story. Colors remain unchanged per “undo color.”
+
+Dog illustration travels/scales/rotates more freely; foliage moves in opposite directions, flowers turn, question artwork grows/rotates and service symbols move. Copy never slides sideways; animations still follow scroll exactly with no loops/timers or scroll interception. Mobile spacing keeps headings/copy/links between header and bottom controls. Below810px viewport height, normal flow preserves access rather than clipping content; reduced motion and no-JS keep static sections. No app/API/data changes or deployment; WIP#41, dist-dev and temporary Firebase config preserved.
+
+Validation: Node24 build, all34 unit tests, formatting, all4 marketing Chrome cases and the public routing/history case passed. New assertions verify header always visible, stage fills viewport below header, no clipped copy, instant navbar clicks, both languages,320/390/760/1440 including320×810. Additional EN/ZH checks at320/390/760/1024/1440 ×844 found no copy/control overlap. Native localhost4180 Chrome clicked Services → Home then manually scrolled into experience with navbar visible. Screenshots: docs/screenshots/persistent-nav-main.png, persistent-nav-experience.png and persistent-nav-mobile.png. Required CI/signature validation and authorized PR merge follow; hosted deployment remains deferred.
+
+
 ## Direct marketing navigation — 2026-11-16
 
 Owner reported that navbar clicks replayed too much of the long scroll story and Home partially hid the navbar. Explicit marketing anchor navigation now jumps instantly; native wheel/touch scrolling retains reversible animation. Home/brand/restart return to document top, including repeated same-hash clicks, direct URLs and cross-page links. Public CSS removes smooth native anchor scrolling; routing explicitly handles same-page marketing destinations and uses the shared instant-scroll helper. App draft guards and routing remain unchanged.

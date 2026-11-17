@@ -11,7 +11,7 @@ export default function useMarketingMotion(
     const element = root.current;
     if (!element) return;
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const cinematicViewport = window.matchMedia('(min-height: 740px)');
+    const cinematicViewport = window.matchMedia('(min-height: 810px)');
     let dispose = () => {};
     function configure() {
       dispose();

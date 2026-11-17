@@ -524,7 +524,7 @@
   }
 }
 /* Short screens keep all copy reachable; scrolling still drives object positions. */
-@media (max-height: 740px) {
+@media (max-height: 809px) {
   .marketing-site[data-scroll-enabled] .scroll-hero,
   .marketing-site[data-scroll-enabled] .experience-scene {
     --sticky-scene: 0;
@@ -1046,8 +1046,11 @@ header.marketing-header {
 
 /* Shared public rhythm: a compact masthead, soft surfaces and quiet details. */
 header.marketing-header {
-  max-width: 1440px;
-  padding: 12px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  max-width: none;
+  padding: 12px max(40px, calc((100vw - 1360px) / 2));
   gap: 24px;
 }
 header.marketing-header .brand {
@@ -1206,5 +1209,13 @@ header.marketing-header .language-selector select {
 
 /* Explicit destinations jump directly; manual scrolling still animates the story. */
 html:has(.marketing-header) {
+  --marketing-header-height: 69px;
+  scroll-padding-top: calc(var(--marketing-header-height) + 16px);
   scroll-behavior: auto;
+}
+
+@media (max-width: 760px) {
+  html:has(.marketing-header) {
+    --marketing-header-height: 107px;
+  }
 }

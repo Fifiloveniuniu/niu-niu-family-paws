@@ -4,6 +4,7 @@ import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './mar
 import useRoute from './use-route';
 import { scrollMarketingTarget } from './marketing-navigation';
 import useMarketingMotion from './use-marketing-motion';
+import useMarketingHeader from './use-marketing-header';
 import SiteAccountLink from './site-account-link';
 import React from 'react';
 import i18n from 'i18next';
@@ -26,8 +27,9 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const route = useRoute(i18n.language, initialPath);
   const page = route.kind;
   const marketingRoot = React.useRef<HTMLElement>(null);
-  useMarketingMotion(marketingRoot, route.path, i18n.language);
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
+  useMarketingHeader(!appVisible);
+  useMarketingMotion(marketingRoot, route.path, i18n.language);
   const [visitedApp, setVisitedApp] = React.useState(appVisible);
   React.useEffect(() => {
     if (appVisible) setVisitedApp(true);

@@ -6,7 +6,8 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] {
   position: relative;
-  height: calc(100svh + var(--chapter-gaps) * 115svh);
+  --stage-height: calc(100svh - var(--marketing-header-height, 69px));
+  height: calc(var(--stage-height) + var(--chapter-gaps) * 115svh);
   background: var(--cinema-color, #f7f6eb);
 }
 .home-story.cinematic-story[data-cinema-enabled] .cinema-markers {
@@ -17,16 +18,16 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] .cinema-markers > span {
   position: absolute;
-  /* Compensate for the document’s 25px anchor inset: land on the full chapter pose. */
-  top: calc(var(--chapter-index) * (100% - 100svh) / var(--chapter-gaps) + 25px);
+  /* Match the sticky header and anchor breathing room at the exact chapter pose. */
+  top: calc(var(--chapter-index) * (100% - var(--stage-height)) / var(--chapter-gaps) + 16px);
   left: 0;
   width: 1px;
   height: 1px;
 }
 .home-story.cinematic-story[data-cinema-enabled] > .cinematic-stage {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: var(--marketing-header-height, 69px);
+  height: var(--stage-height);
   overflow: clip;
   isolation: isolate;
   background: var(--cinema-color, #f7f6eb);
@@ -326,16 +327,63 @@
   transform: translateY(calc(var(--scroll) * -18px));
 }
 .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='hero-pet'] {
-  transform: translateY(calc(var(--scroll) * -28px)) rotate(calc(var(--scroll) * 3deg))
-    scale(calc(1 - var(--scroll) * 0.04));
+  transform: translate(calc(var(--scroll) * 34px), calc(var(--scroll) * -85px))
+    rotate(calc(var(--scroll) * 9deg)) scale(calc(1 + var(--scroll) * 0.08));
 }
 .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='bloom'] {
-  transform: rotate(calc(var(--scroll) * 35deg)) scale(calc(0.94 + var(--scroll) * 0.06));
+  transform: rotate(calc(var(--scroll) * 100deg)) scale(calc(0.88 + var(--scroll) * 0.24));
 }
-.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='leaf-left'],
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='leaf-left'] {
+  transform: translateY(calc(var(--scroll) * -60px)) rotate(calc(var(--scroll) * 24deg));
+}
 .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='leaf-right'] {
-  transform: translateY(calc(var(--scroll) * -18px)) rotate(calc(var(--scroll) * 8deg));
+  transform: translateY(calc(var(--scroll) * 45px)) rotate(calc(var(--scroll) * -28deg));
 }
 .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='rise'] {
   transform: translateY(calc((0.5 - var(--scroll)) * 24px));
+}
+
+/* Give the illustrated layers room to move without carrying the copy sideways. */
+.home-story.cinematic-story[data-cinema-enabled] .question-art {
+  transform: rotate(calc(var(--scroll) * -8deg)) scale(calc(1 + var(--scroll) * 0.12));
+}
+.home-story.cinematic-story[data-cinema-enabled] .service-path-icon {
+  transform: translateY(calc(var(--scroll) * -24px)) rotate(calc(var(--scroll) * 18deg));
+}
+@media (max-width: 760px) {
+  .home-story.cinematic-story[data-cinema-enabled] .hero-world {
+    width: min(56%, 210px);
+    margin-top: 16px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='hero-pet'] {
+    transform: translateY(calc(var(--scroll) * -50px)) rotate(calc(var(--scroll) * 7deg))
+      scale(calc(1 + var(--scroll) * 0.05));
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .experience-portraits {
+    margin: 12px auto;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .chapter-number {
+    margin-bottom: 8px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .experience-steps {
+    gap: 12px;
+  }
+}
+
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object^='step-'] {
+  transform: translateY(calc(var(--scroll) * -30px));
+}
+@media (max-width: 760px) {
+  .home-story.cinematic-story[data-cinema-enabled] .trust-principles article {
+    padding-block: 14px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .service-path {
+    padding-block: 16px;
+  }
+}
+@media (max-width: 760px) {
+  .home-story.cinematic-story[data-cinema-enabled] .home-trust,
+  .home-story.cinematic-story[data-cinema-enabled] .home-services {
+    padding-bottom: 88px;
+  }
 }
