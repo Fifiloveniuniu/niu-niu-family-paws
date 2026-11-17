@@ -122,3 +122,129 @@ test('direct chapter links restore exact poses and manual input interrupts click
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
   expect(await page.evaluate(() => scrollY)).toBe(0);
 });
+
+test('the shared flower exits both sides and returns while icon rotation is stronger and reversible', async ({
+  page,
+}) => {
+  const pose = async (chapter: number) => {
+    await page.evaluate(async (value) => {
+      const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+      const h = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      const count = story.querySelectorAll('[data-cinematic-panel]').length;
+      scrollTo({
+        top:
+          story.getBoundingClientRect().top +
+          scrollY -
+          h +
+          ((story.clientHeight - stage.clientHeight) * value) / (count - 1),
+        behavior: 'instant',
+      });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    }, chapter);
+    return page.evaluate(() => {
+      const flower = document.querySelector('.shared-flower')!.getBoundingClientRect();
+      const stage = document.querySelector('.cinematic-stage')!.getBoundingClientRect();
+      return {
+        left: flower.left,
+        right: flower.right,
+        stageLeft: stage.left,
+        stageRight: stage.right,
+        rotation: getComputedStyle(document.querySelector('.service-path .care-symbol')!).transform,
+        rays: getComputedStyle(document.querySelector('.service-path .symbol-rays')!).transform,
+      };
+    });
+  };
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/home/');
+    const left = await pose(1);
+    expect(left.right).toBeLessThan(left.stageLeft);
+    const visible = await pose(2);
+    expect(visible.right).toBeGreaterThan(visible.stageLeft);
+    expect(visible.left).toBeLessThan(visible.stageRight);
+    const right = await pose(3);
+    expect(right.left).toBeGreaterThan(right.stageRight);
+    await pose(4);
+    expect(await pose(1)).toEqual(left);
+    const first = await pose(2.1);
+    const later = await pose(2.4);
+    expect(later.rotation).not.toBe(first.rotation);
+    // Matrices are parsed in the browser, where DOMMatrix is available.
+    const delta = await page.evaluate(
+      ({ a, b }) => {
+        const x = new DOMMatrixReadOnly(a),
+          y = new DOMMatrixReadOnly(b);
+        return (Math.abs(Math.atan2(y.b, y.a) - Math.atan2(x.b, x.a)) * 180) / Math.PI;
+      },
+      { a: first.rays, b: later.rays },
+    );
+    expect(delta).toBeGreaterThan(60);
+    expect(await pose(2.1)).toEqual(first);
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+  await expect(page.locator('.service-path .care-symbol').first()).toHaveCSS('transform', 'none');
+});
+
+test('each animal has independent readable ear, nose and opening-mouth motion while visible', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  async function pose(chapter: number) {
+    await page.evaluate(async (value) => {
+      const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+        stage = s.querySelector<HTMLElement>('.cinematic-stage')!,
+        header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      const count = s.querySelectorAll('[data-cinematic-panel]').length;
+      scrollTo({
+        top:
+          s.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((s.clientHeight - stage.clientHeight) * value) / (count - 1),
+        behavior: 'instant',
+      });
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      );
+    }, chapter);
+  }
+  const sample = () =>
+    page.locator('.experience-portraits .pet-face').evaluateAll((faces) =>
+      faces.map((face) => {
+        const matrix = (part: string) =>
+          new DOMMatrixReadOnly(getComputedStyle(face.querySelector(part)!).transform);
+        const left = matrix('.pet-ear-left'),
+          right = matrix('.pet-ear-right'),
+          nose = matrix('.pet-nose'),
+          mouth = matrix('.pet-mouth-opening');
+        return {
+          left: (Math.atan2(left.b, left.a) * 180) / Math.PI,
+          right: (Math.atan2(right.b, right.a) * 180) / Math.PI,
+          nose: nose.e,
+          mouth: mouth.d,
+        };
+      }),
+    );
+  await pose(1);
+  const first = await sample();
+  await pose(1.35);
+  const later = await sample();
+  for (let i = 0; i < 3; i++) {
+    expect(later[i].left - first[i].left).toBeGreaterThan(15);
+    expect(first[i].right - later[i].right).toBeGreaterThan(12);
+    expect(later[i].nose - first[i].nose).toBeGreaterThan(1.5);
+    expect(later[i].mouth - first[i].mouth).toBeGreaterThan(0.4);
+  }
+  await pose(1);
+  expect(await sample()).toEqual(first);
+  await page.locator('.cinema-rail a[href="#services"]').click();
+  await page.waitForTimeout(200);
+  expect(await sample()).not.toEqual(first);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+  await expect(page.locator('.pet-ear-left').first()).toHaveCSS('transform', 'none');
+  await expect(page.locator('.pet-mouth-opening').first()).toHaveCSS('transform', 'none');
+});

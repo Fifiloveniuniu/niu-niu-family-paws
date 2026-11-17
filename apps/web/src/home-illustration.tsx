@@ -26,11 +26,10 @@ export default function HomeIllustration() {
       <path d="M181 415q-27-141 88-151 96-4 100 149" fill="#c98656" />
       <path d="M240 310q-45 84-25 114h110q8-72-38-114" fill="#f6ead4" />
       <g className="pet-face">
-        <path
-          className="pet-ears"
-          d="M188 263q-64-81-44-105 33-26 94 21m78 0q69-45 91-16 18 31-50 105"
-          fill="#875338"
-        />
+        <g className="pet-ears" fill="#875338">
+          <path className="pet-ear pet-ear-left" d="M188 263q-64-81-44-105 33-26 94 21" />
+          <path className="pet-ear pet-ear-right" d="M316 179q69-45 91-16 18 31-50 105" />
+        </g>
         <path
           className="pet-head"
           d="M178 228q-3-84 92-88 98-5 103 91 13 90-99 94-108-1-96-97"

@@ -15,6 +15,10 @@ export default function PetExpressionDetails({ hero = false }: { hero?: boolean 
         />
         <path className="pet-chin" d="M106 155q14 5 28 0-3 8-14 8t-14-8Z" opacity=".7" />
       </g>
+      <g className="pet-mouth-opening">
+        <ellipse cx="120" cy="147" rx="8" ry="6" fill="#3e3b31" />
+        <path className="pet-tongue" d="M115 148q5-3 10 0v2q-5 6-10 0Z" fill="#cc8d87" />
+      </g>
     </g>
   );
 }

@@ -4,11 +4,11 @@ const interpolate = (a: number[], b: number[], mix: number) =>
   a.map((value, index) => value + (b[index] - value) * mix);
 const scenePoses: Record<string, { color: number[]; flower: number[] }> = {
   main: { color: [250, 248, 242], flower: [0.58, 0.12, 110, -15] },
-  experience: { color: [231, 237, 224], flower: [0.1, 0.12, 80, 35] },
+  experience: { color: [231, 237, 224], flower: [-0.22, 0.3, 100, 35] },
   services: { color: [245, 242, 233], flower: [0.08, 0.03, 90, 95] },
-  about: { color: [250, 248, 242], flower: [0.88, 0.14, 90, 155] },
+  about: { color: [250, 248, 242], flower: [1.2, 0.5, 120, 155] },
   spaces: { color: [238, 232, 218], flower: [0.85, 0.16, 84, 200] },
-  numbers: { color: [231, 237, 224], flower: [0.01, 0.8, 80, 245] },
+  numbers: { color: [231, 237, 224], flower: [-0.22, 0.6, 110, 245] },
   stories: { color: [250, 248, 242], flower: [0.84, 0.45, 180, 290] },
   faq: { color: [245, 242, 232], flower: [0.21, 0.35, 180, 335] },
   contact: { color: [43, 79, 61], flower: [0.5, 0.18, 100, 395] },
@@ -36,6 +36,7 @@ export function installCinematicStory(story: HTMLElement) {
   const ids = panels.map((panel) => panel.id);
   const anchors = ['main', ...markers.map((marker) => marker.dataset.cinemaAnchor!)];
   const poses = anchors.map((anchor) => scenePoses[anchor] ?? scenePoses.main);
+  // Offstage poses are intentional: one flower exits and returns in later compositions.
   const flowerFor = (index: number) => {
     const pose = poses[index].flower;
     if (innerWidth > 760 || anchors[index] === 'contact') return pose;

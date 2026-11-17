@@ -412,7 +412,7 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path:nth-child(even) {
   transform-origin: 10% 90%;
-  transform: rotate(calc(var(--sway, 0) * -6deg));
+  transform: rotate(calc(var(--sway, 0) * -22deg + var(--scroll) * 45deg));
 }
 .home-story.cinematic-story[data-cinema-enabled] .garden-petal {
   transform-origin: 80px 80px;
@@ -454,7 +454,7 @@
   transform-origin: 50px 50px;
 }
 .home-story.cinematic-story[data-cinema-enabled] .symbol-rays {
-  transform: rotate(calc(var(--scroll) * 65deg)) scale(calc(0.8 + var(--arrival, 1) * 0.2));
+  transform: rotate(calc(var(--scroll) * 240deg)) scale(calc(0.8 + var(--arrival, 1) * 0.2));
 }
 .home-story.cinematic-story[data-cinema-enabled] .symbol-heart {
   transform: scale(calc(1 + var(--sway, 0) * 0.08));
@@ -561,12 +561,13 @@
 
 .marketing-site[data-scroll-enabled] .symbol-crescent {
   transform-origin: 50px 50px;
-  transform: translateX(calc(var(--scroll) * -4px)) rotate(calc(var(--sway, 0) * -6deg))
+  transform: translateX(calc(var(--scroll) * -4px))
+    rotate(calc(var(--sway, 0) * -22deg + var(--scroll) * 45deg))
     scaleX(calc(1 - var(--scroll) * 0.12)) scaleY(calc(1 + var(--scroll) * 0.06));
 }
 .marketing-site[data-scroll-enabled] .symbol-star {
   transform-origin: 76px 33px;
-  transform: translateY(calc(var(--scroll) * -8px)) rotate(calc(var(--scroll) * 80deg))
+  transform: translateY(calc(var(--scroll) * -8px)) rotate(calc(var(--scroll) * 360deg))
     scale(calc(0.8 + var(--arrival, 1) * 0.2 - var(--scroll) * 0.18));
 }
 .marketing-site[data-scroll-enabled] .symbol-satellite {
@@ -575,20 +576,20 @@
 
 /* Each care emblem unfolds through its visible chapter; scrolling back retraces it. */
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-heart {
-  transform: rotate(calc(-18deg + var(--care-progress) * 36deg))
+  transform: rotate(calc(-35deg + var(--care-progress) * 70deg))
     scaleX(calc(0.7 + var(--care-progress) * 0.35)) scaleY(calc(1.15 - var(--care-progress) * 0.2));
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-glint {
   transform-origin: 50px 50px;
-  transform: rotate(calc(var(--care-progress) * -45deg))
+  transform: rotate(calc(var(--care-progress) * -100deg))
     translateY(calc(var(--care-progress) * -8px));
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-orbit {
-  transform: rotate(calc(-35deg + var(--care-progress) * 210deg))
+  transform: rotate(calc(-35deg + var(--care-progress) * 420deg))
     scaleY(calc(0.65 + var(--care-progress) * 0.5));
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-orbit.reverse {
-  transform: rotate(calc(35deg - var(--care-progress) * 180deg))
+  transform: rotate(calc(35deg - var(--care-progress) * 360deg))
     scaleX(calc(1.15 - var(--care-progress) * 0.35));
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-disc {
@@ -596,12 +597,12 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-ring {
   transform-origin: 50px 50px;
-  transform: rotate(calc(-90deg + var(--care-progress) * 150deg));
+  transform: rotate(calc(-90deg + var(--care-progress) * 390deg));
   stroke-dashoffset: calc((1 - var(--care-progress)) * 0.65);
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-check {
   transform-origin: 50px 50px;
-  transform: rotate(calc(-12deg + var(--care-progress) * 20deg));
+  transform: rotate(calc(-18deg + var(--care-progress) * 36deg));
   stroke-dashoffset: calc(1 - min(1, var(--care-progress) * 1.8));
 }
 
@@ -687,14 +688,14 @@
 }
 .marketing-site[data-scroll-enabled] .grooming-blade {
   transform-origin: 50px 48px;
-  transform: rotate(calc(var(--sway, 0) * 12deg));
+  transform: rotate(calc(var(--sway, 0) * 24deg));
 }
 .marketing-site[data-scroll-enabled] .grooming-blade.reverse {
-  transform: rotate(calc(var(--sway, 0) * -12deg));
+  transform: rotate(calc(var(--sway, 0) * -24deg));
 }
 .marketing-site[data-scroll-enabled] .academy-book {
   transform-origin: 50px 50px;
-  transform: scaleX(calc(0.9 + var(--scroll) * 0.1));
+  transform: rotate(calc(var(--sway, 0) * 20deg)) scaleX(calc(0.9 + var(--scroll) * 0.1));
 }
 .marketing-site[data-scroll-enabled] .academy-lines {
   transform: translateY(calc(var(--scroll) * -4px));
@@ -728,7 +729,7 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] .journey-stars > path {
   transform-origin: 66px -49px;
-  transform: rotate(calc(var(--cinema-progress) * 80deg));
+  transform: rotate(calc(var(--cinema-progress) * 360deg));
 }
 .home-story.cinematic-story[data-cinema-enabled] .journey-stars > circle {
   transform: translate(calc(var(--cinema-progress) * 5px), calc(var(--cinema-progress) * -6px));
@@ -736,4 +737,60 @@
 .marketing-site[data-scroll-enabled] .contact-page-flower .garden-petal {
   transform-origin: 80px 80px;
   transform: scaleX(calc(0.85 + var(--scroll) * 0.2)) scaleY(calc(1.1 - var(--scroll) * 0.2));
+}
+
+/* Stronger emblem turns complement independent rays, stars, orbits and scissor blades. */
+.marketing-site[data-scroll-enabled] .service-guide-art .care-symbol {
+  transform-origin: center;
+  transform: rotate(calc((var(--scroll, 0.5) - 0.5) * 100deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .service-path-icon .care-symbol {
+  transform-origin: center;
+  transform: rotate(calc((var(--care-progress, 0.5) - 0.5) * 150deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .service-path-icon .care-symbol-night {
+  transform: rotate(calc((var(--care-progress, 0.5) - 0.5) * -150deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] .trust-symbol .care-symbol {
+  transform-origin: center;
+  transform: rotate(calc((var(--care-progress, 0.5) - 0.5) * 50deg));
+}
+
+/* Readable expressions at portrait size: each ear has its own pivot and the smile opens. */
+.marketing-site[data-scroll-enabled] .pet-ear {
+  transform-box: fill-box;
+  transform-origin: 50% 85%;
+}
+.marketing-site[data-scroll-enabled] .pet-ear-left {
+  transform: rotate(calc(-16deg + var(--expression, var(--scroll)) * 38deg))
+    scaleY(calc(1 - var(--expression, var(--scroll)) * 0.12));
+}
+.marketing-site[data-scroll-enabled] .pet-ear-right {
+  transform: rotate(calc(16deg - var(--expression, var(--scroll)) * 34deg))
+    scaleY(calc(0.9 + var(--expression, var(--scroll)) * 0.1));
+}
+.marketing-site[data-scroll-enabled] .pet-face .pet-nose {
+  transform: translate(
+      calc(-2px + var(--expression, var(--scroll)) * 4px),
+      calc(-1px + var(--expression, var(--scroll)) * 2px)
+    )
+    rotate(calc(-15deg + var(--expression, var(--scroll)) * 30deg))
+    scaleX(calc(0.8 + var(--expression, var(--scroll)) * 0.4))
+    scaleY(calc(1.2 - var(--expression, var(--scroll)) * 0.4));
+}
+.marketing-site[data-scroll-enabled] .pet-face .pet-mouth {
+  transform: translateY(calc(var(--expression, var(--scroll)) * 3px))
+    scaleX(calc(0.85 + var(--expression, var(--scroll)) * 0.3))
+    scaleY(calc(0.8 + var(--expression, var(--scroll)) * 0.5));
+}
+.marketing-site[data-scroll-enabled] .pet-mouth-opening {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(calc(var(--expression, var(--scroll)) * 2px))
+    scaleY(calc(0.05 + var(--expression, var(--scroll)) * 0.95));
+}
+.marketing-site[data-scroll-enabled] .pet-tongue {
+  transform-box: fill-box;
+  transform-origin: center top;
+  transform: scaleY(calc(0.3 + var(--expression, var(--scroll)) * 0.7));
 }
