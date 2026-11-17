@@ -1,4 +1,5 @@
 import React from 'react';
+import {currentRoute,navigate,safeReturnTo} from './routing';
 import { browserSessionPersistence, GoogleAuthProvider, onIdTokenChanged, setPersistence, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { getPortalAccess } from './admin-access';
@@ -45,7 +46,7 @@ const zh: typeof en = {
   session: '使用共用设备时，请记得在离开前退出登录。',
 };
 
-export default function Portal({ onLanguageChange }: { onLanguageChange: (language: 'en' | 'zh') => void }) {
+export default function Portal({ onLanguageChange,active=true }: { active?:boolean;onLanguageChange: (language: 'en' | 'zh') => void }) {
   const { i18n } = useTranslation();
   const chinese = i18n.language === 'zh';
   const t = chinese ? zh : en;
@@ -92,43 +93,45 @@ export default function Portal({ onLanguageChange }: { onLanguageChange: (langua
     await setPersistence(auth, browserSessionPersistence);
     await signInWithPopup(auth, provider);
   }
+  React.useEffect(()=>{if(currentRoute().kind==='login'&&['admin','customer','employee'].includes(access)){const target=safeReturnTo(new URLSearchParams(location.search).get('returnTo'));navigate(target||(access==='admin'?'/app/calendar/':'/app/account/profile/'),true);}},[access]);
+  const [formEpoch,setFormEpoch]=React.useState(0);React.useEffect(()=>{if(!active)setFormEpoch(value=>value+1);},[active]);
+  const route=currentRoute();
+  React.useEffect(()=>{if(active&&['customer','employee'].includes(access)&&!['login','personal'].includes(route.kind))navigate('/app/account/profile/',true);},[access,route.path,active]);
+  React.useEffect(()=>{if(!import.meta.env.DEV)setWorkspace(route.kind==='personal'?'personal':route.kind==='settings'?'houses':'customers');},[route.kind]);
+  const hadSession=React.useRef(false);React.useEffect(()=>{if(user)hadSession.current=true;else if(access==='signed-out'&&hadSession.current){hadSession.current=false;if(active)navigate('/app/sign-in/',true);}},[user,access,active]);
   const previewIdentity=React.useRef({adminUid:null as string|null,epoch:0});
   if(previewIdentity.current.adminUid&&(access==='signed-out'||access==='denied'||access==='customer'||access==='employee'||(user&&user.uid!==previewIdentity.current.adminUid))){previewIdentity.current.epoch++;previewIdentity.current.adminUid=null;}
   if(access==='admin')previewIdentity.current.adminUid=user?.uid||null;
-  const previewRoute=import.meta.env.DEV&&!['#/login','#/admin'].includes(window.location.hash.split('?')[0]);
-  const accountControls=<details className="hc-account-menu"><summary><Icon name="account"/><span>{chinese?'账号':'Account'}</span></summary><div><p>{user?.email}</p><a href="#/personal">{chinese?'我的资料':'My profile'}</a><a href="#">{chinese?'访问网站':'Visit website'}</a><button disabled={busy} onClick={()=>{if(confirmDiscardChanges(i18n.language))void run(()=>signOut(auth));}}><Icon name="logout"/>{t.logout}</button></div></details>;
+  const previewRoute=import.meta.env.DEV&&currentRoute().kind!=='login';
+  const accountControls=<details className="hc-account-menu"><summary><Icon name="account"/><span>{chinese?'账号':'Account'}</span></summary><div><p>{user?.email}</p><a href="/app/account/profile/">{chinese?'我的资料':'My profile'}</a><a href="/home/">{chinese?'访问网站':'Visit website'}</a><button disabled={busy} onClick={()=>{if(confirmDiscardChanges(i18n.language))void run(()=>signOut(auth));}}><Icon name="logout"/>{t.logout}</button></div></details>;
 
-  if(import.meta.env.DEV&&access==='admin')return <HouseCalendar identityEpoch={previewIdentity.current.epoch} onLanguageChange={onLanguageChange} account={accountControls} customers={<div className="portal-admin"><Customers refreshKey={directoryRefresh}/></div>} personal={<Profile showPets={false} onSaved={()=>setDirectoryRefresh(value=>value+1)}/>}/>;
-  if(previewRoute)return <HouseCalendar identityEpoch={previewIdentity.current.epoch} onLanguageChange={onLanguageChange} personal={user&&(access==='customer'||access==='employee')?<Profile onSaved={()=>setDirectoryRefresh(value=>value+1)}/>:undefined} account={<a className="hc-back" href="#/login">{chinese?'登录':'Sign in'}</a>} customers={<section><h1>{chinese?'客户':'Customers'}</h1><p>{chinese?'请使用管理员账号登录以管理客户和宠物。':'Sign in with an administrator account to manage customers and pets.'}</p><a className="hc-manage" href="#/login">{chinese?'登录':'Sign in'}</a></section>}/>;
+  if(import.meta.env.DEV&&access==='admin')return <HouseCalendar identityEpoch={previewIdentity.current.epoch} onLanguageChange={onLanguageChange} account={accountControls} customers={<div className="portal-admin"><Customers key={formEpoch} refreshKey={directoryRefresh}/></div>} personal={<Profile key={formEpoch} showPets={false} onSaved={()=>setDirectoryRefresh(value=>value+1)}/>}/>;
+  if(previewRoute)return <HouseCalendar identityEpoch={previewIdentity.current.epoch} onLanguageChange={onLanguageChange} personal={user&&(access==='customer'||access==='employee')?<Profile key={formEpoch} onSaved={()=>setDirectoryRefresh(value=>value+1)}/>:undefined} account={['customer','employee'].includes(access)?accountControls:<a className="hc-back" href={'/app/sign-in/?returnTo='+encodeURIComponent(location.pathname+location.search)}>{chinese?'登录':'Sign in'}</a>} customers={<section><h1>{chinese?'客户':'Customers'}</h1><p>{chinese?'请使用管理员账号登录以管理客户和宠物。':'Sign in with an administrator account to manage customers and pets.'}</p><a className="hc-manage" href={'/app/sign-in/?returnTo='+encodeURIComponent(location.pathname+location.search)}>{chinese?'登录':'Sign in'}</a></section>}/>;
   return <>
     {import.meta.env.MODE==='test' && <aside className="local-test-banner" role="note">{chinese?'本地测试 · 仅供测试的资料与示例照片':'LOCAL TEST · Demo records and sample photos only'}</aside>}
-    <header className="portal-header"><a className="brand" href="#">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>
-    <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main"><a className="portal-back" href="#">← {t.home}</a><p className="eyebrow">{t.label}</p>
+    <header className="portal-header"><a className="brand" href="/home/">NIU NIU<span className="brand-sub">FAMILY PAWS</span></a><LanguageSelector onChange={onLanguageChange}/></header>
+    <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main"><a className="portal-back" href="/home/">← {t.home}</a><p className="eyebrow">{t.label}</p>
       <h1>{access === 'admin' ? personal ? t.personalTitle : workspace==='houses' ? (chinese?'房屋':'Houses') : t.dashboard : access === 'employee' ? t.employeeTitle : access === 'customer' ? t.customerTitle : t.title}</h1>
       <div className="portal-card" aria-busy={busy || access === 'checking'}>
         {access === 'checking' ? <p role="status">{t.checking}</p> : access === 'signed-out' ? <><p>{t.intro}</p><button className="button" disabled={busy} onClick={() => void run(login)}>{busy ? t.busy : t.login}</button></> : <>
           {access === 'denied' && <h2>{t.denied}</h2>}
           <div className="portal-identity-row"><p className="portal-account"><span>{t.account}</span><strong>{user?.email}</strong></p>{access !== 'denied' && <span className="portal-role">{access === 'admin' ? t.role : access === 'employee' ? t.employeeRole : t.customerRole}</span>}</div>
           {access !== 'admin' && <p className="customer-intro">{access === 'denied' ? t.deniedBody : access === 'employee' ? t.employeeNext : t.customerNext}</p>}
-          <div className="portal-actions session-actions">{access === 'denied' && <button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button>}<button className="icon-button" aria-label={t.logout} title={t.logout} disabled={busy} onClick={() => { if (confirmDiscardChanges(i18n.language)) void run(() => signOut(auth)); }}><Icon name="logout"/></button></div>
+          <div className="portal-actions session-actions">{access!=='denied'&&<a className="language" href="/app/account/profile/">{chinese?'我的资料':'My profile'}</a>}{access === 'denied' && <button className="language" disabled={busy} onClick={() => void run(() => verify(auth.currentUser, true))}>{t.refresh}</button>}<button className="icon-button" aria-label={t.logout} title={t.logout} disabled={busy} onClick={() => { if (confirmDiscardChanges(i18n.language)) void run(() => signOut(auth)); }}><Icon name="logout"/></button></div>
         </>}
         {error && <p role="alert">{t[error]}</p>}
       </div>
       {access === 'admin' && <>
         <section className="portal-workspace" aria-label={t.workspace}>
           <p className="eyebrow">{t.workspace}</p>
-          <div className="workspace-buttons" role="group" aria-label={t.workspace}>
-            <button className="language" aria-pressed={workspace==='customers'} onClick={() => setWorkspace('customers')}>{t.manage}</button>
-            {!import.meta.env.DEV && <button className="language" aria-pressed={workspace==='houses'} onClick={() => setWorkspace('houses')}>{chinese?'房屋':'Houses'}</button>}
-            {import.meta.env.DEV && <a className="language" href="#/house-calendar">{chinese?'房屋日历 · 原型':'House calendar · Prototype'}</a>}
-            <button className="language" aria-pressed={personal} onClick={() => setWorkspace('personal')}>{t.personal}</button>
-          </div>
+          <nav className="workspace-buttons" aria-label={t.workspace}>{[['/app/calendar/','Calendar','日历','calendar'],['/app/customers/','Customers','客户','customers'],['/app/balances/','Balances','寄养余额','balances'],['/app/settings/','Settings','设置','settings']].map(([href,en,zh,kind])=><a key={kind} className="language" href={href} aria-current={route.kind===kind?'page':undefined}>{chinese?zh:en}</a>)}</nav>
 
         </section>
-        <div hidden={workspace!=='customers'}><Customers key={user?.uid} refreshKey={directoryRefresh}/></div>
-        {!import.meta.env.DEV && <div hidden={workspace!=='houses'}><Houses key={user?.uid}/></div>}
+        {!import.meta.env.DEV&&['calendar','balances'].includes(route.kind)&&<section className="customer-section"><h2>{chinese?'规划工具仍在预览中':'Planning tools are still in preview'}</h2><p>{chinese?'日历和余额尚未作为正式业务工具上线。':'Calendar and balance planning are not yet released as live business tools.'}</p><a href="/app/customers/">{chinese?'管理客户':'Manage customers'}</a></section>}
+        <div hidden={workspace!=='customers'||(!import.meta.env.DEV&&['calendar','balances'].includes(route.kind))}><Customers key={user?.uid+'-'+formEpoch} refreshKey={directoryRefresh}/></div>
+        {!import.meta.env.DEV && <div hidden={workspace!=='houses'}><Houses key={user?.uid} initialSelected={route.locationId} routable/></div>}
       </>}
-      {(access === 'admin' || access === 'customer' || access === 'employee') && <div hidden={access === 'admin' && !personal}><Profile key={user?.uid} onSaved={() => setDirectoryRefresh(value => value + 1)}/></div>}
+      {(access === 'admin' || access === 'customer' || access === 'employee') && <div hidden={access === 'admin' && !personal}><Profile key={user?.uid+'-'+formEpoch} onSaved={() => setDirectoryRefresh(value => value + 1)}/></div>}
       <p className="portal-session">{t.session}</p>
     </main>
   </>;

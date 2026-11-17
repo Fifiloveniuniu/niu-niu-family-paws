@@ -1,4 +1,5 @@
 import React from 'react';
+import {navigate} from './routing';
 import {useTranslation} from 'react-i18next';
 import {auth} from './auth-client';
 import Modal from './modal';
@@ -16,9 +17,10 @@ async function api<T>(path='',body?:HouseWrite):Promise<T>{
   const result=await fetch('/api/houses'+path,{method:body?'PUT':'GET',cache:'no-store',headers:{Authorization:`Bearer ${token}`,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
   if(!result.ok)throw new HouseError(result.status);return result.json();
 }
-export default function Houses(){
+export default function Houses({initialSelected='',routable=false}:{initialSelected?:string;routable?:boolean}){
   const {i18n}=useTranslation(),t=i18n.language==='zh'?zh:en;
-  const [items,setItems]=React.useState<House[]>([]),[selected,setSelected]=React.useState('');
+  const [items,setItems]=React.useState<House[]>([]),[selected,setSelected]=React.useState(initialSelected);
+  React.useEffect(()=>setSelected(initialSelected),[initialSelected]);
   const [loading,setLoading]=React.useState(true),[saving,setSaving]=React.useState(false),[uncertain,setUncertain]=React.useState(false);
   const [error,setError]=React.useState<keyof typeof en|null>(null),[saved,setSaved]=React.useState(false);
   const [editor,setEditor]=React.useState<{id:string;input:HouseWrite}|null>(null);
@@ -55,9 +57,10 @@ export default function Houses(){
     {saved&&<p role="status">{t.saved}</p>}
     {error&&!editor&&<p role="alert">{t[error]}</p>}
     {loading&&<p role="status">{t.loading}</p>}
-    {!!items.length&&<label className="house-filter">{t.filter}<select value={selected} disabled={blocked} onChange={event=>setSelected(event.target.value)}><option value="">{t.all}</option>{items.map(house=><option key={house.id} value={house.id}>{house.name}</option>)}</select></label>}
+    {!!items.length&&<label className="house-filter">{t.filter}<select value={selected} disabled={blocked} onChange={event=>{setSelected(event.target.value);if(routable)navigate('/app/settings/locations/'+(event.target.value?encodeURIComponent(event.target.value)+'/':''));}}><option value="">{t.all}</option>{items.map(house=><option key={house.id} value={house.id}>{house.name}</option>)}</select></label>}
     {!loading&&!items.length&&!error&&<p>{t.empty}</p>}
-    <ul className="house-list">{items.filter(house=>!selected||house.id===selected).map(house=><li key={house.id}><div><h3>{house.name}</h3><p>{house.address||t.noAddress}</p><p>{t.timezone}: {house.timezone}</p></div><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${house.name}`} disabled={blocked} onClick={()=>open(house)}><Icon name="edit"/></button></li>)}</ul>
+    {initialSelected&&!loading&&!error&&!items.some(house=>house.id===initialSelected)&&<p role="alert">{i18n.language==='zh'?'未找到该房屋。':'Location not found.'}</p>}
+    <ul className="house-list">{items.filter(house=>!selected||house.id===selected).map(house=><li key={house.id}><div><h3>{routable?<a href={'/app/settings/locations/'+house.id+'/'}>{house.name}</a>:house.name}</h3><p>{house.address||t.noAddress}</p><p>{t.timezone}: {house.timezone}</p></div><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${house.name}`} disabled={blocked} onClick={()=>open(house)}><Icon name="edit"/></button></li>)}</ul>
     {error==='error'&&!editor&&<button className="language" disabled={loading} onClick={()=>void load()}>{t.retry}</button>}
     {editor&&<Modal title={editor.input.version?t.edit:t.add} disabled={blocked} onClose={close}><form ref={form} className="customer-form" onSubmit={event=>void save(event)}>
       <UnsavedChanges active={JSON.stringify(editor.input)!==baseline.current||saving||uncertain}/>

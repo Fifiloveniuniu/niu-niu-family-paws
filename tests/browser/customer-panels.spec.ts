@@ -13,7 +13,7 @@ test('customer list selects the correct pets in bilingual responsive panels and 
     const customerId=route.request().url().split('/').at(-2)!;
     return route.fulfill({json:{items:[{id:'10000000-0000-4000-8000-000000000050',customerId,name:customerId===customers[0].id?'Sample Mochi':'示例豆豆',photo:null,version:1}],nextCursor:null}});
   });
-  await page.goto('/#/login');
+  await page.goto('/app/sign-in/');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.evaluate(async({email})=>{
     const {auth}=await import('/apps/web/src/auth-client.ts');

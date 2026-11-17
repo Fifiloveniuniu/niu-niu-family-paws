@@ -93,11 +93,10 @@ export function CalendarPhotoCredits(){
 export function CalendarProfileLink({name}:{name:string}){
  const {i18n}=useTranslation(),profile=React.useContext(Photos)[name]?.profile;
  if(!profile||import.meta.env.MODE!=='test'||auth.app.options.projectId!=='demo-niu-niu')return null;
- const params=new URLSearchParams({customer:profile.customerId,pet:profile.id,lookup:profile.name});
- return <a className="hc-manage" href={'#/customers?'+params}>{i18n.language==='zh'?'查看宠物档案':'View pet profile'}</a>;
+ return <a className="hc-manage" href={'/app/customers/'+profile.customerId+'/pets/'+profile.id+'/'}>{i18n.language==='zh'?'查看宠物档案':'View pet profile'}</a>;
 }
 export function DemoBalanceLink({customerId,petId}:{customerId:string;petId:string}){
  const {i18n}=useTranslation(),[alias,setAlias]=React.useState('');
  React.useEffect(()=>{let active=true;if(import.meta.env.MODE==='test'&&auth.app.options.projectId==='demo-niu-niu')void Promise.all(calendarPhotoFixtures.map(async item=>({name:item.name,customer:await demoProfileId('local-photo-customer-'+item.family),pet:await demoProfileId('local-photo-'+item.species+'-'+item.family)}))).then(links=>{if(active)setAlias(links.find(item=>item.customer===customerId&&item.pet===petId)?.name||'');});return()=>{active=false;};},[customerId,petId]);
- return alias?<a className="language" href={'#/balances?pet='+encodeURIComponent(alias)}>{i18n.language==='zh'?'查看余额预览':'View balance preview'}</a>:null;
+ return alias?<a className="language" href={'/app/balances/?pet='+encodeURIComponent(alias)}>{i18n.language==='zh'?'查看余额预览':'View balance preview'}</a>:null;
 }

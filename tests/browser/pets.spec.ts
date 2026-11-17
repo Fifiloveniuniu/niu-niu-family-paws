@@ -21,7 +21,7 @@ test('customer manages multiple pets, adds a private photo later and retries the
     if(previous)Object.assign(previous,pet);else pets.push(pet);
     if(lose){lose=false;return route.abort();}return route.fulfill({json:pet});
   });
-  await page.goto('/#/login');
+  await page.goto('/app/sign-in/');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.evaluate(async({email})=>{
     const {auth}=await import('/apps/web/src/auth-client.ts');
@@ -54,6 +54,6 @@ test('customer manages multiple pets, adds a private photo later and retries the
   await expect(page.getByText('尚未添加照片',{exact:true})).toHaveCount(1);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.getByRole('region',{name:'我的宠物',exact:true}).screenshot({path:'test-results/pets-mobile-zh.png'});
-  await page.getByRole('button',{name:'退出登录',exact:true}).click();
+  await page.locator('.hc-account-menu>summary').click();await page.getByRole('button',{name:'退出登录',exact:true}).click();
   await expect(page.getByRole('region',{name:'我的宠物',exact:true})).toHaveCount(0);
 });

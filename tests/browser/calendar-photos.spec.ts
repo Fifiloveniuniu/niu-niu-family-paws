@@ -19,7 +19,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
    if(failPhoto&&route.request().url().includes(uuid('local-photo-cat-1')))return route.fulfill({status:503});
    return route.fulfill({contentType:'image/png',body:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jVioAAAAASUVORK5CYII=','base64')});
  });
- await page.goto('/#/house-calendar');
+ await page.goto('/app/calendar/');
  await expect(page.locator('.hc-avatar')).toHaveCount(9);expect(photoReads).toBe(0);expect(profileReads).toBe(0);
  await expect(page.getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
  await page.getByRole('button',{name:/^Mochi: Checked in/}).click();await page.getByRole('button',{name:'View pet balance',exact:true}).click();await page.getByLabel('Balance customer',{exact:true}).selectOption('all');await page.getByRole('button',{name:'Add balance',exact:true}).click();await page.getByLabel('Days',{exact:true}).fill('7');await page.getByLabel('Reason',{exact:true}).fill('[TEST] retained photo access draft');
@@ -42,12 +42,12 @@ test('calendar uses authenticated profile photos consistently and clears them on
  await expect(page.getByAltText('Coco profile photo (sample)',{exact:true})).toBeVisible();
  const canonicalCustomer=uuid('local-photo-customer-0'),canonicalPet=uuid('local-photo-dog-0');
  await page.route('**/api/pet-search?*',r=>r.fulfill({json:{items:[{customer:{id:canonicalCustomer,name:'[TEST] Canonical family',loginEmail:email},pet:{id:canonicalPet,customerId:canonicalCustomer,name:'[TEST] dog 0',photo:null,version:1}}],nextCursor:null}}));
+ await page.route('**/api/customers?*',r=>r.fulfill({json:{items:[{id:canonicalCustomer,name:'[TEST] Canonical family',loginEmail:email,email:'',phone:'',language:'en',version:1}],nextCursor:null}}));
  await page.getByRole('button',{name:/^Mochi: Checked in/}).click();await page.getByRole('dialog').getByRole('link',{name:'View pet profile',exact:true}).click();
  await expect(page.getByRole('region',{name:'Selected customer pets',exact:true}).getByRole('heading',{name:'[TEST] Canonical family',exact:true})).toBeVisible();await expect(page.locator('.pet-card-selected')).toContainText('[TEST] dog 0');
  await page.locator('.pet-card-selected').getByRole('link',{name:'View balance preview',exact:true}).click();await expect(page.getByLabel('Statement pet',{exact:true})).toHaveValue('Mochi');
  await page.getByRole('navigation',{name:'Workspace'}).getByRole('link',{name:'Calendar',exact:true}).click();
  await claims(false);await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
  await expect(page.locator('.hc-profile-photo img')).toHaveCount(0);
- await expect(page.locator('.hc-photo-credits')).toHaveCount(0);await expect(page.getByRole('button',{name:'Sign in for pet photos',exact:true})).toBeVisible();
- expect(await page.locator('.hc-profile-photo').first().textContent()).toBe('');
+ await expect(page.locator('.hc-photo-credits')).toHaveCount(0);await expect(page).toHaveURL(/\/app\/account\/profile\/$/);await expect(page.locator('.customer-directory-panel')).toHaveCount(0);
 });

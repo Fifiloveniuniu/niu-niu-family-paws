@@ -1,5 +1,14 @@
 # Session handoff — 2026-10-22
 
+## Path routing commit — 2026-11-16
+
+Owner requested committing the current work. Fixed undefined routable reference in PetSearch; search results link directly to canonical pet paths. Node 24 production build and all 32 unit tests pass; all three routing browser tests pass (public pages/history/reload, shared filters, authenticated record/location deep links). Commit includes existing path-based routing source/config/tests and bilingual Home navigation. Generated dist-dev and temporary .firebase-routing-preview.json remain untracked. Frontend4180/API8081/Auth9099 started as detached background processes; Firestore8085 preserved. Logs in /tmp/niu-niu-family-paws-servers/. No deployment.
+
+## Home navigation follow-up — 2026-11-16
+
+Owner reported missing /home. Existing uncommitted feat/path-based-routes work already maps /home and /home/ to home and canonicalizes root to /home/. Added explicit bilingual Home / 首页 link to public main navigation with current-page state. Actual native Chrome localhost:4180/home/ visibly showed home hero, content and Home link. Routing unit tests (3) pass. Build is blocked by pre-existing undefined routable in PetSearch (apps/web/src/pets.tsx:157). No deployment or merge at that point; preserve dist-dev. Browser-host access failed, but native Chrome access succeeded. Further click was refused because the user changed Chrome; no further UI actions taken.
+
+
 ## Clean app design: unified balances and context links — pending native review
 
 Third milestone on feat/unified-balance-history: one shared customer/pet/date/activity filter panel, current per-pet balance summary followed directly by its statement, and all-pet cards with isolated credits. Removed Overview/Statement page switching and Calendar's global Boarding balances action. Primary scheduling action is Add booking; stay details are a desktop drawer/mobile sheet. Existing contextual balance dialogs, dates, templates, adjustments and CSV/detail behavior remain. Added explicit-demo-only profile/balance links matched by canonical customer/pet IDs through the approved photo fixture mapping. Customers resolves a requested context through authenticated pet-search and checks both IDs; selected pet is highlighted. No name/email identity matching, API changes, new persisted balances, data reset or deployment.

@@ -11,7 +11,7 @@ async function reviewDays(page:Page){await page.getByLabel('Required days',{exac
 
 test('calendar prototype manages empty locations and time-aware pet placement',async({page:p})=>{
 await p.setViewportSize({width:1440,height:1100});p.setDefaultTimeout(7000);const errors:string[]=[];p.on('pageerror',e=>errors.push(e.message));
-await p.goto('/#/house-calendar');
+await p.goto('/app/calendar/');
 await p.getByRole('button',{name:'Add house',exact:true}).click();await p.getByLabel('House name',{exact:true}).fill('Preview West');await p.getByRole('button',{name:'Apply to preview',exact:true}).click();
 const house=p.locator('.hc-house').filter({hasText:'Preview West'});await house.getByRole('button',{name:'Add room',exact:true}).click();await p.getByLabel('Room name',{exact:true}).fill('Oak');await p.getByLabel('Maximum capacity',{exact:true}).fill('2');await p.getByLabel('Dog capacity usage',{exact:true}).fill('1');await p.getByRole('button',{name:'Apply to preview',exact:true}).click();
 await p.getByRole('button',{name:'Add booking',exact:true}).click();await p.getByLabel('Pet',{exact:true}).selectOption('Willow');const times=await p.evaluate(()=>{const a=new Date();a.setHours(10,0,0,0);a.setDate(a.getDate()+2);const z=(d:Date)=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);return [z(a),z(new Date(a.getTime()+86400000))];});await p.getByLabel('Arrival',{exact:true}).fill(times[0]);await p.getByLabel('Pickup',{exact:true}).fill(times[1]);await reviewDays(p);await p.getByRole('button',{name:'Choose a room',exact:true}).click();await p.getByText('Capacity override & manual selection',{exact:true}).click();const houseId=await p.getByRole('dialog').getByLabel('House',{exact:true}).locator('option').filter({hasText:'Preview West'}).getAttribute('value');await p.getByRole('dialog').getByLabel('House',{exact:true}).selectOption(houseId!);const roomId=await p.getByRole('dialog').getByLabel('Room',{exact:true}).locator('option').filter({hasText:'Oak'}).getAttribute('value');await p.getByRole('dialog').getByLabel('Room',{exact:true}).selectOption(roomId!);await p.getByRole('button',{name:'Review stay',exact:true}).click();await coverStay(p);await p.getByRole('button',{name:'Add to preview',exact:true}).click();await p.getByRole('button',{name:'Remove placement: Willow',exact:true}).waitFor();
@@ -20,7 +20,7 @@ p.once('dialog',d=>d.accept());await p.getByRole('button',{name:'Remove placemen
 await p.getByRole('button',{name:'Add booking',exact:true}).click();await p.getByLabel('Pet',{exact:true}).selectOption('Miso');await p.getByLabel('Arrival',{exact:true}).fill(times[0]);await p.getByLabel('Pickup',{exact:true}).fill(times[1]);await reviewDays(p);await p.getByRole('button',{name:'Choose a room',exact:true}).click();if(!await p.getByRole('dialog').getByLabel('House',{exact:true}).locator('option[value="1"]').evaluate(e=>(e as HTMLOptionElement).disabled))throw Error('Unconfigured house enabled');await p.screenshot({path:'test-results/calendar-availability-desktop.png',fullPage:true});p.once('dialog',d=>d.accept());await p.getByRole('button',{name:'Cancel',exact:true}).click();await p.setViewportSize({width:390,height:844});await p.locator('.language-selector select').selectOption('zh');if(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile overflow');await p.screenshot({path:'test-results/calendar-mobile-zh.png',fullPage:true});if(errors.length)throw Error(errors.join());console.log('PASS create/remove house/room, configure capacity, place/remove pet, occupied removal guard, in-care guard, disabled availability, Chinese mobile');});
 
 test('customer filtering combines with other filters and calendar tabs support keyboard navigation',async({page})=>{
- await page.goto('/#/house-calendar');
+ await page.goto('/app/calendar/');
  const filters=page.getByRole('region',{name:'Filters',exact:true});
  await filters.getByRole('combobox',{name:'Customer',exact:true}).selectOption('1');
  await page.getByRole('button',{name:'Remove placement: Luna',exact:true}).waitFor();
@@ -45,7 +45,7 @@ test('customer filtering combines with other filters and calendar tabs support k
 });
 
 test('add-pet calendar selects available stays and grays out continuous unavailable time ranges',async({page})=>{
- await page.goto('/#/house-calendar');
+ await page.goto('/app/calendar/');
  await page.getByRole('button',{name:'Room settings: Sample house A · Room 1',exact:true}).click();
  await page.getByLabel('Maximum capacity',{exact:true}).fill('4');
  await page.getByLabel('Dog capacity usage',{exact:true}).fill('1');
@@ -84,7 +84,7 @@ test('add-pet calendar selects available stays and grays out continuous unavaila
 });
 
 test('boarding balance history stays separate by pet and rejects invalid adjustments',async({page})=>{
- await page.goto('/#/house-calendar');await page.getByRole('button',{name:/^Mochi: Checked in/}).click();await page.getByRole('button',{name:'View pet balance',exact:true}).click();await page.getByLabel('Balance customer',{exact:true}).selectOption('all');
+ await page.goto('/app/calendar/');await page.getByRole('button',{name:/^Mochi: Checked in/}).click();await page.getByRole('button',{name:'View pet balance',exact:true}).click();await page.getByLabel('Balance customer',{exact:true}).selectOption('all');
  await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Days',{exact:true}).fill('3');await page.getByLabel('Reason',{exact:true}).fill('[TEST] opening days');
  const dates=await page.evaluate(()=>{const y=new Date().getFullYear();return [y+'-01-01',(y+1)+'-12-31'];});
@@ -110,7 +110,7 @@ test('boarding balance history stays separate by pet and rejects invalid adjustm
 
 test('stay review blocks insufficient balance and tracks planned coverage after correction',async({page})=>{
  await page.setViewportSize({width:1440,height:1100});
- await page.goto('/#/house-calendar');await page.getByRole('button',{name:'Room settings: Sample house A · Room 1',exact:true}).click();await page.getByLabel('Maximum capacity',{exact:true}).fill('4');await page.getByLabel('Dog capacity usage',{exact:true}).fill('1');await page.getByRole('button',{name:'Apply to preview',exact:true}).click();
+ await page.goto('/app/calendar/');await page.getByRole('button',{name:'Room settings: Sample house A · Room 1',exact:true}).click();await page.getByLabel('Maximum capacity',{exact:true}).fill('4');await page.getByLabel('Dog capacity usage',{exact:true}).fill('1');await page.getByRole('button',{name:'Apply to preview',exact:true}).click();
  await page.getByRole('button',{name:'Add booking',exact:true}).click();await page.getByRole('combobox',{name:'Pet',exact:true}).selectOption('Willow');
  const dates=await page.evaluate(()=>{const a=new Date();a.setDate(a.getDate()+1);a.setHours(11,0,0,0);const b=new Date(a);b.setDate(b.getDate()+1);const key=(d:Date)=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);return [key(a),key(b)];});
  await page.getByLabel('Arrival',{exact:true}).fill(dates[0]);await page.getByLabel('Pickup',{exact:true}).fill(dates[1]);await reviewDays(page);await page.getByLabel('Required days',{exact:true}).fill('2');await page.getByRole('button',{name:'Choose a room',exact:true}).click();await page.getByRole('button',{name:'Choose Sample house A · Room 1',exact:true}).click();await page.getByRole('button',{name:'Review stay',exact:true}).click();
@@ -125,7 +125,7 @@ test('stay review blocks insufficient balance and tracks planned coverage after 
 
 test('balance policy templates reuse dates without sharing credits and reasons are optional',async({page})=>{
  await page.setViewportSize({width:1440,height:1100});
- await page.goto('/#/house-calendar');await page.getByRole('button',{name:/^Mochi: Checked in/}).click();await page.getByRole('button',{name:'View pet balance',exact:true}).click();await page.getByLabel('Balance customer',{exact:true}).selectOption('all');
+ await page.goto('/app/calendar/');await page.getByRole('button',{name:/^Mochi: Checked in/}).click();await page.getByRole('button',{name:'View pet balance',exact:true}).click();await page.getByLabel('Balance customer',{exact:true}).selectOption('all');
  await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.locator('.hc-template-create summary').click();await page.getByRole('button',{name:'Save template',exact:true}).click();await page.getByRole('alert').waitFor();
  await page.getByLabel('Valid from',{exact:true}).fill('2026-01-01');await page.getByLabel('Valid through',{exact:true}).fill('2026-12-31');

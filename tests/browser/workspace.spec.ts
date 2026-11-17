@@ -78,10 +78,10 @@ test('administrator switches to own profile and pets without losing drafts or by
   const discardDraft=page.waitForEvent('dialog').then(dialog=>dialog.accept());
   await page.locator('.hc-top>a').click();
   await discardDraft;
-  await page.getByRole('link',{name:'登录',exact:true}).click();
+  await page.getByRole('link',{name:/^(登录|打开应用)$/,exact:true}).click();
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
   await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Discard on sign out');
   page.once('dialog',dialog=>dialog.accept());
-  await page.getByRole('button',{name:'退出登录',exact:true}).click();
+  await page.locator('.hc-account-menu>summary').click();await page.getByRole('button',{name:'退出登录',exact:true}).click();
   await expect(page.getByRole('region',{name:'我的资料',exact:true})).toHaveCount(0);
 });
