@@ -15,6 +15,7 @@ export default function HomeIllustration() {
       <path d="M408 406h74l-12 49h-49z" fill="#bd7455" />
       <ellipse cx="272" cy="433" rx="138" ry="18" fill="#cebd9d" />
       <path
+        className="pet-tail"
         d="M201 365q-73-68-75-5-4 30 56 39"
         fill="none"
         stroke="#b66c43"
@@ -23,11 +24,15 @@ export default function HomeIllustration() {
       />
       <path d="M181 415q-27-141 88-151 96-4 100 149" fill="#c98656" />
       <path d="M240 310q-45 84-25 114h110q8-72-38-114" fill="#f6ead4" />
-      <path d="M188 263q-64-81-44-105 33-26 94 21m78 0q69-45 91-16 18 31-50 105" fill="#875338" />
+      <path
+        className="pet-ears"
+        d="M188 263q-64-81-44-105 33-26 94 21m78 0q69-45 91-16 18 31-50 105"
+        fill="#875338"
+      />
       <path d="M178 228q-3-84 92-88 98-5 103 91 13 90-99 94-108-1-96-97" fill="#d49764" />
       <path d="M234 150q36-13 64 0l-8 73 29 32q-10 48-47 48-38 0-49-46l27-35z" fill="#fcf0d9" />
-      <ellipse cx="230" cy="225" rx="7" ry="9" fill="#382f29" />
-      <ellipse cx="316" cy="225" rx="7" ry="9" fill="#382f29" />
+      <ellipse className="pet-eye" cx="230" cy="225" rx="7" ry="9" fill="#382f29" />
+      <ellipse className="pet-eye" cx="316" cy="225" rx="7" ry="9" fill="#382f29" />
       <path d="M257 255q16-9 31 0-4 18-15 18-12-2-16-18" fill="#382f29" />
       <path
         d="M273 272v10m-18 0q18 18 36 0"

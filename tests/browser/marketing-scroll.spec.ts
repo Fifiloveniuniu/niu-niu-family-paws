@@ -29,6 +29,21 @@ test('one cinematic timeline scrubs across chapters and restores exact earlier p
       .locator('[data-scroll-object="hero-pet"]')
       .evaluate((element) => getComputedStyle(element).transform);
   }
+  // Equal scroll distances should move the artwork progressively farther.
+  const artworkOffsets: number[] = [];
+  for (const chapter of [0, 0.15, 0.3, 0.45]) {
+    await pose(chapter);
+    artworkOffsets.push(
+      await page
+        .locator('[data-scroll-object="hero-pet"]')
+        .evaluate((element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m42),
+    );
+  }
+  const distances = artworkOffsets
+    .slice(1)
+    .map((offset, index) => Math.abs(offset - artworkOffsets[index]));
+  expect(distances[1]).toBeGreaterThan(distances[0] * 1.5);
+  expect(distances[2]).toBeGreaterThan(distances[1] * 1.2);
   const first = await pose(0.2);
   const middle = await pose(0.5);
   for (const panel of await page.locator('[data-cinematic-panel]').all()) {
@@ -198,19 +213,22 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
   await expect(page.locator('.service-path').first()).toBeInViewport();
 });
 
-test('marketing links jump directly and Home restores the complete header', async ({ page }) => {
+test('marketing links animate briefly without replaying intervening chapters and Home restores the header', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 950 });
   await page.goto('/home/');
   for (const language of ['en', 'zh']) {
     await page.locator('select').selectOption(language);
     for (const anchor of ['services', 'about', 'faq', 'main', 'main']) {
-      // A direct click should land within two rendering frames, without playing intervening scenes.
       await page.locator(`.marketing-header nav a[href="/home/#${anchor}"]`).click();
-      await page.evaluate(
-        () =>
-          new Promise<void>((resolve) =>
-            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-          ),
+      await expect(page.locator('.marketing-site')).toHaveAttribute(
+        'data-marketing-transition',
+        '',
+      );
+      await expect(page.locator('.marketing-site')).not.toHaveAttribute(
+        'data-marketing-transition',
+        { timeout: 900 },
       );
       if (anchor === 'main') {
         expect(await page.evaluate(() => scrollY)).toBe(0);
@@ -237,4 +255,108 @@ test('marketing links jump directly and Home restores the complete header', asyn
   expect(await page.evaluate(() => scrollY)).toBe(0);
   await page.goto('/home/#main');
   await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
+});
+
+test('navbar follows manual scroll and chapter buttons animate with rapid-click recovery', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  await page.evaluate(() => {
+    const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+    const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+    const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+    scrollTo({
+      top:
+        story.getBoundingClientRect().top +
+        scrollY -
+        header +
+        (story.clientHeight - stage.clientHeight) * 0.6,
+      behavior: 'instant',
+    });
+  });
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#services',
+  );
+  await page.locator('.cinema-rail a[href="#faq"]').click();
+  await expect(page.locator('.marketing-site')).toHaveAttribute('data-marketing-transition', '');
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#faq',
+  );
+  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await page.locator('.marketing-header nav a[href="/home/#about"]').click();
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('[data-cinematic-story]')).toHaveAttribute('data-active-chapter', '2');
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#about',
+  );
+  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  await expect(page.locator('.marketing-site')).toHaveAttribute('data-marketing-transition', '');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('#services')).toBeInViewport();
+  await expect(page.locator('.marketing-header nav a[aria-current]')).toHaveAttribute(
+    'href',
+    '/home/#services',
+  );
+});
+
+test('one persistent landscape and internal SVG shapes morph continuously and reverse exactly', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  async function scenePose(chapter: number) {
+    await page.evaluate((value) => {
+      const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+      const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          story.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((story.clientHeight - stage.clientHeight) * value) / 5,
+        behavior: 'instant',
+      });
+    }, chapter);
+    await expect
+      .poll(() =>
+        page
+          .locator('[data-cinematic-story]')
+          .evaluate((element) =>
+            Number((element as HTMLElement).style.getPropertyValue('--cinema-progress')),
+          ),
+      )
+      .toBeCloseTo(chapter / 5, 2);
+    return page.evaluate(() => ({
+      hill: document.querySelector('[data-journey-hill="back"]')!.getAttribute('d'),
+      orb: document.querySelector('[data-journey-orb]')!.getAttribute('transform'),
+      moon: document.querySelector('[data-journey-moon]')!.getAttribute('cx'),
+      petal: getComputedStyle(document.querySelector('.garden-petal')!).transform,
+      tail: getComputedStyle(document.querySelector('.pet-tail')!).transform,
+      rays: getComputedStyle(document.querySelector('.symbol-rays')!).transform,
+    }));
+  }
+  await expect(page.locator('.story-landscape')).toHaveCount(1);
+  const first = await scenePose(0.15);
+  const later = await scenePose(0.4);
+  expect(later.hill).not.toBe(first.hill);
+  expect(later.orb).not.toBe(first.orb);
+  expect(later.petal).not.toBe(first.petal);
+  expect(later.tail).not.toBe(first.tail);
+  const beforeBoundary = await scenePose(0.999);
+  const afterBoundary = await scenePose(1.001);
+  expect(Math.abs(Number(beforeBoundary.moon) - Number(afterBoundary.moon))).toBeLessThan(0.1);
+  expect(await scenePose(0.15)).toEqual(first);
+  const service = await scenePose(3.15);
+  expect((await scenePose(3.4)).rays).not.toBe(service.rays);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.story-landscape')).toBeHidden();
+  await expect(page.locator('.garden-petal').first()).toHaveCSS('transform', 'none');
+  await expect(page.locator('.pet-tail')).toHaveCSS('transform', 'none');
 });

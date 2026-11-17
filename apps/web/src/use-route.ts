@@ -95,7 +95,7 @@ export default function useRoute(language: string, initialPath = '/') {
         if (!document.querySelector('.marketing-header')) return;
         event.preventDefault();
         navigate(url.href);
-        scrollMarketingTarget(url.hash);
+        scrollMarketingTarget(url.hash, !anchor.classList.contains('skip'));
         return;
       }
       event.preventDefault();

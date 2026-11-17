@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import type { CSSProperties } from 'react';
 import './cinematic-story.css';
 import HomeIllustration from './home-illustration';
+import StoryLandscape, { CareSymbol } from './story-landscape';
 import { PetPortrait } from './marketing-sections';
 import { GardenArch, GardenBranch, GardenBlossom } from './garden-art';
 
@@ -31,6 +32,7 @@ export default function MarketingHome() {
         ))}
       </div>
       <div className="cinematic-stage">
+        <StoryLandscape />
         <section
           className="scroll-hero"
           data-cinematic-panel
@@ -162,7 +164,7 @@ export default function MarketingHome() {
             {[1, 2, 3].map((number) => (
               <article key={number} data-scroll-object="rise">
                 <span className="trust-symbol" aria-hidden="true">
-                  {['♡', '◎', '✓'][number - 1]}
+                  <CareSymbol kind={(['heart', 'orbit', 'check'] as const)[number - 1]} />
                 </span>
                 <div>
                   <h3>{t('trust' + number)}</h3>
@@ -187,7 +189,7 @@ export default function MarketingHome() {
           </div>
           <a className="service-path" href="/services/" data-scroll-object="rise">
             <span className="service-path-icon" aria-hidden="true">
-              ☀
+              <CareSymbol kind="day" />
             </span>
             <span>
               <span className="eyebrow">{t('homeDayLabel')}</span>
@@ -200,7 +202,7 @@ export default function MarketingHome() {
           </a>
           <a className="service-path" href="/services/#boarding" data-scroll-object="rise">
             <span className="service-path-icon" aria-hidden="true">
-              ☾
+              <CareSymbol kind="night" />
             </span>
             <span>
               <span className="eyebrow">{t('homeNightLabel')}</span>
