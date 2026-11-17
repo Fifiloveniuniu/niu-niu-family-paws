@@ -177,3 +177,10 @@ Latest approved clean design (2026-11-16; supersedes earlier navigation proposal
 | Missing photos | Labelled species samples versus actual owner photos for real pets; whether photo becomes mandatory for new real pets |
 
 Unknown values must stay unconfigured or explicitly pending, not be silently replaced by illustrative numbers. Calendar/balance development can proceed on independent UI and record foundations, but financially consequential booking, deduction and refund behavior must wait for the relevant approved rules.
+
+
+## Public marketing direction — 2026-11-16
+
+Latest owner direction supersedes earlier entrance-only animation: use scroll-linked object positions across the public page. Moving backward restores earlier poses; stopping scroll holds the pose. Natural wheel/touch/keyboard scrolling and reduced motion must remain usable. Aim for a clean, cute, professional illustrated art direction with a coordinated palette and messaging about clarity, care, trust and the care experience.
+
+Home introduces the brand/experience and links to distinct detailed Services, About and FAQ content; do not repeat their sections/paragraphs on Home. Keep home navigation anchors working. Customer testimonials and real customer experiences require approved source wording and attribution; never invent them. None have been supplied in this session, so testimonial publication remains pending.

@@ -206,3 +206,10 @@ Customers now has a Filters panel for customer and pet prefix searches. Only my 
 Balances now has one shared customer/pet/date/activity filter panel. A selected pet’s current credits appear above its statement; choose All pets for separate per-pet summary cards. No credits are pooled. Calendar stay details link to a pet’s balance; the Calendar header no longer has a global balance button. In the isolated demo, linked test profiles can open their explicitly mapped balance preview and return to the canonical customer/pet profile. These links do not connect real customers to sample credit records.
 
 余额与明细使用同一组客户、宠物、日期及类型筛选。所选宠物的当前额度显示在明细上方，选择全部宠物可逐只查看余额卡片，不合并宠物额度。日历详情可查看该宠物余额，日历顶部不再显示全局余额按钮。本地示例中的档案链接仅通过明确的测试档案对应关系连接，不会把真实客户与示例额度混用。
+
+
+## Marketing artwork preview — 2026-11-16
+
+The local Home page is now an illustrated garden story. Scroll slowly to move the pets, leaves and flowers; scroll upward to return them to earlier positions. Your device’s Reduce Motion setting shows a static, readable version. Home introduces the experience, while Services, About and FAQs have their own detailed content. The top links scroll to Home introductions; the links inside those introductions open the full guides. Approved customer quotes and permitted names are still needed before testimonials can be published. This design is locally validated and awaits the final combined deployment.
+
+本地首页现在是一幅花园主题的插画故事。慢慢向下滚动，宠物、枝叶和花朵会随滚动位置移动；向上滚动时会回到之前的位置。设备开启“减少动态效果”后，页面会静态展示。首页介绍整体体验，服务、关于我们及常见问题分别保留独立的详细内容。发布客户评价前，仍需要您提供获准公开的原文和署名。当前设计仅在本地完成验证，待所有功能完成后统一上线。

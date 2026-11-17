@@ -29,7 +29,7 @@ function publicPageHtml(template, routePath, title, markup) {
 
 async function writePublicPage(App, template, routePath, title) {
   const markup = renderToString(createElement(App, { initialPath: routePath }));
-  if (!markup.includes('<h1>')) throw new Error('Missing public heading: ' + routePath);
+  if (!/<h1(?:\s[^>]*)?>/.test(markup)) throw new Error('Missing public heading: ' + routePath);
   const isNotFound = routePath === '/404/';
   const directory = isNotFound || routePath === '/' ? 'dist' : 'dist' + routePath;
   const destination = isNotFound ? 'dist/404.html' : directory + '/index.html';
