@@ -25,7 +25,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const route = useRoute(i18n.language, initialPath);
   const page = route.kind;
   const marketingRoot = React.useRef<HTMLElement>(null);
-  useMarketingMotion(marketingRoot, route.path);
+  useMarketingMotion(marketingRoot, route.path, i18n.language);
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
   const [visitedApp, setVisitedApp] = React.useState(appVisible);
   React.useEffect(() => {
@@ -56,12 +56,14 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
       'not-found': chinese ? '未找到页面' : 'Page not found',
     };
     document.title = names[page] + ' · Niu Niu Family Paws';
+  }, [page, route.path, chinese, t]);
+  React.useEffect(() => {
     if (location.hash && !location.hash.startsWith('#/'))
       requestAnimationFrame(() =>
         document.getElementById(location.hash.slice(1))?.scrollIntoView(),
       );
     else window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [page, route.path, route.hash, chinese]);
+  }, [page, route.path, route.hash]);
   function setLanguage(lang: 'en' | 'zh') {
     void i18n.changeLanguage(lang);
     try {

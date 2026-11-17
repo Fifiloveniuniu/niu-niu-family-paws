@@ -1,76 +1,81 @@
 import { test, expect } from '@playwright/test';
 
-test('scroll position scrubs the scene forward and back without timed animation', async ({
+test('one cinematic timeline scrubs across chapters and restores exact earlier poses', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 950 });
   await page.goto('/home/');
-  const scene = page.locator('.scroll-hero');
-  const geometry = await scene.evaluate((element) => ({
-    top: element.getBoundingClientRect().top + scrollY,
-    travel: element.clientHeight - innerHeight,
-  }));
-  async function pose(fraction: number) {
-    await page.evaluate(
-      ({ top, travel, fraction }) =>
-        window.scrollTo({ top: top + travel * fraction, behavior: 'instant' }),
-      { ...geometry, fraction },
-    );
+  const story = page.locator('[data-cinematic-story]');
+  await expect(story).toHaveAttribute('data-cinema-enabled', '');
+  async function pose(chapter: number) {
+    await page.evaluate((value) => {
+      const element = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+      const top = element.getBoundingClientRect().top + scrollY;
+      window.scrollTo({
+        top: top + ((element.clientHeight - innerHeight) * value) / 5,
+        behavior: 'instant',
+      });
+    }, chapter);
     await expect
-      .poll(() => scene.evaluate((element) => Number(element.style.getPropertyValue('--scroll'))))
-      .toBeCloseTo(fraction, 2);
+      .poll(() =>
+        story.evaluate((element) => Number(element.style.getPropertyValue('--cinema-progress'))),
+      )
+      .toBeCloseTo(chapter / 5, 2);
     return page
       .locator('[data-scroll-object="hero-pet"]')
       .evaluate((element) => getComputedStyle(element).transform);
   }
-  const start = await pose(0.2);
+  const first = await pose(0.2);
   const middle = await pose(0.5);
-  const end = await pose(0.8);
-  expect(start).not.toBe(middle);
-  expect(middle).not.toBe(end);
+  expect(first).not.toBe(middle);
+  await pose(1.25);
+  await expect(story).toHaveAttribute('data-active-chapter', '1');
+  await page.locator('select').selectOption('zh');
+  await expect(story).toHaveAttribute('data-active-chapter', '1');
+  await page.locator('select').selectOption('en');
+  await expect(
+    page.getByRole('heading', { name: 'Every little personality. A thoughtful beginning.' }),
+  ).toBeVisible();
+  expect(
+    await page.locator('.scroll-hero').evaluate((element) => (element as HTMLElement).inert),
+  ).toBe(true);
   expect(await pose(0.5)).toBe(middle);
-  expect(await pose(0.2)).toBe(start);
+  expect(await pose(0.2)).toBe(first);
+  expect(
+    await page.evaluate(
+      () =>
+        document.getAnimations().filter((animation) => animation.playState === 'running').length,
+    ),
+  ).toBe(0);
+  await expect(page.locator('[data-scroll-object="hero-pet"]')).toHaveCSS('transform', first);
+  await page
+    .getByRole('navigation', { name: 'Story chapters' })
+    .getByRole('link', { name: 'Services', exact: true })
+    .click();
+  await expect(story).toHaveAttribute('data-active-chapter', '3');
   await expect
     .poll(() =>
-      page.evaluate(
-        () =>
-          document.getAnimations().filter((animation) => animation.playState === 'running').length,
-      ),
+      story.evaluate((element) => Number(element.style.getPropertyValue('--cinema-progress'))),
     )
-    .toBe(0);
-  await expect(page.locator('[data-scroll-object="hero-pet"]')).toHaveCSS('transform', start);
-
-  const experience = page.locator('.experience-scene');
-  const secondGeometry = await experience.evaluate((element) => ({
-    top: element.offsetTop,
-    travel: element.clientHeight - innerHeight,
-  }));
-  await page.evaluate(
-    ({ top, travel }) => window.scrollTo({ top: top + travel * 0.25, behavior: 'instant' }),
-    secondGeometry,
-  );
+    .toBeCloseTo(0.6, 3);
+  await expect(page.locator('.cinema-count')).toHaveText('04 / 06');
+  await expect(
+    page.getByRole('heading', { name: 'For a day. For a little longer.' }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(story).toHaveAttribute('data-active-chapter', '3');
   await expect
     .poll(() =>
-      experience.evaluate((element) => Number(element.style.getPropertyValue('--scroll'))),
+      story.evaluate((element) => Number(element.style.getPropertyValue('--cinema-progress'))),
     )
-    .toBeCloseTo(0.25, 2);
-  const pet = page.locator('[data-scroll-object="pet-left"]');
-  const firstPose = await pet.evaluate((element) => getComputedStyle(element).transform);
-  await page.evaluate(
-    ({ top, travel }) => window.scrollTo({ top: top + travel * 0.75, behavior: 'instant' }),
-    secondGeometry,
-  );
-  await expect
-    .poll(() => pet.evaluate((element) => getComputedStyle(element).transform))
-    .not.toBe(firstPose);
-  await page.evaluate(
-    ({ top, travel }) => window.scrollTo({ top: top + travel * 0.25, behavior: 'instant' }),
-    secondGeometry,
-  );
-  await expect(pet).toHaveCSS('transform', firstPose);
+    .toBeCloseTo(0.6, 3);
+  await page.locator('[data-cinema-next]').click();
+  await expect(story).toHaveAttribute('data-active-chapter', '4');
+  await page.goBack();
+  await expect(story).toHaveAttribute('data-active-chapter', '3');
 });
 
-test('public pages own distinct content and home anchors link to detailed guides', async ({
+test('public pages own distinct content and chapter links open detailed guides', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -95,43 +100,49 @@ test('public pages own distinct content and home anchors link to detailed guides
   await expect(page.locator('#boarding')).toBeInViewport();
 });
 
-test('reduced motion and small bilingual layouts keep all content reachable', async ({ page }) => {
+test('bilingual chapters fit mobile and desktop; reduced motion restores static sections', async ({
+  page,
+}) => {
   await page.goto('/home/');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-scroll-enabled');
   for (const width of [320, 390, 760, 1440]) {
-    for (const language of ['en', 'zh']) {
-      await page.setViewportSize({ width, height: 650 });
-      await page.locator('select').selectOption(language);
-      await expect(page.locator('html')).toHaveAttribute(
-        'lang',
-        language === 'zh' ? 'zh-Hans' : 'en',
-      );
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-        true,
-      );
-      await page.locator('#contact').scrollIntoViewIfNeeded();
-      await expect(page.locator('#contact h2')).toBeInViewport();
-      await expect(page.locator('[data-scroll-object="hero-pet"]')).toHaveCSS('transform', 'none');
-    }
-  }
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await expect(page.locator('.marketing-site')).toHaveAttribute('data-scroll-enabled', '');
-  for (const width of [320, 1440]) {
     await page.setViewportSize({ width, height: 844 });
-    for (const fraction of [0, 0.5, 1]) {
-      await page.evaluate(async (progress) => {
-        window.scrollTo({
-          top: (document.documentElement.scrollHeight - innerHeight) * progress,
-          behavior: 'instant',
-        });
-        await new Promise<void>((resolve) =>
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+    for (const language of ['en', 'zh']) {
+      await page.locator('select').selectOption(language);
+      for (const chapter of [0, 1, 2, 3, 4, 5]) {
+        await page.evaluate((value) => {
+          const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+          window.scrollTo({
+            top:
+              story.getBoundingClientRect().top +
+              scrollY +
+              ((story.clientHeight - innerHeight) * value) / 5,
+            behavior: 'instant',
+          });
+        }, chapter);
+        await expect(page.locator('[data-cinematic-story]')).toHaveAttribute(
+          'data-active-chapter',
+          String(chapter),
         );
-      }, fraction);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-        true,
-      );
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+          true,
+        );
+        const panel = page.locator('[data-cinematic-panel]').nth(chapter);
+        const links = panel.locator('a');
+        for (const link of await links.all()) await expect(link).toBeInViewport();
+      }
     }
   }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-cinematic-story]')).not.toHaveAttribute('data-cinema-enabled');
+  await expect(page.locator('[data-cinematic-panel][inert]')).toHaveCount(0);
+  await expect(page.locator('[data-cinema-anchor][id]')).toHaveCount(0);
+  await expect(page.locator('#services')).toHaveClass('home-services');
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await expect(page.locator('#contact h2')).toBeInViewport();
+  await expect(page.locator('[data-scroll-object="hero-pet"]')).toHaveCSS('transform', 'none');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.setViewportSize({ width: 390, height: 650 });
+  await expect(page.locator('[data-cinematic-story]')).not.toHaveAttribute('data-cinema-enabled');
+  await page.locator('#services').scrollIntoViewIfNeeded();
+  await expect(page.locator('.service-path').first()).toBeInViewport();
 });

@@ -1,15 +1,31 @@
 import { useEffect, type RefObject } from 'react';
+import { installCinematicStory } from './cinematic-scroll';
 
 /** One deterministic scroll position drives every object, in both directions. */
-export default function useMarketingMotion(root: RefObject<HTMLElement | null>, page: string) {
+export default function useMarketingMotion(
+  root: RefObject<HTMLElement | null>,
+  page: string,
+  language: string,
+) {
   useEffect(() => {
     const element = root.current;
     if (!element) return;
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const cinematicViewport = window.matchMedia('(min-height: 740px)');
     let dispose = () => {};
     function configure() {
       dispose();
       if (!element || preference.matches) return;
+      const story = element.querySelector<HTMLElement>('[data-cinematic-story]');
+      if (story && cinematicViewport.matches) {
+        element.setAttribute('data-scroll-enabled', '');
+        const stop = installCinematicStory(story);
+        dispose = () => {
+          stop();
+          element.removeAttribute('data-scroll-enabled');
+        };
+        return;
+      }
       const scenes = Array.from(element.querySelectorAll<HTMLElement>('[data-scroll-scene]'));
       let frame = 0;
       element.setAttribute('data-scroll-enabled', '');
@@ -49,9 +65,11 @@ export default function useMarketingMotion(root: RefObject<HTMLElement | null>, 
     }
     configure();
     preference.addEventListener('change', configure);
+    cinematicViewport.addEventListener('change', configure);
     return () => {
       dispose();
       preference.removeEventListener('change', configure);
+      cinematicViewport.removeEventListener('change', configure);
     };
-  }, [root, page]);
+  }, [root, page, language]);
 }

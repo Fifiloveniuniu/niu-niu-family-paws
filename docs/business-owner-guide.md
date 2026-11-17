@@ -213,3 +213,10 @@ Balances now has one shared customer/pet/date/activity filter panel. A selected 
 The local Home page is now an illustrated garden story. Scroll slowly to move the pets, leaves and flowers; scroll upward to return them to earlier positions. Your device’s Reduce Motion setting shows a static, readable version. Home introduces the experience, while Services, About and FAQs have their own detailed content. The top links scroll to Home introductions; the links inside those introductions open the full guides. Approved customer quotes and permitted names are still needed before testimonials can be published. This design is locally validated and awaits the final combined deployment.
 
 本地首页现在是一幅花园主题的插画故事。慢慢向下滚动，宠物、枝叶和花朵会随滚动位置移动；向上滚动时会回到之前的位置。设备开启“减少动态效果”后，页面会静态展示。首页介绍整体体验，服务、关于我们及常见问题分别保留独立的详细内容。发布客户评价前，仍需要您提供获准公开的原文和署名。当前设计仅在本地完成验证，待所有功能完成后统一上线。
+
+
+## Continuous cinematic Home preview
+
+Home now plays as one continuous six-chapter story: welcome, experience, trust, services, questions and contact. Scroll down or up to move between scenes; the chapter dots and Continue the story links can jump directly. This is a long story with an ending, as clarified in your request. Reduced Motion shows a normal static page, and short screens use normal page flow. Services, About and FAQs keep their own detailed content. Changing language preserves your chapter. This remains a local preview until the final combined deployment.
+
+首页现在是一段连续的六章节故事：欢迎、体验、信任、服务、问题及联系。向下或向上滚动即可推进或回看，也可以使用章节圆点和“继续这段故事”直接跳转。按您的澄清，这是有结尾的长篇滚动故事。开启“减少动态效果”后会静态展示；较矮的屏幕使用普通页面布局。详细服务、理念和常见问题仍在独立页面中；切换语言会保留当前章节。所有功能完成前仍仅在本地预览。

@@ -184,3 +184,8 @@ Unknown values must stay unconfigured or explicitly pending, not be silently rep
 Latest owner direction supersedes earlier entrance-only animation: use scroll-linked object positions across the public page. Moving backward restores earlier poses; stopping scroll holds the pose. Natural wheel/touch/keyboard scrolling and reduced motion must remain usable. Aim for a clean, cute, professional illustrated art direction with a coordinated palette and messaging about clarity, care, trust and the care experience.
 
 Home introduces the brand/experience and links to distinct detailed Services, About and FAQ content; do not repeat their sections/paragraphs on Home. Keep home navigation anchors working. Customer testimonials and real customer experiences require approved source wording and attribution; never invent them. None have been supplied in this session, so testimonial publication remains pending.
+
+
+## Cinematic story clarification — 2026-11-16
+
+Owner cited Make Your Money Matter and the earlier Apple Mac Pro product site, then explicitly selected **Long cinematic scroll story** when distinguishing it from an endless looping page. Home should progress through connected full-screen chapters with reversible scroll-driven artwork and restrained copy. Do not repeat the page indefinitely or clone its content. Preserve distinct detailed pages, direct section URLs, native scrolling, bilingual layouts and reduced-motion/static access.
