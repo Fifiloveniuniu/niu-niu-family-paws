@@ -2,6 +2,7 @@ import { englishMessages, chineseMessages } from './marketing-messages';
 import MarketingHome from './marketing-home';
 import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
 import useRoute from './use-route';
+import { scrollMarketingTarget } from './marketing-navigation';
 import useMarketingMotion from './use-marketing-motion';
 import SiteAccountLink from './site-account-link';
 import React from 'react';
@@ -59,9 +60,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   }, [page, route.path, chinese, t]);
   React.useEffect(() => {
     if (location.hash && !location.hash.startsWith('#/'))
-      requestAnimationFrame(() =>
-        document.getElementById(location.hash.slice(1))?.scrollIntoView(),
-      );
+      requestAnimationFrame(() => scrollMarketingTarget(location.hash));
     else window.scrollTo({ top: 0, behavior: 'instant' });
   }, [page, route.path, route.hash]);
   function setLanguage(lang: 'en' | 'zh') {

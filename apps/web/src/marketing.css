@@ -1203,3 +1203,8 @@ header.marketing-header .language-selector select {
     font-size: 12px;
   }
 }
+
+/* Explicit destinations jump directly; manual scrolling still animates the story. */
+html:has(.marketing-header) {
+  scroll-behavior: auto;
+}
