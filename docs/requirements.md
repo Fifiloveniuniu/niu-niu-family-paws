@@ -204,3 +204,8 @@ Latest direction replaces instant-only clicks: navbar and right-side chapter/nex
 ## Integrated continuous artwork — 2026-11-16
 
 Treat the marketing chapters as one continuous illustrated piece. Allow shapes inside SVGs/icons to change with scroll, with shared artwork that carries through scene boundaries. Retain readability, full-screen composition below the visible navbar, brief animated navigation, active-section indication, neutral service background, exact reversible motion and static/reduced-motion access.
+
+
+## Natural movement and shape resizing — 2026-11-16
+
+Latest owner direction supersedes opacity-based scene changes: use movement into/out of the viewport, including offscreen side exits where appropriate. Calm the shared sun/flower so they do not bounce between sides. Include scroll-linked shape resizing, keeping everything smooth, natural and reversible. Preserve animated navbar/chapter navigation, active-section indication, sticky header, neutral backgrounds, readable text and reduced-motion/static access.

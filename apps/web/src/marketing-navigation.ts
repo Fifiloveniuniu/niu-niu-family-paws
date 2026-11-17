@@ -48,37 +48,41 @@ export function scrollMarketingTarget(hash: string, animated = false) {
   window.addEventListener('touchstart', cancel, { passive: true });
   window.addEventListener('keydown', handleKey);
   void (async () => {
-    const outgoing =
-      stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ?? stage;
-    const exit = outgoing.animate(
-      [
-        { opacity: 1, transform: 'translateY(0)' },
-        { opacity: 0, transform: 'translateY(-40px)' },
-      ],
-      { duration: 180, easing: 'cubic-bezier(.55,.05,.9,.5)', fill: 'forwards' },
-    );
-    animations.push(exit);
-    await exit.finished.catch(() => {});
-    if (cancelled) return;
-    // Select the requested chapter, not the still-active chapter from before the jump.
-    const story = stage.closest('[data-cinematic-story]');
+    const story = stage.closest<HTMLElement>('[data-cinematic-story]');
+    const panels = Array.from(stage.querySelectorAll<HTMLElement>('[data-cinematic-panel]'));
     const anchors = [
       'main',
       ...Array.from(story?.querySelectorAll<HTMLElement>('[data-cinema-anchor]') ?? []).map(
         (marker) => marker.dataset.cinemaAnchor,
       ),
     ];
-    const panels = stage.querySelectorAll<HTMLElement>('[data-cinematic-panel]');
-    const incoming = panels[anchors.indexOf(hash.slice(1))] ?? stage;
+    const destinationIndex = anchors.indexOf(hash.slice(1));
+    const headerBottom =
+      document.querySelector('.marketing-header')?.getBoundingClientRect().bottom ?? 0;
+    const outgoing =
+      stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ??
+      panels.find((panel) => {
+        const bounds = panel.getBoundingClientRect();
+        return bounds.bottom > headerBottom + 20 && bounds.top < innerHeight;
+      }) ??
+      stage;
+    const currentIndex = Math.max(0, panels.indexOf(outgoing));
+    const direction = destinationIndex >= 0 && destinationIndex < currentIndex ? -1 : 1;
+    const exit = outgoing.animate(
+      [{ transform: 'translateY(0)' }, { transform: `translateY(${-direction * 110}%)` }],
+      { duration: 240, easing: 'cubic-bezier(.55,.05,.9,.5)', fill: 'forwards' },
+    );
+    animations.push(exit);
+    await exit.finished.catch(() => {});
+    if (cancelled) return;
+    // Select the requested chapter, not the still-active chapter from before the jump.
+    const incoming = panels[destinationIndex] ?? stage;
     const entrance = incoming.animate(
-      [
-        { opacity: 0, transform: 'translateY(64px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ],
-      { duration: 360, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' },
+      [{ transform: `translateY(${direction * 110}%)` }, { transform: 'translateY(0)' }],
+      { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' },
     );
     animations.push(entrance);
-    // Hold the destination invisible until the scroll timeline has updated its pose.
+    // Hold the destination outside the viewport until its scroll pose is ready.
     entrance.pause();
     entrance.currentTime = 0;
     jump();

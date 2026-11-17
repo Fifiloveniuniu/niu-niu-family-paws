@@ -43,8 +43,8 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  opacity: var(--panel-opacity, 0);
-  transform: translateY(var(--panel-shift, 0px)) scale(var(--panel-scale, 1));
+  transform: translateY(var(--panel-shift, 0px));
+  overflow: clip;
   transform-origin: center;
   align-content: center;
   pointer-events: none;
@@ -304,19 +304,7 @@
     padding: 40px 24px 76px;
   }
 }
-/* Words leave before the next words arrive; only the artwork dissolves together. */
-.home-story.cinematic-story[data-cinema-enabled] .hero-message,
-.home-story.cinematic-story[data-cinema-enabled] .experience-heading,
-.home-story.cinematic-story[data-cinema-enabled] .experience-steps,
-.home-story.cinematic-story[data-cinema-enabled] .home-section-intro,
-.home-story.cinematic-story[data-cinema-enabled] .trust-principles,
-.home-story.cinematic-story[data-cinema-enabled] .service-path,
-.home-story.cinematic-story[data-cinema-enabled] .home-questions > div:last-child,
-.home-story.cinematic-story[data-cinema-enabled] .home-contact > :not(.contact-bloom) {
-  opacity: var(--copy-opacity, 1);
-}
-
-/* Each chapter settles in place; artwork carries the reversible motion. */
+/* Layered artwork follows the same reversible movement timeline. */
 .home-story.cinematic-story[data-cinema-enabled] .service-path {
   border-radius: 32px;
 }
@@ -331,7 +319,7 @@
     rotate(calc(var(--scroll) * 9deg)) scale(calc(1 + var(--scroll) * 0.08));
 }
 .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='bloom'] {
-  transform: rotate(calc(var(--scroll) * 100deg)) scale(calc(0.88 + var(--scroll) * 0.24));
+  transform: rotate(calc(var(--scroll) * 25deg)) scale(calc(0.94 + var(--scroll) * 0.08));
 }
 .home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='leaf-left'] {
   transform: translateY(calc(var(--scroll) * -60px)) rotate(calc(var(--scroll) * 24deg));
@@ -344,9 +332,6 @@
 }
 
 /* Give the illustrated layers room to move without carrying the copy sideways. */
-.home-story.cinematic-story[data-cinema-enabled] .question-art {
-  transform: rotate(calc(var(--scroll) * -8deg)) scale(calc(1 + var(--scroll) * 0.12));
-}
 .home-story.cinematic-story[data-cinema-enabled] .service-path-icon {
   transform: translateY(calc(var(--scroll) * -24px)) rotate(calc(var(--scroll) * 18deg));
 }
@@ -423,11 +408,11 @@
 .home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path {
   transform-box: fill-box;
   transform-origin: 80% 90%;
-  transform: rotate(calc(var(--sway, 0) * 9deg)) scale(calc(0.92 + var(--arrival, 1) * 0.08));
+  transform: rotate(calc(var(--sway, 0) * 5deg)) scale(calc(0.92 + var(--arrival, 1) * 0.08));
 }
 .home-story.cinematic-story[data-cinema-enabled] .garden-leaves > path:nth-child(even) {
   transform-origin: 10% 90%;
-  transform: rotate(calc(var(--sway, 0) * -12deg));
+  transform: rotate(calc(var(--sway, 0) * -6deg));
 }
 .home-story.cinematic-story[data-cinema-enabled] .garden-petal {
   transform-origin: 80px 80px;
@@ -456,7 +441,7 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] .pet-tail {
   transform-origin: right bottom;
-  transform: rotate(calc(var(--sway, 0) * 22deg));
+  transform: rotate(calc(var(--sway, 0) * 10deg));
 }
 .home-story.cinematic-story[data-cinema-enabled] .pet-ears {
   transform: rotate(calc(var(--sway, 0) * 5deg)) scaleY(calc(1 + var(--sway, 0) * 0.08));
@@ -475,15 +460,12 @@
 .home-story.cinematic-story[data-cinema-enabled] .symbol-rays {
   transform: rotate(calc(var(--scroll) * 65deg)) scale(calc(0.8 + var(--arrival, 1) * 0.2));
 }
-.home-story.cinematic-story[data-cinema-enabled] .symbol-disc {
-  transform: scale(calc(1 + var(--sway, 0) * 0.12));
-}
 .home-story.cinematic-story[data-cinema-enabled] .symbol-star {
   transform-origin: 76px 33px;
   transform: rotate(calc(var(--scroll) * 140deg)) scale(calc(0.7 + var(--arrival, 1) * 0.3));
 }
 .home-story.cinematic-story[data-cinema-enabled] .symbol-crescent {
-  transform: rotate(calc(var(--sway, 0) * -12deg));
+  transform: rotate(calc(var(--sway, 0) * -6deg));
 }
 .home-story.cinematic-story[data-cinema-enabled] .symbol-heart {
   transform: scale(calc(1 + var(--sway, 0) * 0.08));
@@ -504,4 +486,31 @@
 }
 .home-story.cinematic-story[data-cinema-enabled] .experience-pet {
   border-radius: calc(50% - var(--scroll) * 12%) calc(50% - var(--scroll) * 4%) 42% 42%;
+}
+
+/* Perspective and shape changes accompany the travel, without pulsing or fades. */
+.home-story.cinematic-story[data-cinema-enabled] .hero-world {
+  transform-origin: center bottom;
+  transform: scale(calc(1 - var(--scroll) * 0.12));
+}
+.home-story.cinematic-story[data-cinema-enabled] .garden-arch {
+  transform-origin: center bottom;
+  transform: scaleX(calc(1 - var(--scroll) * 0.14)) scaleY(calc(1 + var(--scroll) * 0.05));
+}
+.home-story.cinematic-story[data-cinema-enabled] .experience-pet svg {
+  transform-origin: center;
+  transform: scale(calc(0.94 + var(--arrival, 1) * 0.06 - var(--scroll) * 0.1));
+}
+.home-story.cinematic-story[data-cinema-enabled] .question-art {
+  transform: translateX(calc(var(--scroll) * -12vw)) rotate(calc(var(--scroll) * -5deg))
+    scale(calc(1 - var(--scroll) * 0.14));
+  border-radius: calc(50% - var(--scroll) * 18%) calc(50% - var(--scroll) * 8%)
+    calc(8px + var(--scroll) * 60px) calc(8px + var(--scroll) * 32px);
+}
+.home-story.cinematic-story[data-cinema-enabled] .service-path .care-symbol {
+  transform-origin: center;
+  transform: scale(calc(1 - var(--scroll) * 0.18));
+}
+.home-story.cinematic-story[data-cinema-enabled] .symbol-disc {
+  transform: scale(calc(1 + var(--scroll) * 0.16));
 }
