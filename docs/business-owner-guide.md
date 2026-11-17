@@ -220,3 +220,10 @@ The local Home page is now an illustrated garden story. Scroll slowly to move th
 Home now plays as one continuous six-chapter story: welcome, experience, trust, services, questions and contact. Scroll down or up to move between scenes; the chapter dots and Continue the story links can jump directly. This is a long story with an ending, as clarified in your request. Reduced Motion shows a normal static page, and short screens use normal page flow. Services, About and FAQs keep their own detailed content. Changing language preserves your chapter. This remains a local preview until the final combined deployment.
 
 首页现在是一段连续的六章节故事：欢迎、体验、信任、服务、问题及联系。向下或向上滚动即可推进或回看，也可以使用章节圆点和“继续这段故事”直接跳转。按您的澄清，这是有结尾的长篇滚动故事。开启“减少动态效果”后会静态展示；较矮的屏幕使用普通页面布局。详细服务、理念和常见问题仍在独立页面中；切换语言会保留当前章节。所有功能完成前仍仅在本地预览。
+
+
+## Calmer marketing preview — 2026-11-16
+
+The marketing navbar is shorter, with sign-in and language side by side. Scroll chapters now gently fade and settle vertically. The pets and plants move more subtly, and the public pages share softer cream, sage and clay colors. Scroll upward to retrace the story; Reduce Motion still shows ordinary readable sections. Preview locally at http://localhost:4180/home/. This update is not deployed yet.
+
+营销网站的导航栏更紧凑，登录和语言选择并排显示。滚动章节现在轻柔淡入并上下微移，宠物与植物的动作更克制，各公开页面统一使用柔和的奶油色、鼠尾草绿与陶土色。向上滚动可以回看；开启“减少动态效果”后仍以普通页面显示。当前仅在本地预览，尚未上线。

@@ -1,10 +1,10 @@
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 const chapterColors = [
-  [247, 246, 235],
-  [223, 232, 215],
-  [255, 250, 240],
-  [236, 209, 188],
-  [248, 243, 230],
+  [250, 248, 242],
+  [231, 237, 224],
+  [250, 248, 242],
+  [242, 227, 213],
+  [245, 242, 232],
   [43, 79, 61],
 ];
 
@@ -46,8 +46,10 @@ export function installCinematicStory(story: HTMLElement) {
         distance < 0 ? clamp((distance + 0.2) / 0.2) : clamp((0.76 - distance) / 0.16);
       panel.style.setProperty('--panel-opacity', String(opacity));
       panel.style.setProperty('--copy-opacity', String(copyOpacity));
-      panel.style.setProperty('--panel-shift', `${-distance * 8}vw`);
-      panel.style.setProperty('--panel-scale', String(1 - distance * 0.035));
+      // Settle vertically into each composition instead of pushing every scene left.
+      const travel = Math.max(-1, Math.min(1, distance));
+      panel.style.setProperty('--panel-shift', `${-travel * 24}px`);
+      panel.style.setProperty('--panel-scale', String(1 - Math.abs(travel) * 0.012));
       panel.style.setProperty('--scroll', String(clamp(distance / 0.65)));
       panel.inert = index !== active || copyOpacity < 0.15;
       panel.setAttribute('aria-hidden', String(index !== active || copyOpacity < 0.15));

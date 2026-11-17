@@ -1043,3 +1043,163 @@ header.marketing-header {
 .marketing-site.public-page .public-policy-terms article {
   background: #fff8ec;
 }
+
+/* Shared public rhythm: a compact masthead, soft surfaces and quiet details. */
+header.marketing-header {
+  max-width: 1440px;
+  padding: 12px 40px;
+  gap: 24px;
+}
+header.marketing-header .brand {
+  font-size: 20px;
+  gap: 9px;
+}
+header.marketing-header .paw {
+  font-size: 30px;
+}
+header.marketing-header .brand-sub {
+  font-size: 8px;
+  margin-top: 4px;
+}
+header.marketing-header nav {
+  gap: 24px;
+  align-items: center;
+  font-size: 13px;
+}
+header.marketing-header nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 7px;
+}
+header.marketing-header nav a[aria-current] {
+  color: #88543f;
+  text-decoration: underline;
+}
+header.marketing-header .header-actions {
+  width: auto;
+  gap: 12px;
+  flex-direction: row;
+  align-items: center;
+}
+header.marketing-header .sign-in-link {
+  padding: 8px 18px;
+  font-size: 13px;
+  border-radius: 24px;
+}
+header.marketing-header .language-selector {
+  min-width: 112px;
+}
+header.marketing-header .language-selector > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+header.marketing-header .language-selector select {
+  border-radius: 24px;
+  background: transparent;
+  font-size: 12px;
+}
+.marketing-site.public-page {
+  --muted: #53695c;
+}
+.marketing-site.public-page .services,
+.home-story .home-services {
+  background: #f2e3d5;
+  border-color: #ddcbb8;
+}
+.marketing-site.public-page .service,
+.marketing-site.public-page .public-policy-terms article {
+  background: #fdfaf4;
+  border-color: #ddcbb8;
+  border-radius: 24px;
+}
+.marketing-site.public-page .service-1 {
+  background: #e7eddf;
+  border-color: #c7d2bd;
+}
+.marketing-site.public-page .care-story,
+.home-story .experience-scene {
+  background: #e7ede0;
+}
+.home-story .home-trust {
+  background: #faf8f2;
+}
+.home-story .home-questions {
+  background: #f5f2e8;
+}
+.home-story .button {
+  box-shadow: none;
+}
+.home-story .world-note {
+  box-shadow: 0 6px 24px #2446380a;
+  border-radius: 20px;
+}
+.home-story .experience-pet {
+  box-shadow: none;
+}
+.home-story .service-path {
+  background: #fdf8f0;
+  border-color: #d8c8b7;
+  border-radius: 32px;
+}
+.home-story .service-path:nth-of-type(2) {
+  background: #e7eddf;
+  border-color: #c7d2bd;
+}
+.home-story .trust-symbol {
+  border-radius: 50%;
+}
+@media (max-width: 1000px) {
+  header.marketing-header {
+    padding: 10px 24px;
+    gap: 16px;
+  }
+  header.marketing-header nav {
+    gap: 14px;
+  }
+}
+@media (max-width: 760px) {
+  header.marketing-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 8px;
+    padding: 10px 20px 4px;
+  }
+  header.marketing-header .brand {
+    grid-area: 1 / 1;
+    font-size: 17px;
+    letter-spacing: 1px;
+  }
+  header.marketing-header .brand-sub {
+    letter-spacing: 2px;
+    font-size: 7px;
+  }
+  header.marketing-header .paw {
+    display: none;
+  }
+  header.marketing-header .header-actions {
+    grid-area: 1 / 2;
+    gap: 6px;
+  }
+  header.marketing-header .sign-in-link {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  header.marketing-header .language-selector {
+    min-width: 0;
+    width: 92px;
+  }
+  header.marketing-header .language-selector select {
+    padding-inline: 6px;
+    font-size: 11px;
+  }
+  header.marketing-header nav {
+    grid-area: 2 / 1 / 3 / -1;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+  }
+}

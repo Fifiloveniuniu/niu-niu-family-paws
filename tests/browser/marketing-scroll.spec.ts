@@ -27,6 +27,14 @@ test('one cinematic timeline scrubs across chapters and restores exact earlier p
   }
   const first = await pose(0.2);
   const middle = await pose(0.5);
+  for (const panel of await page.locator('[data-cinematic-panel]').all()) {
+    const movement = await panel.evaluate((element) => {
+      const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
+      return { horizontal: matrix.m41, vertical: matrix.m42 };
+    });
+    expect(movement.horizontal).toBe(0);
+    expect(Math.abs(movement.vertical)).toBeLessThanOrEqual(24);
+  }
   expect(first).not.toBe(middle);
   await pose(1.25);
   await expect(story).toHaveAttribute('data-active-chapter', '1');
@@ -108,6 +116,10 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
     await page.setViewportSize({ width, height: 844 });
     for (const language of ['en', 'zh']) {
       await page.locator('select').selectOption(language);
+      const headerHeight = await page
+        .locator('.marketing-header')
+        .evaluate((element) => element.getBoundingClientRect().height);
+      expect(headerHeight).toBeLessThanOrEqual(width <= 760 ? 115 : 85);
       for (const chapter of [0, 1, 2, 3, 4, 5]) {
         await page.evaluate((value) => {
           const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
