@@ -111,7 +111,7 @@ test('direct chapter links restore exact poses and manual input interrupts click
         .locator('[data-cinema-enabled]')
         .evaluate((e) => Number((e as HTMLElement).style.getPropertyValue('--cinema-progress'))),
     )
-    .toBeCloseTo(0.6, 3);
+    .toBeCloseTo(3 / 8, 3);
   await page.reload();
   await expect(page.locator('[data-cinema-enabled]')).toHaveAttribute('data-active-chapter', '3');
   await page.locator('.cinema-rail a[href="#contact"]').click();

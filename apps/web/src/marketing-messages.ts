@@ -41,6 +41,10 @@ export const englishMessages = {
   a1: 'Have your pet’s details and preferred dates ready. Contact details will be posted here once confirmed. We aren’t accepting bookings through this website yet.',
   q2: 'Where can I find prices and packages?',
   a2: 'Prices and package terms haven’t been confirmed yet. We’ll add them here when they’re ready.',
+  q7: 'Do you offer pet grooming?',
+  a7: 'Yes. Explore Pet grooming on the Services page, then confirm treatments, suitability, prices, and appointment availability with us.',
+  q8: 'Can I learn to become a groomer?',
+  a8: 'We offer training classes for new groomers. Visit Grooming Academy for upcoming course information; dates, fees, and enrolment details will be shared once confirmed.',
   q3: 'What should I share about my pet?',
   a3: 'Tell us about their daily routine, feeding instructions, medication, and any special care needs. Please confirm specific care arrangements before booking.',
   contactLabel: 'LET’S PLAN THEIR NEXT STAY',
@@ -137,7 +141,7 @@ export const englishMessages = {
   trust3Body:
     'Ask questions, share concerns, and make sure the arrangements feel right for your pet.',
   homeServicesLabel: 'FIND YOUR STARTING POINT',
-  homeServicesTitle: 'For a day.\nFor a little longer.',
+  homeServicesTitle: 'Care for every chapter.',
   homeServicesIntro:
     'Explore the kind of care you have in mind. The service guide explains what to discuss next.',
   homeDayLabel: 'WHEN YOUR DAY TAKES YOU ELSEWHERE',
@@ -155,6 +159,10 @@ export const englishMessages = {
     'Public contact and location details will appear here once confirmed. In the meantime, get to know the care approach and prepare your questions.',
 };
 export const chineseMessages: typeof englishMessages = {
+  q7: '你们提供宠物美容吗？',
+  a7: '提供。请在服务项目中了解宠物美容，并先确认具体项目、适用宠物、价格与可预约时间。',
+  q8: '我可以学习成为宠物美容师吗？',
+  a8: '我们提供面向新手美容师的培训课程。请在美容师成长课堂页面关注课程信息，时间、费用与报名详情将在确认后公布。',
   home: '首页',
   skip: '跳至正文',
   services: '服务项目',
@@ -281,7 +289,7 @@ export const chineseMessages: typeof englishMessages = {
   trust3: '信任，从坦诚开始',
   trust3Body: '提出问题，分享顾虑，一起确认安排是否适合您的宠物。',
   homeServicesLabel: '从您需要的照护开始',
-  homeServicesTitle: '白天的安排，\n或是更长的陪伴。',
+  homeServicesTitle: '每一阶段，用心陪伴。',
   homeServicesIntro: '先找到适合您计划的服务方向，再通过服务指南了解下一步需要沟通的事项。',
   homeDayLabel: '当白天的行程带您出门',
   homeDayBody: '从这里，开始了解日间照护。',

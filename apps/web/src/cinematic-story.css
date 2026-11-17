@@ -201,8 +201,8 @@
   align-items: center;
   font-weight: 600;
 }
-.cinematic-story[data-active-chapter='5'] .cinema-controls,
-.cinematic-story[data-active-chapter='5'] .cinema-rail {
+.cinematic-story[data-dark-scene='true'] .cinema-controls,
+.cinematic-story[data-dark-scene='true'] .cinema-rail {
   color: #fff4d8;
 }
 @media (max-width: 760px) {
@@ -526,8 +526,8 @@
   padding: 1px 4px;
   bottom: 20px;
 }
-.cinematic-story[data-active-chapter='5'] .cinema-controls,
-.cinematic-story[data-active-chapter='5'] .cinema-rail {
+.cinematic-story[data-dark-scene='true'] .cinema-controls,
+.cinematic-story[data-dark-scene='true'] .cinema-rail {
   background: rgb(0 0 0 / 0.01);
   border-color: rgb(255 244 216 / 0.25);
 }
