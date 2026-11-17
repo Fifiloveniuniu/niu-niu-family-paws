@@ -8,7 +8,7 @@ test('four ordered tabs connect customer records, balance preview, statement and
  await page.route('**/api/customers?*',r=>r.fulfill({json:{items:[],nextCursor:null}}));
  await page.route('**/api/profile',r=>r.fulfill({status:204}));
  await page.route('**/api/account-link',r=>r.fulfill({json:{status:'none'}}));
- await page.goto('/#/login');
+ await page.goto('/app/sign-in/');
  await page.evaluate(async({email})=>{const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');await signInWithEmailAndPassword(auth,email,'emulator-only-password');},{email});
  const nav=page.getByRole('navigation',{name:'Workspace',exact:true});
  await expect(nav.getByRole('link')).toHaveText(['Calendar','Customers','Balances','Settings']);
@@ -17,14 +17,15 @@ test('four ordered tabs connect customer records, balance preview, statement and
  await nav.getByRole('link',{name:'Balances',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Balances',exact:true})).toBeVisible();
  await expect(page.getByRole('dialog')).toHaveCount(0);
+ await page.getByLabel('Statement pet',{exact:true}).selectOption('Mochi');
  await page.getByRole('button',{name:'Add balance',exact:true}).click();
  await page.getByLabel('Days',{exact:true}).fill('12');await page.getByLabel('Valid from',{exact:true}).fill('2026-01-01');await page.getByLabel('Valid through',{exact:true}).fill('2027-12-31');
- page.once('dialog',d=>d.dismiss());await page.evaluate(()=>{location.hash='#/customers';});
- await expect(page).toHaveURL(/#\/balances$/);await expect(page.getByLabel('Days',{exact:true})).toHaveValue('12');
+ page.once('dialog',d=>d.dismiss());await page.evaluate(async()=>{const{navigate}=await import('/apps/web/src/routing.ts');navigate('/app/customers/');});
+ await expect(page).toHaveURL(/\/app\/balances\/(?:\?pet=Mochi)?$/);await expect(page.getByLabel('Days',{exact:true})).toHaveValue('12');
  await page.getByRole('dialog').getByRole('button',{name:'Add balance',exact:true}).click();
  await nav.getByRole('link',{name:'Customers',exact:true}).click();await expect(page.getByRole('button',{name:'Add customer',exact:true})).toBeVisible();
  await page.locator('.hc-account-menu>summary').click();await page.getByRole('link',{name:'My profile',exact:true}).click();await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Retained draft');
- await nav.getByRole('link',{name:'Settings',exact:true}).click();await expect(page.getByRole('heading',{name:'Houses and rooms',exact:true})).toHaveCount(0);await page.getByRole('link',{name:'Cancellation policy',exact:true}).click();
+ await nav.getByRole('link',{name:'Settings',exact:true}).click();await expect(page.getByRole('heading',{name:'Houses and rooms',exact:true})).toHaveCount(0);page.once('dialog',d=>d.dismiss());await page.getByRole('link',{name:'Cancellation policy',exact:true}).click();await expect(page).toHaveURL(/\/app\/settings\/$/);
  await expect(nav.getByRole('link',{name:'Settings',exact:true})).toHaveAttribute('aria-current','page');
  await nav.getByRole('link',{name:'Balances',exact:true}).click();await expect(page.locator('.hc-statement-row')).toHaveCount(1);await expect(page.locator('.hc-statement-row')).toContainText('12 days');
  await nav.getByRole('link',{name:'Balances',exact:true}).click();await expect(page.locator('.hc-balance-metrics strong').first()).toHaveText('12');

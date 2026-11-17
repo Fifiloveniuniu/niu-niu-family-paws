@@ -1,4 +1,5 @@
 import React from 'react';
+import {currentRoute,routeUrl,navigate,updateQuery} from './routing';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets, { PetSearch } from './pets';
@@ -56,8 +57,8 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const [error, setError] = React.useState<keyof typeof en | null>(null);
   const [editor, setEditor] = React.useState<{ id: string; input: CustomerWrite } | null>(null);
   const [uncertain, setUncertain] = React.useState(false);
-  const [search, setSearch] = React.useState('');
-  const [activeSearch, setActiveSearch] = React.useState('');
+  const [search, setSearch] = React.useState(()=>new URLSearchParams(location.search).get('customerSearch')||'');
+  const [activeSearch, setActiveSearch] = React.useState(()=>new URLSearchParams(location.search).get('customerSearch')||'');
   const [petCustomer, setPetCustomer] = React.useState<{ id: string; name: string; loginEmail: string | null } | null>(null);
   const [linkBusy,setLinkBusy] = React.useState(false);
   const [linkCustomer,setLinkCustomer] = React.useState<string|null>(null);
@@ -67,8 +68,9 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const form = React.useRef<HTMLFormElement>(null), petsPanel = React.useRef<HTMLDivElement>(null), directoryPanel = React.useRef<HTMLDivElement>(null);
   const revealPets=React.useCallback(()=>{if(window.matchMedia('(max-width: 800px)').matches&&petsPanel.current&&!petsPanel.current.closest('[hidden]')){petsPanel.current.focus({preventScroll:true});petsPanel.current.scrollIntoView({block:'start',behavior:'instant'});}},[]);
   function choosePets(customer: NonNullable<typeof petCustomer>) {
-    if (customer.id === petCustomer?.id || confirmDiscardChanges(i18n.language, petsPanel.current)) {
+    if (!onlyMine||customer.id===ownCustomer?.id) {
       if(onlyMine&&customer.id!==ownCustomer?.id)return;
+      if(!navigate('/app/customers/'+encodeURIComponent(customer.id)+'/'+location.search))return;
       setPetCustomer(customer);
       if (window.matchMedia('(max-width: 800px)').matches) requestAnimationFrame(() => {
         petsPanel.current?.focus({ preventScroll: true });
@@ -120,25 +122,26 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       if (alive.current) { report(e); setUncertain(!(e instanceof ApiError) || e.status >= 500); }
     } finally { if (alive.current) setSaving(false); }
   }
-  const route=window.location.hash;
-  React.useEffect(()=>{const params=new URLSearchParams(route.split('?')[1]||''),customer=params.get('customer'),pet=params.get('pet'),lookup=params.get('lookup');if(!customer||!pet||!lookup)return;let active=true;
-    void (async()=>{try{const token=await auth.currentUser?.getIdToken();if(!token)return;const response=await fetch('/api/pet-search?'+new URLSearchParams({search:lookup}),{cache:'no-store',headers:{Authorization:`Bearer ${token}`}});if(!response.ok)throw new Error('lookup');const result:components['schemas']['PetSearchPage']=await response.json();const match=result.items.find(item=>item.customer.id===customer&&item.pet.id===pet);if(active){if(match){setOnlyMine(false);setPetCustomer(match.customer);}else setError('error');}}catch{if(active)setError('error');}})();return()=>{active=false;};
+  const route=routeUrl(),parsedRoute=currentRoute();
+  React.useEffect(()=>{const params=new URLSearchParams(route.split('?')[1]||''),customer=parsedRoute.customerId||params.get('customer'),pet=parsedRoute.petId||params.get('pet'),lookup=params.get('lookup');if(!customer)return;let active=true;
+    void (async()=>{try{const token=await auth.currentUser?.getIdToken();if(!token)return;if(!lookup){let cursor:string|null=null;do{const response=await fetch('/api/customers?'+new URLSearchParams(cursor?{cursor}:{}),{cache:'no-store',headers:{Authorization:`Bearer ${token}`}});if(!response.ok)throw new Error('lookup');const result:components['schemas']['CustomerPage']=await response.json();if(!active)return;const match=result.items.find(item=>item.id===customer);if(match){setPetCustomer(match);return;}cursor=result.nextCursor;}while(cursor);throw new Error('not-found');}const response=await fetch('/api/pet-search?'+new URLSearchParams({search:lookup}),{cache:'no-store',headers:{Authorization:`Bearer ${token}`}});if(!response.ok)throw new Error('lookup');const result:components['schemas']['PetSearchPage']=await response.json();const match=result.items.find(item=>item.customer.id===customer&&item.pet.id===pet);if(active){if(match){setPetCustomer(match.customer);}else setError('error');}}catch{if(active)setError('error');}})();return()=>{active=false;};
   },[route]);
   async function mine(next:boolean){
     if(!confirmDiscardChanges(i18n.language,petsPanel.current))return;
-    const generation=++ownGeneration.current;setOnlyMine(next);setOwnCustomer(null);setOwnError(false);setOwnLoading(false);setPetCustomer(null);
+    const generation=++ownGeneration.current;setOnlyMine(next);setOwnCustomer(null);setOwnError(false);setOwnLoading(false);setPetCustomer(null);const scope=new URLSearchParams(location.search);if(next)scope.set('ownership','mine');else scope.delete('ownership');navigate('/app/customers/'+(scope.size?'?'+scope:''),true);
     if(!next)return;
     setOwnLoading(true);
     try{const token=await auth.currentUser?.getIdToken();if(!token)throw new Error('signed-out');const response=await fetch('/api/profile',{cache:'no-store',headers:{Authorization:`Bearer ${token}`}});if(!response.ok)throw new Error('profile');const own:Customer|null=response.status===204?null:await response.json();if(alive.current&&generation===ownGeneration.current){setOwnCustomer(own);setPetCustomer(own);}}
     catch{if(alive.current&&generation===ownGeneration.current)setOwnError(true);}
     finally{if(alive.current&&generation===ownGeneration.current)setOwnLoading(false);}
   }
+  React.useEffect(()=>{const p=new URLSearchParams(parsedRoute.search),query=p.get('customerSearch')||'';if(query!==activeSearch){setSearch(query);setActiveSearch(query);void load(undefined,query);}if((p.get('ownership')==='mine')!==onlyMine)void mine(p.get('ownership')==='mine');},[parsedRoute.search]);
   const visibleItems=onlyMine?(ownCustomer&&(!activeSearch.trim()||[ownCustomer.name,ownCustomer.email,ownCustomer.loginEmail||''].some(value=>value.toLowerCase().startsWith(activeSearch.trim().toLowerCase())))?[ownCustomer]:[]):items;
-  function resetFilters(){if(!confirmDiscardChanges(i18n.language,petsPanel.current))return;++ownGeneration.current;setOwnLoading(false);setOwnError(false);setOnlyMine(false);setSearch('');setActiveSearch('');setPetCustomer(null);setFilterReset(value=>value+1);void load(undefined,'');}
+  function resetFilters(){if(!confirmDiscardChanges(i18n.language,petsPanel.current))return;++ownGeneration.current;setOwnLoading(false);setOwnError(false);setOnlyMine(false);setSearch('');setActiveSearch('');setPetCustomer(null);setFilterReset(value=>value+1);navigate('/app/customers/',true);void load(undefined,'');}
   return <section className="customer-section" aria-labelledby="customers-title">
     <div className="customer-heading"><div><h2 id="customers-title">{t.title}</h2></div><button className="button" disabled={saving || uncertain} onClick={() => open()}>{t.add}</button></div>
     <p className="customer-intro">{t.intro}</p>
-    <section className="customer-filters" aria-label={chinese?'客户筛选':'Customer filters'}><div className="hc-filters-heading"><h2>{chinese?'筛选':'Filters'}</h2><button className="icon-button" title={chinese?'清除客户筛选':'Clear customer filters'} aria-label={chinese?'清除客户筛选':'Clear customer filters'} onClick={resetFilters}><Icon name="reset"/></button></div><div className="customer-filter-fields">    <form className="customer-search" role="search" onSubmit={event => { event.preventDefault(); setActiveSearch(search); void load(undefined, search); }}>
+    <section className="customer-filters" aria-label={chinese?'客户筛选':'Customer filters'}><div className="hc-filters-heading"><h2>{chinese?'筛选':'Filters'}</h2><button className="icon-button" title={chinese?'清除客户筛选':'Clear customer filters'} aria-label={chinese?'清除客户筛选':'Clear customer filters'} onClick={resetFilters}><Icon name="reset"/></button></div><div className="customer-filter-fields">    <form className="customer-search" role="search" onSubmit={event => { event.preventDefault(); setActiveSearch(search);updateQuery({customerSearch:search.trim()||null});void load(undefined, search); }}>
       <label htmlFor="customer-search">{t.searchHint}</label>
       <div className="portal-actions"><input id="customer-search" type="search" maxLength={254} value={search} onChange={event => setSearch(event.target.value)} /><button className="language" disabled={loading || saving} type="submit">{t.search}</button></div>
     </form><PetSearch key={filterReset} onChoose={choosePets} customerScope={onlyMine?ownCustomer?.id||'none':undefined}/></div><label className="customer-ownership-filter"><input type="checkbox" checked={onlyMine} onChange={e=>void mine(e.target.checked)}/>{chinese?'只看我的宠物':'Only my pets'}</label>{ownLoading&&<p role="status">{chinese?'正在加载自己的资料…':'Loading your own profile…'}</p>}{ownError&&<p role="alert">{chinese?'无法加载自己的资料，请重试。':'Could not load your profile. Try again.'}<button className="language" onClick={()=>void mine(true)}>{t.reload}</button></p>}{onlyMine&&!ownLoading&&!ownError&&!ownCustomer&&<p>{chinese?'请先在账号菜单中保存个人资料。':'Save your profile from the Account menu to find your own pets.'}</p>}</section>
@@ -165,7 +168,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
     {loading && <p role="status">{t.loading}</p>}
     {cursor && !onlyMine && <button className="language" disabled={loading || saving} onClick={() => void load(cursor)}>{t.more}</button>}
     </div>
-    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets selectedPetId={new URLSearchParams(route.split('?')[1]||'').get('pet')||undefined} key={petCustomer.id} customerId={petCustomer.id} onReady={revealPets} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
+    <div ref={petsPanel} tabIndex={-1} className="admin-pets" role="region" aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}>{petCustomer ? <><div className="selected-customer-heading"><button className="back-to-customers" onClick={() => { directoryPanel.current?.focus({ preventScroll: true }); directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' }); }}>{chinese ? '← 客户列表' : '← Customers'}</button><h3>{petCustomer.name}</h3>{petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}</div><Pets routable selectedPetId={parsedRoute.petId||new URLSearchParams(route.split('?')[1]||'').get('pet')||undefined} key={petCustomer.id} customerId={petCustomer.id} onReady={revealPets} title={chinese ? '客户的宠物' : 'Customer’s pets'}/></> : <div className="pet-selection-empty"><h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3><p>{chinese ? '从客户列表中选择一位客户，查看和管理其宠物。' : 'Select a customer from the list to view and manage their pets.'}</p></div>}</div>
     </div>
   </section>;
 }

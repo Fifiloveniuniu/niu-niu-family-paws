@@ -1,4 +1,5 @@
 import React from 'react';
+import {updateQuery} from './routing';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Modal from './modal';
@@ -57,7 +58,7 @@ function PetPhoto({ pet }: { pet: Pet }) {
   if (!pet.photo) return <div className="pet-photo"><span>{t.noPhoto}</span></div>;
   return <div className="pet-photo">{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{t.loading}</span>}</div>;
 }
-export default function Pets({ customerId, title, onReady,selectedPetId }: { customerId: string; title?: string;selectedPetId?:string; onReady?:()=>void }) {
+export default function Pets({ customerId, title, onReady,selectedPetId,routable=false }: { customerId: string; title?: string;selectedPetId?:string;routable?:boolean; onReady?:()=>void }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
   const headingId = React.useId();
   const [items, setItems] = React.useState<Pet[]>([]), [cursor, setCursor] = React.useState<string | null>(null);
@@ -83,6 +84,7 @@ export default function Pets({ customerId, title, onReady,selectedPetId }: { cus
   }
   React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++generation.current; }; }, [customerId]);
   React.useEffect(()=>{if(!loading)onReady?.();},[loading,onReady]);
+  React.useEffect(()=>{if(selectedPetId&&!loading&&!error&&cursor&&!items.some(p=>p.id===selectedPetId))void load(cursor);},[selectedPetId,loading,error,cursor,items]);
   function open(pet?: Pet) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
     setError(null); setSaved(false); setUncertain(false);
@@ -126,14 +128,15 @@ export default function Pets({ customerId, title, onReady,selectedPetId }: { cus
       {editor.preview && <><img className="pet-preview" src={editor.preview} alt={editor.input.name}/><p>{t.selected}</p></>}
       <div className="portal-actions"><button className="button" type="submit" disabled={saving || reading || loading || error === 'conflict' || error === 'forbidden' || error === 'invalid'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={blocked} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
     </form></Modal>}
-    <div className="pet-grid">{items.map(pet => <article className={'pet-card'+(pet.id===selectedPetId?' pet-card-selected':'')} key={pet.id}><PetPhoto pet={pet}/><div><h4>{pet.name}</h4>{pet.photoCredit && <p className="pet-photo-credit">{i18n.language==='zh'?'测试示例照片':'Test sample photo'} · {pet.photoCredit.creator} · <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">{i18n.language==='zh'?'来源':'Source'}</a> · <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">{pet.photoCredit.license}</a></p>}<DemoBalanceLink customerId={pet.customerId} petId={pet.id}/><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}><Icon name="edit"/></button></div></article>)}</div>
+    <div className="pet-grid">{items.map(pet => <article className={'pet-card'+(pet.id===selectedPetId?' pet-card-selected':'')} key={pet.id}><PetPhoto pet={pet}/><div><h4>{routable?<a href={'/app/customers/'+pet.customerId+'/pets/'+pet.id+'/'}>{pet.name}</a>:pet.name}</h4>{pet.photoCredit && <p className="pet-photo-credit">{i18n.language==='zh'?'测试示例照片':'Test sample photo'} · {pet.photoCredit.creator} · <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">{i18n.language==='zh'?'来源':'Source'}</a> · <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">{pet.photoCredit.license}</a></p>}<DemoBalanceLink customerId={pet.customerId} petId={pet.id}/><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}><Icon name="edit"/></button></div></article>)}</div>
+    {selectedPetId&&!loading&&!cursor&&!error&&!items.some(p=>p.id===selectedPetId)&&<p role="alert">{i18n.language==='zh'?'未找到该宠物。':'Pet not found.'}</p>}
     {loading ? <p role="status">{t.loading}</p> : !items.length && !error ? <p>{t.empty}</p> : null}
     {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && <div className="portal-actions">{(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={blocked || loading} onClick={() => void load()}>{t.reload}</button>}{cursor && <button className="language" disabled={blocked || loading} onClick={() => void load(cursor)}>{t.more}</button>}</div>}
   </section>;
 }
 export function PetSearch({ onChoose,customerScope }: { customerScope?:string;onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void }) {
   const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
-  const [search, setSearch] = React.useState(''), [active, setActive] = React.useState(''), [loading, setLoading] = React.useState(false), [error, setError] = React.useState(false);
+  const [search, setSearch] = React.useState(()=>new URLSearchParams(location.search).get('petSearch')||''), [active, setActive] = React.useState(''), [loading, setLoading] = React.useState(false), [error, setError] = React.useState(false);
   const [page, setPage] = React.useState<components['schemas']['PetSearchPage'] | null>(null);
   const generation = React.useRef(0);
   React.useEffect(() => () => { ++generation.current; }, []);
@@ -145,12 +148,13 @@ export function PetSearch({ onChoose,customerScope }: { customerScope?:string;on
     } catch { if (current === generation.current) setError(true); }
     finally { if (current === generation.current) setLoading(false); }
   }
+  React.useEffect(()=>{const query=new URLSearchParams(location.search).get('petSearch');if(query)void load(query);},[]);
   const matches=page?.items.filter(item=>!customerScope||item.customer.id===customerScope);
-  return <div className="pet-search"><form className="customer-search" role="search" onSubmit={event => { event.preventDefault(); void load(search.trim()); }}>
+  return <div className="pet-search"><form className="customer-search" role="search" onSubmit={event => { event.preventDefault();updateQuery({petSearch:search.trim()});void load(search.trim()); }}>
     <label>{t.searchHint}<input type="search" required maxLength={120} value={search} onChange={event => setSearch(event.target.value)}/></label><button className="language" disabled={loading || !search.trim()}>{t.search}</button>
   </form>{error && <p role="alert">{t.error}</p>}{loading && <p role="status">{t.loading}</p>}
     {page && !loading && !matches?.length && <p>{t.noMatches}</p>}
-    <ul className="customer-list">{matches?.map(({ pet, customer }) => <li key={pet.customerId + '/' + pet.id}><div><h4>{pet.name}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
+    <ul className="customer-list">{matches?.map(({ pet, customer }) => <li key={pet.customerId + '/' + pet.id}><div><h4>{<a href={'/app/customers/'+pet.customerId+'/pets/'+pet.id+'/'}>{pet.name}</a>}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
     {page?.nextCursor && <button className="language" disabled={loading} onClick={() => void load(active, page.nextCursor!)}>{t.more}</button>}
   </div>;
 }

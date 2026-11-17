@@ -14,7 +14,7 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
     items=[...items.filter(h=>h.id!==id),house];
     if(lose){lose=false;return route.fulfill({status:503,json:{code:'unavailable'}});}return route.fulfill({json:house});
   });
-  await page.goto('/#/login');
+  await page.goto('/app/sign-in/');
   await page.evaluate(async({email})=>{
     const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithEmailAndPassword(auth,email,'emulator-only-password');

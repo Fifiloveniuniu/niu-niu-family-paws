@@ -27,7 +27,7 @@ test('administrator and customer complete linking without exposing records befor
       return route.fulfill({json:method==='POST'?{code,state}:state});
     });
   }
-  async function login(page:typeof admin,email:string){await page.goto('/#/login');await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();await page.evaluate(async({email})=>{const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');await signInWithEmailAndPassword(auth,email,'emulator-only-password');},{email});}
+  async function login(page:typeof admin,email:string){await page.goto('/app/sign-in/');await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();await page.evaluate(async({email})=>{const {auth}=await import('/apps/web/src/auth-client.ts');const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');await signInWithEmailAndPassword(auth,email,'emulator-only-password');},{email});}
   await login(admin,adminEmail);await admin.getByRole('link',{name:'Customers',exact:true}).click();
   await admin.getByRole('button',{name:'Link Google account: Existing customer',exact:true}).click();
   const panel=admin.getByRole('region',{name:'Link a Google account',exact:true});

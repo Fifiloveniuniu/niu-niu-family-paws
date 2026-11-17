@@ -6,7 +6,7 @@ test.beforeEach(async ({page})=>{
 
 test('signed-out portal, bilingual navigation, and public FAQs work on mobile', async ({page}) => {
   await page.setViewportSize({width:400,height:860});
-  await page.goto('/#/admin');
+  await page.goto('/app/sign-in/');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toHaveCount(0);
   await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
@@ -24,7 +24,7 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
   const created=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key', {data:{email,password:'emulator-only-password',returnSecureToken:true}});
   const {localId}=await created.json();
   expect(localId).toBeTruthy();
-  await page.goto('/#/admin');
+  await page.goto('/app/sign-in/');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.evaluate(async ({email})=>{
     // The development server exposes modules only in this isolated test mode.
@@ -39,19 +39,19 @@ test('only verified admins see dashboard; sign-out clears access', async ({page,
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   };
   await update({admin:'true'});
-  await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'My profile',level:1,exact:true})).toBeVisible();
   await update({employee:true});
-  await expect(page.getByRole('heading',{name:'Staff account',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'My profile',level:1,exact:true})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Administrator dashboard'})).toHaveCount(0);
-  await update({admin:true});
+  await update({admin:true});await page.getByRole('link',{name:'Calendar',exact:true}).click();
   await expect(page.getByRole('heading',{name:'House calendar',exact:true})).toBeVisible();
   await page.screenshot({path:'test-results/admin-dashboard-en.png',fullPage:true});
   await page.reload();
   await expect(page.getByRole('heading',{name:'House calendar',exact:true})).toBeVisible();
   await update({});
-  await expect(page.getByRole('heading',{name:'Customer account',exact:true})).toBeVisible();
-  await expect(page.getByText('Manage your profile and pets below.', {exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'Sign out'}).click();
+  await expect(page.getByRole('heading',{name:'My profile',level:1,exact:true})).toBeVisible();
+  await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toBeVisible();
+  await page.locator('.hc-account-menu>summary').click();await page.getByRole('button',{name:'Sign out'}).click();
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.reload();
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
@@ -79,7 +79,7 @@ test('administrator can add, edit and search customers in both languages on mobi
     }
   });
   await page.setViewportSize({width:400,height:860});
-  await page.goto('/#/admin');
+  await page.goto('/app/sign-in/');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.evaluate(async ({email})=>{
     const {auth}=await import('/apps/web/src/auth-client.ts');
@@ -156,7 +156,7 @@ test('prominent shared sign-in works from the home page in English and Chinese',
   await expect(page.getByRole('link',{name:'Sign in',exact:true})).toHaveCount(1);
   await page.screenshot({path:'test-results/shared-login-desktop-en.png',fullPage:true});
   await page.locator('header').getByRole('link',{name:'Sign in',exact:true}).click();
-  await expect(page).toHaveURL(/#\/login$/);
+  await expect(page).toHaveURL(/\/app\/sign-in\/$/);
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await expect(page.getByText('Sign in with your Google account to continue.',{exact:true})).toBeVisible();
   await page.getByRole('link',{name:'Back to website'}).click();

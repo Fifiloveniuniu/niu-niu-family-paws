@@ -1,6 +1,6 @@
 import {test,expect} from '@playwright/test';
 test('balances share customer/pet filters with statement and keep focused edits',async({page})=>{
- await page.setViewportSize({width:1440,height:1000});await page.goto('/#/balances');
+ await page.setViewportSize({width:1440,height:1000});await page.goto('/app/balances/?pet=Mochi');
  const panel=page.locator('.hc-balance-page');await expect(page.getByLabel('Statement pet',{exact:true})).toHaveCount(1);await expect(page.getByRole('navigation',{name:'Balance views'})).toHaveCount(0);
  expect(await panel.locator('.hc-balance-content').evaluate(e=>parseFloat(getComputedStyle(e).paddingLeft))).toBeGreaterThanOrEqual(24);
  await page.getByRole('button',{name:'Add balance',exact:true}).click();const editor=page.getByRole('dialog',{name:'Add balance',exact:true});

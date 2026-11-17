@@ -18,7 +18,7 @@ test('customer saves their own profile, keeps edits during access refresh, and r
     return route.fulfill({json:profile});
   });
   await page.setViewportSize({width:400,height:860});
-  await page.goto('/#/login');
+  await page.goto('/app/sign-in/');
   await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
   await page.evaluate(async({email})=>{
     const {auth}=await import('/apps/web/src/auth-client.ts');
@@ -49,6 +49,6 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('王小明');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:'test-results/profile-mobile-zh.png',fullPage:true});
-  await page.getByRole('button',{name:'退出登录',exact:true}).click();
+  await page.locator('.hc-account-menu>summary').click();await page.getByRole('button',{name:'退出登录',exact:true}).click();
   await expect(page.getByRole('heading',{name:'我的资料',exact:true})).toHaveCount(0);
 });
