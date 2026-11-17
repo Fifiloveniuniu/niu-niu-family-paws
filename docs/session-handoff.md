@@ -1,5 +1,14 @@
 # Session handoff — 2026-10-22
 
+## Natural marketing rhythm — 2026-11-16
+
+Owner requested removing the repeated leftward scene movement, shortening the navbar and making the whole public site consistent. Branch feat/natural-marketing-design replaces horizontal chapter travel with bounded 24px vertical settling and a restrained dissolve/scale. Pet, foliage, flower and copy motion is gentler and remains exactly scroll-linked/reversible. Six chapters, direct anchors, distinct public guides and reduced-motion/static access remain.
+
+Marketing header is 69px on desktop and 107px on phones, with inline sign-in/language controls, retained accessible language label, 44px controls and one row of mobile navigation. Shared cream/sage/clay surfaces, rounded service cards, circular trust icons and quieter shadows coordinate Home, Services, About, FAQs and policy. No invented business content, app/API/data changes or deployment. Existing WIP#41, dist-dev and temporary Firebase config preserved.
+
+Validation: Node24 production build, all34 unit tests and three focused Chrome browser cases passed. Additional EN/ZH checks at320/390/760/1024/1440 confirm compact header, visible controls and no overflow on all five public routes. Native localhost4180 Chrome walkthrough visibly moved Home → experience → Home with normal scroll. Screenshots: docs/screenshots/natural-marketing-1440.png and natural-marketing-390.png. Focused regression includes zero horizontal chapter translation, bounded vertical travel and header height. Final deployment remains deferred until all requested features are complete. Review: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/67. Implementation213da58 is GitHub Verified (valid). Merge authorized after required checks; consult PR for final merge status.
+
+
 ## Continuous cinematic Home — 2026-11-16
 
 Latest owner referenced makeyourmoneymatter.org and the previous Apple Mac Pro site, then explicitly chose **Long cinematic scroll story**, not an endless loop. Branch feat/cinematic-marketing-story builds one pinned full-screen stage over six native-scroll chapters. Artwork, scene scale/position, background color and copy progression derive from one deterministic timeline; backward scrolling restores previous poses and stopping holds the frame. Copy exits before new copy arrives to avoid stacked text. Chapter rail, localized progress/next/restart controls and URL markers preserve direct anchors, refresh and history. Inactive/faded chapters are inert and hidden from assistive technology. Reduced motion/no-JS restores six semantic static sections and their original IDs; short screens retain normal page flow. No wheel/touch/key interception, duplicate content or animation dependency.

@@ -43,7 +43,7 @@
   border-radius: 0;
   background: transparent;
   opacity: var(--panel-opacity, 0);
-  transform: translateX(var(--panel-shift, 0px)) scale(var(--panel-scale, 1));
+  transform: translateY(var(--panel-shift, 0px)) scale(var(--panel-scale, 1));
   transform-origin: center;
   align-content: center;
   pointer-events: none;
@@ -313,4 +313,29 @@
 .home-story.cinematic-story[data-cinema-enabled] .home-questions > div:last-child,
 .home-story.cinematic-story[data-cinema-enabled] .home-contact > :not(.contact-bloom) {
   opacity: var(--copy-opacity, 1);
+}
+
+/* Each chapter settles in place; artwork carries the reversible motion. */
+.home-story.cinematic-story[data-cinema-enabled] .service-path {
+  border-radius: 32px;
+}
+.home-story.cinematic-story[data-cinema-enabled] .hero-stage {
+  margin-inline: auto;
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='hero-copy'] {
+  transform: translateY(calc(var(--scroll) * -18px));
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='hero-pet'] {
+  transform: translateY(calc(var(--scroll) * -28px)) rotate(calc(var(--scroll) * 3deg))
+    scale(calc(1 - var(--scroll) * 0.04));
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='bloom'] {
+  transform: rotate(calc(var(--scroll) * 35deg)) scale(calc(0.94 + var(--scroll) * 0.06));
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='leaf-left'],
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='leaf-right'] {
+  transform: translateY(calc(var(--scroll) * -18px)) rotate(calc(var(--scroll) * 8deg));
+}
+.home-story.cinematic-story[data-cinema-enabled] [data-scroll-object='rise'] {
+  transform: translateY(calc((0.5 - var(--scroll)) * 24px));
 }
