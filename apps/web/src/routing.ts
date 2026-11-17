@@ -15,6 +15,7 @@ export type AppRoute = {
   kind: RouteKind;
   path: string;
   search: string;
+  hash?: string;
   customerId?: string;
   petId?: string;
   bookingId?: string;
@@ -32,9 +33,6 @@ const legacyPaths: Record<string, string> = {
   '/settings': '/app/settings/',
   '/personal': '/app/account/profile/',
   '/cancellation-policy': '/cancellation-policy/',
-  services: '/services/',
-  about: '/about/',
-  faq: '/faqs/',
 };
 export function canonicalUrl(input: string) {
   const url = new URL(input, 'https://family-paws.invalid');
@@ -49,7 +47,7 @@ export function canonicalUrl(input: string) {
 export function parseRoute(input: string): AppRoute {
   const url = new URL(canonicalUrl(input), 'https://family-paws.invalid');
   const path = url.pathname;
-  const base = { path, search: url.search };
+  const base = { path, search: url.search, ...(url.hash ? { hash: url.hash } : {}) };
   const staticRouteKinds: Record<string, RouteKind> = {
     '/': 'home',
     '/home/': 'home',

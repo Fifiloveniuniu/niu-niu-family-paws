@@ -1503,7 +1503,8 @@ html[lang='zh-Hans'] h2 {
   border-left: 3px solid #a78a52;
   background: #f1eee2;
 }
-header nav [aria-current='page'] {
+header nav [aria-current='page'],
+header nav [aria-current='location'] {
   text-decoration: underline;
   text-underline-offset: 6px;
 }

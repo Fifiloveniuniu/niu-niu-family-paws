@@ -89,8 +89,7 @@ export default function useRoute(language: string, initialPath = '/') {
         url.pathname === location.pathname &&
         url.search === location.search &&
         url.hash &&
-        !url.hash.startsWith('#/') &&
-        !['#services', '#about', '#faq'].includes(url.hash)
+        !url.hash.startsWith('#/')
       )
         return;
       event.preventDefault();
