@@ -939,3 +939,58 @@ header.marketing-header nav {
   width: fit-content;
   margin-inline: auto;
 }
+
+/* Original artwork gives each public total a recognizable subject. */
+.metric-art {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 14px;
+  padding: 17px;
+  border-radius: 50%;
+  background: #d8e3cd;
+  color: #6c8260;
+}
+.metric-art-groomingAppointments {
+  background: #efdfcf;
+  color: #ad6b48;
+}
+.metric-art-groomersTrained {
+  background: #ece3c9;
+  color: #9b7d3f;
+}
+.metric-art .care-symbol {
+  width: 100%;
+  height: 100%;
+}
+.marketing-site[data-scroll-enabled] .metric-art .care-symbol {
+  transform-origin: center;
+  transform: rotate(calc((var(--care-progress, 0.5) - 0.5) * 120deg));
+}
+.marketing-site[data-scroll-enabled] .metric-art-groomingAppointments .care-symbol {
+  transform: rotate(calc((var(--care-progress, 0.5) - 0.5) * -120deg));
+}
+.marketing-site[data-scroll-enabled] .metric-paw-pad {
+  transform-origin: 50px 65px;
+  transform: scaleX(calc(0.85 + var(--expression, var(--scroll)) * 0.25))
+    scaleY(calc(1.1 - var(--expression, var(--scroll)) * 0.2));
+}
+.marketing-site[data-scroll-enabled] .metric-paw-toes {
+  transform-origin: 50px 50px;
+  transform: rotate(calc(var(--sway, 0) * 12deg));
+}
+.marketing-site[data-scroll-enabled] .metric-paw-toes > ellipse {
+  translate: 0 calc(var(--expression, var(--scroll)) * -4px);
+}
+.marketing-site[data-scroll-enabled] .metric-paw-toes > ellipse:nth-child(even) {
+  translate: 0 calc(var(--expression, var(--scroll)) * 3px);
+}
+@media (max-width: 760px) {
+  .metric-art {
+    width: 52px;
+    height: 52px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+}

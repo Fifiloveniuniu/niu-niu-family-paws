@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePublicMarketingContent } from './public-marketing-content';
+import { usePublicMarketingContent, type StatKey } from './public-marketing-content';
 import { StoryQuotes } from './marketing-galleries';
 import { ServiceSymbol } from './marketing-pages';
 function CountUp({ value }: { value?: number }) {
@@ -119,6 +119,36 @@ export function HomeSpaces() {
     </section>
   );
 }
+function MetricArtwork({ kind }: { kind: StatKey }) {
+  return (
+    <span className={`metric-art metric-art-${kind}`} aria-hidden="true">
+      {kind === 'petsCaredFor' ? (
+        <svg className="care-symbol metric-paw" viewBox="0 0 100 100">
+          <g className="metric-paw-toes" fill="currentColor">
+            <ellipse cx="23" cy="35" rx="8" ry="11" transform="rotate(-28 23 35)" />
+            <ellipse cx="41" cy="24" rx="8" ry="11" transform="rotate(-8 41 24)" />
+            <ellipse cx="61" cy="24" rx="8" ry="11" transform="rotate(8 61 24)" />
+            <ellipse cx="79" cy="35" rx="8" ry="11" transform="rotate(28 79 35)" />
+          </g>
+          <path
+            className="metric-paw-pad"
+            d="M28 60q9-24 22-20 13-4 22 20 10 22-8 22-14-9-28 0-18 0-8-22Z"
+            fill="currentColor"
+          />
+          <path
+            d="M43 64q7 6 14 0"
+            fill="none"
+            stroke="#faf8f2"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        </svg>
+      ) : (
+        <ServiceSymbol kind={kind === 'groomingAppointments' ? 'grooming' : 'academy'} />
+      )}
+    </span>
+  );
+}
 export function HomeNumbers() {
   const { i18n } = useTranslation();
   const zh = i18n.language === 'zh';
@@ -150,6 +180,7 @@ export function HomeNumbers() {
       <div className="number-grid">
         {metrics.map(([key, label]) => (
           <article key={key}>
+            <MetricArtwork kind={key} />
             <CountUp value={content.stats[key]?.value} />
             <h3>{label}</h3>
             <p>
