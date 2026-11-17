@@ -1,3 +1,4 @@
+import { HomeSpaces, HomeNumbers, HomeStories, HomeServiceExtras } from './marketing-home-sections';
 import { useTranslation } from 'react-i18next';
 import type { CSSProperties } from 'react';
 import './cinematic-story.css';
@@ -7,12 +8,15 @@ import { PetPortrait } from './marketing-sections';
 import { GardenArch, GardenBranch, GardenBlossom } from './garden-art';
 
 export default function MarketingHome() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const chapters = [
     { anchor: 'main', label: t('home') },
     { anchor: 'experience', label: t('cinemaExperience') },
     { anchor: 'services', label: t('services') },
     { anchor: 'about', label: t('approach') },
+    { anchor: 'spaces', label: i18n.language === 'zh' ? '我们的小天地' : 'Our Spaces' },
+    { anchor: 'numbers', label: i18n.language === 'zh' ? '小爪印的故事' : 'Our story in numbers' },
+    { anchor: 'stories', label: i18n.language === 'zh' ? '暖心分享' : 'Kind words' },
     { anchor: 'faq', label: t('questions') },
     { anchor: 'contact', label: t('contact') },
   ];
@@ -184,6 +188,7 @@ export default function MarketingHome() {
               ↗
             </span>
           </a>
+          <HomeServiceExtras />
         </section>
 
         <section
@@ -215,6 +220,9 @@ export default function MarketingHome() {
           </div>
         </section>
 
+        <HomeSpaces />
+        <HomeNumbers />
+        <HomeStories />
         <section
           id="faq"
           className="home-questions"
@@ -257,7 +265,9 @@ export default function MarketingHome() {
             {t('homeContactTitle')}
           </h2>
           <p data-scroll-object="rise">{t('homeContactBody')}</p>
-          <span className="contact-status">{t('pending')}</span>
+          <a className="contact-status" href="/contact/">
+            {t('contact')} ↗
+          </a>
         </section>
         <nav className="cinema-rail" aria-label={t('cinemaChapters')}>
           {chapters.map((chapter) => (
@@ -274,7 +284,7 @@ export default function MarketingHome() {
         </nav>
         <div className="cinema-controls">
           <span className="cinema-count" aria-hidden="true">
-            <span data-cinema-count>01</span> / 06
+            <span data-cinema-count>01</span> / {String(chapters.length).padStart(2, '0')}
           </span>
           <span className="cinema-progress" aria-hidden="true">
             <span />

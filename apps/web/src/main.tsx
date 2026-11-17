@@ -1,3 +1,4 @@
+import { FamilyStories } from './marketing-galleries';
 import { englishMessages, chineseMessages } from './marketing-messages';
 import MarketingHome from './marketing-home';
 import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
@@ -141,6 +142,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               </section>
             )}
             {page === 'about' && <CareStory />}
+            {page === 'about' && <FamilyStories />}
             {page === 'services' && <VisitPreparation />}
             {page === 'services' && <StayPlanning />}
             {page === 'faqs' && (
@@ -150,7 +152,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                   <SectionHeading>{t('questions')}</SectionHeading>
                 </div>
                 <div>
-                  {[1, 2, 3, 4, 5, 6].map((n) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                     <details data-scroll-object="rise" key={n}>
                       <summary>{t('q' + n)}</summary>
                       <p>{t('a' + n)}</p>

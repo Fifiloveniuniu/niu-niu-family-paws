@@ -99,6 +99,23 @@ test('every chapter keeps bilingual copy accessible on mobile and desktop with s
             .map((e) => e.textContent);
         });
         expect(clipped).toEqual([]);
+        const covered = await panels.nth(index).evaluate((panel) => {
+          const flower = document.querySelector('.shared-flower')!.getBoundingClientRect();
+          return [...panel.querySelectorAll('h1,h2,h3,p,a')]
+            .filter((element) => {
+              const copy = element.getBoundingClientRect();
+              return (
+                copy.width > 0 &&
+                copy.height > 0 &&
+                copy.left < flower.right - 3 &&
+                copy.right > flower.left + 3 &&
+                copy.top < flower.bottom - 3 &&
+                copy.bottom > flower.top + 3
+              );
+            })
+            .map((element) => element.textContent);
+        });
+        expect(covered).toEqual([]);
       }
     }
   }

@@ -297,3 +297,18 @@ Use the top navbar to open Home, Services, About us or FAQs as separate pages. E
 Scroll Home to turn one travelling sun into a crescent moon. The pets' eyes, brows, noses, smiles, cheek and jaw contours, chins, forehead fur, hairlines and ears change as you scroll. Scroll upward to retrace the same expressions. On wider screens the right chapter marker slides up/down between dots without a background panel. Reduce Motion keeps static artwork. This is locally validated and awaits the final combined deployment.
 
 滚动首页时，同一个太阳会逐渐变成弯月。宠物的眼睛、眉毛、鼻子、嘴唇与微笑、面颊及下颌轮廓、下巴、额头毛发、发际线和耳朵都会随滚动变化；向上滚动会沿原轨迹回到先前表情。较宽屏幕右侧的章节指示条会在圆点间上下移动，背景面板已移除。“减少动态效果”保留静态插画。目前仅在本地验证，等待最后统一部署。
+
+
+## Marketing site refresh — 2026-11-17
+
+The local navbar is Home / Services / Our Spaces / About us / Pricing / FAQs / Contact us. Open the Services arrow for daycare, boarding, pet grooming or Grooming Academy. On phones, use Menu; language and sign-in are inside it. Pricing includes the cancellation policy, and its Services link opens the Services page. Old cancellation links still work.
+
+Home now has nine connected chapters, including all four services, a spaces preview, large-number area and family stories. Previous chapter / Next chapter / Restart story move the shared flower, sun/moon, shapes and side marker together. Reduced Motion and short screens show ordinary sections. About contains full family stories; Academy has the student photo/story area. Tap a gallery photo to enlarge it; Close or Escape returns to the photo. The deep-green footer carries the same navigation and styling.
+
+Sample photos are clearly marked and do not show our actual spaces, students or work. Actual prices, contact details, course facts, approved reviews, photos and verified totals are still needed. Numbers are currently blank, not zero, and are not connected to business records yet. Tell Codex what to change in English or Chinese; you do not need to edit files or use a terminal. This is a local preview, not a new hosted release.
+
+本地导航为：首页 / 服务项目 / 我们的小天地 / 关于我们 / 价格 / 常见问题 / 联系我们。服务箭头可展开日间托管、寄养、美容及美容师成长课堂。手机上点击“菜单”，登录与语言选择也在其中。取消政策整合在价格页内，旧链接仍可使用，其中的服务链接会打开独立服务页。
+
+首页现在包含九个相连章节，展示四类服务、空间预览、数字区域及家长故事。“上一章 / 下一章 / 重新开始”会同时移动共用花朵、太阳与月亮、内部图形及侧边指示条。开启减少动态效果或使用较矮屏幕时，显示普通页面布局。关于页面展示完整家长故事，课堂页面展示学员照片与故事区域。点击图库照片可放大，关闭或按 Esc 返回。深绿色页脚与整站保持一致。
+
+示例照片均有明确标注，不代表本店空间、学员或作品。实际价格、联系方式、课程信息、获准公开的评价、真实照片及核实后的数字仍待提供。当前数字留空，并非零，也尚未接入实际业务记录。可直接用中文或英文告诉 Codex 要改什么，无需编辑文件或使用终端。当前为本地预览，尚未发布新版本。

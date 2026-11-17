@@ -1,3 +1,5 @@
+import { PhotoGallery, StoryQuotes } from './marketing-galleries';
+import { usePublicMarketingContent } from './public-marketing-content';
 import { useTranslation } from 'react-i18next';
 import { CareSymbol } from './story-landscape';
 import { GardenBlossom } from './garden-art';
@@ -298,7 +300,9 @@ export function SpacesPage() {
           </p>
         </article>
       </div>
-      <div id="space-gallery" />
+      <div id="space-gallery">
+        <PhotoGallery />
+      </div>
       <a className="text-link" href="/services/#grooming">
         {zh ? '了解宠物美容' : 'Explore pet grooming'} ↗
       </a>
@@ -308,6 +312,7 @@ export function SpacesPage() {
 export function AcademyPage() {
   const { i18n } = useTranslation();
   const zh = i18n.language === 'zh';
+  const content = usePublicMarketingContent();
   return (
     <section className="editorial-page academy-page" data-scroll-scene>
       <p className="eyebrow">{zh ? '新的手艺，新的开始' : 'NEW HANDS. NEW POSSIBILITIES.'}</p>
@@ -334,7 +339,9 @@ export function AcademyPage() {
           </a>
         </div>
       </div>
-      <div id="academy-gallery" />
+      <div id="academy-gallery">
+        <PhotoGallery student />
+      </div>
       <section className="student-stories">
         <p className="eyebrow">{zh ? '从课堂出发' : 'FROM THE LEARNING ROOM'}</p>
         <h2>{zh ? '小小进步，大大可能。' : 'Small steps. Growing confidence.'}</h2>
@@ -343,9 +350,7 @@ export function AcademyPage() {
             ? '学员课堂照片、作品与获准分享的真实学习故事即将更新。'
             : 'Student class photos, work, and first-hand stories will be shared here with their permission.'}
         </p>
-        <span className="cute-note">
-          {zh ? '期待下一段成长故事。' : 'Their next chapter is on its way.'}
-        </span>
+        <StoryQuotes stories={content.studentStories} student />
       </section>
       <a className="text-link" href="/pricing/">
         {zh ? '价格与实用信息' : 'Pricing & useful details'} ↗

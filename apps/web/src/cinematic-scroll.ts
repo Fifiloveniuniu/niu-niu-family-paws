@@ -5,11 +5,11 @@ const interpolate = (a: number[], b: number[], mix: number) =>
 const scenePoses: Record<string, { color: number[]; flower: number[] }> = {
   main: { color: [250, 248, 242], flower: [0.58, 0.12, 110, -15] },
   experience: { color: [231, 237, 224], flower: [0.1, 0.12, 80, 35] },
-  services: { color: [245, 242, 233], flower: [0.9, 0.1, 90, 95] },
+  services: { color: [245, 242, 233], flower: [0.08, 0.03, 90, 95] },
   about: { color: [250, 248, 242], flower: [0.88, 0.14, 90, 155] },
   spaces: { color: [238, 232, 218], flower: [0.85, 0.16, 84, 200] },
-  numbers: { color: [231, 237, 224], flower: [0.5, 0.78, 100, 245] },
-  stories: { color: [250, 248, 242], flower: [0.12, 0.18, 90, 290] },
+  numbers: { color: [231, 237, 224], flower: [0.01, 0.8, 80, 245] },
+  stories: { color: [250, 248, 242], flower: [0.84, 0.45, 180, 290] },
   faq: { color: [245, 242, 232], flower: [0.21, 0.35, 180, 335] },
   contact: { color: [43, 79, 61], flower: [0.5, 0.18, 100, 395] },
 };
@@ -36,6 +36,16 @@ export function installCinematicStory(story: HTMLElement) {
   const ids = panels.map((panel) => panel.id);
   const anchors = ['main', ...markers.map((marker) => marker.dataset.cinemaAnchor!)];
   const poses = anchors.map((anchor) => scenePoses[anchor] ?? scenePoses.main);
+  const flowerFor = (index: number) => {
+    const pose = poses[index].flower;
+    if (innerWidth > 760 || anchors[index] === 'contact') return pose;
+    return [
+      anchors[index] === 'main' ? 0.1 : anchors[index] === 'faq' ? 0.85 : pose[0],
+      0.01,
+      pose[2],
+      pose[3],
+    ];
+  };
   const next = story.querySelector<HTMLAnchorElement>('[data-cinema-next]');
   const previous = story.querySelector<HTMLAnchorElement>('[data-cinema-previous]');
   const count = story.querySelector('[data-cinema-count]');
@@ -95,8 +105,8 @@ export function installCinematicStory(story: HTMLElement) {
       ? interpolate(travel.state.color, poses[travel.state.target].color, travel.mix)
       : interpolate(poses[from].color, poses[to].color, mix);
     flowerPose = travel
-      ? interpolate(travel.state.flower, poses[travel.state.target].flower, travel.mix)
-      : interpolate(poses[from].flower, poses[to].flower, mix);
+      ? interpolate(travel.state.flower, flowerFor(travel.state.target), travel.mix)
+      : interpolate(flowerFor(from), flowerFor(to), mix);
     active = travel
       ? travel.mix < 0.5
         ? travel.state.source
@@ -127,7 +137,8 @@ export function installCinematicStory(story: HTMLElement) {
     moon?.setAttribute('cx', String(115 - morph * 93));
     story.style.setProperty('--celestial-morph', String(morph));
     if (flower) {
-      const size = flowerPose[2] * (innerWidth <= 760 ? 0.57 : 1);
+      const size =
+        innerWidth <= 760 ? Math.max(28, Math.min(46, flowerPose[2] * 0.35)) : flowerPose[2];
       flower.style.width = `${size}px`;
       flower.style.left = `${flowerPose[0] * (stage.clientWidth - size)}px`;
       flower.style.top = `${flowerPose[1] * (stage.clientHeight - size)}px`;
