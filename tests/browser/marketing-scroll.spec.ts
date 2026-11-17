@@ -52,7 +52,7 @@ test('one cinematic timeline scrubs across chapters and restores exact earlier p
       return { horizontal: matrix.m41, vertical: matrix.m42 };
     });
     expect(movement.horizontal).toBe(0);
-    expect(Math.abs(movement.vertical)).toBeLessThanOrEqual(24);
+    await expect(panel).toHaveCSS('opacity', '1');
   }
   expect(first).not.toBe(middle);
   await pose(1.25);
@@ -361,7 +361,7 @@ test('one persistent landscape and internal SVG shapes morph continuously and re
   await expect(page.locator('.pet-tail')).toHaveCSS('transform', 'none');
 });
 
-test('navbar entrance visibly animates the destination rather than the hidden outgoing panel', async ({
+test('navbar moves the visible destination without fading or animating a hidden panel', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 950 });
@@ -379,7 +379,7 @@ test('navbar entrance visibly animates the destination rather than the hidden ou
             element.getAttribute('aria-hidden') === 'false' &&
             !!entrance &&
             transform.m42 > 1 &&
-            Number(getComputedStyle(element).opacity) < 1
+            Number(getComputedStyle(element).opacity) === 1
           );
         }),
       { intervals: [20], timeout: 900 },
@@ -407,5 +407,100 @@ test('navbar entrance visibly animates the destination rather than the hidden ou
       { intervals: [20], timeout: 900 },
     )
     .toBe(true);
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+});
+
+test('scenes move edge to edge without fading and landscape ornaments stay anchored', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const samples: Array<{
+    orbX: number;
+    orbY: number;
+    seedX: number;
+    seedY: number;
+    orbScale: number;
+    seedScale: number;
+    archScale: number;
+  }> = [];
+  for (const chapter of [0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5]) {
+    await page.evaluate((value) => {
+      const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+      const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          story.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((story.clientHeight - stage.clientHeight) * value) / 5,
+        behavior: 'instant',
+      });
+    }, chapter);
+    await expect
+      .poll(() =>
+        page
+          .locator('[data-cinematic-story]')
+          .evaluate((element) =>
+            Number((element as HTMLElement).style.getPropertyValue('--cinema-progress')),
+          ),
+      )
+      .toBeCloseTo(chapter / 5, 2);
+    const sample = await page.evaluate(() => {
+      const panels = [...document.querySelectorAll<HTMLElement>('[data-cinematic-panel]')];
+      const positions = panels.map((element) => element.getBoundingClientRect());
+      const orb = (
+        document.querySelector('[data-journey-orb]') as SVGGraphicsElement
+      ).transform.baseVal.consolidate()!.matrix;
+      const seed = (
+        document.querySelector('[data-journey-seed]') as SVGGraphicsElement
+      ).transform.baseVal.consolidate()!.matrix;
+      return {
+        opacity: panels.map((element) => getComputedStyle(element).opacity),
+        gaps: positions.slice(1).map((position, index) => position.top - positions[index].bottom),
+        orbX: orb.e,
+        orbY: orb.f,
+        seedX: seed.e,
+        seedY: seed.f,
+        orbScale: Math.hypot(orb.a, orb.b),
+        seedScale: Math.hypot(seed.a, seed.b),
+        archScale: new DOMMatrixReadOnly(
+          getComputedStyle(document.querySelector('.garden-arch')!).transform,
+        ).a,
+      };
+    });
+    expect(sample.opacity.every((opacity) => opacity === '1')).toBe(true);
+    expect(sample.gaps.every((gap) => Math.abs(gap) < 2)).toBe(true);
+    samples.push(sample);
+  }
+  expect(new Set(samples.map((sample) => sample.orbX)).size).toBe(1);
+  expect(new Set(samples.map((sample) => sample.seedX)).size).toBe(1);
+  expect(samples.at(-1)!.orbScale).toBeGreaterThan(samples[0].orbScale);
+  expect(samples.at(-1)!.seedScale).toBeGreaterThan(samples[0].seedScale);
+  expect(samples[3].archScale).toBeLessThan(samples[0].archScale);
+  expect(
+    samples.every((sample, index) => index === 0 || sample.orbScale >= samples[index - 1].orbScale),
+  ).toBe(true);
+  expect(
+    samples.every(
+      (sample, index) => index === 0 || sample.seedScale >= samples[index - 1].seedScale,
+    ),
+  ).toBe(true);
+
+  expect(
+    samples.every((sample, index) => index === 0 || sample.orbY >= samples[index - 1].orbY),
+  ).toBe(true);
+  expect(
+    samples.every((sample, index) => index === 0 || sample.seedY <= samples[index - 1].seedY),
+  ).toBe(true);
+  await page.locator('.marketing-header nav a[href="/home/#services"]').click();
+  const keyframes = await page.evaluate(() =>
+    document
+      .getAnimations()
+      .flatMap((animation) => (animation.effect as KeyframeEffect).getKeyframes()),
+  );
+  expect(keyframes.length).toBeGreaterThan(0);
+  expect(keyframes.every((keyframe) => !('opacity' in keyframe))).toBe(true);
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
 });

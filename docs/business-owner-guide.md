@@ -269,3 +269,10 @@ The six chapters now share one landscape. Scroll to reshape the hills and path, 
 Navbar and right-side chapter clicks now animate the chosen scene reliably. The outgoing scene leaves gently and the destination rises into place; the transition takes about half a second. The shared landscape and navbar stay visible. Reduce Motion still jumps directly. This fix is locally validated and awaits the final combined deployment.
 
 顶部导航和右侧章节按钮现在会可靠地播放所选场景的切换动画：当前内容轻柔退出，目标内容向上进入，总时长约半秒。共用风景和导航栏保持可见。“减少动态效果”模式仍直接跳转。修复已在本地验证，等待最终统一上线。
+
+
+## Calmer movement and resizing shapes — 2026-11-16
+
+Scenes now move into and out of the screen without fading. The sun and flower stay on their own sides with slow drift and gradual size changes. Arches, petals, portraits and illustrated frames grow or contract with the scroll. Navbar and chapter clicks move forward/up or backward/down as appropriate. Reduce Motion keeps ordinary static sections. This is locally validated and awaits the final combined deployment.
+
+场景现在通过移入和移出屏幕切换，不再淡入淡出。太阳和花朵固定在各自一侧，只缓慢漂移并逐渐改变大小。拱门、花瓣、宠物插画及边框会随滚动舒展或收缩。导航及章节按钮根据方向向上或向下移动内容。“减少动态效果”模式保留普通静态页面。当前本地验证完成，等待最终统一上线。

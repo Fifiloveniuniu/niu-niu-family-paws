@@ -9,12 +9,12 @@ const chapterColors = [
 ];
 
 const landscapePoses = [
-  [1240, 160, 130, 700, 770, 700, 760, 95],
-  [300, 160, 1220, 610, 730, 790, 700, 85],
-  [1180, 240, 180, 270, 790, 710, 790, 70],
-  [880, 140, 1280, 730, 720, 790, 730, 55],
-  [300, 340, 240, 730, 770, 700, 780, 35],
-  [1140, 170, 700, 770, 730, 770, 710, 22],
+  [770, 700, 760, 95],
+  [730, 790, 700, 85],
+  [790, 710, 790, 70],
+  [720, 790, 730, 55],
+  [770, 700, 780, 35],
+  [730, 770, 710, 22],
 ];
 
 /** A single, reversible timeline. Every pose is derived from scroll geometry. */
@@ -43,13 +43,12 @@ export function installCinematicStory(story: HTMLElement) {
   function update() {
     frame = 0;
     const bounds = story.getBoundingClientRect();
+    const stageHeight = stage.clientHeight;
     const headerHeight =
       Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--marketing-header-height'),
       ) || 0;
-    const progress = clamp(
-      (headerHeight - bounds.top) / Math.max(1, bounds.height - stage.clientHeight),
-    );
+    const progress = clamp((headerHeight - bounds.top) / Math.max(1, bounds.height - stageHeight));
     const chapter = progress * (panels.length - 1);
     const from = Math.min(panels.length - 1, Math.floor(chapter));
     const to = Math.min(panels.length - 1, from + 1);
@@ -57,21 +56,25 @@ export function installCinematicStory(story: HTMLElement) {
     const color = chapterColors[from].map((channel, index) =>
       Math.round(channel + (chapterColors[to][index] - channel) * mix),
     );
-    const active = Math.min(panels.length - 1, Math.floor(chapter + 0.175));
+    const active = Math.min(panels.length - 1, Math.round(chapter));
     story.style.setProperty('--cinema-progress', String(progress));
     story.style.setProperty('--cinema-color', `rgb(${color.join(',')})`);
     story.dataset.activeChapter = String(active);
     // One continuous landscape morphs underneath all six compositions.
     const blend = mix * mix * (3 - 2 * mix);
-    const [orbX, orbY, seedX, seedY, leftHill, middleHill, rightHill, moonOffset] = landscapePoses[
-      from
-    ].map((value, index) => value + (landscapePoses[to][index] - value) * blend);
+    const [leftHill, middleHill, rightHill, moonOffset] = landscapePoses[from].map(
+      (value, index) => value + (landscapePoses[to][index] - value) * blend,
+    );
     const spread = innerWidth <= 760 ? 0.24 : 1;
-    orb?.setAttribute('transform', `translate(${720 + (orbX - 720) * spread} ${orbY})`);
+    // Quiet anchors: the sun and flower no longer cross the composition or bounce.
+    orb?.setAttribute(
+      'transform',
+      `translate(${720 + 520 * spread} ${125 + progress * 20}) scale(${1 + progress * 0.16})`,
+    );
     moon?.setAttribute('cx', String(moonOffset));
     seed?.setAttribute(
       'transform',
-      `translate(${720 + (seedX - 720) * spread} ${seedY}) rotate(${chapter * 95}) scale(${0.65 + Math.sin(chapter * Math.PI) * 0.15})`,
+      `translate(${720 - 590 * spread} ${750 - progress * 15}) rotate(${chapter * 8}) scale(${0.6 + progress * 0.12})`,
     );
     backHill?.setAttribute(
       'd',
@@ -85,20 +88,14 @@ export function installCinematicStory(story: HTMLElement) {
       'd',
       `M-80 ${leftHill - 100}C280 ${middleHill - 230} 450 ${rightHill + 80} 780 ${middleHill - 70}S1170 ${leftHill - 150} 1520 ${rightHill - 80}`,
     );
-    story.style.setProperty('--journey-turn', `${chapter * 65}deg`);
+    story.style.setProperty('--journey-turn', `${chapter * 6}deg`);
 
+    const easedMix = mix * mix * mix * (mix * (mix * 6 - 15) + 10);
+    const position = from + easedMix;
     panels.forEach((panel, index) => {
       const distance = chapter - index;
-      const opacity = Math.min(clamp((distance + 0.35) / 0.35), clamp((1 - distance) / 0.35));
-      const copyOpacity =
-        distance < 0 ? clamp((distance + 0.2) / 0.2) : clamp((0.76 - distance) / 0.16);
-      panel.style.setProperty('--panel-opacity', String(opacity));
-      panel.style.setProperty('--copy-opacity', String(copyOpacity));
-      // Settle vertically into each composition instead of pushing every scene left.
-      const linearTravel = Math.max(-1, Math.min(1, distance));
-      const travel = Math.sign(linearTravel) * linearTravel ** 2;
-      panel.style.setProperty('--panel-shift', `${-travel * 24}px`);
-      panel.style.setProperty('--panel-scale', String(1 - Math.abs(travel) * 0.012));
+      // Full-height movement replaces dissolves. Adjacent scenes meet at their edges.
+      panel.style.setProperty('--panel-shift', `${(index - position) * stageHeight}px`);
       // Quadratic ease-in builds speed with scroll distance, without trailing timers.
       const motionProgress = clamp(distance / 0.65);
       panel.style.setProperty('--scroll', String(motionProgress ** 2));
@@ -109,8 +106,8 @@ export function installCinematicStory(story: HTMLElement) {
         String(1 - 0.85 * Math.exp(-(((distance - 0.3) / 0.045) ** 2))),
       );
 
-      panel.inert = index !== active || copyOpacity < 0.15;
-      panel.setAttribute('aria-hidden', String(index !== active || copyOpacity < 0.15));
+      panel.inert = index !== active;
+      panel.setAttribute('aria-hidden', String(index !== active));
     });
     chapterLinks.forEach((link, index) => {
       if (index === active) link.setAttribute('aria-current', 'step');
@@ -150,16 +147,7 @@ export function installCinematicStory(story: HTMLElement) {
       if (panelIds[index]) panel.id = panelIds[index];
       panel.inert = false;
       panel.removeAttribute('aria-hidden');
-      for (const property of [
-        '--panel-opacity',
-        '--copy-opacity',
-        '--panel-shift',
-        '--panel-scale',
-        '--scroll',
-        '--arrival',
-        '--sway',
-        '--blink',
-      ])
+      for (const property of ['--panel-shift', '--scroll', '--arrival', '--sway', '--blink'])
         panel.style.removeProperty(property);
     });
     chapterLinks.forEach((link) => link.removeAttribute('aria-current'));
