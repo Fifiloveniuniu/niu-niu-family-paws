@@ -1531,12 +1531,6 @@ header nav [aria-current='page'] {
 }
 
 /* Motion is confined to public marketing pages; the app keeps its own behavior. */
-.marketing-site .hero-art svg {
-  transform: translateY(var(--art-travel, 0px));
-}
-.marketing-site .illustration-halo {
-  transform: translateY(var(--halo-travel, 0px));
-}
 @media (prefers-reduced-motion: no-preference) {
   .marketing-site .button {
     transition:
@@ -1567,8 +1561,216 @@ header nav [aria-current='page'] {
   html {
     scroll-behavior: auto;
   }
-  .marketing-site .hero-art svg,
-  .marketing-site .illustration-halo {
-    transform: none;
+}
+
+/* Public editorial sections: warm paper, illustrated portraits and generous type. */
+.marketing-site .scroll-invitation {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: fit-content;
+  margin: -20px 48px 40px;
+  color: #657065;
+  font-size: 12px;
+}
+.scroll-invitation > span {
+  display: grid;
+  place-items: center;
+  border: 1px solid #c8cdc1;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+.marketing-site .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.marketing-site .service-detail {
+  font-size: 14px;
+  padding-left: 16px;
+  border-left: 2px solid #bba77c;
+  margin: 24px 0;
+}
+.pet-stories {
+  padding: 96px 48px;
+}
+.pet-stories .section-heading {
+  max-width: 650px;
+}
+.pet-story-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+.pet-story {
+  padding: 20px 24px 30px;
+  border: 1px solid #dddccd;
+  border-radius: 120px 120px 12px 12px;
+  background: #f2eee2;
+}
+.pet-story-cat {
+  background: #eceee5;
+}
+.pet-story-rabbit {
+  background: #f3e9df;
+}
+.pet-portrait {
+  width: min(100%, 260px);
+  margin: 0 auto 24px;
+  color: #9c7050;
+}
+.pet-story-cat .pet-portrait {
+  color: #56765e;
+}
+.pet-story-rabbit .pet-portrait {
+  color: #a27268;
+}
+.pet-portrait svg {
+  display: block;
+  width: 100%;
+}
+.pet-story .eyebrow {
+  font-size: 10px;
+  margin-bottom: 12px;
+}
+.pet-story h3 {
+  font:
+    400 27px/1.2 Georgia,
+    'Songti SC',
+    serif;
+  margin: 0 0 16px;
+}
+.pet-story > p:last-child {
+  font-size: 14px;
+  color: #586658;
+  margin-bottom: 0;
+}
+.care-story {
+  padding: 64px 48px;
+  background: #e9deca;
+  border-radius: 12px;
+  text-align: center;
+}
+.story-flower {
+  display: inline-block;
+  color: #a76547;
+  font-size: 74px;
+  line-height: 1;
+  margin-bottom: 28px;
+}
+.care-story h2 {
+  font-size: clamp(34px, 4.2vw, 56px);
+}
+.care-story p:not(.eyebrow) {
+  max-width: 650px;
+  margin: 0 auto 28px;
+  color: #596252;
+}
+.visit-preparation {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 72px;
+  padding: 84px 48px;
+}
+.preparation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.preparation-list li {
+  display: flex;
+  gap: 20px;
+  padding: 26px 0;
+  border-top: 1px solid #d9d9cb;
+}
+.preparation-list li:last-child {
+  border-bottom: 1px solid #d9d9cb;
+}
+.preparation-number {
+  font:
+    italic 22px Georgia,
+    serif;
+  color: #a76547;
+}
+.preparation-list h3 {
+  font-size: 17px;
+  margin: 0 0 10px;
+}
+.preparation-list p {
+  color: #657065;
+  font-size: 14px;
+  margin: 0;
+}
+.preparation-check {
+  flex: none;
+  margin-left: auto;
+  color: #6e876a;
+}
+.stay-planning {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  padding: 64px 48px;
+  background: #eceee5;
+  border-radius: 12px;
+}
+.stay-planning > div:last-of-type {
+  align-self: center;
+}
+.stay-planning p:not(.eyebrow) {
+  color: #586658;
+  margin: 0 0 24px;
+}
+.planning-rule {
+  position: absolute;
+  bottom: 0;
+  left: 48px;
+  right: 48px;
+  height: 3px;
+  background: #a7b39a;
+  transform-origin: left;
+}
+@media (max-width: 760px) {
+  .marketing-site .scroll-invitation {
+    margin: 0 24px 32px;
+  }
+  .pet-stories,
+  .visit-preparation {
+    padding: 56px 24px;
+  }
+  .pet-story-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .pet-story {
+    border-radius: 100px 100px 12px 12px;
+    padding: 20px 28px 32px;
+  }
+  .pet-portrait {
+    max-width: 230px;
+    margin-bottom: 12px;
+  }
+  .care-story,
+  .stay-planning {
+    padding: 48px 24px;
+    border-radius: 0;
+  }
+  .visit-preparation,
+  .stay-planning {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .visit-preparation .section-heading {
+    margin-bottom: 12px;
+  }
+  .planning-rule {
+    left: 24px;
+    right: 24px;
   }
 }

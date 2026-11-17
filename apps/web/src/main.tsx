@@ -1,5 +1,6 @@
 import { englishMessages, chineseMessages } from './marketing-messages';
 import HomeIllustration from './home-illustration';
+import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
 import useRoute from './use-route';
 import useMarketingMotion from './use-marketing-motion';
 import SiteAccountLink from './site-account-link';
@@ -134,11 +135,17 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                   </a>
                   <p className="handwritten">{t('note')}</p>
                 </div>
-                <div className="hero-art">
+                <div className="hero-art" data-reveal="art">
                   <HomeIllustration />
                   <span className="art-label">NIU NIU · FAMILY PAWS</span>
                 </div>
               </section>
+            )}
+            {page === 'home' && (
+              <a className="scroll-invitation" href="#services">
+                <span aria-hidden="true">↓</span>
+                {t('scrollHint')}
+              </a>
             )}
             {(page === 'home' || page === 'services') && (
               <section id="services" className="services">
@@ -159,12 +166,17 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                       <p className="eyebrow">{t(key + 'Tag')}</p>
                       <h3>{t(key)}</h3>
                       <p>{t(key + 'Description')}</p>
+                      <p className="service-detail">{t(key + 'Detail')}</p>
+                      <a className="text-link" href="/services/#prepare">
+                        {t('prepareLink')} <span aria-hidden="true">↗</span>
+                      </a>
                       <p className="price">{t('price')}</p>
                     </article>
                   ))}
                 </div>
               </section>
             )}
+            {(page === 'home' || page === 'services') && <PetCareStories />}
             {(page === 'home' || page === 'about') && (
               <section id="about" className="about">
                 <div>
@@ -187,6 +199,9 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                 </ol>
               </section>
             )}
+            {(page === 'home' || page === 'about') && <CareStory />}
+            {(page === 'home' || page === 'services' || page === 'about') && <VisitPreparation />}
+            {(page === 'home' || page === 'services' || page === 'about') && <StayPlanning />}
             {(page === 'home' || page === 'faqs') && (
               <section id="faq" className="faq">
                 <div>
@@ -196,7 +211,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
                   </SectionHeading>
                 </div>
                 <div>
-                  {[1, 2, 3].map((n) => (
+                  {[1, 2, 3, 4, 5, 6].map((n) => (
                     <details key={n}>
                       <summary>{t('q' + n)}</summary>
                       <p>{t('a' + n)}</p>

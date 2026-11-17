@@ -50,6 +50,58 @@ export const englishMessages = {
   footer: 'Niu Niu Family Paws Sitting LLC',
   footerNote: 'Made for the ones with paws.',
   illustration: 'An illustration of a dog relaxing beside a plant',
+  storyLabel: 'LITTLE DETAILS, BIG DIFFERENCE',
+  storyTitle: 'Their habits. Their comforts.\nTheir kind of stay.',
+  storyBody:
+    'A good conversation starts with the everyday things: a favourite resting spot, a familiar mealtime, or how your pet likes to be greeted. Bring those details into planning their care.',
+  petsLabel: 'EVERY PAW HAS A PERSONALITY',
+  petsTitle: 'Tell us what makes\nthem, them.',
+  petsIntro:
+    'Use these conversation starters to explain your dog, cat or rabbit’s needs. Suitability and specific care arrangements should always be confirmed before a stay.',
+  dogName: 'For your dog',
+  dogNote: 'The familiar rhythm',
+  dogBody:
+    'Share their usual walk times, energy level, lead habits and how they respond to other animals. Tell us what helps them settle after a busy day.',
+  catName: 'For your cat',
+  catNote: 'Comfort in the small things',
+  catBody:
+    'Describe their favourite hiding spots, litter routine and whether they prefer company or a little space. Mention how they react to a new environment.',
+  rabbitName: 'For your rabbit',
+  rabbitNote: 'A routine worth knowing',
+  rabbitBody:
+    'Explain their usual food, enclosure setup, handling preferences and quiet-time routine. Discuss any particular care needs before making arrangements.',
+  prepareLabel: 'A LITTLE PREPARATION',
+  prepareTitle: 'Before the bags\nare packed.',
+  prepareIntro:
+    'Keep the important details together. This is a planning guide, not a list of mandatory items; confirm what to bring and what care can be provided before your visit.',
+  prepare1: 'Food & familiar routines',
+  prepare1Body:
+    'Write down usual mealtimes, portions and any food sensitivities. Ask how food should be packed and labelled.',
+  prepare2: 'Health & care notes',
+  prepare2Body:
+    'Discuss allergies, medication and any support your pet needs. Confirm whether those needs can be accommodated before booking.',
+  prepare3: 'Comforts from home',
+  prepare3Body:
+    'Mention a favourite blanket or toy and what helps your pet relax. Check which belongings are suitable to bring.',
+  prepare4: 'Arrival & going home',
+  prepare4Body:
+    'Confirm drop-off and pickup arrangements, the best contact during the stay, and who will collect your pet.',
+  planningLabel: 'MAKE ROOM FOR THE DETAILS',
+  planningTitle: 'A clear plan for\nyou and your pet.',
+  planningBody:
+    'Before you commit, confirm the dates, care needs, price and cancellation terms together. A saved pet profile helps keep their details handy; it does not confirm a booking.',
+  planningLink: 'Read cancellation terms',
+  prepareLink: 'See the preparation guide',
+  dayDetail: 'Discuss the day: arrival and pickup, meals, rest and your pet’s usual activity.',
+  nightDetail:
+    'Discuss the whole stay: dates, sleeping routine, food and the things that help them settle.',
+  q4: 'Can I book or pay online?',
+  a4: 'Online booking and payment are not available yet. Signing in lets you manage your profile and pet details; it does not reserve a place or confirm care.',
+  q5: 'What if my plans change?',
+  a5: 'Read the cancellation policy and confirm the complete terms before arranging a stay. Exact deadlines, shorter-notice terms and the form of refund still need confirmation.',
+  q6: 'What should I bring?',
+  a6: 'Prepare feeding instructions, care notes and details of any familiar belongings. Confirm what is appropriate to bring and any specific requirements before your visit.',
+  scrollHint: 'A little more to discover',
 };
 export const chineseMessages: typeof englishMessages = {
   home: '首页',
@@ -99,4 +151,50 @@ export const chineseMessages: typeof englishMessages = {
   footer: 'Niu Niu Family Paws Sitting LLC',
   footerNote: '用心陪伴每一个小爪印。',
   illustration: '一只小狗在植物旁休息的插画',
+  storyLabel: '小细节，也值得用心了解',
+  storyTitle: '它的习惯，它的安心，\n它自己的托管节奏。',
+  storyBody:
+    '喜欢在哪里休息、几点吃饭、怎样打招呼才自在——从这些日常小事聊起，让照护安排更了解您的毛孩子。',
+  petsLabel: '每个小爪印，都有自己的个性',
+  petsTitle: '聊聊它，\n独一无二的它。',
+  petsIntro:
+    '为狗狗、猫咪或兔兔安排照护时，可以从这些话题聊起。是否适合托管及具体照护安排，请务必在托管前确认。',
+  dogName: '给狗狗',
+  dogNote: '熟悉的日常节奏',
+  dogBody:
+    '介绍平时的散步时间、精力、牵引习惯，以及与其他动物相处的反应。也说说活动后怎样让它安静下来。',
+  catName: '给猫咪',
+  catNote: '安心，藏在小细节里',
+  catBody: '说说它喜欢的藏身处、猫砂习惯，是喜欢陪伴还是需要独处空间，以及面对新环境时的反应。',
+  rabbitName: '给兔兔',
+  rabbitNote: '值得仔细了解的习惯',
+  rabbitBody:
+    '介绍平时的食物、生活环境、接触方式和安静休息的习惯。特殊照护需求请在安排前充分沟通。',
+  prepareLabel: '提前准备，从容一点',
+  prepareTitle: '出发之前，\n把小事想周全。',
+  prepareIntro:
+    '把重要信息整理在一起。这是一份沟通指南，并非强制携带清单；请在到店前确认物品和可提供的照护。',
+  prepare1: '饮食与日常习惯',
+  prepare1Body: '记下平时的喂食时间、份量和食物敏感情况，并确认食物如何分装及标注。',
+  prepare2: '健康与照护说明',
+  prepare2Body: '提前沟通过敏、用药和需要协助的事项。预约前先确认这些需求是否能够得到照顾。',
+  prepare3: '熟悉的小物件',
+  prepare3Body: '介绍它喜欢的毯子、玩具，以及帮助它放松的方法，并先确认哪些物品适合带来。',
+  prepare4: '到店与接回安排',
+  prepare4Body: '确认送达和接回安排、托管期间的联系方法，以及由谁接回宠物。',
+  planningLabel: '把重要的安排聊清楚',
+  planningTitle: '为您和它，\n准备一份清楚的计划。',
+  planningBody:
+    '确定托管前，请一起核对日期、照护需求、费用及取消条款。保存宠物档案方便整理资料，但不代表已成功预约。',
+  planningLink: '查看取消条款',
+  prepareLink: '查看托管准备指南',
+  dayDetail: '聊聊白天的安排：送达与接回、用餐、休息，以及平时的活动习惯。',
+  nightDetail: '聊聊整个寄养期间的安排：日期、睡眠、饮食，以及帮助它安心的小细节。',
+  q4: '可以在线预约或付款吗？',
+  a4: '目前尚未开放在线预约和付款。登录后可以管理自己与宠物的资料，但不会预留名额或确认托管。',
+  q5: '如果行程改变了怎么办？',
+  a5: '安排托管前，请阅读取消政策并确认完整条款。具体截止时间、临近到店的取消规则和返还形式等仍需确认。',
+  q6: '需要带些什么？',
+  a6: '请准备喂食说明、照护注意事项，以及熟悉物品的信息。到店前先确认适合携带的物品和具体要求。',
+  scrollHint: '往下看看，了解更多',
 };
