@@ -1,6 +1,7 @@
 import { englishMessages, chineseMessages } from './marketing-messages';
 import HomeIllustration from './home-illustration';
 import useRoute from './use-route';
+import useMarketingMotion from './use-marketing-motion';
 import SiteAccountLink from './site-account-link';
 import React from 'react';
 import i18n from 'i18next';
@@ -21,6 +22,8 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const chinese = i18n.language === 'zh';
   const route = useRoute(i18n.language, initialPath);
   const page = route.kind;
+  const marketingRoot = React.useRef<HTMLElement>(null);
+  useMarketingMotion(marketingRoot, route.path);
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
   const [visitedApp, setVisitedApp] = React.useState(appVisible);
   React.useEffect(() => {
@@ -115,7 +118,11 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
               <LanguageSelector onChange={setLanguage} />
             </div>
           </header>
-          <main id="main" className={page !== 'home' ? 'public-page' : undefined}>
+          <main
+            ref={marketingRoot}
+            id="main"
+            className={'marketing-site' + (page !== 'home' ? ' public-page' : '')}
+          >
             {page === 'home' && (
               <section className="hero">
                 <div>

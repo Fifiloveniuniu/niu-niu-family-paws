@@ -1,5 +1,12 @@
 # Session handoff — 2026-10-22
 
+## Marketing motion — 2026-11-16
+
+Owner requested animation and scroll parallax. Public marketing pages now progressively animate hero copy, section headings, service cards, care steps, FAQs and policy content on first entry. The existing dog illustration and halo move at different bounded scroll speeds, with smaller travel on phones. Service cards/buttons have subtle hover feedback. Public content remains visible without animation; reduced-motion preference disables entrances/parallax and smooth scrolling, including preference changes during the session. Event/observer/frame/animation cleanup is scoped to the public route; authenticated workflows and bilingual copy are unchanged.
+
+Validation: Node24 production build, formatting and all34 unit tests pass. Actual native Chrome localhost4180 home walkthrough scrolled through the site and returned home. Automated Chrome checks confirmed scroll changes, live reduced-motion cancellation, no horizontal overflow at320/390/760/1440, Chinese layouts, public route navigation and app sign-in entry; no page errors. Desktop and Chinese phone screenshots are docs/screenshots/marketing-motion-desktop.png and marketing-motion-mobile-zh.png. No data/emulator reset or deployment; defer hosted delivery until the full requested feature set is complete. Review: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/62. Implementation a91889d is GitHub Verified (valid); routine merge authorized once required checks pass. Consult PR for current merge status.
+
+
 ## Project readability refactor — 2026-11-16
 
 Owner requested a whole-project helper/naming cleanup. Refactor covers handwritten frontend/backend TypeScript, React, styles, JavaScript utility scripts, tests and root configuration; generated contracts/builds, data, Python photo collection and WIP #41 are preserved. Added shared authenticated API transport (JSON/204/blob, status errors, captured token and cancellation), canonical customer lookup helpers, strict date/local-date helpers, sample calendar time/data modules, backend identity/schema/text-validation helpers and separated marketing copy/illustration. Replaced ambiguous local names with domain names and expanded compressed source; one variable declaration per statement. Added pinned Prettier, format/format:check scripts, CI formatting check and docs/code-maintenance.md.
