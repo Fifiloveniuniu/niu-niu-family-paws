@@ -1,87 +1,159 @@
-import {test,expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-test('administrator switches to own profile and pets without losing drafts or bypassing revoked access',async({page,request})=>{
-  const email=`workspace-${Date.now()}@example.test`;
-  const response=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key',{data:{email,password:'emulator-only-password',returnSecureToken:true}});
-  const {localId}=await response.json();
-  const claims=async(admin:boolean)=>{
-    const updated=await request.post('http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',{headers:{Authorization:'Bearer owner'},data:{localId,emailVerified:true,customAttributes:JSON.stringify(admin?{admin:true}:{})}});
+test('administrator switches to own profile and pets without losing drafts or bypassing revoked access', async ({
+  page,
+  request,
+}) => {
+  const email = `workspace-${Date.now()}@example.test`;
+  const response = await request.post(
+    'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signUp?key=demo-key',
+    { data: { email, password: 'emulator-only-password', returnSecureToken: true } },
+  );
+  const { localId } = await response.json();
+  const claims = async (admin: boolean) => {
+    const updated = await request.post(
+      'http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/projects/demo-niu-niu/accounts:update',
+      {
+        headers: { Authorization: 'Bearer owner' },
+        data: {
+          localId,
+          emailVerified: true,
+          customAttributes: JSON.stringify(admin ? { admin: true } : {}),
+        },
+      },
+    );
     expect(updated.ok()).toBe(true);
   };
   await claims(true);
-  await page.route('**/api/profile',route=>route.fulfill({json:{id:'10000000-0000-4000-8000-000000000030',name:'Sample owner',language:'en',email:'',phone:'',loginEmail:email,version:1,createdAt:'2026-10-22',updatedAt:'2026-10-22'}}));
-  await page.route('**/api/customers?*',route=>route.fulfill({json:{items:[],nextCursor:null}}));
-  await page.route('**/api/customers/*/pets',route=>route.fulfill({json:{items:[],nextCursor:null}}));
+  await page.route('**/api/profile', (route) =>
+    route.fulfill({
+      json: {
+        id: '10000000-0000-4000-8000-000000000030',
+        name: 'Sample owner',
+        language: 'en',
+        email: '',
+        phone: '',
+        loginEmail: email,
+        version: 1,
+        createdAt: '2026-10-22',
+        updatedAt: '2026-10-22',
+      },
+    }),
+  );
+  await page.route('**/api/customers?*', (route) =>
+    route.fulfill({ json: { items: [], nextCursor: null } }),
+  );
+  await page.route('**/api/customers/*/pets', (route) =>
+    route.fulfill({ json: { items: [], nextCursor: null } }),
+  );
   await page.goto('/');
-  await page.getByRole('link',{name:'Sign in',exact:true}).click();
-  await expect(page.getByRole('button',{name:'Continue with Google'})).toBeVisible();
-  await page.evaluate(async({email})=>{
-    const {auth}=await import('/apps/web/src/auth-client.ts');
-    const {signInWithEmailAndPassword}=await import('/node_modules/.vite/deps/firebase_auth.js');
-    await signInWithEmailAndPassword(auth,email,'emulator-only-password');
-  },{email});
-  await page.getByRole('link',{name:'Customers',exact:true}).click();
-  await expect(page.getByRole('link',{name:'Customers',exact:true})).toHaveAttribute('aria-current','page');
-  await page.getByRole('button',{name:'Add customer',exact:true}).click();
-  await expect(page.getByRole('dialog',{name:'Add customer',exact:true})).toBeVisible();
-  await expect(page.getByRole('textbox',{name:'Customer name',exact:true})).toBeFocused();
+  await page.getByRole('link', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
+  await page.evaluate(
+    async ({ email }) => {
+      const { auth } = await import('/apps/web/src/auth-client.ts');
+      const { signInWithEmailAndPassword } =
+        await import('/node_modules/.vite/deps/firebase_auth.js');
+      await signInWithEmailAndPassword(auth, email, 'emulator-only-password');
+    },
+    { email },
+  );
+  await page.getByRole('link', { name: 'Customers', exact: true }).click();
+  await expect(page.getByRole('link', { name: 'Customers', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await page.getByRole('button', { name: 'Add customer', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Add customer', exact: true })).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Customer name', exact: true })).toBeFocused();
   await page.keyboard.press('Shift+Tab');
-  await expect(page.getByRole('button',{name:'Close',exact:true})).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Close', exact: true })).toBeFocused();
   await page.keyboard.press('Shift+Tab');
-  await expect(page.getByRole('button',{name:'Cancel',exact:true})).toBeFocused();
-  await page.getByRole('textbox',{name:'Customer name',exact:true}).fill('Unsaved directory draft');
-  page.once('dialog',dialog=>dialog.dismiss());
-  await page.getByRole('button',{name:'Close',exact:true}).click();
-  await expect(page.getByRole('textbox',{name:'Customer name',exact:true})).toHaveValue('Unsaved directory draft');
-  page.once('dialog',dialog=>dialog.accept());
+  await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeFocused();
+  await page
+    .getByRole('textbox', { name: 'Customer name', exact: true })
+    .fill('Unsaved directory draft');
+  page.once('dialog', (dialog) => dialog.dismiss());
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Customer name', exact: true })).toHaveValue(
+    'Unsaved directory draft',
+  );
+  page.once('dialog', (dialog) => dialog.accept());
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Add customer',exact:true})).toBeFocused();
-  await page.locator('.hc-account-menu>summary').click();await page.getByRole('link',{name:'My profile',exact:true}).click();
-  await page.getByRole('textbox',{name:'Your name',exact:true}).fill('Unsaved personal draft');
-  await page.getByRole('link',{name:'Customers',exact:true}).click();
-  await page.locator('.hc-account-menu>summary').click();await page.getByRole('link',{name:'My profile',exact:true}).click();
-  await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
-  await page.getByRole('link',{name:'Customers',exact:true}).click();
-  await page.getByRole('checkbox',{name:'Only my pets',exact:true}).check();
-  await page.getByRole('button',{name:'Add pet',exact:true}).click();
-  await expect(page.getByRole('dialog',{name:'Add pet',exact:true})).toBeVisible();
-  await page.getByRole('textbox',{name:'Pet name',exact:true}).fill('Unsaved pet draft');
-  const warning=page.waitForEvent('dialog');
-  const refresh=page.reload({timeout:1500}).catch(()=>null);
-  const dialog=await warning;expect(dialog.type()).toBe('beforeunload');await dialog.dismiss();await refresh;
-  await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
-  page.once('dialog',dialog=>dialog.dismiss());
+  await expect(page.getByRole('button', { name: 'Add customer', exact: true })).toBeFocused();
+  await page.locator('.hc-account-menu>summary').click();
+  await page.getByRole('link', { name: 'My profile', exact: true }).click();
+  await page
+    .getByRole('textbox', { name: 'Your name', exact: true })
+    .fill('Unsaved personal draft');
+  await page.getByRole('link', { name: 'Customers', exact: true }).click();
+  await page.locator('.hc-account-menu>summary').click();
+  await page.getByRole('link', { name: 'My profile', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Your name', exact: true })).toHaveValue(
+    'Unsaved personal draft',
+  );
+  await page.getByRole('link', { name: 'Customers', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Only my pets', exact: true }).check();
+  await page.getByRole('button', { name: 'Add pet', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Add pet', exact: true })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Pet name', exact: true }).fill('Unsaved pet draft');
+  const warning = page.waitForEvent('dialog');
+  const refresh = page.reload({ timeout: 1500 }).catch(() => null);
+  const dialog = await warning;
+  expect(dialog.type()).toBe('beforeunload');
+  await dialog.dismiss();
+  await refresh;
+  await expect(page.getByRole('textbox', { name: 'Pet name', exact: true })).toHaveValue(
+    'Unsaved pet draft',
+  );
+  page.once('dialog', (dialog) => dialog.dismiss());
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('textbox',{name:'Pet name',exact:true})).toHaveValue('Unsaved pet draft');
-  page.once('dialog',dialog=>dialog.accept());
-  await page.getByRole('button',{name:'Close',exact:true}).click();
-  await page.locator('.hc-account-menu>summary').click();await page.getByRole('link',{name:'My profile',exact:true}).click();
-  await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toHaveValue('Unsaved personal draft');
-  await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
-  await expect(page.getByRole('textbox',{name:'Your name',exact:true})).toBeVisible();
-  await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');
-  await page.setViewportSize({width:400,height:860});
+  await expect(page.getByRole('textbox', { name: 'Pet name', exact: true })).toHaveValue(
+    'Unsaved pet draft',
+  );
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.locator('.hc-account-menu>summary').click();
+  await page.getByRole('link', { name: 'My profile', exact: true }).click();
+  await expect(page.getByRole('textbox', { name: 'Your name', exact: true })).toHaveValue(
+    'Unsaved personal draft',
+  );
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.getByRole('textbox', { name: 'Your name', exact: true })).toBeVisible();
+  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await page.setViewportSize({ width: 400, height: 860 });
   await claims(false);
-  await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
-  await expect(page.getByRole('heading',{name:'我的资料',level:1,exact:true})).toBeVisible();
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(
+    page.getByRole('heading', { name: '我的资料', level: 1, exact: true }),
+  ).toBeVisible();
   await expect(page.locator('.customer-directory-panel')).toHaveCount(0);
-  await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Unsaved personal draft');
-  await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Sample owner');
+  await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue(
+    'Unsaved personal draft',
+  );
+  await page.getByRole('textbox', { name: '您的姓名', exact: true }).fill('Sample owner');
   await page.reload();
-  await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
-  await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Discard on navigation');
-  const keepDraft=page.waitForEvent('dialog').then(dialog=>dialog.dismiss());
+  await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue(
+    'Sample owner',
+  );
+  await page.getByRole('textbox', { name: '您的姓名', exact: true }).fill('Discard on navigation');
+  const keepDraft = page.waitForEvent('dialog').then((dialog) => dialog.dismiss());
   await page.locator('.hc-top>a').click();
   await keepDraft;
-  await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Discard on navigation');
-  const discardDraft=page.waitForEvent('dialog').then(dialog=>dialog.accept());
+  await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue(
+    'Discard on navigation',
+  );
+  const discardDraft = page.waitForEvent('dialog').then((dialog) => dialog.accept());
   await page.locator('.hc-top>a').click();
   await discardDraft;
-  await page.getByRole('link',{name:/^(登录|打开应用)$/,exact:true}).click();
-  await expect(page.getByRole('textbox',{name:'您的姓名',exact:true})).toHaveValue('Sample owner');
-  await page.getByRole('textbox',{name:'您的姓名',exact:true}).fill('Discard on sign out');
-  page.once('dialog',dialog=>dialog.accept());
-  await page.locator('.hc-account-menu>summary').click();await page.getByRole('button',{name:'退出登录',exact:true}).click();
-  await expect(page.getByRole('region',{name:'我的资料',exact:true})).toHaveCount(0);
+  await page.getByRole('link', { name: /^(登录|打开应用)$/, exact: true }).click();
+  await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue(
+    'Sample owner',
+  );
+  await page.getByRole('textbox', { name: '您的姓名', exact: true }).fill('Discard on sign out');
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.locator('.hc-account-menu>summary').click();
+  await page.getByRole('button', { name: '退出登录', exact: true }).click();
+  await expect(page.getByRole('region', { name: '我的资料', exact: true })).toHaveCount(0);
 });

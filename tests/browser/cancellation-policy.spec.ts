@@ -1,5 +1,24 @@
-import {test,expect} from '@playwright/test';
-test('public cancellation policy has a routable marketing page in both languages',async({page})=>{
- await page.goto('/cancellation-policy/');await expect(page.getByRole('heading',{name:'Cancellation policy',level:1})).toBeVisible();await expect(page.getByText('Cancellation receives a full refund.',{exact:true})).toBeVisible();await expect(page.getByText('Cancellation receives a half refund.',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Edit policy'})).toHaveCount(0);await expect(page.getByText(/Exact deadlines, shorter-notice/)).toBeVisible();
- await page.getByRole('combobox',{name:'Language / 语言',exact:true}).selectOption('zh');await page.setViewportSize({width:390,height:844});await page.reload();await expect(page.getByRole('heading',{name:'取消政策',level:1})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await page.screenshot({path:'test-results/cancellation-policy-public-mobile-zh.png',fullPage:true});
+import { test, expect } from '@playwright/test';
+test('public cancellation policy has a routable marketing page in both languages', async ({
+  page,
+}) => {
+  await page.goto('/cancellation-policy/');
+  await expect(page.getByRole('heading', { name: 'Cancellation policy', level: 1 })).toBeVisible();
+  await expect(
+    page.getByText('Cancellation receives a full refund.', { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Cancellation receives a half refund.', { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Edit policy' })).toHaveCount(0);
+  await expect(page.getByText(/Exact deadlines, shorter-notice/)).toBeVisible();
+  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload();
+  await expect(page.getByRole('heading', { name: '取消政策', level: 1 })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({
+    path: 'test-results/cancellation-policy-public-mobile-zh.png',
+    fullPage: true,
+  });
 });

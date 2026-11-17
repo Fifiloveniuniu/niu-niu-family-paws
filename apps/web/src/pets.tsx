@@ -1,160 +1,550 @@
+import { ApiError, apiJson, apiBlob } from './api-client';
 import React from 'react';
-import {updateQuery} from './routing';
+import { updateQuery } from './routing';
 import { useTranslation } from 'react-i18next';
-import { auth } from './auth-client';
 import Modal from './modal';
-import {DemoBalanceLink} from './calendar-pet-photos';
+import { DemoBalanceLink } from './calendar-pet-photos';
 import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
 type PetWrite = components['schemas']['PetWrite'];
-const en = {
-  title: 'Pets', own: 'My pets', intro: 'Each pet has its own profile. You can add a photo now or later.',
-  add: 'Add pet', edit: 'Edit pet', name: 'Pet name', photo: 'Pet photo (optional)', hint: 'JPEG, PNG or WebP, up to 3 MB and 16 megapixels. Photos are private to the owner and administrators.',
-  noPhoto: 'No photo yet', save: 'Save pet', retry: 'Retry pet save', cancel: 'Cancel', loading: 'Loading pets…', saving: 'Saving pet…',
-  empty: 'No pets yet. Add your first pet.', more: 'Load more pets', reload: 'Try again', saved: 'Pet saved.',
-  error: 'Couldn’t load or save pets. Please try again.', invalid: 'Enter a pet name (up to 120 characters) and choose a valid photo within the limits.',
+const englishMessages = {
+  title: 'Pets',
+  own: 'My pets',
+  intro: 'Each pet has its own profile. You can add a photo now or later.',
+  add: 'Add pet',
+  edit: 'Edit pet',
+  name: 'Pet name',
+  photo: 'Pet photo (optional)',
+  hint: 'JPEG, PNG or WebP, up to 3 MB and 16 megapixels. Photos are private to the owner and administrators.',
+  noPhoto: 'No photo yet',
+  save: 'Save pet',
+  retry: 'Retry pet save',
+  cancel: 'Cancel',
+  loading: 'Loading pets…',
+  saving: 'Saving pet…',
+  empty: 'No pets yet. Add your first pet.',
+  more: 'Load more pets',
+  reload: 'Try again',
+  saved: 'Pet saved.',
+  error: 'Couldn’t load or save pets. Please try again.',
+  invalid: 'Enter a pet name (up to 120 characters) and choose a valid photo within the limits.',
   forbidden: 'You don’t have access to these pets. Sign out and sign in again.',
-  conflict: 'This pet changed elsewhere. Your edits are kept. Choose Try again and reopen the latest pet before saving.',
-  photoError: 'Couldn’t load this private photo.', photoRetry: 'Retry photo', selected: 'New photo selected. Save the pet to upload it.',
-  search: 'Search pet names', searchHint: 'Start of pet name', noMatches: 'No matching pets.', customer: 'Customer', manage: 'Manage these pets',
+  conflict:
+    'This pet changed elsewhere. Your edits are kept. Choose Try again and reopen the latest pet before saving.',
+  photoError: 'Couldn’t load this private photo.',
+  photoRetry: 'Retry photo',
+  selected: 'New photo selected. Save the pet to upload it.',
+  search: 'Search pet names',
+  searchHint: 'Start of pet name',
+  noMatches: 'No matching pets.',
+  customer: 'Customer',
+  manage: 'Manage these pets',
 };
-const zh: typeof en = {
-  title: '宠物', own: '我的宠物', intro: '为每只宠物单独添加资料，照片可以以后再补。',
-  add: '添加宠物', edit: '编辑宠物', name: '宠物名字', photo: '宠物照片（选填）', hint: '支持 JPEG、PNG 或 WebP，最大 3 MB、1600 万像素。仅宠物主人和管理员可查看照片。',
-  noPhoto: '尚未添加照片', save: '保存宠物', retry: '重试保存宠物', cancel: '取消', loading: '正在加载宠物…', saving: '正在保存宠物…',
-  empty: '还没有添加宠物，先添加一只吧。', more: '加载更多宠物', reload: '重试', saved: '宠物资料已保存。',
-  error: '宠物资料加载或保存失败，请重试。', invalid: '请填写宠物名字（最多 120 个字符），并检查照片格式和大小。',
+const chineseMessages: typeof englishMessages = {
+  title: '宠物',
+  own: '我的宠物',
+  intro: '为每只宠物单独添加资料，照片可以以后再补。',
+  add: '添加宠物',
+  edit: '编辑宠物',
+  name: '宠物名字',
+  photo: '宠物照片（选填）',
+  hint: '支持 JPEG、PNG 或 WebP，最大 3 MB、1600 万像素。仅宠物主人和管理员可查看照片。',
+  noPhoto: '尚未添加照片',
+  save: '保存宠物',
+  retry: '重试保存宠物',
+  cancel: '取消',
+  loading: '正在加载宠物…',
+  saving: '正在保存宠物…',
+  empty: '还没有添加宠物，先添加一只吧。',
+  more: '加载更多宠物',
+  reload: '重试',
+  saved: '宠物资料已保存。',
+  error: '宠物资料加载或保存失败，请重试。',
+  invalid: '请填写宠物名字（最多 120 个字符），并检查照片格式和大小。',
   forbidden: '暂时无法访问这些宠物的资料。请退出后重新登录。',
-  conflict: '宠物资料已在其他页面更新，您还没保存的修改仍保留在这里。请点击“重试”，再打开最新资料编辑。',
-  photoError: '照片加载失败。', photoRetry: '重新加载照片', selected: '已选好新照片，点击“保存宠物”后才会上传。',
-  search: '搜索宠物名字', searchHint: '输入宠物名字的开头', noMatches: '没有找到符合条件的宠物。', customer: '客户', manage: '管理这些宠物',
+  conflict:
+    '宠物资料已在其他页面更新，您还没保存的修改仍保留在这里。请点击“重试”，再打开最新资料编辑。',
+  photoError: '照片加载失败。',
+  photoRetry: '重新加载照片',
+  selected: '已选好新照片，点击“保存宠物”后才会上传。',
+  search: '搜索宠物名字',
+  searchHint: '输入宠物名字的开头',
+  noMatches: '没有找到符合条件的宠物。',
+  customer: '客户',
+  manage: '管理这些宠物',
 };
-class PetError extends Error { constructor(public status: number) { super('Pet request failed'); } }
-async function request(path: string, body?: PetWrite, photo = false) {
-  const user = auth.currentUser;
-  if (!user) throw new PetError(401);
-  const token = await user.getIdToken();
-  const response = await fetch('/api' + path, { method: body ? 'PUT' : 'GET', cache: 'no-store',
-    headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
-  if (!response.ok) throw new PetError(response.status);
-  return photo ? response.blob() : response.json();
-}
 function readFile(file: Blob): Promise<string> {
-  return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Image read failed')); reader.readAsDataURL(file); });
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error('Image read failed'));
+    reader.readAsDataURL(file);
+  });
 }
 function PetPhoto({ pet }: { pet: Pet }) {
-  const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
-  const [url, setUrl] = React.useState(''), [failed, setFailed] = React.useState(false), [retry, setRetry] = React.useState(0);
+  const { i18n } = useTranslation();
+  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const [url, setUrl] = React.useState('');
+  const [failed, setFailed] = React.useState(false);
+  const [retry, setRetry] = React.useState(0);
   React.useEffect(() => {
-    let alive = true; setUrl(''); setFailed(false);
-    if (pet.photo) void request(`/customers/${pet.customerId}/pets/${pet.id}/photo`, undefined, true)
-      .then(readFile).then(value => { if (alive) setUrl(value); }).catch(() => { if (alive) setFailed(true); });
-    return () => { alive = false; };
+    let alive = true;
+    setUrl('');
+    setFailed(false);
+    if (pet.photo)
+      void apiBlob(`/customers/${pet.customerId}/pets/${pet.id}/photo`)
+        .then(readFile)
+        .then((value) => {
+          if (alive) setUrl(value);
+        })
+        .catch(() => {
+          if (alive) setFailed(true);
+        });
+    return () => {
+      alive = false;
+    };
   }, [pet.customerId, pet.id, pet.photo, retry]);
-  if (!pet.photo) return <div className="pet-photo"><span>{t.noPhoto}</span></div>;
-  return <div className="pet-photo">{url ? <img src={url} alt={pet.name}/> : failed ? <div><p>{t.photoError}</p><button className="language" onClick={() => setRetry(value => value + 1)}>{t.photoRetry}</button></div> : <span>{t.loading}</span>}</div>;
+  if (!pet.photo)
+    return (
+      <div className="pet-photo">
+        <span>{labels.noPhoto}</span>
+      </div>
+    );
+  return (
+    <div className="pet-photo">
+      {url ? (
+        <img src={url} alt={pet.name} />
+      ) : failed ? (
+        <div>
+          <p>{labels.photoError}</p>
+          <button className="language" onClick={() => setRetry((value) => value + 1)}>
+            {labels.photoRetry}
+          </button>
+        </div>
+      ) : (
+        <span>{labels.loading}</span>
+      )}
+    </div>
+  );
 }
-export default function Pets({ customerId, title, onReady,selectedPetId,routable=false }: { customerId: string; title?: string;selectedPetId?:string;routable?:boolean; onReady?:()=>void }) {
-  const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
+export default function Pets({
+  customerId,
+  title,
+  onReady,
+  selectedPetId,
+  routable = false,
+}: {
+  customerId: string;
+  title?: string;
+  selectedPetId?: string;
+  routable?: boolean;
+  onReady?: () => void;
+}) {
+  const { i18n } = useTranslation();
+  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
   const headingId = React.useId();
-  const [items, setItems] = React.useState<Pet[]>([]), [cursor, setCursor] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(true), [saving, setSaving] = React.useState(false), [reading, setReading] = React.useState(false);
-  const [error, setError] = React.useState<keyof typeof en | null>(null), [saved, setSaved] = React.useState(false), [uncertain, setUncertain] = React.useState(false);
-  const [editor, setEditor] = React.useState<{ id: string; input: PetWrite; preview: string } | null>(null);
-  const alive = React.useRef(true), generation = React.useRef(0);
+  const [items, setItems] = React.useState<Pet[]>([]);
+  const [cursor, setCursor] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [saving, setSaving] = React.useState(false);
+  const [reading, setReading] = React.useState(false);
+  const [error, setError] = React.useState<keyof typeof englishMessages | null>(null);
+  const [saved, setSaved] = React.useState(false);
+  const [uncertain, setUncertain] = React.useState(false);
+  const [editor, setEditor] = React.useState<{
+    id: string;
+    input: PetWrite;
+    preview: string;
+  } | null>(null);
+  const alive = React.useRef(true);
+  const generation = React.useRef(0);
   const path = `/customers/${customerId}/pets`;
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null);
-  function report(e: unknown) {
-    const status = e instanceof PetError ? e.status : 0;
-    setError(status === 409 ? 'conflict' : status === 401 || status === 403 ? 'forbidden' : status === 400 ? 'invalid' : 'error');
+  function report(event: unknown) {
+    const status = event instanceof ApiError ? event.status : 0;
+    setError(
+      status === 409
+        ? 'conflict'
+        : status === 401 || status === 403
+          ? 'forbidden'
+          : status === 400
+            ? 'invalid'
+            : 'error',
+    );
   }
   async function load(next?: string) {
-    const version = ++generation.current; setLoading(true); setError(null);
+    const version = ++generation.current;
+    setLoading(true);
+    setError(null);
     try {
-      const page: components['schemas']['PetPage'] = await request(path + (next ? '?cursor=' + next : ''));
+      const page: components['schemas']['PetPage'] = await apiJson<
+        components['schemas']['PetPage']
+      >(path + (next ? '?cursor=' + next : ''));
       if (!alive.current || version !== generation.current) return;
-      setItems(previous => next ? [...new Map([...previous, ...page.items].map(p => [p.id, p])).values()] : page.items); setCursor(page.nextCursor);
-    } catch (e) { if (alive.current && version === generation.current) report(e); }
-    finally { if (alive.current && version === generation.current) setLoading(false); }
+      setItems((previous) =>
+        next
+          ? [...new Map([...previous, ...page.items].map((p) => [p.id, p])).values()]
+          : page.items,
+      );
+      setCursor(page.nextCursor);
+    } catch (e) {
+      if (alive.current && version === generation.current) report(e);
+    } finally {
+      if (alive.current && version === generation.current) setLoading(false);
+    }
   }
-  React.useEffect(() => { alive.current = true; void load(); return () => { alive.current = false; ++generation.current; }; }, [customerId]);
-  React.useEffect(()=>{if(!loading)onReady?.();},[loading,onReady]);
-  React.useEffect(()=>{if(selectedPetId&&!loading&&!error&&cursor&&!items.some(p=>p.id===selectedPetId))void load(cursor);},[selectedPetId,loading,error,cursor,items]);
+  React.useEffect(() => {
+    alive.current = true;
+    void load();
+    return () => {
+      alive.current = false;
+      ++generation.current;
+    };
+  }, [customerId]);
+  React.useEffect(() => {
+    if (!loading) onReady?.();
+  }, [loading, onReady]);
+  React.useEffect(() => {
+    if (selectedPetId && !loading && !error && cursor && !items.some((p) => p.id === selectedPetId))
+      void load(cursor);
+  }, [selectedPetId, loading, error, cursor, items]);
   function open(pet?: Pet) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
-    setError(null); setSaved(false); setUncertain(false);
+    setError(null);
+    setSaved(false);
+    setUncertain(false);
     const input = { name: pet?.name ?? '', version: pet?.version ?? 0 };
     baseline.current = JSON.stringify(input);
     setEditor({ id: pet?.id ?? crypto.randomUUID(), input, preview: '' });
   }
   async function choose(file?: File) {
     if (!file || !editor) return;
-    setError(null); setSaved(false);
-    if (file.size > 3_145_728 || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setError('invalid'); return; }
+    setError(null);
+    setSaved(false);
+    if (file.size > 3_145_728 || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setError('invalid');
+      return;
+    }
     setReading(true);
     try {
       const preview = await readFile(file);
-      if (alive.current) setEditor({ ...editor, preview, input: { ...editor.input, photoData: preview.split(',')[1] } });
-    } catch { if (alive.current) setError('invalid'); }
-    finally { if (alive.current) setReading(false); }
+      if (alive.current)
+        setEditor({
+          ...editor,
+          preview,
+          input: { ...editor.input, photoData: preview.split(',')[1] },
+        });
+    } catch {
+      if (alive.current) setError('invalid');
+    } finally {
+      if (alive.current) setReading(false);
+    }
   }
   async function save(event: React.FormEvent) {
-    event.preventDefault(); if (!editor || loading || saving || reading) return;
-    setSaving(true); setError(null); setSaved(false);
+    event.preventDefault();
+    if (!editor || loading || saving || reading) return;
+    setSaving(true);
+    setError(null);
+    setSaved(false);
     try {
-      await request(`${path}/${editor.id}`, editor.input);
+      await apiJson(`${path}/${editor.id}`, { body: editor.input });
       if (!alive.current) return;
-      setEditor(null); setUncertain(false); setSaved(true); await load();
-    } catch (e) { if (alive.current) { report(e); setUncertain(!(e instanceof PetError) || e.status >= 500 || e.status === 429); } }
-    finally { if (alive.current) setSaving(false); }
+      setEditor(null);
+      setUncertain(false);
+      setSaved(true);
+      await load();
+    } catch (e) {
+      if (alive.current) {
+        report(e);
+        setUncertain(!(e instanceof ApiError) || e.status >= 500 || e.status === 429);
+      }
+    } finally {
+      if (alive.current) setSaving(false);
+    }
   }
   const blocked = saving || reading || uncertain;
-  return <section className="pets-section" aria-labelledby={headingId}>
-    <div className="customer-heading"><h3 id={headingId}>{title ?? t.own}</h3><button className="button" disabled={blocked || loading} onClick={() => open()}>{t.add}</button></div>
-    <p className="customer-intro">{t.intro}</p>
-    {error && <p role="alert">{t[error]}</p>}{saved && <p role="status">{t.saved}</p>}
-    {editor && <Modal title={editor.input.version ? t.edit : t.add} disabled={blocked} onClose={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}><form ref={form} className="customer-form pet-form" onSubmit={event => void save(event)}>
-      <UnsavedChanges active={JSON.stringify(editor.input) !== baseline.current || saving || reading || uncertain}/>
-      <fieldset disabled={blocked}>
-        <label>{t.name}<input required maxLength={120} value={editor.input.name} onChange={event => { setEditor({ ...editor, input: { ...editor.input, name: event.target.value } }); if (error === 'invalid') setError(null); }}/></label>
-        <label>{t.photo}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event => void choose(event.target.files?.[0])}/></label>
-      </fieldset>
-      <p className="customer-intro">{t.hint}</p>
-      {editor.preview && <><img className="pet-preview" src={editor.preview} alt={editor.input.name}/><p>{t.selected}</p></>}
-      <div className="portal-actions"><button className="button" type="submit" disabled={saving || reading || loading || error === 'conflict' || error === 'forbidden' || error === 'invalid'}>{saving ? t.saving : uncertain ? t.retry : t.save}</button><button className="language" type="button" disabled={blocked} onClick={() => { if (confirmDiscardChanges(i18n.language, form.current)) { setEditor(null); setError(null); } }}>{t.cancel}</button></div>
-    </form></Modal>}
-    <div className="pet-grid">{items.map(pet => <article className={'pet-card'+(pet.id===selectedPetId?' pet-card-selected':'')} key={pet.id}><PetPhoto pet={pet}/><div><h4>{routable?<a href={'/app/customers/'+pet.customerId+'/pets/'+pet.id+'/'}>{pet.name}</a>:pet.name}</h4>{pet.photoCredit && <p className="pet-photo-credit">{i18n.language==='zh'?'测试示例照片':'Test sample photo'} · {pet.photoCredit.creator} · <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">{i18n.language==='zh'?'来源':'Source'}</a> · <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">{pet.photoCredit.license}</a></p>}<DemoBalanceLink customerId={pet.customerId} petId={pet.id}/><button className="icon-button" title={t.edit} aria-label={`${t.edit}: ${pet.name}`} disabled={blocked} onClick={() => open(pet)}><Icon name="edit"/></button></div></article>)}</div>
-    {selectedPetId&&!loading&&!cursor&&!error&&!items.some(p=>p.id===selectedPetId)&&<p role="alert">{i18n.language==='zh'?'未找到该宠物。':'Pet not found.'}</p>}
-    {loading ? <p role="status">{t.loading}</p> : !items.length && !error ? <p>{t.empty}</p> : null}
-    {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && <div className="portal-actions">{(error === 'error' || error === 'conflict') && !uncertain && <button className="language" disabled={blocked || loading} onClick={() => void load()}>{t.reload}</button>}{cursor && <button className="language" disabled={blocked || loading} onClick={() => void load(cursor)}>{t.more}</button>}</div>}
-  </section>;
+  return (
+    <section className="pets-section" aria-labelledby={headingId}>
+      <div className="customer-heading">
+        <h3 id={headingId}>{title ?? labels.own}</h3>
+        <button className="button" disabled={blocked || loading} onClick={() => open()}>
+          {labels.add}
+        </button>
+      </div>
+      <p className="customer-intro">{labels.intro}</p>
+      {error && <p role="alert">{labels[error]}</p>}
+      {saved && <p role="status">{labels.saved}</p>}
+      {editor && (
+        <Modal
+          title={editor.input.version ? labels.edit : labels.add}
+          disabled={blocked}
+          onClose={() => {
+            if (confirmDiscardChanges(i18n.language, form.current)) {
+              setEditor(null);
+              setError(null);
+            }
+          }}
+        >
+          <form
+            ref={form}
+            className="customer-form pet-form"
+            onSubmit={(event) => void save(event)}
+          >
+            <UnsavedChanges
+              active={
+                JSON.stringify(editor.input) !== baseline.current || saving || reading || uncertain
+              }
+            />
+            <fieldset disabled={blocked}>
+              <label>
+                {labels.name}
+                <input
+                  required
+                  maxLength={120}
+                  value={editor.input.name}
+                  onChange={(event) => {
+                    setEditor({ ...editor, input: { ...editor.input, name: event.target.value } });
+                    if (error === 'invalid') setError(null);
+                  }}
+                />
+              </label>
+              <label>
+                {labels.photo}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(event) => void choose(event.target.files?.[0])}
+                />
+              </label>
+            </fieldset>
+            <p className="customer-intro">{labels.hint}</p>
+            {editor.preview && (
+              <>
+                <img className="pet-preview" src={editor.preview} alt={editor.input.name} />
+                <p>{labels.selected}</p>
+              </>
+            )}
+            <div className="portal-actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={
+                  saving ||
+                  reading ||
+                  loading ||
+                  error === 'conflict' ||
+                  error === 'forbidden' ||
+                  error === 'invalid'
+                }
+              >
+                {saving ? labels.saving : uncertain ? labels.retry : labels.save}
+              </button>
+              <button
+                className="language"
+                type="button"
+                disabled={blocked}
+                onClick={() => {
+                  if (confirmDiscardChanges(i18n.language, form.current)) {
+                    setEditor(null);
+                    setError(null);
+                  }
+                }}
+              >
+                {labels.cancel}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+      <div className="pet-grid">
+        {items.map((pet) => (
+          <article
+            className={'pet-card' + (pet.id === selectedPetId ? ' pet-card-selected' : '')}
+            key={pet.id}
+          >
+            <PetPhoto pet={pet} />
+            <div>
+              <h4>
+                {routable ? (
+                  <a href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}>
+                    {pet.name}
+                  </a>
+                ) : (
+                  pet.name
+                )}
+              </h4>
+              {pet.photoCredit && (
+                <p className="pet-photo-credit">
+                  {i18n.language === 'zh' ? '测试示例照片' : 'Test sample photo'} ·{' '}
+                  {pet.photoCredit.creator} ·{' '}
+                  <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">
+                    {i18n.language === 'zh' ? '来源' : 'Source'}
+                  </a>{' '}
+                  ·{' '}
+                  <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">
+                    {pet.photoCredit.license}
+                  </a>
+                </p>
+              )}
+              <DemoBalanceLink customerId={pet.customerId} petId={pet.id} />
+              <button
+                className="icon-button"
+                title={labels.edit}
+                aria-label={`${labels.edit}: ${pet.name}`}
+                disabled={blocked}
+                onClick={() => open(pet)}
+              >
+                <Icon name="edit" />
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+      {selectedPetId &&
+        !loading &&
+        !cursor &&
+        !error &&
+        !items.some((p) => p.id === selectedPetId) && (
+          <p role="alert">{i18n.language === 'zh' ? '未找到该宠物。' : 'Pet not found.'}</p>
+        )}
+      {loading ? (
+        <p role="status">{labels.loading}</p>
+      ) : !items.length && !error ? (
+        <p>{labels.empty}</p>
+      ) : null}
+      {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && (
+        <div className="portal-actions">
+          {(error === 'error' || error === 'conflict') && !uncertain && (
+            <button className="language" disabled={blocked || loading} onClick={() => void load()}>
+              {labels.reload}
+            </button>
+          )}
+          {cursor && (
+            <button
+              className="language"
+              disabled={blocked || loading}
+              onClick={() => void load(cursor)}
+            >
+              {labels.more}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
+  );
 }
-export function PetSearch({ onChoose,customerScope }: { customerScope?:string;onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void }) {
-  const { i18n } = useTranslation(), t = i18n.language === 'zh' ? zh : en;
-  const [search, setSearch] = React.useState(()=>new URLSearchParams(location.search).get('petSearch')||''), [active, setActive] = React.useState(''), [loading, setLoading] = React.useState(false), [error, setError] = React.useState(false);
+export function PetSearch({
+  onChoose,
+  customerScope,
+}: {
+  customerScope?: string;
+  onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void;
+}) {
+  const { i18n } = useTranslation();
+  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const [search, setSearch] = React.useState(
+    () => new URLSearchParams(location.search).get('petSearch') || '',
+  );
+  const [active, setActive] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
   const [page, setPage] = React.useState<components['schemas']['PetSearchPage'] | null>(null);
   const generation = React.useRef(0);
-  React.useEffect(() => () => { ++generation.current; }, []);
+  React.useEffect(
+    () => () => {
+      ++generation.current;
+    },
+    [],
+  );
   async function load(query: string, cursor?: string) {
-    const current = ++generation.current; setLoading(true); setError(false); setActive(query);
+    const current = ++generation.current;
+    setLoading(true);
+    setError(false);
+    setActive(query);
     try {
-      const next: components['schemas']['PetSearchPage'] = await request('/pet-search?' + new URLSearchParams({ search: query, ...(cursor ? { cursor } : {}) }));
-      if (current === generation.current) setPage(previous => ({ ...next, items: cursor ? [...(previous?.items ?? []), ...next.items] : next.items }));
-    } catch { if (current === generation.current) setError(true); }
-    finally { if (current === generation.current) setLoading(false); }
+      const next: components['schemas']['PetSearchPage'] = await apiJson<
+        components['schemas']['PetSearchPage']
+      >('/pet-search?' + new URLSearchParams({ search: query, ...(cursor ? { cursor } : {}) }));
+      if (current === generation.current)
+        setPage((previous) => ({
+          ...next,
+          items: cursor ? [...(previous?.items ?? []), ...next.items] : next.items,
+        }));
+    } catch {
+      if (current === generation.current) setError(true);
+    } finally {
+      if (current === generation.current) setLoading(false);
+    }
   }
-  React.useEffect(()=>{const query=new URLSearchParams(location.search).get('petSearch');if(query)void load(query);},[]);
-  const matches=page?.items.filter(item=>!customerScope||item.customer.id===customerScope);
-  return <div className="pet-search"><form className="customer-search" role="search" onSubmit={event => { event.preventDefault();updateQuery({petSearch:search.trim()});void load(search.trim()); }}>
-    <label>{t.searchHint}<input type="search" required maxLength={120} value={search} onChange={event => setSearch(event.target.value)}/></label><button className="language" disabled={loading || !search.trim()}>{t.search}</button>
-  </form>{error && <p role="alert">{t.error}</p>}{loading && <p role="status">{t.loading}</p>}
-    {page && !loading && !matches?.length && <p>{t.noMatches}</p>}
-    <ul className="customer-list">{matches?.map(({ pet, customer }) => <li key={pet.customerId + '/' + pet.id}><div><h4>{<a href={'/app/customers/'+pet.customerId+'/pets/'+pet.id+'/'}>{pet.name}</a>}</h4><p>{t.customer}: {customer.name}</p>{customer.loginEmail && <p>{customer.loginEmail}</p>}</div><button className="language" onClick={() => onChoose(customer)}>{t.manage}</button></li>)}</ul>
-    {page?.nextCursor && <button className="language" disabled={loading} onClick={() => void load(active, page.nextCursor!)}>{t.more}</button>}
-  </div>;
+  React.useEffect(() => {
+    const query = new URLSearchParams(location.search).get('petSearch');
+    if (query) void load(query);
+  }, []);
+  const matches = page?.items.filter(
+    (item) => !customerScope || item.customer.id === customerScope,
+  );
+  return (
+    <div className="pet-search">
+      <form
+        className="customer-search"
+        role="search"
+        onSubmit={(event) => {
+          event.preventDefault();
+          updateQuery({ petSearch: search.trim() });
+          void load(search.trim());
+        }}
+      >
+        <label>
+          {labels.searchHint}
+          <input
+            type="search"
+            required
+            maxLength={120}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </label>
+        <button className="language" disabled={loading || !search.trim()}>
+          {labels.search}
+        </button>
+      </form>
+      {error && <p role="alert">{labels.error}</p>}
+      {loading && <p role="status">{labels.loading}</p>}
+      {page && !loading && !matches?.length && <p>{labels.noMatches}</p>}
+      <ul className="customer-list">
+        {matches?.map(({ pet, customer }) => (
+          <li key={pet.customerId + '/' + pet.id}>
+            <div>
+              <h4>
+                {
+                  <a href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}>
+                    {pet.name}
+                  </a>
+                }
+              </h4>
+              <p>
+                {labels.customer}: {customer.name}
+              </p>
+              {customer.loginEmail && <p>{customer.loginEmail}</p>}
+            </div>
+            <button className="language" onClick={() => onChoose(customer)}>
+              {labels.manage}
+            </button>
+          </li>
+        ))}
+      </ul>
+      {page?.nextCursor && (
+        <button
+          className="language"
+          disabled={loading}
+          onClick={() => void load(active, page.nextCursor!)}
+        >
+          {labels.more}
+        </button>
+      )}
+    </div>
+  );
 }

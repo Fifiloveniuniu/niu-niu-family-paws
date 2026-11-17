@@ -1,7 +1,13 @@
 {
   "indexes": [],
-  "fieldOverrides": [{ "collectionGroup": "pets", "fieldPath": "nameKeys", "indexes": [
-    { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
-    { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
-  ] }]
+  "fieldOverrides": [
+    {
+      "collectionGroup": "pets",
+      "fieldPath": "nameKeys",
+      "indexes": [
+        { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
+        { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+      ]
+    }
+  ]
 }
