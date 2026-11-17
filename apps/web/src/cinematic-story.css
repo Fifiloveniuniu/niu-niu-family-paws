@@ -507,3 +507,41 @@
   border-radius: calc(50% - var(--scroll) * 18%) calc(50% - var(--scroll) * 8%)
     calc(8px + var(--scroll) * 60px) calc(8px + var(--scroll) * 32px);
 }
+
+/* Each care emblem unfolds through its visible chapter; scrolling back retraces it. */
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-heart {
+  transform: rotate(calc(-18deg + var(--care-progress) * 36deg))
+    scaleX(calc(0.7 + var(--care-progress) * 0.35)) scaleY(calc(1.15 - var(--care-progress) * 0.2));
+}
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-glint {
+  transform-origin: 50px 50px;
+  transform: rotate(calc(var(--care-progress) * -45deg))
+    translateY(calc(var(--care-progress) * -8px));
+}
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-orbit {
+  transform: rotate(calc(-35deg + var(--care-progress) * 210deg))
+    scaleY(calc(0.65 + var(--care-progress) * 0.5));
+}
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-orbit.reverse {
+  transform: rotate(calc(35deg - var(--care-progress) * 180deg))
+    scaleX(calc(1.15 - var(--care-progress) * 0.35));
+}
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-disc {
+  transform: scale(calc(0.7 + var(--care-progress) * 0.6));
+}
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-ring {
+  transform-origin: 50px 50px;
+  transform: rotate(calc(-90deg + var(--care-progress) * 150deg));
+  stroke-dashoffset: calc((1 - var(--care-progress)) * 0.65);
+}
+.home-story.cinematic-story[data-cinema-enabled] .home-trust .symbol-check {
+  transform-origin: 50px 50px;
+  transform: rotate(calc(-12deg + var(--care-progress) * 20deg));
+  stroke-dashoffset: calc(1 - min(1, var(--care-progress) * 1.8));
+}
+
+.home-story.cinematic-story[data-cinema-enabled] .cinema-controls {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}

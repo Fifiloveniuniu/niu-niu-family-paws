@@ -1,3 +1,9 @@
+## Transparent story controls and transforming care icons — 2026-11-17
+
+Removed the bottom chapter controls background and outline. Home care icons now unfold a heart, counter-turn and reshape orbit ellipses, and draw a check inside a rotating ring. A bounded chapter progress value changes internal SVG parts throughout arrival and departure; reverse scroll restores exact poses. Reduced motion removes timeline styling. Existing owner work in the primary checkout is preserved; this change was prepared in an isolated worktree. No deployment.
+
+Validation: Node24 production build, all34 unit tests and all10 marketing Chrome cases passed. Actual localhost4180 Chrome walkthrough scrubbed About forward/backward, confirmed identical reverse poses and transparent/borderless controls. Additional EN/ZH390/1440 and reduced-motion checks passed. Screenshot: docs/screenshots/care-icons-scroll.png. Final combined deployment remains deferred.
+
 # Session handoff — 2026-10-22
 
 ## Page-owned marketing navbar; Home owns scrolling — 2026-11-17

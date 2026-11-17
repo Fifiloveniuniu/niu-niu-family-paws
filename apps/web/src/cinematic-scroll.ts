@@ -102,6 +102,7 @@ export function installCinematicStory(story: HTMLElement) {
       // Quadratic ease-in builds speed with scroll distance, without trailing timers.
       const motionProgress = clamp(distance / 0.65);
       panel.style.setProperty('--scroll', String(motionProgress ** 2));
+      panel.style.setProperty('--care-progress', String(clamp(distance + 0.5)));
       panel.style.setProperty('--arrival', String(clamp(distance + 1)));
       panel.style.setProperty('--sway', String(Math.sin(distance * Math.PI * 2)));
       panel.style.setProperty(
@@ -150,7 +151,14 @@ export function installCinematicStory(story: HTMLElement) {
       if (panelIds[index]) panel.id = panelIds[index];
       panel.inert = false;
       panel.removeAttribute('aria-hidden');
-      for (const property of ['--panel-shift', '--scroll', '--arrival', '--sway', '--blink'])
+      for (const property of [
+        '--panel-shift',
+        '--scroll',
+        '--arrival',
+        '--sway',
+        '--blink',
+        '--care-progress',
+      ])
         panel.style.removeProperty(property);
     });
     chapterLinks.forEach((link) => link.removeAttribute('aria-current'));
