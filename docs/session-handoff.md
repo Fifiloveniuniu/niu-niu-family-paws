@@ -1,5 +1,14 @@
 # Session handoff — 2026-10-22
 
+## Richer marketing and scroll entrances — 2026-11-16
+
+Latest owner correction replaces parallax with scrolling animation and requests richer content. Removed all parallax scroll/resize handlers and illustration transforms. Public sections now reveal once as they enter view, with staggered text/cards, scale/rotate illustrated entrances and a line reveal; reduced motion cancels/disables animation. Static content remains visible without animation and production prerender works without JavaScript.
+
+Added original decorative SVG dog/cat/rabbit portraits with care conversation starters, a warm editorial care section, a four-part visit preparation guide, fuller service descriptions, cancellation-policy planning links and six FAQs. Home, Services and About share relevant content; English and Simplified Chinese are complete. New copy frames care details as things to discuss, without inventing service guarantees, mandatory items, prices, photos, contact information or business rules. No API/data/workspace changes or deployment.
+
+Validated Node24 production build, formatting and all34 unit tests. Native Chrome localhost4180 walkthrough scrolled Home through Services/pet guides and clicked through to Services preparation anchor. Automated Chrome checks confirmed one-time scroll entrances, absence of parallax, reduced motion, EN/ZH at320/390/760/1024/1440, preparation anchor, six FAQs/expansion, public pages, app sign-in, production no-JS prerender and no page errors. Screenshots: docs/screenshots/marketing-stories-desktop.png, marketing-stories-mobile-zh.png and marketing-preparation-desktop.png. Preserve WIP#41, dist-dev and temporary Firebase configuration. Final hosted delivery remains deferred with the broader incomplete requested features. Branch feat/richer-marketing-scroll-story; consult its PR for current checks and merge status.
+
+
 ## Marketing motion — 2026-11-16
 
 Owner requested animation and scroll parallax. Public marketing pages now progressively animate hero copy, section headings, service cards, care steps, FAQs and policy content on first entry. The existing dog illustration and halo move at different bounded scroll speeds, with smaller travel on phones. Service cards/buttons have subtle hover feedback. Public content remains visible without animation; reduced-motion preference disables entrances/parallax and smooth scrolling, including preference changes during the session. Event/observer/frame/animation cleanup is scoped to the public route; authenticated workflows and bilingual copy are unchanged.

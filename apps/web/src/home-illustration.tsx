@@ -4,7 +4,7 @@ export default function HomeIllustration() {
   const { t } = useTranslation();
   return (
     <svg viewBox="0 0 600 540" role="img" aria-label={t('illustration')}>
-      <circle className="illustration-halo" cx="302" cy="268" r="224" fill="#e9d9bb" />
+      <circle cx="302" cy="268" r="224" fill="#e9d9bb" />
       <path d="M58 443 Q300 393 551 443" fill="none" stroke="#baaa87" strokeWidth="2" />
       <path
         d="M446 424v-157m0 81q-75-20-56-72 58 9 56 72m0-28q68-34 61-85-58 13-61 85m0-55q-47-26-31-64 45 14 31 64"
