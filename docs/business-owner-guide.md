@@ -262,3 +262,10 @@ Click the top navbar or right-side chapter controls for a short animated change 
 The six chapters now share one landscape. Scroll to reshape the hills and path, carry a seed through the story and turn the sun into a moon. Look closer: flower petals open, leaves sway, the dog wags its tail, and the sun/moon/trust symbols change inside their shapes. Scroll backward to retrace every change. The navbar stays visible and current; click transitions are still brief. Reduced Motion keeps a readable static page. This remains a local preview awaiting the final combined deployment.
 
 六个章节现在共用一幅连续的风景。滚动时，山丘与小径变换形状，花种穿过故事，太阳逐渐变成月亮。花瓣会舒展，叶片会摆动，小狗会摇尾巴，太阳、月亮和信任图标内部也会变化。向上滚动可沿原轨迹回看。导航栏始终可见并标记当前章节，点击切换保持简短。“减少动态效果”模式显示易读的静态页面。目前仍为本地预览，等待最终统一上线。
+
+
+## Clearer navbar transitions — 2026-11-16
+
+Navbar and right-side chapter clicks now animate the chosen scene reliably. The outgoing scene leaves gently and the destination rises into place; the transition takes about half a second. The shared landscape and navbar stay visible. Reduce Motion still jumps directly. This fix is locally validated and awaits the final combined deployment.
+
+顶部导航和右侧章节按钮现在会可靠地播放所选场景的切换动画：当前内容轻柔退出，目标内容向上进入，总时长约半秒。共用风景和导航栏保持可见。“减少动态效果”模式仍直接跳转。修复已在本地验证，等待最终统一上线。
