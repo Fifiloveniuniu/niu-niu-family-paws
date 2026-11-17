@@ -27,7 +27,13 @@ export function installCinematicStory(story: HTMLElement) {
   function update() {
     frame = 0;
     const bounds = story.getBoundingClientRect();
-    const progress = clamp(-bounds.top / Math.max(1, bounds.height - stage.clientHeight));
+    const headerHeight =
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--marketing-header-height'),
+      ) || 0;
+    const progress = clamp(
+      (headerHeight - bounds.top) / Math.max(1, bounds.height - stage.clientHeight),
+    );
     const chapter = progress * (panels.length - 1);
     const from = Math.min(panels.length - 1, Math.floor(chapter));
     const to = Math.min(panels.length - 1, from + 1);

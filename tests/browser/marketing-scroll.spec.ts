@@ -10,9 +10,13 @@ test('one cinematic timeline scrubs across chapters and restores exact earlier p
   async function pose(chapter: number) {
     await page.evaluate((value) => {
       const element = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
-      const top = element.getBoundingClientRect().top + scrollY;
+      const stageHeight = element.querySelector<HTMLElement>('.cinematic-stage')!.clientHeight;
+      const headerHeight = document
+        .querySelector('.marketing-header')!
+        .getBoundingClientRect().height;
+      const top = element.getBoundingClientRect().top + scrollY - headerHeight;
       window.scrollTo({
-        top: top + ((element.clientHeight - innerHeight) * value) / 5,
+        top: top + ((element.clientHeight - stageHeight) * value) / 5,
         behavior: 'instant',
       });
     }, chapter);
@@ -112,8 +116,14 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
   page,
 }) => {
   await page.goto('/home/');
-  for (const width of [320, 390, 760, 1440]) {
-    await page.setViewportSize({ width, height: 844 });
+  for (const [width, height] of [
+    [320, 810],
+    [320, 844],
+    [390, 844],
+    [760, 844],
+    [1440, 844],
+  ]) {
+    await page.setViewportSize({ width, height });
     for (const language of ['en', 'zh']) {
       await page.locator('select').selectOption(language);
       const headerHeight = await page
@@ -123,11 +133,16 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
       for (const chapter of [0, 1, 2, 3, 4, 5]) {
         await page.evaluate((value) => {
           const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+          const headerHeight = document
+            .querySelector('.marketing-header')!
+            .getBoundingClientRect().height;
+          const stageHeight = story.querySelector<HTMLElement>('.cinematic-stage')!.clientHeight;
           window.scrollTo({
             top:
               story.getBoundingClientRect().top +
-              scrollY +
-              ((story.clientHeight - innerHeight) * value) / 5,
+              scrollY -
+              headerHeight +
+              ((story.clientHeight - stageHeight) * value) / 5,
             behavior: 'instant',
           });
         }, chapter);
@@ -139,6 +154,30 @@ test('bilingual chapters fit mobile and desktop; reduced motion restores static 
           true,
         );
         const panel = page.locator('[data-cinematic-panel]').nth(chapter);
+        await expect(page.locator('.marketing-header')).toBeInViewport({ ratio: 1 });
+        const sceneBounds = await page.locator('.cinematic-stage').evaluate((element) => {
+          const stage = element.getBoundingClientRect();
+          const header = document.querySelector('.marketing-header')!.getBoundingClientRect();
+          return {
+            top: stage.top,
+            headerBottom: header.bottom,
+            bottom: stage.bottom,
+            viewport: innerHeight,
+          };
+        });
+        expect(Math.abs(sceneBounds.top - sceneBounds.headerBottom)).toBeLessThan(2);
+        expect(Math.abs(sceneBounds.bottom - sceneBounds.viewport)).toBeLessThan(2);
+        const clippedCopy = await panel.evaluate((element) => {
+          const top = document.querySelector('.marketing-header')!.getBoundingClientRect().bottom;
+          const bottom = document.querySelector('.cinema-controls')!.getBoundingClientRect().top;
+          return [...element.querySelectorAll('h1,h2,h3,p,a')]
+            .filter((node) => {
+              const bounds = node.getBoundingClientRect();
+              return bounds.height > 0 && (bounds.top < top - 1 || bounds.bottom > bottom + 1);
+            })
+            .map((node) => node.textContent);
+        });
+        expect(clippedCopy).toEqual([]);
         const links = panel.locator('a');
         for (const link of await links.all()) await expect(link).toBeInViewport();
       }
@@ -166,9 +205,7 @@ test('marketing links jump directly and Home restores the complete header', asyn
     await page.locator('select').selectOption(language);
     for (const anchor of ['services', 'about', 'faq', 'main', 'main']) {
       // A direct click should land within two rendering frames, without playing intervening scenes.
-      await page.locator(`.marketing-header nav a[href="/home/#${anchor}"]`).evaluate((link) => {
-        (link as HTMLAnchorElement).click();
-      });
+      await page.locator(`.marketing-header nav a[href="/home/#${anchor}"]`).click();
       await page.evaluate(
         () =>
           new Promise<void>((resolve) =>
@@ -187,7 +224,10 @@ test('marketing links jump directly and Home restores the complete header', asyn
         const targetTop = await page
           .locator(`#${anchor}`)
           .evaluate((element) => element.getBoundingClientRect().top);
-        expect(Math.abs(targetTop - 25)).toBeLessThan(2);
+        const headerHeight = await page
+          .locator('.marketing-header')
+          .evaluate((element) => element.getBoundingClientRect().height);
+        expect(Math.abs(targetTop - headerHeight - 16)).toBeLessThan(2);
       }
     }
   }

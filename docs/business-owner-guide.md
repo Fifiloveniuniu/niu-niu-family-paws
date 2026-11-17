@@ -234,3 +234,10 @@ The marketing navbar is shorter, with sign-in and language side by side. Scroll 
 The top links and chapter controls now go directly to their destination. Home returns to the very top with the whole navbar visible. Scrolling by hand still plays the story forward and backward. The previous colors are preserved. This is a local preview, awaiting the final combined deployment.
 
 顶部导航和章节控件现在直接跳转至目标位置，不再播放沿途章节动画。“首页”会回到页面最顶部，完整显示导航栏。手动滚动仍可推进或回看故事。保留原来的配色，目前仅在本地预览，等待最终统一上线。
+
+
+## Always-visible marketing navbar — 2026-11-16
+
+The compact navbar stays visible while you read or scroll. Each story scene fills the screen below it; use the top links to jump directly at any time. Artwork has more movement while the text stays steady. Short screens and Reduce Motion use ordinary page sections. Colors are unchanged. This is locally complete and awaits the final combined deployment.
+
+精简导航栏在阅读或滚动时始终可见，每个故事场景填满导航栏下方的屏幕空间。随时点击顶部链接即可直接跳转。插画动作更丰富，文字保持稳定。较矮的屏幕和“减少动态效果”模式使用普通页面布局。配色保持不变；当前本地完成，等待最终统一上线。
