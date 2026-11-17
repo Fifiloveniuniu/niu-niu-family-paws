@@ -209,3 +209,8 @@ Treat the marketing chapters as one continuous illustrated piece. Allow shapes i
 ## Natural movement and shape resizing — 2026-11-16
 
 Latest owner direction supersedes opacity-based scene changes: use movement into/out of the viewport, including offscreen side exits where appropriate. Calm the shared sun/flower so they do not bounce between sides. Include scroll-linked shape resizing, keeping everything smooth, natural and reversible. Preserve animated navbar/chapter navigation, active-section indication, sticky header, neutral backgrounds, readable text and reduced-motion/static access.
+
+
+## Purposeful scale and sun movement — 2026-11-16
+
+Owner clarification: shapes resize when needed by the composition; the sun should move. Use one continuous, gentle sun journey rather than repeated chapter zigzags. Avoid automatic ornament growth for its own sake; adapt their size for screen fit while retaining useful perspective/exit resizing and movement-only scene changes.
