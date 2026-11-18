@@ -1,0 +1,44 @@
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          { "key": "X-Content-Type-Options", "value": "nosniff" },
+          { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+          { "key": "X-Frame-Options", "value": "DENY" },
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://niu-niu-family-paws.firebaseapp.com https://www.googleapis.com; frame-src https://niu-niu-family-paws.firebaseapp.com https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+          }
+        ]
+      },
+      { "source": "/", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/index.html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/services/**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/about/**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/faqs/**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      {
+        "source": "/cancellation-policy/**",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      { "source": "/app", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/app/**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/404.html", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
+      { "source": "/home/**", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+    ],
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "run": { "serviceId": "family-paws-api", "region": "us-west1", "pinTag": true }
+      },
+      { "source": "/app", "destination": "/app/index.html" },
+      { "source": "/app/**", "destination": "/app/index.html" }
+    ],
+    "redirects": [{ "source": "/", "destination": "/home/", "type": 301 }]
+  },
+  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" },
+  "emulators": { "hosting": { "port": 4188, "host": "localhost" }, "ui": { "enabled": false } }
+}
