@@ -375,3 +375,10 @@ The hair gathers when the scissors close and spreads when they reopen. Scroll ba
 The full family-story section (heading, introduction, quote, attribution and links), growing-story line, photo captions and footer are centered. The last milestone has no border, and preparation steps no longer have decorative checkmarks. Text-and-arrow links have compact spacing and continuous underlines throughout the marketing site. Hover or keyboard-focus Contact us on Home for a white button with green text. This is locally validated and not deployed.
 
 家长故事的整段内容（标题、介绍、引文、署名与链接）、成长故事短句、照片说明和页脚已居中。最后一个数字项目移除了边框，来访准备步骤移除了装饰性勾号。营销网站中的文字与箭头间距更紧凑，下划线连续。首页“联系我们”按钮在悬停或键盘聚焦时显示为白底绿字。目前仅为本地更新，尚未发布。
+
+
+## Marketing update is live — 2026-11-17
+
+The reviewed marketing version is now published at https://niu-niu-family-paws.web.app/home/. Desktop/mobile and English/Chinese live checks passed, including the centered sections/footer, photo layouts, menus and sign-in dialog. Google’s secure provider window opens normally. Production continues to show only approved business content; sample prices, totals and testimonials remain part of the local preview. Unfinished booking/balance workflows are not activated by this marketing release.
+
+本次确认的营销网站版本已发布：https://niu-niu-family-paws.web.app/home/。电脑、手机及中英文的线上检查均已通过，包括居中排版、页脚、照片、菜单和登录弹窗。Google 安全登录窗口可正常打开。正式网站继续只展示已批准的业务内容；示例价格、数字及评价仍仅用于本地预览。本次营销网站更新不会启用尚未完成的预约或余额流程。
