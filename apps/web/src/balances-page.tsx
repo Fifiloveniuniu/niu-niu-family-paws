@@ -70,17 +70,6 @@ export default function BalancesPage({
   const scoped = pets.filter((p) => filters.customer === 'all' || p.customer === filters.customer);
   return (
     <section className="hc-balances-workspace">
-      <div className="hc-title">
-        <div>
-          <h1>{translate('Balances', '寄养余额')}</h1>
-          <p>
-            {translate(
-              'Pet credits and their complete statement, together.',
-              '在同一页面管理宠物额度及完整交易明细。',
-            )}
-          </p>
-        </div>
-      </div>
       <StatementFilterPanel pets={pets} filters={filters} onChange={changeFilters} />
       {new URLSearchParams(search).has('pet') &&
         !pets.some((p) => p.name === new URLSearchParams(search).get('pet')) && (

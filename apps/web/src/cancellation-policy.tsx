@@ -68,17 +68,7 @@ export default function CancellationPolicyPage({
         : translate('Cutoff calculation pending', '截止时间计算方式待确认');
   return (
     <section className="hc-finance-page">
-      <div className="hc-title">
-        <div>
-          <p className="hc-page-eyebrow">{translate('BOARDING', '寄养')}</p>
-          <h1>{translate('Cancellation policy', '取消政策')}</h1>
-          <p>
-            {translate(
-              'Clear terms before a booking is cancelled.',
-              '取消预约前，明确了解返还规则。',
-            )}
-          </p>
-        </div>
+      <div className="hc-page-toolbar">
         <button
           className="hc-apply"
           onClick={() => {

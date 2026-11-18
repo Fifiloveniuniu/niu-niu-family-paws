@@ -90,21 +90,7 @@ export default function BoardingStatement({
   }
   return (
     <section className="hc-finance-page hc-statement-page">
-      <div className="hc-title">
-        <div>
-          {!embedded && <p className="hc-page-eyebrow">{translate('BOARDING', '寄养')}</p>}
-          {embedded ? (
-            <h2>{translate('Statement', '交易明细')}</h2>
-          ) : (
-            <h1>{translate('Statement', '交易明细')}</h1>
-          )}
-          <p>
-            {translate(
-              'Balance activity for every pet, in one place.',
-              '在一个页面查看每只宠物的余额变动。',
-            )}
-          </p>
-        </div>
+      <div className="hc-page-toolbar">
         <div className="hc-statement-actions">
           <button className="hc-manage" disabled={!rows.length || !valid} onClick={download}>
             {translate('Export CSV', '导出 CSV')}

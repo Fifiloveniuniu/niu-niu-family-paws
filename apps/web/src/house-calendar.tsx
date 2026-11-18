@@ -122,6 +122,12 @@ export default function HouseCalendar({
   React.useEffect(() => {
     if (!admin) setManage(false);
   }, [admin]);
+  const [clockTimezone, setClockTimezone] = React.useState(
+    () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+  );
+  const clockTimezones = Array.from(
+    new Set([clockTimezone, ...Intl.supportedValuesOf('timeZone')]),
+  );
   const [now, setNow] = React.useState(() => new Date());
   React.useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 60000);
@@ -383,12 +389,6 @@ export default function HouseCalendar({
               />
             )}
             <div hidden={view !== 'settings'}>
-              <div className="hc-title">
-                <div>
-                  <h1>{translate('Settings', '设置')}</h1>
-                  <p>{translate('Manage boarding rules.', '管理寄养规则。')}</p>
-                </div>
-              </div>
               {parsed.locations ? (
                 <div className="hc-settings-locations">
                   <a href="/app/settings/">← {translate('Settings', '设置')}</a>
@@ -434,12 +434,8 @@ export default function HouseCalendar({
               {parsed.bookingId && !stays.some((stay) => stay.id === parsed.bookingId) && (
                 <p role="alert">{translate('Booking not found.', '未找到该预约。')}</p>
               )}
-              <div className="hc-title">
-                <div>
-                  <h1>{translate('House calendar', '房屋日历')}</h1>
-                  <p>{translate('Stays and check-ins, by room.', '按房间查看托管与入住。')}</p>
-                </div>
-                <div className="hc-title-actions">
+              <div className="hc-page-toolbar">
+                <div className="hc-page-toolbar-actions">
                   <div className="hc-main-actions">
                     <button
                       className="hc-apply hc-add-placement"
@@ -472,13 +468,28 @@ export default function HouseCalendar({
                       </a>
                     )}
                   </div>
-                  <div className="hc-live">
-                    <span /> {translate('Local time', '当地时间')} ·{' '}
-                    {now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
-                    <small>
-                      {translate('Timezone', '时区')}:{' '}
-                      {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                    </small>
+                  <div className="hc-clock-controls">
+                    <label>
+                      <span>{translate('Timezone', '时区')}</span>
+                      <select
+                        aria-label={translate('Clock timezone', '时钟时区')}
+                        value={clockTimezone}
+                        onChange={(event) => setClockTimezone(event.target.value)}
+                      >
+                        {clockTimezones.map((zone) => (
+                          <option key={zone} value={zone}>
+                            {zone.replaceAll('_', ' ')}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <time>
+                      {now.toLocaleTimeString(locale, {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: clockTimezone,
+                      })}
+                    </time>
                   </div>
                 </div>
               </div>
