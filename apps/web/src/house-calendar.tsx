@@ -315,7 +315,12 @@ export default function HouseCalendar({
   return (
     <CalendarPhotoProvider>
       <div className="hc">
-        <MarketingHeader page="app" onLanguageChange={onLanguageChange} account={account} />
+        <MarketingHeader
+          showNavigation={false}
+          page="app"
+          onLanguageChange={onLanguageChange}
+          account={account}
+        />
         <div className="hc-body">
           <nav className="hc-work-nav" aria-label={translate('Workspace', '工作区')}>
             {[
