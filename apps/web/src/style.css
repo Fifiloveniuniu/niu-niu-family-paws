@@ -1759,3 +1759,17 @@ header nav [aria-current='location'] {
     margin-bottom: 12px;
   }
 }
+
+/* The supplied badge has a baked-in checkerboard outside its oval edge. */
+.brand-logo {
+  display: block;
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  clip-path: ellipse(43.8% 45.2% at 50% 50.3%);
+  flex-shrink: 0;
+}
+.marketing-footer .brand-logo {
+  width: clamp(160px, 22vw, 220px);
+  height: auto;
+}

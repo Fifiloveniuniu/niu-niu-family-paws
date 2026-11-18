@@ -134,12 +134,13 @@ export function MarketingHeader({
       }}
     >
       <a className="brand" href="/home/" aria-label="Niu Niu Family Paws">
-        <span className="paw" aria-hidden="true">
-          ✿
-        </span>
-        <span>
-          NIU NIU<span className="brand-sub">FAMILY PAWS</span>
-        </span>
+        <img
+          className="brand-logo"
+          src="/images/marketing/logo.png"
+          alt="Niu Niu Family Paws Sitting LLC"
+          width="1024"
+          height="1024"
+        />
       </a>
       <button
         ref={menu}
@@ -196,12 +197,14 @@ export function MarketingFooter() {
       <div className="footer-main">
         <div className="footer-brand">
           <div className="brand">
-            <span className="paw" aria-hidden="true">
-              ✿
-            </span>
-            <span>
-              NIU NIU<span className="brand-sub">FAMILY PAWS</span>
-            </span>
+            <img
+              className="brand-logo"
+              src="/images/marketing/logo.png"
+              alt="Niu Niu Family Paws Sitting LLC"
+              width="1024"
+              height="1024"
+              loading="lazy"
+            />
           </div>
           <p className="cute-note">
             {zh ? '小小爪印，满满的爱。' : 'Little paws. A whole lot of love.'}

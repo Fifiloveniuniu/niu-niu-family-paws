@@ -1,3 +1,37 @@
+## Supplied business logo — 2026-11-17
+
+Owner selected `public/images/marketing/logo.png` as the site logo. Replaced marketing header/footer and portal header wordmarks with the supplied image and accessible brand text. CSS oval clipping hides its baked-in checkerboard without modifying the source. Compact68px header and responsive160–220px footer preserve navigation. Production build passed; actual localhost Chrome desktop and390px phone review confirmed loaded logos/no horizontal overflow. No deployment. Preserve unrelated local asset scripts and HEIC deletions.
+
+## Circular dog eyes — local, 2026-11-17
+
+Owner requested perfect circles for eyes. Updated generator and both refined SVGs with circle primitives for36-unit irises,27-unit pupils and6.7-unit white highlights. Existing aperture mask preserves muzzle/fur overlap; iris shading/reflections retained. Rendered and visually inspected; geometry assertions passed. Final Chrome reload timed out, so no completed browser verification claimed for this edit. No deployment.
+
+## Corrected duplicate dog shapes — local, 2026-11-17
+
+Owner reported lost detail and duplicate shapes in the refinement. Updated generator and both refined assets: removed replacement facial/paw overlays and ten redundant component renderings, retained one detailed source instance, restored source bow/nose/iris/tongue texture. Tangent adjustment now preserves original handle lengths and limits movement to0.22 source units. Standalone divider removal tightened. XML/reference checks and single-instance assertions passed; rendered and reviewed locally. Previous refinement entry is superseded. No deployment.
+
+## Refined dog vector review — local, 2026-11-17
+
+Owner requested all discussed dog shape refinements. Added `public/images/marketing/logo-refined.svg` and `dog-head-refined.svg`, preserving `logo-transparent.svg`. Reproducible generator: `scripts/assets/refine-dog-vectors.py` (requires svgpathtools). Uses existing smooth bow/nose, rounded nostrils, smooth eye contours/catchlights, new smile/tongue/crease, paw masks/toe curves and bounded smoothing of source fur joins. Standalone dog omits the brown divider strip. Valid XML, unique IDs, valid references and no raster images; librsvg rendering and localhost Chrome review. New designs remain local review assets; no site references changed or deployment.
+
+## Standalone heart and paw SVGs — local, 2026-11-17
+
+Created `public/images/marketing/heart.svg` and `paw.svg` from the current refined logo ornament geometry. Transparent, editable vector assets in logo pink and brown, with accessible titles and scalable viewBoxes. XML validation passed and both assets opened in localhost Chrome. No page references changed, no deployment or commit; keep alongside the existing local logo review assets.
+
+## Vector logo assets — local review, 2026-11-17
+
+Owner supplied `public/images/marketing/logo.jpg` and iteratively requested a source-matched, purely vector logo. Current review asset: `logo-recreated.svg`, at http://localhost:4180/images/marketing/logo-recreated.svg. It includes a true circular badge, transparent outer background, embedded Milkshake font for editable name text, heart dots, precise decorative geometry and a centered heart/paw ornament. Dog detail uses vector paths partitioned into ten editable anatomy components; standalone `dog-head.svg` and cumulative `dog-head-components.svg` are also in the marketing image directory. `logo.svg` is the earlier trace, not the current refined review asset. No public page references were changed and no deployment was performed.
+
+Subsequent refinement preserves the restored contours and targets pale backing fragments beneath the ears plus the small left-paw notch/lower-paw fringe. Cleanup is vector masks; Chrome source-reference, embedded-font, no-bitmap and transparent-corner checks passed.
+
+Owner requested restore: reverted the last designed-curve/outline changes in the logo and both dog previews. Restored the preceding trimmed vector silhouette; earlier color, spacing and ornament adjustments remain.
+
+Edge cleanup: tightened the shared vector silhouette by2 source pixels and removed disconnected edge flecks in the logo, standalone head and component sheet; inspected the updated localhost Chrome rendering. No bitmap was embedded.
+
+Follow-up: lower heart/paw, paired pink lines and flanking dots moved down together14 SVG units; divider curves softened and decorative stroke caps/joins rounded. Chrome preview inspected.
+
+Latest cleanup harmonizes decorative browns/pinks, removes component seams using a shared vector foundation, removes old banner fragments/stale definitions, and adds subtitle/heart/slogan breathing room. Chrome localhost review at390/1440 passed font loading, transparent-corner, valid SVG-reference, no-bitmap and no-overflow checks. These assets remain local/uncommitted pending the owner's visual review. Preserve unrelated HEIC deletions and all existing work.
+
 ## Pet boarding service name — 2026-11-17
 
 Owner requested “Pet boarding” instead of “Boarding”. Updated the English public service name across Home, Services, its submenu and Pricing; Chinese remains unchanged. Node24 build and six Chrome route/viewport checks passed, with actual localhost Services inspection. No deployment. PR97 service additions are merged; this label correction is a separate change.
