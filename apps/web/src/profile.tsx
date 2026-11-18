@@ -157,7 +157,7 @@ export default function Profile({
       aria-labelledby="profile-title"
       aria-busy={loading || saving}
     >
-      <h2 id="profile-title">{labels.title}</h2>
+      <h1 id="profile-title">{labels.title}</h1>
       <p>{labels.intro}</p>
       {loading && <p role="status">{labels.loading}</p>}
       {error && <p role="alert">{labels[error]}</p>}

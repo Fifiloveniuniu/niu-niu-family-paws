@@ -370,7 +370,6 @@ export default function HouseCalendar({
               )}
             </div>
             <div data-retained-workspace hidden={view !== 'personal'}>
-              <h1>{translate('My profile', '我的资料')}</h1>
               {personal}
             </div>
             {view === 'balances' && (

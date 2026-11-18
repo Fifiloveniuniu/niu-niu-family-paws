@@ -234,7 +234,6 @@ export default function Portal({
       <div>
         <p>{user?.email}</p>
         <a href="/app/account/profile/">{chinese ? '我的资料' : 'My profile'}</a>
-        <a href="/home/">{chinese ? '访问网站' : 'Visit website'}</a>
         <button
           disabled={busy}
           onClick={() => {
