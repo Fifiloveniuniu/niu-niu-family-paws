@@ -1675,3 +1675,86 @@ header.marketing-header nav {
     outline-offset: -4px;
   }
 }
+
+/* Wide chapters use editorial columns; phone chapters retain their reading rows. */
+@media (min-width: 761px) {
+  .home-story .home-services,
+  .home-story.cinematic-story[data-cinema-enabled] .home-services {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+  }
+  .marketing-site .home-story.cinematic-story .home-services .service-path[href] {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 24px;
+    padding: 28px 64px 28px 24px;
+    min-height: 164px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .home-services .service-path-icon {
+    width: 64px;
+    height: 64px;
+  }
+  .home-story .number-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-block: 36px;
+  }
+  .number-grid article {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    padding: 20px 24px;
+    border: 0;
+  }
+  .number-grid article + article {
+    border-left: 1px solid #cdd3c5;
+  }
+  .number-grid .metric-art {
+    width: 72px;
+    height: 72px;
+    padding: 14px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .number-grid .live-number,
+  .home-story .number-grid .live-number {
+    font-size: clamp(56px, 6.5vw, 96px);
+  }
+  .number-grid .metric-copy h3 {
+    font-size: 24px;
+    line-height: 1.3;
+  }
+  .number-grid .metric-copy p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+.home-stories .story-quotes blockquote {
+  font-family: var(--paws-heading);
+  font-synthesis: style;
+  font-style: italic;
+  font-size: clamp(26px, 2.5vw, 36px);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  max-width: 46ch;
+  margin-block: 16px 24px;
+  padding-left: 24px;
+  border-left: 3px solid #b57b59;
+  text-wrap: pretty;
+}
+.home-stories .story-quotes figcaption {
+  padding-left: 27px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+@media (max-width: 760px) {
+  .home-stories .story-quotes figure {
+    padding-block: 8px;
+  }
+  .home-stories .story-quotes blockquote {
+    font-size: 22px;
+    line-height: 1.4;
+    padding-left: 16px;
+    margin-block: 8px 16px;
+  }
+  .home-stories .story-quotes figcaption {
+    padding-left: 19px;
+  }
+}
