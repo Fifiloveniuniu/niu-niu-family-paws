@@ -1,6 +1,6 @@
 ## Mobile planning panel side spacing — 2026-11-17
 
-Added24px of equal left/right outer margin around the Services planning panel at widths760px and below. Keeps the previous24px internal padding,24px corners,48px phone footer gap, removed bottom bar, and desktop layout. Actual localhost Chrome phone walkthrough and320/390/760/1440 geometry checks confirmed equal insets and no horizontal overflow. Node24 build and Prettier passed. Screenshot: docs/screenshots/planning-mobile-side-spacing.png. No deployment; delivery PR follows. Preserve final combined deployment boundary and unrelated WIP.
+Added24px of equal left/right outer margin around the Services planning panel at widths760px and below. Keeps the previous24px internal padding,24px corners,48px phone footer gap, removed bottom bar, and desktop layout. Actual localhost Chrome phone walkthrough and320/390/760/1440 geometry checks confirmed equal insets and no horizontal overflow. Node24 build and Prettier passed. Screenshot: docs/screenshots/planning-mobile-side-spacing.png. No deployment. Delivery: [PR93](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/93); GitHub verified the implementation commit signature and required CI is checked before merge. Preserve final combined deployment boundary and unrelated WIP.
 
 ## Planning section/footer breathing room and removed bottom bar — 2026-11-17
 
