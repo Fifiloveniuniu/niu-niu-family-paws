@@ -99,7 +99,7 @@ export default function CalendarSettingsDialog({
             <p className="hc-setup-note">
               {translate(
                 'Capacity is weighted, not a pet count. Configure illustrative pet-type consumption below or use a placement override. One species at a time.',
-                '容量按规则计算，并非宠物数量。请在下方配置示例种类用量，或使用放置时的覆盖值。同一时段仅容纳一种宠物。',
+                '容量按规则计算，并非宠物数量。请在下方配置种类用量，或使用放置时的覆盖值。同一时段仅容纳一种宠物。',
               )}
             </p>
             {['dog', 'cat', 'rabbit'].map((species, index) => (
@@ -157,8 +157,8 @@ export default function CalendarSettingsDialog({
             </datalist>
             <p className="hc-setup-note">
               {translate(
-                'The sample timeline uses your browser’s time zone. Per-house timeline conversion is not connected yet.',
-                '示例时间轴使用浏览器时区，尚未关联各房屋的时区转换。',
+                'The timeline uses your browser’s time zone. Per-house timeline conversion is not connected yet.',
+                '时间轴使用浏览器时区，尚未关联各房屋的时区转换。',
               )}
             </p>
           </>
