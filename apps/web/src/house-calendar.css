@@ -3899,3 +3899,6 @@
     padding-top: 8px;
   }
 }
+.hc-assignment-dialog .hc-range-room-name {
+  border-right: 0;
+}
