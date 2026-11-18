@@ -1,0 +1,119 @@
+.hc-pet-preview-root {
+  display: inline-flex;
+  flex: none;
+}
+.hc .hc-pet-preview-trigger {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+.hc .hc-pet-preview-trigger:hover {
+  box-shadow: 0 0 0 2px #b6c2b0;
+}
+.hc-pet-preview {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 20px;
+  overflow-y: auto;
+  border: 1px solid #c5cdbd;
+  border-radius: 20px;
+  background: #faf8f2;
+  color: #293f35;
+  box-shadow: 0 12px 30px #293f3524;
+  font:
+    14px/1.5 'Paws Nunito',
+    'PingFang SC',
+    'Microsoft YaHei',
+    sans-serif;
+  text-align: left;
+}
+.hc-pet-preview::backdrop {
+  background: transparent;
+  pointer-events: none;
+}
+.hc-pet-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 8px 0 20px;
+}
+.hc .hc-pet-preview .hc-pet-preview-photo {
+  width: 112px;
+  height: 112px;
+  flex: none;
+  border-radius: 20px;
+}
+.hc .hc-pet-preview .hc-pet-preview-photo svg {
+  width: 52px;
+  height: 52px;
+}
+.hc .hc-pet-preview h3 {
+  margin: 0 24px 4px 0;
+  font:
+    700 22px/1.25 'Paws Nunito',
+    'PingFang SC',
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.hc-pet-preview-header p {
+  margin: 4px 0;
+  color: #526457;
+  font-size: 14px;
+}
+.hc .hc-pet-preview-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  min-height: 32px;
+  padding: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #31594c;
+}
+.hc-pet-preview dl {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+.hc-pet-preview dl > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+}
+.hc-pet-preview dt {
+  color: #526457;
+}
+.hc-pet-preview dd {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.hc-pet-preview-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.hc .hc-pet-preview-links a {
+  min-height: 36px;
+  padding: 6px 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #31594c;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
