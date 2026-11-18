@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 import sharp from 'sharp';
 
@@ -101,7 +102,7 @@ test('customer manages multiple pets, adds a private photo later and retries the
   expect(pets).toHaveLength(2);
   await expect(section.getByRole('img', { name: 'Sample Niu Niu', exact: true })).toBeVisible();
   await expect(section.getByText('No photo yet', { exact: true })).toHaveCount(1);
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.setViewportSize({ width: 400, height: 860 });
   await page.reload();
   await expect(

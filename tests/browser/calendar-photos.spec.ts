@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 const uuid = (label: string) => {
@@ -82,7 +83,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
   ).toBeVisible();
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   await page.getByLabel('Days', { exact: true }).fill('7');
   await page.getByLabel('Reason', { exact: true }).fill('[TEST] retained photo access draft');
@@ -136,7 +137,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
   );
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   const balancePhoto = page
     .getByRole('dialog')
     .getByAltText('Mochi profile photo', { exact: true });
@@ -203,7 +204,10 @@ test('calendar uses authenticated profile photos consistently and clears them on
     .locator('.pet-card-selected')
     .getByRole('link', { name: 'View balance preview', exact: true })
     .click();
-  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveValue('Mochi');
+  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveAttribute(
+    'data-value',
+    'Mochi',
+  );
   await page
     .getByRole('navigation', { name: 'Workspace' })
     .getByRole('link', { name: 'Calendar', exact: true })

@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 test('statement shows recorded per-pet changes, exports filtered rows and preserves workspace state', async ({
@@ -7,7 +8,7 @@ test('statement shows recorded per-pet changes, exports filtered rows and preser
   await page.goto('/app/calendar/');
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   const add = async (days: string) => {
     await page.getByRole('button', { name: 'Add balance', exact: true }).click();
     await page.getByLabel('Days', { exact: true }).fill(days);
@@ -20,7 +21,7 @@ test('statement shows recorded per-pet changes, exports filtered rows and preser
   await add('10');
   await add('3');
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
-  await page.getByLabel('Adjustment', { exact: true }).selectOption('remove');
+  await chooseOption(page.getByLabel('Adjustment', { exact: true }), 'remove');
   await page.getByLabel('Days', { exact: true }).fill('2');
   await page.getByLabel('Reason', { exact: true }).fill('[TEST] correction');
   await page.getByRole('button', { name: 'Save adjustment', exact: true }).click();
@@ -35,9 +36,12 @@ test('statement shows recorded per-pet changes, exports filtered rows and preser
       .getByRole('navigation', { name: 'Workspace' })
       .getByRole('link', { name: 'Balances', exact: true }),
   ).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveValue('Mochi');
+  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveAttribute(
+    'data-value',
+    'Mochi',
+  );
   await expect(page.locator('.hc-statement-row')).toHaveCount(3);
-  await page.getByLabel('Statement activity', { exact: true }).selectOption('correction');
+  await chooseOption(page.getByLabel('Statement activity', { exact: true }), 'correction');
   await expect(page.locator('.hc-statement-row')).toHaveCount(1);
   await expect(page.locator('.hc-statement-row td').nth(4)).toHaveText('11 days');
   await page.getByRole('button', { name: /View transaction:/ }).click();
@@ -57,7 +61,7 @@ test('statement shows recorded per-pet changes, exports filtered rows and preser
   await page.screenshot({ path: 'test-results/boarding-statement-desktop.png' });
   await page.setViewportSize({ width: 820, height: 1000 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.getByLabel('Statement customer', { exact: true }).selectOption('2');
+  await chooseOption(page.getByLabel('Statement customer', { exact: true }), '2');
   await expect(
     page.getByRole('heading', { name: 'No matching transactions', exact: true }),
   ).toBeVisible();
@@ -75,10 +79,10 @@ test('statement shows recorded per-pet changes, exports filtered rows and preser
     .getByRole('navigation', { name: 'Workspace' })
     .getByRole('link', { name: 'Balances', exact: true })
     .click();
-  await page.getByLabel('Statement pet', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Statement pet', { exact: true }), 'all');
   await expect(page.locator('.hc-statement-row')).toHaveCount(4);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('.language-selector select').selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await expect(page.getByRole('heading', { name: '交易明细', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: 'test-results/boarding-statement-mobile-zh.png', fullPage: true });

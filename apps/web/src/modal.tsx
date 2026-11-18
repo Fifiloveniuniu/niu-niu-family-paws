@@ -21,7 +21,7 @@ export default function Modal({
     const dialog = ref.current;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     dialog?.showModal();
-    dialog?.querySelector<HTMLInputElement>('input:not([type=file]), select')?.focus();
+    dialog?.querySelector<HTMLInputElement>('input:not([type=file]), [role=combobox]')?.focus();
     return () => {
       dialog?.close();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
@@ -36,9 +36,14 @@ export default function Modal({
         if (event.key !== 'Tab') return;
         const nodes = [
           ...event.currentTarget.querySelectorAll<HTMLElement>(
-            'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+            'button:not(:disabled), a[href], input:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
           ),
-        ].filter((node) => node.getClientRects().length > 0 && !node.closest('[hidden]'));
+        ].filter(
+          (node) =>
+            node.getClientRects().length > 0 &&
+            !node.closest('[hidden]') &&
+            node.getAttribute('aria-hidden') !== 'true',
+        );
         const first = nodes[0];
         const last = nodes.at(-1);
         if (!first) {

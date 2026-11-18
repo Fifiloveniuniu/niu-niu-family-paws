@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 test('public cancellation policy has a routable marketing page in both languages', async ({
   page,
@@ -12,7 +13,7 @@ test('public cancellation policy has a routable marketing page in both languages
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Edit policy' })).toHaveCount(0);
   await expect(page.getByText(/Exact deadlines, shorter-notice/)).toBeVisible();
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload();
   await expect(page.getByRole('heading', { name: '取消政策', level: 1 })).toBeVisible();

@@ -1,3 +1,4 @@
+import { useDropdownState } from './dropdown-state';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import MarketingLanguageMenu from './marketing-language-menu';
@@ -47,7 +48,7 @@ export function MarketingHeader({
   const { t, i18n } = useTranslation();
   const zh = i18n.language === 'zh';
   const [open, setOpen] = useState(false);
-  const [dropdown, setDropdown] = useState<string | null>(null);
+  const [dropdown, setDropdown] = useDropdownState<string | null>(null);
   const menu = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   useEffect(() => {

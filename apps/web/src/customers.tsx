@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import { findCustomerById, findPetCustomer } from './customer-lookup';
 import { ApiError, apiJson, apiOptionalJson } from './api-client';
 import React from 'react';
@@ -475,7 +476,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                   </label>
                   <label>
                     {labels.language}
-                    <select
+                    <CustomSelect
                       value={editor.input.language}
                       onChange={(event) =>
                         setEditor({
@@ -486,7 +487,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                     >
                       <option value="en">English</option>
                       <option value="zh">简体中文</option>
-                    </select>
+                    </CustomSelect>
                   </label>
                 </fieldset>
                 <div className="portal-actions">

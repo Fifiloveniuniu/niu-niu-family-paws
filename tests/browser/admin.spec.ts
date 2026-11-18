@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -11,7 +12,7 @@ test('signed-out portal, bilingual navigation, and public FAQs work on mobile', 
   await page.goto('/app/sign-in/');
   await expect(page.getByRole('button', { name: 'Continue with Google' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Administrator dashboard' })).toHaveCount(0);
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.reload();
   await expect(page.getByRole('button', { name: '使用 Google 登录' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -248,7 +249,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await page.getByRole('button', { name: 'Manage these pets', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Other sample', exact: true })).toBeVisible();
   await expect(petSection.getByRole('textbox', { name: 'Pet name', exact: true })).toHaveCount(0);
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await expect(page.getByRole('button', { name: '添加客户', exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: 'test-results/customers-mobile-zh.png', fullPage: true });
@@ -271,7 +272,7 @@ test('prominent shared sign-in works from the home page in English and Chinese',
   ).toBeVisible();
   await page.getByRole('link', { name: 'Back to website' }).click();
   await page.setViewportSize({ width: 400, height: 860 });
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await expect(
     page.locator('header').getByRole('link', { name: '登录', exact: true }),
   ).toBeVisible();

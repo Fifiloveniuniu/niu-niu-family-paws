@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 
 test('administrator and customer complete linking without exposing records before approval', async ({
@@ -161,7 +162,7 @@ test('administrator and customer complete linking without exposing records befor
   admin.once('dialog', (dialog) => dialog.accept());
   await panel.getByRole('button', { name: 'Approve account link', exact: true }).click();
   await expect(panel.getByText('Account linked', { exact: true })).toBeVisible();
-  await customer.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(customer.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await customer.getByRole('button', { name: '查看最新状态', exact: true }).click();
   await expect(customer.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue(
     'Existing customer',

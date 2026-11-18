@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 test('public pages have direct paths, distinct content and working history', async ({ page }) => {
   const errors: string[] = [];
@@ -49,19 +50,31 @@ test('public pages have direct paths, distinct content and working history', asy
 });
 test('balance and calendar filters can be refreshed and shared', async ({ page }) => {
   await page.goto('/app/balances/?customer=2&pet=Coco&from=2026-01-01&activity=added');
-  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveValue('Coco');
-  await expect(page.getByLabel('Statement customer', { exact: true })).toHaveValue('2');
-  await expect(page.getByLabel('Statement activity', { exact: true })).toHaveValue('added');
-  await page.getByLabel('Statement pet', { exact: true }).selectOption('Pip');
+  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveAttribute(
+    'data-value',
+    'Coco',
+  );
+  await expect(page.getByLabel('Statement customer', { exact: true })).toHaveAttribute(
+    'data-value',
+    '2',
+  );
+  await expect(page.getByLabel('Statement activity', { exact: true })).toHaveAttribute(
+    'data-value',
+    'added',
+  );
+  await chooseOption(page.getByLabel('Statement pet', { exact: true }), 'Pip');
   await expect(page).toHaveURL(/pet=Pip/);
   await page.reload();
-  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveValue('Pip');
+  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveAttribute(
+    'data-value',
+    'Pip',
+  );
   await page.goto('/app/calendar/?date=2026-11-16&view=day&house=1');
   await expect(page.getByRole('tab', { name: 'Day', exact: true })).toHaveAttribute(
     'aria-selected',
     'true',
   );
-  await expect(page.getByLabel('House', { exact: true })).toHaveValue('1');
+  await expect(page.getByLabel('House', { exact: true })).toHaveAttribute('data-value', '1');
   await page.getByRole('tab', { name: 'Month', exact: true }).click();
   await expect(page).toHaveURL(/view=month/);
   await page.reload();
@@ -150,7 +163,8 @@ test('sign-in returns to canonical records and locations support direct refresh'
   await page.goto('/app/customers/' + customerId + '/pets/missing/');
   await expect(page.getByRole('alert')).toHaveText('Pet not found.');
   await page.goto('/app/settings/locations/' + houseId + '/');
-  await expect(page.getByRole('combobox', { name: 'Show house', exact: true })).toHaveValue(
+  await expect(page.getByRole('combobox', { name: 'Show house', exact: true })).toHaveAttribute(
+    'data-value',
     houseId,
   );
   await page.reload();

@@ -510,7 +510,7 @@ footer {
   font-size: 0.9rem;
 }
 .customer-form input,
-.customer-form select {
+.customer-form :is(select, .custom-select-trigger) {
   width: 100%;
   min-width: 0;
   font: inherit;
@@ -712,7 +712,7 @@ footer {
   stroke: currentColor;
   stroke-width: 1.5;
 }
-.language-selector select {
+.language-selector :is(select, .custom-select-trigger) {
   width: 100%;
   min-height: 44px;
   padding: 9px 12px;
@@ -723,7 +723,7 @@ footer {
   font: inherit;
   cursor: pointer;
 }
-select:focus-visible,
+:is(select, .custom-select-trigger):focus-visible,
 input:focus-visible {
   outline: 3px solid #b5c9b1;
   outline-offset: 2px;
@@ -882,7 +882,7 @@ input:focus-visible {
   font-weight: 600;
 }
 .customer-form input,
-.customer-form select {
+.customer-form :is(select, .custom-select-trigger) {
   font-weight: 400;
   min-height: 46px;
   border-color: #a9b8a2;
@@ -1159,7 +1159,7 @@ html[lang='zh-Hans'] h2 {
   flex-direction: column;
   gap: 8px;
 }
-.customer-pet-picker select {
+.customer-pet-picker :is(select, .custom-select-trigger) {
   max-width: 100%;
   min-width: 0;
   width: 100%;

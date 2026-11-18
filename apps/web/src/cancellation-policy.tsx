@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
@@ -246,7 +247,7 @@ export default function CancellationPolicyPage({
             </label>
             <label>
               {translate('Notice calculation', '提前时间计算')}
-              <select
+              <CustomSelect
                 value={draft.basis}
                 onChange={(event) =>
                   setDraft({ ...draft, basis: event.target.value as CancellationPolicy['basis'] })
@@ -259,7 +260,7 @@ export default function CancellationPolicyPage({
                 <option value="calendar">
                   {translate('Calendar days in the house timezone', '按房屋时区计算日历天')}
                 </option>
-              </select>
+              </CustomSelect>
             </label>
             <div className="hc-settings-actions">
               <button type="button" className="hc-manage" onClick={close}>

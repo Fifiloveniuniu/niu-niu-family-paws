@@ -1,3 +1,4 @@
+import { useDropdownState } from './dropdown-state';
 import React from 'react';
 import { currentRoute, navigate, safeReturnTo } from './routing';
 import {
@@ -225,8 +226,29 @@ export default function Portal({
   }
   if (access === 'admin') previewIdentity.current.adminUid = user?.uid || null;
   const previewRoute = import.meta.env.DEV && currentRoute().kind !== 'login';
+  const [accountOpen, setAccountOpen] = useDropdownState(false);
+  React.useEffect(() => {
+    const outside = (event: PointerEvent) => {
+      if (!(event.target as Element).closest('.hc-account-menu')) setAccountOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setAccountOpen(false);
+    };
+    document.addEventListener('pointerdown', outside);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', outside);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [setAccountOpen]);
   const accountControls = (
-    <details className="hc-account-menu">
+    <details
+      className="hc-account-menu"
+      open={accountOpen}
+      onToggle={(event) => {
+        if (event.currentTarget.open !== accountOpen) setAccountOpen(event.currentTarget.open);
+      }}
+    >
       <summary>
         <Icon name="account" />
         <span>{chinese ? '账号' : 'Account'}</span>

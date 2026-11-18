@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useDropdownState } from './dropdown-state';
+import { useEffect, useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function MarketingLanguageMenu({
@@ -7,7 +8,7 @@ export default function MarketingLanguageMenu({
   onChange: (language: 'en' | 'zh') => void;
 }) {
   const { i18n } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useDropdownState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const id = useId();

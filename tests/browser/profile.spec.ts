@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 
 test('customer saves their own profile, keeps edits during access refresh, and retries without changing owner', async ({
@@ -60,16 +61,20 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   await page.getByRole('textbox', { name: 'Your name', exact: true }).fill('王小明');
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect(page.getByRole('textbox', { name: 'Your name', exact: true })).toHaveValue('王小明');
-  await page
-    .getByRole('combobox', { name: 'Your preferred language', exact: true })
-    .selectOption('zh');
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(
+    page.getByRole('combobox', { name: 'Your preferred language', exact: true }),
+    'zh',
+  );
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue('王小明');
-  await expect(page.getByRole('combobox', { name: '您的首选语言', exact: true })).toHaveValue('zh');
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('en');
+  await expect(page.getByRole('combobox', { name: '您的首选语言', exact: true })).toHaveAttribute(
+    'data-value',
+    'zh',
+  );
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'en');
   await expect(
     page.getByRole('combobox', { name: 'Your preferred language', exact: true }),
-  ).toHaveValue('zh');
+  ).toHaveAttribute('data-value', 'zh');
   await page.getByRole('button', { name: 'Save profile', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Retry profile save', exact: true })).toBeVisible();
   await expect(page.getByText('You have unsaved changes.', { exact: false })).toBeVisible();
@@ -79,7 +84,7 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   await expect(page.getByText('You have unsaved changes.', { exact: false })).toHaveCount(0);
   expect(writes).toHaveLength(2);
   expect(writes[0]).toEqual(writes[1]);
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.reload();
   await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue('王小明');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
