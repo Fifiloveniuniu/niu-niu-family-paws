@@ -913,5 +913,8 @@
   "ui.datePicker.applyDateTime": "Apply date and time",
   "ui.houses.addressMissing": "Address required — edit this house to complete setup.",
   "ui.houseCalendar.viewAddress": "View address",
-  "ui.houseCalendar.houseAddress": "House address"
+  "ui.houseCalendar.houseAddress": "House address",
+  "ui.autocomplete.chooseOption": "Choose an item from the list.",
+  "ui.autocomplete.noMatches": "No matches",
+  "ui.calendarAssignment.customer": "Customer"
 }

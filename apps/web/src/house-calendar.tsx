@@ -985,7 +985,11 @@ export default function HouseCalendar({
                   })),
                 }))}
                 stays={stays}
-                pets={roster}
+                pets={roster.map((pet) => ({ ...pet, customerId: customerFor(pet.name) }))}
+                customers={[...new Set(roster.map((pet) => customerFor(pet.name)))].map((id) => ({
+                  id,
+                  name: customerName(id),
+                }))}
                 balances={balances}
                 balancePlans={balancePlans}
                 onManageBalance={(pet, service) => setBalanceView({ pet, service, fromStay: true })}

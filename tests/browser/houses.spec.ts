@@ -72,7 +72,10 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await expect(dialog.getByLabel('House name', { exact: true })).toBeFocused();
   await dialog.getByLabel('House name', { exact: true }).fill('Demo West');
   await dialog.getByLabel('Address', { exact: true }).fill('Synthetic address');
-  await dialog.getByLabel('Time zone', { exact: true }).fill('America/Los_Angeles');
+  await chooseOption(
+    dialog.getByRole('combobox', { name: 'Time zone', exact: true }),
+    'America/Los_Angeles',
+  );
   page.once('dialog', (d) => d.dismiss());
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog.getByLabel('House name', { exact: true })).toHaveValue('Demo West');
@@ -81,7 +84,10 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await section.getByRole('button', { name: 'Add house', exact: true }).click();
   await dialog.getByLabel('House name', { exact: true }).fill('Demo East');
   await dialog.getByLabel('Address', { exact: true }).fill('Synthetic east address');
-  await dialog.getByLabel('Time zone', { exact: true }).fill('Asia/Shanghai');
+  await chooseOption(
+    dialog.getByRole('combobox', { name: 'Time zone', exact: true }),
+    'Asia/Shanghai',
+  );
   await dialog.getByRole('button', { name: 'Save house', exact: true }).click();
   await chooseOption(page.getByRole('combobox', { name: 'Show house', exact: true }), '');
   await expect(section.getByRole('heading', { level: 3 })).toHaveCount(2);

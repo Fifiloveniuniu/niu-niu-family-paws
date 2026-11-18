@@ -1,5 +1,6 @@
 import { englishCatalog, uiText, uiValue } from './i18n.ts';
 import CustomSelect from './custom-select';
+import CustomAutocomplete from './custom-autocomplete';
 import { ApiError, apiJson } from './api-client';
 import React from 'react';
 import { navigate } from './routing';
@@ -247,26 +248,18 @@ export default function Houses({
               </label>
               <label>
                 {labels.timezone}
-                <input
+                <CustomAutocomplete
+                  label={labels.timezone}
                   required
-                  list={fieldId + '-zones'}
-                  aria-describedby={fieldId + '-zone-hint'}
+                  disabled={blocked}
                   placeholder={labels.zoneExample}
-                  maxLength={100}
                   value={editor.input.timezone}
-                  onChange={(event) =>
-                    setEditor({
-                      ...editor,
-                      input: { ...editor.input, timezone: event.target.value },
-                    })
+                  options={zones.map((zone) => ({ value: zone, label: zone }))}
+                  onChange={(timezone) =>
+                    setEditor({ ...editor, input: { ...editor.input, timezone } })
                   }
                 />
               </label>
-              <datalist id={fieldId + '-zones'}>
-                {zones.map((zone) => (
-                  <option key={zone} value={zone} />
-                ))}
-              </datalist>
               <p id={fieldId + '-zone-hint'} className="customer-intro">
                 {labels.zoneHint}
               </p>

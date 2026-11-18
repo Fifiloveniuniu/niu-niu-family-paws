@@ -66,6 +66,10 @@ for (const width of [390, 1440])
       });
       await expect(next).toBeDisabled();
       await chooseOption(
+        dialog.getByRole('combobox', { name: translate('Customer', '客户'), exact: true }),
+        '4',
+      );
+      await chooseOption(
         dialog.getByRole('combobox', { name: translate('Pet', '宠物'), exact: true }),
         'Willow',
       );
@@ -140,13 +144,14 @@ for (const [width, height] of [
         .click();
       const dialog = page.getByRole('dialog');
       const pet = dialog.getByRole('combobox', {
-        name: language === 'en' ? 'Pet' : '宠物',
+        name: language === 'en' ? 'Customer' : '客户',
         exact: true,
       });
       await pet.click();
       await pet.press('Escape');
+      await chooseOption(pet, '1');
       const fields = dialog.locator('.hc-wizard-step:not([hidden]) input');
-      await expect(fields).toHaveCount(2);
+      await expect(fields).toHaveCount(4);
       for (let i = 0; i < (await fields.count()); i++) {
         await fields.nth(i).focus();
         const bounds = await fields.nth(i).evaluate((element) => {

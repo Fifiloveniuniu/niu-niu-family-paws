@@ -1,6 +1,7 @@
 import CustomDateInput from './custom-date-input';
 import { localeFor, speciesText, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
+import CustomAutocomplete from './custom-autocomplete';
 import { localDateTimeValue } from './date-utils';
 import { sampleDateAtOffset, sampleDayOffset } from './calendar-time';
 import React from 'react';
@@ -30,6 +31,7 @@ export default function AssignmentDialog({
   houses,
   stays,
   pets,
+  customers,
   anchor,
   initial,
   onClose,
@@ -40,7 +42,8 @@ export default function AssignmentDialog({
 }: {
   houses: PlacementHouse[];
   stays: Placement[];
-  pets: { name: string; species: string }[];
+  pets: { name: string; species: string; customerId: string }[];
+  customers: { id: string; name: string }[];
   anchor: Date;
   initial?: { house: number; room: number };
   onClose: () => void;
@@ -51,6 +54,7 @@ export default function AssignmentDialog({
 }) {
   const { i18n } = useTranslation();
 
+  const [customer, setCustomer] = React.useState('');
   const [pet, setPet] = React.useState('');
   const [start, setStart] = React.useState(localDateTimeValue(sampleDateAtOffset(anchor, 0)));
   const [end, setEnd] = React.useState('');
@@ -264,23 +268,51 @@ export default function AssignmentDialog({
             <p>{uiText('ui.calendarAssignment.chooseYourGuestAndTheirPlannedArrivalAndPickup')}</p>
           </div>
           <label>
-            {uiText('ui.calendarAssignment.pet')}
-            <CustomSelect
-              aria-label={uiText('ui.calendarAssignment.pet')}
+            {uiText('ui.calendarAssignment.customer')}
+            <CustomAutocomplete
+              label={uiText('ui.calendarAssignment.customer')}
               required
-              value={pet}
-              onChange={(event) => {
-                setPet(event.target.value);
+              value={customer}
+              options={customers.map((item) => ({ value: item.id, label: item.name }))}
+              onChange={(value) => {
+                setCustomer(value);
+                setPet('');
                 invalidate();
               }}
-            >
-              <option value="">{uiText('ui.calendarAssignment.selectAPet')}</option>
-              {pets.map((petProfile) => (
-                <option key={petProfile.name} value={petProfile.name}>
-                  {petProfile.name} · {speciesText(petProfile.species)}
-                </option>
-              ))}
-            </CustomSelect>
+            />
+          </label>
+          <label>
+            {uiText('ui.calendarAssignment.pet')}
+            <CustomAutocomplete
+              label={uiText('ui.calendarAssignment.pet')}
+              required
+              disabled={!customer}
+              value={pet}
+              options={pets
+                .filter((item) => item.customerId === customer)
+                .map((item) => ({
+                  value: item.name,
+                  label: item.name,
+                  search: item.name + ' ' + speciesText(item.species),
+                  content: (
+                    <span className="custom-autocomplete-pet">
+                      <span aria-hidden="true">
+                        {item.species === 'dog' ? '🐕' : item.species === 'cat' ? '🐈' : '🐇'}
+                      </span>
+                      <PetProfileAvatar name={item.name} />
+                      <span>
+                        <strong>{item.name}</strong>
+                        <br />
+                        <small>{speciesText(item.species)}</small>
+                      </span>
+                    </span>
+                  ),
+                }))}
+              onChange={(value) => {
+                setPet(value);
+                invalidate();
+              }}
+            />
           </label>
           <div className="hc-time-fields">
             <label>
