@@ -3713,3 +3713,10 @@
 .hc .hc-pet > .hc-label small {
   line-height: 16px;
 }
+/* Timeline cells own vertical dividers; sticky labels do not add a second line. */
+.hc .hc-calendar .hc-label {
+  border-right: 0;
+}
+.hc .hc-ticks {
+  background-image: none;
+}
