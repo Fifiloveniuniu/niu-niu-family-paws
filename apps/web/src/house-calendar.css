@@ -3646,3 +3646,56 @@
 .hc-clock-controls {
   order: 1;
 }
+/* Denser schedule keeps more rooms and stays visible. */
+.hc .hc-page-toolbar {
+  margin-bottom: 12px;
+}
+.hc .hc-filters {
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+.hc .hc-filter-fields {
+  gap: 8px;
+}
+.hc .hc-filter-fields label {
+  gap: 4px;
+}
+.hc .hc-filter-fields input,
+.hc .hc-filter-fields select {
+  min-height: 32px;
+  padding: 5px 8px;
+}
+.hc .hc-range {
+  min-height: 50px;
+  padding: 8px 12px;
+  gap: 10px;
+}
+.hc .hc-scales [role='tab'] {
+  min-height: 30px;
+  padding: 5px 10px;
+}
+.hc .hc-axis {
+  height: 62px;
+}
+.hc .hc-house,
+.hc .hc-room-heading {
+  min-height: 34px;
+}
+.hc .hc-house {
+  padding: 2px 12px;
+}
+.hc .hc-room {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.hc .hc-pet {
+  height: 50px;
+}
+.hc .hc-label {
+  padding: 6px 12px;
+  gap: 8px;
+}
+.hc .hc-legend {
+  padding: 8px 12px;
+}

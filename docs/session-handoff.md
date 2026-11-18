@@ -1,3 +1,7 @@
+## Compact calendar — local, 2026-11-18
+
+Reduced filter/control spacing, date axis to62px, room/house headings to34px and pet rows to50px. Right-aligned action buttons retained. Production build/typecheck, formatting and four bilingual390/1440 layout checks passed; actual localhost Chrome previewed. No deployment.
+
 ## Compact app toolbar — local, 2026-11-18
 
 Removed app hc-title headings/descriptions while preserving actions. Calendar buttons are36px tall and right aligned; clock timezone dropdown sits left on the same desktop row and wraps on phones. Dropdown changes the clock only; booking/house timezone rules are unchanged. Production build/typecheck, formatting,12 bilingual page checks and four timezone/layout checks passed; actual localhost Chrome reviewed. No deployment.
