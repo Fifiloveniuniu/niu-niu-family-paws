@@ -1636,6 +1636,11 @@ header.marketing-header nav {
 .marketing-site .stay-planning {
   margin-bottom: clamp(48px, 6vw, 80px);
 }
+@media (max-width: 760px) {
+  .marketing-site .stay-planning {
+    margin-inline: 24px;
+  }
+}
 .marketing-site .stay-planning .eyebrow {
   margin-bottom: 24px;
 }
