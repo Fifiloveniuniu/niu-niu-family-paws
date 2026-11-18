@@ -1,3 +1,6 @@
+import useLanguageUrl from './use-language-url';
+import { withLanguage } from './language-url.ts';
+import { navigate, routeUrl } from './routing';
 import {
   catalogs,
   htmlLanguage,
@@ -53,6 +56,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const { t } = useTranslation();
   const chinese = i18n.language === 'zh';
   const route = useRoute(i18n.language, initialPath);
+  useLanguageUrl(route);
   const page = route.kind;
   const marketingRoot = React.useRef<HTMLElement>(null);
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
@@ -65,13 +69,6 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
     if (appVisible) setVisitedApp(true);
   }, [appVisible]);
   const SectionHeading = 'h1';
-  React.useEffect(() => {
-    try {
-      void i18n.changeLanguage(resolveLanguage(localStorage.getItem('language')));
-    } catch {
-      /* optional */
-    }
-  }, []);
   React.useEffect(() => {
     document.documentElement.lang = htmlLanguage(i18n.language);
     const names: Record<string, string> = {
@@ -105,11 +102,14 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
     else window.scrollTo({ top: 0, behavior: 'instant' });
   }, [page, route.path, route.hash]);
   function setLanguage(lang: Language) {
-    void i18n.changeLanguage(lang);
-    try {
-      localStorage.setItem('language', lang);
-    } catch {
-      /* optional */
+    const language = resolveLanguage(lang);
+    if (navigate(withLanguage(routeUrl(), language, location.origin), true)) {
+      void i18n.changeLanguage(language);
+      try {
+        localStorage.setItem('language', language);
+      } catch {
+        /* optional preference */
+      }
     }
   }
   const portal =

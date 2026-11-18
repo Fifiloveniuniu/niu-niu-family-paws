@@ -1,3 +1,4 @@
+import { urlLanguage, withLanguage, withoutLanguage } from './language-url.ts';
 export type RouteKind =
   | 'home'
   | 'services'
@@ -18,6 +19,7 @@ export type AppRoute = {
   kind: RouteKind;
   path: string;
   search: string;
+  language?: string;
   hash?: string;
   customerId?: string;
   petId?: string;
@@ -50,7 +52,13 @@ export function canonicalUrl(input: string) {
   const url = new URL(input, 'https://family-paws.invalid');
   const hash = url.hash.slice(1);
   const [old, query] = hash.split('?');
-  if (legacyPaths[old]) return legacyPaths[old] + (query ? '?' + query : '');
+  if (legacyPaths[old]) {
+    const target = new URL(legacyPaths[old], 'https://family-paws.invalid');
+    for (const [key, value] of new URLSearchParams(query)) target.searchParams.set(key, value);
+    if (url.searchParams.has('lang') && !target.searchParams.has('lang'))
+      target.searchParams.set('lang', url.searchParams.get('lang')!);
+    return target.pathname + target.search + target.hash;
+  }
   if (url.pathname.replace(/\/+$/, '') === '/cancellation-policy')
     return '/pricing/' + url.search + '#cancellation-policy';
   const path = url.pathname === '/' ? '/' : url.pathname.replace(/\/+$/, '') + '/';
@@ -60,8 +68,15 @@ export function canonicalUrl(input: string) {
 }
 export function parseRoute(input: string): AppRoute {
   const url = new URL(canonicalUrl(input), 'https://family-paws.invalid');
+  const language = urlLanguage(url.href);
+  url.searchParams.delete('lang');
   const path = url.pathname;
-  const base = { path, search: url.search, ...(url.hash ? { hash: url.hash } : {}) };
+  const base = {
+    path,
+    search: url.search,
+    ...(language ? { language } : {}),
+    ...(url.hash ? { hash: url.hash } : {}),
+  };
   const staticRouteKinds: Record<string, RouteKind> = {
     '/': 'home',
     '/home/': 'home',
@@ -108,7 +123,8 @@ export function currentRoute() {
 export function navigate(to: string, replace = false) {
   const url = new URL(to, window.location.origin);
   if (url.origin !== window.location.origin) return false;
-  const targetUrl = canonicalUrl(url.href);
+  const inheritedLanguage = urlLanguage(url.href) ?? urlLanguage(location.href) ?? 'en';
+  const targetUrl = withLanguage(canonicalUrl(url.href), inheritedLanguage, location.origin);
   if (targetUrl === routeUrl()) return true;
   if (
     !window.dispatchEvent(
@@ -133,7 +149,11 @@ export function navigate(to: string, replace = false) {
   return true;
 }
 export function closeRecord(parent: string) {
-  if (window.history.state?.familyPawsFrom === parent) window.history.back();
+  if (
+    window.history.state?.familyPawsFrom &&
+    withoutLanguage(window.history.state.familyPawsFrom) === withoutLanguage(parent)
+  )
+    window.history.back();
   else navigate(parent, true);
 }
 export function updateQuery(values: Record<string, string | null | undefined>) {

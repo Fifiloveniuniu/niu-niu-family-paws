@@ -1,3 +1,4 @@
+import { withoutLanguage } from './language-url.ts';
 import { localeFor, type Language, uiText } from './i18n.ts';
 import CalendarPetPreview from './calendar-pet-preview';
 import CustomSelect from './custom-select';
@@ -54,7 +55,7 @@ export default function HouseCalendar({
 }) {
   const { i18n } = useTranslation();
 
-  const route = routeUrl();
+  const route = withoutLanguage(routeUrl());
   const parsed = currentRoute();
   const path = parsed.path;
   const routeParams = new URLSearchParams(parsed.search);

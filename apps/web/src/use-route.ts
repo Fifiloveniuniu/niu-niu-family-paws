@@ -1,3 +1,4 @@
+import { withoutLanguage, withLanguage, urlLanguage } from './language-url.ts';
 import React from 'react';
 import { scrollMarketingTarget, animateMarketingPageEntry } from './marketing-navigation';
 import { canonicalUrl, parseRoute, routeUrl, navigate } from './routing';
@@ -12,6 +13,7 @@ export default function useRoute(language: string, initialPath = '/') {
     let isRevertingHistory = false;
     history.replaceState({ ...history.state, familyPawsIndex: historyIndex }, '', previousUrl);
     const canNavigate = (nextUrl: string) => {
+      if (withoutLanguage(nextUrl) === withoutLanguage(previousUrl)) return true;
       if (!previousUrl.startsWith('/app/')) return true;
       const retainWorkspaceDrafts =
         nextUrl.startsWith('/app/') && !nextUrl.startsWith('/app/sign-in/');
@@ -85,6 +87,8 @@ export default function useRoute(language: string, initialPath = '/') {
       const anchor = event.target.closest<HTMLAnchorElement>('a[href]');
       if (!anchor || anchor.target || anchor.hasAttribute('download')) return;
       const url = new URL(anchor.href, location.href);
+      if (url.origin === location.origin)
+        url.searchParams.set('lang', urlLanguage(location.href) ?? language);
       if (url.origin !== location.origin) return;
       if (
         url.pathname === location.pathname &&
