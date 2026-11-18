@@ -3,7 +3,7 @@ import { FieldPath, type Firestore } from 'firebase-admin/firestore';
 import { Conflict, type CustomerStore } from './app.ts';
 import type { components } from '../../../packages/contracts/generated.ts';
 type Customer = components['schemas']['Customer'];
-function customerFromDocument(data: FirebaseFirestore.DocumentData): Customer {
+export function customerFromDocument(data: FirebaseFirestore.DocumentData): Customer {
   const { id, name, email, phone, language, version, createdAt, updatedAt } = data;
   return {
     id,

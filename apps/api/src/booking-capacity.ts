@@ -1,6 +1,7 @@
 export type Occupancy = {
   id: string;
   petId: string;
+  customerId?: string;
   houseId: string;
   roomId: string;
   species: string;
@@ -59,7 +60,11 @@ export function capacityIssue(
   );
   if (
     active.some(
-      (s) => s.petId === candidate.petId && occupancyStart(s) < end && occupancyEnd(s, now) > start,
+      (s) =>
+        s.petId === candidate.petId &&
+        (s.customerId ?? '') === (candidate.customerId ?? '') &&
+        occupancyStart(s) < end &&
+        occupancyEnd(s, now) > start,
     )
   )
     return 'pet_overlap';

@@ -65,3 +65,15 @@ test('blocked spans aggregate occupancy without guest identities and release com
   assert.deepEqual(spans, [{ from: t(2), through: t(3), issue: 'species' }]);
   assert.equal(JSON.stringify(spans).includes('other-pet'), false);
 });
+
+test('equal pet IDs in different customer records remain separate identities', () => {
+  assert.equal(
+    capacityIssue(
+      [stay({ customerId: 'other', petId: 'pet', houseId: 'elsewhere' })],
+      { ...candidate, customerId: 'own' },
+      1,
+      0,
+    ),
+    null,
+  );
+});

@@ -1,3 +1,4 @@
+import { workspaceStore } from './workspace.ts';
 import { firebaseIdentity } from './authentication.ts';
 import { applicationDefault, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
@@ -35,6 +36,7 @@ const app = buildApp({
   rooms: roomStore(getFirestore()),
   balances: balanceStore(getFirestore()),
   bookings: bookingStore(getFirestore()),
+  workspace: workspaceStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(), async (uid) => {
     const user = await auth.getUser(uid);

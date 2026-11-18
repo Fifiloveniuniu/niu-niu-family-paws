@@ -9,6 +9,13 @@ import { requestIdentity } from './request-context.ts';
 import { uuidSchema, emptyObjectSchema, containsControlCharacters } from './validation.ts';
 export type Room = components['schemas']['Room'];
 export type RoomWrite = components['schemas']['RoomWrite'];
+export function projectRoom(data: FirebaseFirestore.DocumentData): Room {
+  const { id, houseId, name, capacity, costs, version, createdAt, updatedAt } = data;
+  const allowed: Room['costs'] = {};
+  for (const species of ['dog', 'cat', 'rabbit'] as const)
+    if (typeof costs?.[species] === 'number') allowed[species] = costs[species];
+  return { id, houseId, name, capacity, costs: allowed, version, createdAt, updatedAt };
+}
 export interface RoomStore {
   list(houseId: string): Promise<{ items: Room[] }>;
   save(houseId: string, id: string, input: RoomWrite, actor: string): Promise<Room>;
@@ -20,7 +27,7 @@ export function roomStore(database: Firestore): RoomStore {
       const house = await houses.doc(houseId).get();
       if (!house.exists) throw new PetMissing();
       const result = await houses.doc(houseId).collection('rooms').orderBy('name').get();
-      return { items: result.docs.map((doc) => doc.data() as Room) };
+      return { items: result.docs.map((doc) => projectRoom(doc.data())) };
     },
     async save(houseId, id, input, actor) {
       const house = houses.doc(houseId);
@@ -31,7 +38,13 @@ export function roomStore(database: Firestore): RoomStore {
           tx.get(house),
           tx.get(ref),
           tx.get(lock),
-          tx.get(database.collection('bookings').where('roomId', '==', id)),
+          tx.get(
+            database
+              .collection('bookings')
+              .where('houseId', '==', houseId)
+              .where('roomId', '==', id)
+              .where('status', 'in', ['planned', 'in_care']),
+          ),
         ]);
         if (!houseDoc.exists) throw new PetMissing();
         if (!houseDoc.data()!.address?.trim()) throw new PetInvalid();

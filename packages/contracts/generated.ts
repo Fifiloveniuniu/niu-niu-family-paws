@@ -4,6 +4,81 @@
  */
 
 export interface paths {
+    "/api/workspace/pets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Paginated canonical pet/customer/balance rows for current admin or own effective customer */
+        get: {
+            parameters: {
+                query?: {
+                    customerId?: string;
+                    cursor?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Scoped pet rows with current balances */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorkspacePets"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/workspace/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Authorized house/room catalog; no private stays or customer identities */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved locations */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorkspaceLocations"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/availability": {
         parameters: {
             query?: never;
@@ -51,7 +126,29 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Read an owned or administrator booking by stable identifier */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Scoped booking */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Booking"];
+                    };
+                };
+            };
+        };
         /** Save an unbilled planned placement or edit an active booking (administrator only until billing rules are configured) */
         put: {
             parameters: {
@@ -721,6 +818,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        WorkspacePets: {
+            admin: boolean;
+            customer: components["schemas"]["Customer"] | null;
+            items: {
+                customer: components["schemas"]["Customer"];
+                pet: components["schemas"]["Pet"];
+                account: components["schemas"]["BoardingAccount"] | null;
+            }[];
+            nextCursor: string | null;
+        };
+        WorkspaceLocations: {
+            items: {
+                house: components["schemas"]["House"];
+                rooms: components["schemas"]["Room"][];
+            }[];
+        };
         BookingWrite: {
             /** Format: uuid */
             operationId: string;

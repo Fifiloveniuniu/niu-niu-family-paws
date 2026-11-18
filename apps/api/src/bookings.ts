@@ -17,6 +17,50 @@ export type AvailabilityInput = components['schemas']['AvailabilityInput'];
 export type AvailabilityResult = components['schemas']['AvailabilityResult'];
 type Room = components['schemas']['Room'];
 type House = components['schemas']['House'];
+export function projectBooking(data: FirebaseFirestore.DocumentData): Booking {
+  const {
+    id,
+    customerId,
+    petId,
+    houseId,
+    roomId,
+    arrival,
+    pickup,
+    occupancyFrom,
+    occupancyThrough,
+    species,
+    units,
+    timezone,
+    status,
+    billingStatus,
+    actualArrival,
+    actualPickup,
+    version,
+    createdAt,
+    updatedAt,
+  } = data;
+  return {
+    id,
+    customerId,
+    petId,
+    houseId,
+    roomId,
+    arrival,
+    pickup,
+    occupancyFrom,
+    occupancyThrough,
+    species,
+    units,
+    timezone,
+    status,
+    billingStatus,
+    actualArrival,
+    actualPickup,
+    version,
+    createdAt,
+    updatedAt,
+  };
+}
 export class BookingConflict extends Error {
   issue: string;
   constructor(issue: string) {
@@ -26,6 +70,7 @@ export class BookingConflict extends Error {
 }
 export class BookingPolicyMissing extends Error {}
 export interface BookingStore {
+  get(identity: Identity, id: string): Promise<Booking>;
   list(
     identity: Identity,
     customerId?: string,
@@ -53,6 +98,12 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
   const bookings = database.collection('bookings');
   const activeQuery = (field: string, id: string) =>
     bookings.where(field, '==', id).where('status', 'in', ['planned', 'in_care']);
+  const activePetQuery = (cid: string, pid: string) =>
+    bookings
+      .where('customerId', '==', cid)
+      .where('petId', '==', pid)
+      .where('status', 'in', ['planned', 'in_care']);
+  const petLockId = (cid: string, pid: string) => signature([cid, pid]);
   async function authorize(
     tx: FirebaseFirestore.Transaction,
     identity: Identity,
@@ -88,12 +139,12 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
       roomRef = houseRef.collection('rooms').doc(input.roomId);
     const lockIds = [...new Set([input.houseId, ...(previous ? [previous.houseId] : [])])];
     const lockRefs = lockIds.map((hid) => database.doc('houseSchedules/' + hid));
-    const petLock = database.doc('petSchedules/' + input.petId);
+    const petLock = database.doc('petSchedules/' + petLockId(input.customerId, input.petId));
     const [houseDoc, roomDoc, houseStays, petStays, petRevision, ...locks] = await Promise.all([
       tx.get(houseRef),
       tx.get(roomRef),
       tx.get(activeQuery('houseId', input.houseId)),
-      tx.get(activeQuery('petId', input.petId)),
+      tx.get(activePetQuery(input.customerId, input.petId)),
       tx.get(petLock),
       ...lockRefs.map((ref) => tx.get(ref)),
     ]);
@@ -157,6 +208,15 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
     return next;
   }
   return {
+    async get(identity, id) {
+      return database.runTransaction(async (tx) => {
+        const snapshot = await tx.get(bookings.doc(id));
+        if (!snapshot.exists) throw new PetMissing();
+        const booking = projectBooking(snapshot.data()!);
+        await authorize(tx, identity, booking.customerId, booking.petId);
+        return booking;
+      });
+    },
     async list(identity, cid, cursor, window) {
       const from = window ? timestamp(window.from) : null,
         through = window ? timestamp(window.through) : null;
@@ -210,7 +270,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
           } else query = query.startAfter(cursor);
         }
         const result = await tx.get(query);
-        const items = result.docs.slice(0, 100).map((doc) => doc.data() as Booking);
+        const items = result.docs.slice(0, 100).map((doc) => projectBooking(doc.data()));
         return { items, nextCursor: result.size > 100 ? items.at(-1)!.id : null };
       });
     },
@@ -239,7 +299,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
         const [houseDocs, roomDocs, petStays] = await Promise.all([
           tx.get(database.collection('houses')),
           tx.get(database.collectionGroup('rooms')),
-          tx.get(activeQuery('petId', input.petId)),
+          tx.get(activePetQuery(input.customerId, input.petId)),
         ]);
         const houses = new Map(houseDocs.docs.map((doc) => [doc.id, doc.data() as House]));
         const houseStays = await Promise.all(
@@ -262,6 +322,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
             const candidate: Occupancy = {
               id: previous?.id ?? '',
               petId: input.petId,
+              customerId: input.customerId,
               houseId: house.id,
               roomId: room.id,
               species: pet!.species ?? '',
@@ -410,7 +471,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
           ? []
           : [
               database.doc('houseSchedules/' + previous.houseId),
-              database.doc('petSchedules/' + previous.petId),
+              database.doc('petSchedules/' + petLockId(previous.customerId, previous.petId)),
             ];
         if (!ctx) await authorize(tx, identity, previous.customerId, previous.petId);
         const releaseLocks = await Promise.all(releaseRefs.map((ref) => tx.get(ref)));
@@ -484,6 +545,11 @@ export function bookingRoutes(api: FastifyInstance, store: BookingStore) {
     '/availability',
     { schema: { querystring: emptyObjectSchema, body: spec.components.schemas.AvailabilityInput } },
     (request) => store.availability(requestIdentity(request), request.body),
+  );
+  api.get<{ Params: { id: string } }>(
+    '/bookings/:id',
+    { schema: { params, querystring: emptyObjectSchema } },
+    (request) => store.get(requestIdentity(request), request.params.id),
   );
   api.put<{ Params: { id: string }; Body: BookingWrite }>(
     '/bookings/:id',

@@ -28,6 +28,30 @@ export interface BalanceStore {
     input: BoardingAdjustment,
   ): Promise<BoardingAccount>;
 }
+export function projectBoardingAccount(data: FirebaseFirestore.DocumentData): BoardingAccount {
+  const {
+    customerId,
+    petId,
+    service,
+    days,
+    validFrom,
+    validThrough,
+    version,
+    createdAt,
+    updatedAt,
+  } = data;
+  return {
+    customerId,
+    petId,
+    service,
+    days,
+    validFrom,
+    validThrough,
+    version,
+    createdAt,
+    updatedAt,
+  };
+}
 export function validDay(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value < '0001-01-01') return false;
   const timestamp = Date.parse(value + 'T00:00:00Z');
@@ -64,13 +88,39 @@ export function balanceStore(database: Firestore): BalanceStore {
         if (cursor) query = query.startAfter(cursor);
         const events = await tx.get(query);
         const items = events.docs.slice(0, 50).map((doc) => {
-          const event = doc.data() as BoardingEvent;
+          const data = doc.data();
+          const {
+            id,
+            customerId,
+            petId,
+            version,
+            delta,
+            daysAfter,
+            validFrom,
+            validThrough,
+            reason,
+            actor,
+            at,
+          } = data;
+          const event: BoardingEvent = {
+            id,
+            customerId,
+            petId,
+            version,
+            delta,
+            daysAfter,
+            validFrom,
+            validThrough,
+            reason,
+            actor,
+            at,
+          };
           if (identity.admin === true) return event;
-          const { actor, ...publicEvent } = event;
+          const { actor: _actor, ...publicEvent } = event;
           return publicEvent;
         });
         return {
-          account: a.exists ? (a.data() as BoardingAccount) : null,
+          account: a.exists ? projectBoardingAccount(a.data()!) : null,
           events: items,
           nextCursor: events.size > 50 ? items.at(-1)!.version : null,
         };
@@ -113,7 +163,7 @@ export function balanceStore(database: Firestore): BalanceStore {
           if (op.data()!.signature !== signature) throw new Conflict();
           return op.data()!.result as BoardingAccount;
         }
-        const previous = a.exists ? (a.data() as BoardingAccount) : null;
+        const previous = a.exists ? projectBoardingAccount(a.data()!) : null;
         if ((previous?.version ?? 0) !== input.version) throw new Conflict();
         if (
           !Number.isSafeInteger(input.version + 1) ||
