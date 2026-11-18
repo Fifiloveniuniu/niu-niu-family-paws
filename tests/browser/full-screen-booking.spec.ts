@@ -3,7 +3,7 @@ import { chooseOption } from './dropdown-helpers';
 
 for (const width of [390, 1440])
   for (const language of ['en', 'zh']) {
-    test(`full-screen booking without manual day/capacity fields ${language} ${width}`, async ({
+    test(`near-full-screen booking without manual day/capacity fields ${language} ${width}`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });
@@ -41,7 +41,13 @@ for (const width of [390, 1440])
         .click();
       const dialog = page.getByRole('dialog');
       const rect = await dialog.boundingBox();
-      expect(rect).toMatchObject({ x: 0, y: 0, width, height: 900 });
+      const edge = width <= 700 ? 12 : 24;
+      expect(rect).toMatchObject({
+        x: edge,
+        y: edge,
+        width: width - 2 * edge,
+        height: 900 - 2 * edge,
+      });
       await expect(
         dialog.getByText(translate('Required days', '所需天数'), { exact: true }),
       ).toHaveCount(0);
