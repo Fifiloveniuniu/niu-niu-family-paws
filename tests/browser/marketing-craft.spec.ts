@@ -71,6 +71,7 @@ test('standard mobile heights keep all story chapters readable with supplied pho
           requestAnimationFrame(() => requestAnimationFrame(() => r())),
         );
         const bottom = document.querySelector('.cinema-controls')!.getBoundingClientRect().top;
+        if (chapter === 4 && innerWidth <= 760) return []; // Full-size photos use a scrollable chapter, checked separately below.
         return [
           ...story
             .querySelectorAll('[data-cinematic-panel]')
@@ -170,5 +171,87 @@ test('sun rays fade into the moon and chapters three and six use full-width rows
         );
       expect(rows[0].width).toBeCloseTo(available, 0);
     }
+  }
+});
+
+test('mobile Home photos fill their column, captions follow photos and the chapter scrolls', async ({
+  page,
+}) => {
+  for (const width of [320, 390, 760]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/home/#spaces');
+    const panel = page.locator('.home-spaces');
+    await expect(panel).toHaveAttribute('aria-hidden', 'false');
+    await expect(panel).toHaveCSS('overflow-y', 'auto');
+    await page.evaluate(() => document.fonts.ready);
+    const geometry = await panel.evaluate((e) => {
+      const available =
+        e.clientWidth -
+        parseFloat(getComputedStyle(e).paddingLeft) -
+        parseFloat(getComputedStyle(e).paddingRight);
+      return [...e.querySelectorAll('figure')].map((f) => {
+        const image = f.querySelector('img')!,
+          caption = f.querySelector('figcaption')!,
+          i = image.getBoundingClientRect(),
+          c = caption.getBoundingClientRect(),
+          s = getComputedStyle(image);
+        return {
+          available,
+          width: i.width,
+          gap: c.top - i.bottom,
+          left: c.left - i.left,
+          radii: [
+            s.borderTopLeftRadius,
+            s.borderTopRightRadius,
+            s.borderBottomLeftRadius,
+            s.borderBottomRightRadius,
+          ],
+          ratio: i.width / i.height,
+          source: image.naturalWidth / image.naturalHeight,
+        };
+      });
+    });
+    for (const item of geometry) {
+      expect(item.width).toBeCloseTo(item.available, 0);
+      expect(item.gap).toBeGreaterThanOrEqual(11.9);
+      expect(item.left).toBeCloseTo(0, 0);
+      expect(new Set(item.radii).size).toBe(1);
+      expect(item.radii[0]).toBe('24px');
+      expect(item.ratio).toBeCloseTo(item.source, 2);
+    }
+    await panel.hover();
+    const before = await page.evaluate(() => scrollY);
+    await page.mouse.wheel(0, 500);
+    await expect.poll(() => panel.evaluate((e) => e.scrollTop)).toBeGreaterThan(100);
+    await page.waitForTimeout(250); // Let Chrome finish the wheel gesture before repositioning a caption.
+    expect(await page.evaluate(() => scrollY)).toBe(before);
+    for (const caption of await panel.locator('figcaption').all()) {
+      await caption.evaluate((e) => {
+        const panel = e.closest('.home-spaces')!;
+        panel.scrollTop +=
+          e.getBoundingClientRect().top -
+          panel.getBoundingClientRect().top -
+          panel.clientHeight / 2;
+      });
+      await expect(caption).toBeInViewport();
+      const b = (await caption.boundingBox())!;
+      const controls = (await page.locator('.cinema-controls').boundingBox())!;
+      expect(b.y + b.height).toBeLessThan(controls.y);
+    }
+  }
+});
+
+test('planning eyebrow has breathing room below it', async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/services/');
+    const gap = await page
+      .locator('.stay-planning')
+      .evaluate(
+        (e) =>
+          e.querySelector('h2')!.getBoundingClientRect().top -
+          e.querySelector('.eyebrow')!.getBoundingClientRect().bottom,
+      );
+    expect(gap).toBeGreaterThanOrEqual(24);
   }
 });
