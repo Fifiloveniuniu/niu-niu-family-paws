@@ -3720,3 +3720,125 @@
 .hc .hc-ticks {
   background-image: none;
 }
+
+/* Readable calendar text, with the compact row geometry preserved. */
+.hc-calendar-workspace {
+  --calendar-secondary: #526457;
+}
+.hc-calendar-workspace .hc-filters h2,
+.hc-calendar-workspace .hc-filter-fields label,
+.hc-calendar-workspace .hc-clock-controls,
+.hc-calendar-workspace .hc-clock-controls label {
+  font-size: 13px;
+  color: var(--calendar-secondary);
+}
+.hc-calendar-workspace .hc-filter-fields input,
+.hc-calendar-workspace .hc-filter-fields select {
+  font-size: 14px;
+  min-height: 36px;
+  color: var(--ink);
+}
+.hc-calendar-workspace .hc-filter-fields input::placeholder {
+  color: var(--calendar-secondary);
+}
+.hc-calendar-workspace .hc-main-actions button {
+  font-size: 13px;
+}
+.hc-calendar-workspace .hc-range h2 {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+}
+.hc-calendar-workspace .hc-range > div:first-child button,
+.hc-calendar-workspace .hc-scales [role='tab'] {
+  font-size: 13px;
+  color: #405b4b;
+}
+.hc-calendar-workspace .hc-grid {
+  --label: 250px;
+}
+.hc-calendar-workspace .hc-axis .hc-label,
+.hc-calendar-workspace .hc-ticks small {
+  font-size: 12px;
+  color: var(--calendar-secondary);
+}
+.hc-calendar-workspace .hc-ticks strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #405b4b;
+}
+.hc-calendar-workspace .hc-house {
+  font-size: 14px;
+  color: #294b39;
+}
+.hc-calendar-workspace .hc-house small,
+.hc-calendar-workspace .hc-room small {
+  font-size: 12px;
+  color: var(--calendar-secondary);
+}
+.hc-calendar-workspace .hc-room {
+  font-size: 14px !important;
+  font-weight: 600;
+  color: #405b4b;
+}
+.hc-calendar-workspace .hc-label strong {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 18px;
+}
+.hc-calendar-workspace .hc-status {
+  font-size: 12px;
+  line-height: 16px;
+  margin-top: 2px;
+  color: var(--calendar-secondary);
+}
+.hc-calendar-workspace .hc-status.in {
+  color: #366a2d;
+}
+.hc-calendar-workspace .hc-status.upcoming {
+  color: #6b5935;
+}
+.hc-calendar-workspace .hc-label > div {
+  min-width: 0;
+}
+.hc-calendar-workspace .hc-stay {
+  top: 8px;
+  padding: 7px 9px;
+  color: #315d29;
+}
+.hc-calendar-workspace .hc-stay span {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.hc-calendar-workspace .hc-stay.upcoming {
+  color: #365e75;
+}
+.hc-calendar-workspace .hc-stay.out {
+  color: #526047;
+}
+.hc-calendar-workspace .hc-stay.overdue {
+  color: #884522;
+}
+.hc-calendar-workspace .hc-legend {
+  font-size: 12px;
+  color: var(--calendar-secondary);
+}
+.hc-calendar-workspace .hc-now-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #9b5035;
+}
+@media (max-width: 700px) {
+  .hc-calendar-workspace .hc-grid {
+    --label: 190px;
+  }
+  .hc-calendar-workspace .hc-filter-fields input,
+  .hc-calendar-workspace .hc-filter-fields select {
+    font-size: 16px;
+  }
+  .hc-calendar-workspace .hc-label {
+    padding-inline: 8px;
+    gap: 6px;
+  }
+}
