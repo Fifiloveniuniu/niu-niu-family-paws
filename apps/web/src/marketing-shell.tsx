@@ -36,7 +36,9 @@ export function MarketingHeader({
   onLanguageChange,
   account,
   showNavigation = true,
+  navigation,
 }: {
+  navigation?: ReactNode;
   showNavigation?: boolean;
   account?: ReactNode;
   page: string;
@@ -172,6 +174,7 @@ export function MarketingHeader({
         <span aria-hidden="true">{open ? '×' : '☰'}</span>
       </button>
       <div id="marketing-menu" className="marketing-menu">
+        {navigation}
         {showNavigation && (
           <nav aria-label={zh ? '主导航' : 'Main navigation'}>
             {link('/home/', t('home'), 'home')}
