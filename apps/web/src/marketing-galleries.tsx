@@ -57,10 +57,10 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
           {zh
             ? student
               ? '以下展示美容与毛发护理。课堂照片与学员作品将另行分享。'
-              : '以下为美容主题示例照片，并非我们的店铺、设备或服务记录。我们的真实图集即将更新。'
+              : '以下为美容主题素材照片，并非我们的店铺、设备或服务记录。我们的真实图集即将更新。'
             : student
               ? 'A look at grooming and coat care. Student work and class photographs will be shared separately.'
-              : 'Grooming inspiration, shown with sample photos. These are not our shop, equipment, or service records. Our own gallery is on its way.'}
+              : 'Grooming inspiration, shown with stock photos. These are not our shop, equipment, or service records. Our own gallery is on its way.'}
         </p>
       )}
       <div className="photo-grid">
@@ -80,7 +80,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
             <figcaption>
               <span className="cute-note">{photo.caption[lang]}</span>
               {photo.sample && (
-                <small>{zh ? '示例照片 · 非本店实拍' : 'Sample photo · not our business'}</small>
+                <small>{zh ? '素材照片 · 非本店实拍' : 'Stock photo · not our business'}</small>
               )}
               {photo.credit && (
                 <a href={photo.url} target="_blank" rel="noreferrer">
@@ -109,7 +109,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
             <img src={entries[selected].src} alt={entries[selected].alt[lang]} />
             <p>
               {entries[selected].caption[lang]}
-              {entries[selected].sample ? (zh ? ' · 示例照片' : ' · Sample photo') : ''}
+              {entries[selected].sample ? (zh ? ' · 素材照片' : ' · Stock photo') : ''}
             </p>
           </div>
         )}

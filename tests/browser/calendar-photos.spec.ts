@@ -99,7 +99,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
     { email },
   );
   await expect(
-    page.getByRole('dialog').getByAltText('Mochi profile photo (sample)', { exact: true }),
+    page.getByRole('dialog').getByAltText('Mochi profile photo', { exact: true }),
   ).toBeVisible();
   await expect(page.getByLabel('Days', { exact: true })).toHaveValue('7');
   await expect(page.getByLabel('Reason', { exact: true })).toHaveValue(
@@ -113,7 +113,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
   const main = page
     .locator('.hc-pet')
     .filter({ has: page.getByRole('button', { name: 'Remove placement: Mochi', exact: true }) })
-    .getByAltText('Mochi profile photo (sample)', { exact: true });
+    .getByAltText('Mochi profile photo', { exact: true });
   await expect(main).toBeVisible();
   await expect(main).toHaveJSProperty('naturalWidth', 1);
   const source = await main.getAttribute('src');
@@ -139,7 +139,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
   await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
   const balancePhoto = page
     .getByRole('dialog')
-    .getByAltText('Mochi profile photo (sample)', { exact: true });
+    .getByAltText('Mochi profile photo', { exact: true });
   await expect(balancePhoto).toBeVisible();
   await expect(balancePhoto).toHaveAttribute('src', source!);
   expect(anonymous).toBe(0);
@@ -148,7 +148,7 @@ test('calendar uses authenticated profile photos consistently and clears them on
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   failPhoto = false;
   await page.getByRole('button', { name: 'Retry profile photos', exact: true }).click();
-  await expect(page.getByAltText('Coco profile photo (sample)', { exact: true })).toBeVisible();
+  await expect(page.getByAltText('Coco profile photo', { exact: true })).toBeVisible();
   const canonicalCustomer = uuid('local-photo-customer-0');
   const canonicalPet = uuid('local-photo-dog-0');
   await page.route('**/api/pet-search?*', (r) =>

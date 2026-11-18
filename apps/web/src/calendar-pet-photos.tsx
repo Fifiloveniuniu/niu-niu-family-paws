@@ -218,7 +218,7 @@ export function PetProfileAvatar({ name, className = '' }: { name: string; class
   React.useEffect(() => setBroken(false), [photo?.url]);
   const ready = photo?.status === 'ready' && !broken;
   const title = photo?.profile
-    ? (isChinese ? `示例档案：${photo.profile.name}` : `Demo profile: ${photo.profile.name}`) +
+    ? (isChinese ? `档案：${photo.profile.name}` : `Profile: ${photo.profile.name}`) +
       (photo.profile.photoCredit
         ? ` · ${photo.profile.photoCredit.creator} · ${photo.profile.photoCredit.license}`
         : '')
@@ -246,7 +246,7 @@ export function PetProfileAvatar({ name, className = '' }: { name: string; class
       {ready ? (
         <img
           src={photo.url}
-          alt={isChinese ? `${name} 的档案照片（示例）` : `${name} profile photo (sample)`}
+          alt={isChinese ? `${name} 的档案照片` : `${name} profile photo`}
           loading="lazy"
           decoding="async"
           onError={() => setBroken(true)}
