@@ -106,6 +106,7 @@ export default function HouseCalendar({
     creating?: boolean;
   } | null>(null);
   const [manage, setManage] = React.useState(false);
+  const [addressHouse, setAddressHouse] = React.useState<number | null>(null);
   const [admin, setAdmin] = React.useState(false);
   React.useEffect(
     () =>
@@ -752,6 +753,14 @@ export default function HouseCalendar({
                             </small>
                             <button
                               className="hc-settings"
+                              title={uiText('ui.houseCalendar.viewAddress')}
+                              aria-label={`${uiText('ui.houseCalendar.viewAddress')}: ${houseName(h)}`}
+                              onClick={() => setAddressHouse(h)}
+                            >
+                              <Icon name="address" />
+                            </button>
+                            <button
+                              className="hc-settings"
                               title={uiText('ui.houseCalendar.houseSettings')}
                               aria-label={`${uiText('ui.houseCalendar.houseSettings')}: ${houseName(h)}`}
                               onClick={() => setSettings({ house: h })}
@@ -1025,6 +1034,18 @@ export default function HouseCalendar({
                 onClose={() => setBalanceView(null)}
                 onSave={saveBalance}
               />
+            )}
+            {addressHouse !== null && (
+              <Modal
+                title={uiText('ui.houseCalendar.houseAddress')}
+                onClose={() => setAddressHouse(null)}
+              >
+                <h3>{houseName(addressHouse)}</h3>
+                <p>{config['h' + addressHouse]?.address || uiText('common.notAvailable')}</p>
+                {!config['h' + addressHouse]?.address?.trim() && (
+                  <p>{uiText('ui.houses.addressMissing')}</p>
+                )}
+              </Modal>
             )}
             {settings && settingValue && (
               <CalendarSettingsDialog

@@ -23,7 +23,11 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await page.route('**/api/customers?*', (route) =>
     route.fulfill({ json: { items: [], nextCursor: null } }),
   );
-  await page.route('**/api/profile', (route) => route.fulfill({ status: 204 }));
+  await page.route('**/api/profile', (route) =>
+    route.request().headers().authorization
+      ? route.fulfill({ status: 204 })
+      : route.fulfill({ status: 401, json: { code: 'unauthenticated' } }),
+  );
   await page.route('**/api/houses*', (route) => route.fulfill({ json: { items } }));
   await page.route('**/api/houses/*', (route) => {
     const body = route.request().postDataJSON();
@@ -67,7 +71,7 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   const dialog = page.getByRole('dialog').last();
   await expect(dialog.getByLabel('House name', { exact: true })).toBeFocused();
   await dialog.getByLabel('House name', { exact: true }).fill('Demo West');
-  await dialog.getByLabel('Address (optional)', { exact: true }).fill('Synthetic address');
+  await dialog.getByLabel('Address', { exact: true }).fill('Synthetic address');
   await dialog.getByLabel('Time zone', { exact: true }).fill('America/Los_Angeles');
   page.once('dialog', (d) => d.dismiss());
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
@@ -76,6 +80,7 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await expect(section.getByRole('heading', { name: 'Demo West', exact: true })).toBeVisible();
   await section.getByRole('button', { name: 'Add house', exact: true }).click();
   await dialog.getByLabel('House name', { exact: true }).fill('Demo East');
+  await dialog.getByLabel('Address', { exact: true }).fill('Synthetic east address');
   await dialog.getByLabel('Time zone', { exact: true }).fill('Asia/Shanghai');
   await dialog.getByRole('button', { name: 'Save house', exact: true }).click();
   await chooseOption(page.getByRole('combobox', { name: 'Show house', exact: true }), '');
@@ -119,4 +124,30 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await page
     .getByRole('region', { name: '房屋', exact: true })
     .screenshot({ path: 'test-results/houses-desktop-zh.png' });
+});
+
+test('calendar shows house address and requires one before saving house settings', async ({
+  page,
+}) => {
+  await page.route('**/api/profile', (route) =>
+    route.fulfill({ status: 401, json: { code: 'unauthenticated' } }),
+  );
+  await page.goto('/app/calendar/?lang=en');
+  await page.getByRole('button', { name: 'View address: House A', exact: true }).click();
+  let dialog = page.getByRole('dialog', { name: 'House address', exact: true });
+  await expect(dialog.getByText('N/A', { exact: true })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+  await page.getByRole('button', { name: 'House settings: House A', exact: true }).click();
+  dialog = page.getByRole('dialog', { name: 'House settings', exact: true });
+  await expect(dialog.getByLabel('Address', { exact: true })).toHaveAttribute('required', '');
+  await dialog.getByRole('button', { name: 'Apply changes', exact: true }).click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByLabel('Address', { exact: true }).fill('[TEST] Synthetic local address');
+  await dialog.getByRole('button', { name: 'Apply changes', exact: true }).click();
+  await page.getByRole('button', { name: 'View address: House A', exact: true }).click();
+  await expect(
+    page
+      .getByRole('dialog', { name: 'House address', exact: true })
+      .getByText('[TEST] Synthetic local address', { exact: true }),
+  ).toBeVisible();
 });

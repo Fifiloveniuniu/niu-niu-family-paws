@@ -62,6 +62,8 @@ test('house reads and writes require current verified admin and never trust an i
     });
   for (const body of [
     { ...input, name: ' ' },
+    { ...input, address: '' },
+    { ...input, address: '   ' },
     { ...input, timezone: 'PST' },
     { ...input, timezone: 'Not/AZone' },
     { ...input, actor: 'other' },

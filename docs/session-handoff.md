@@ -1,3 +1,7 @@
+## Required house addresses — local, 2026-11-18
+
+House API and both house editors require nonblank addresses. Existing missing addresses remain readable and are flagged for completion; Calendar has a location-pin address dialog showing N/A until configured. No business address invented. Build/API typecheck/formatting and46 unit tests passed,10 bilingual booking regressions and2 house browser workflows passed; actual localhost Chrome address dialog reviewed in isolated tab27. Date picker PR130 passed CI with verified signature. No deployment.
+
 ## Custom date/time pickers — local, 2026-11-18
 
 Replaced native booking, balance-validity and statement date fields with one custom calendar, shared dropdown exclusivity and matching cream/sage styling. Supports typed ISO dates, localized labels, month/year navigation, clamped month keyboard navigation, explicit time entry, validation, viewport-aware modal portals and empty values. Build/API typecheck/formatting and46 unit tests passed;15 booking/date browser tests plus6 final date cases passed across English/Chinese and phone/desktop. Actual localhost Chrome booking/calendar reviewed in isolated tab26. Translation PR127 and language-query PR128 passed CI, signatures verified and merged with gh stack; no deployment. Production workflow work remains in docs/current-implementation-request.md.

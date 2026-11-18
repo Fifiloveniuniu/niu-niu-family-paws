@@ -341,7 +341,7 @@
   "ui.calendarSettings.existingStaysNeedAtLeast": "现有托管至少需要",
   "ui.calendarSettings.capacityUnitsAtPeak": "容量单位（最高同时用量）。",
   "ui.calendarSettings.capacityIsWeightedNotAPetCountConfigurePet": "容量按规则计算，并非宠物数量。请在下方配置种类用量。同一时段仅容纳一种宠物。",
-  "ui.calendarSettings.addressOptional": "地址（选填）",
+  "ui.calendarSettings.addressOptional": "地址",
   "ui.calendarSettings.timeZone": "时区",
   "ui.calendarSettings.chooseAValidTimeZone": "请选择有效时区。",
   "ui.calendarSettings.theTimelineUsesYourBrowserSTimeZonePer": "时间轴使用浏览器时区，尚未关联各房屋的时区转换。",
@@ -511,7 +511,7 @@
     "add": "添加房屋",
     "edit": "编辑房屋",
     "name": "房屋名称",
-    "address": "地址（选填）",
+    "address": "地址",
     "timezone": "时区",
     "zoneHint": "请选择房屋所在地的时区。之后的寄养安排将使用该时区。",
     "zoneExample": "例如：America/Los_Angeles",
@@ -910,5 +910,8 @@
   "ui.datePicker.close": "关闭",
   "ui.datePicker.invalidDate": "请输入有效日期，格式为 YYYY-MM-DD。",
   "ui.datePicker.invalidDateTime": "请输入有效日期与时间，格式为 YYYY-MM-DD HH:mm。",
-  "ui.datePicker.applyDateTime": "应用日期与时间"
+  "ui.datePicker.applyDateTime": "应用日期与时间",
+  "ui.houses.addressMissing": "请编辑此房屋以补全必填地址。",
+  "ui.houseCalendar.viewAddress": "查看地址",
+  "ui.houseCalendar.houseAddress": "房屋地址"
 }
