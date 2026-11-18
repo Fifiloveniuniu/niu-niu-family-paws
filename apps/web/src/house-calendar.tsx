@@ -1,3 +1,4 @@
+import CalendarPetPreview from './calendar-pet-preview';
 import CustomSelect from './custom-select';
 import { initialStays } from './calendar-fixtures';
 import { sampleDateAtOffset, MILLISECONDS_PER_DAY } from './calendar-time';
@@ -15,7 +16,6 @@ import PetBalances from './pet-balances';
 import type { BalancePolicyTemplate } from './pet-balance';
 import {
   CalendarPhotoProvider,
-  PetProfileAvatar,
   CalendarPhotoStatus,
   CalendarProfileLink,
 } from './calendar-pet-photos';
@@ -855,9 +855,13 @@ export default function HouseCalendar({
                                       return (
                                         <div className="hc-pet" key={stay.id}>
                                           <div className="hc-label">
-                                            <PetProfileAvatar
+                                            <CalendarPetPreview
                                               name={stay.name}
-                                              className={'hc-avatar ' + stay.species}
+                                              species={stay.species}
+                                              owner={customerName(customerFor(stay.name))}
+                                              location={`${houseName(stay.house)} · ${roomName(stay.house, stay.room)}`}
+                                              status={status(stay)}
+                                              balance={balances[balanceKey(stay.name, 'boarding')]}
                                             />
                                             <div>
                                               <strong title={customerName(customerFor(stay.name))}>

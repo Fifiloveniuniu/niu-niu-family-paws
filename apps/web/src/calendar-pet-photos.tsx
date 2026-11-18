@@ -209,7 +209,15 @@ export function PhotoSignIn() {
     </div>
   );
 }
-export function PetProfileAvatar({ name, className = '' }: { name: string; className?: string }) {
+export function PetProfileAvatar({
+  name,
+  className = '',
+  showTitle = true,
+}: {
+  name: string;
+  className?: string;
+  showTitle?: boolean;
+}) {
   const { i18n } = useTranslation();
   const isChinese = i18n.language === 'zh';
   const photo = React.useContext(Photos)[name];
@@ -240,7 +248,7 @@ export function PetProfileAvatar({ name, className = '' }: { name: string; class
   return (
     <span
       className={'hc-profile-photo ' + className}
-      title={title}
+      title={showTitle ? title : undefined}
       data-photo-state={broken ? 'failed' : ready ? 'ready' : photo?.status || 'unavailable'}
     >
       {ready ? (
