@@ -17,7 +17,7 @@ import Houses from './houses';
 const HouseCalendar = React.lazy(() => import('./house-calendar'));
 import './workspace.css';
 import Profile from './profile';
-import LanguageSelector from './language-selector';
+import { MarketingHeader } from './marketing-shell';
 import Icon from './icons';
 import { confirmDiscardChanges } from './unsaved-changes';
 
@@ -321,18 +321,11 @@ export default function Portal({
             : 'LOCAL TEST · Demo records and sample photos only'}
         </aside>
       )}
-      <header className="portal-header">
-        <a className="brand" href="/home/">
-          <img
-            className="brand-logo"
-            src="/images/marketing/logo.png"
-            alt="Niu Niu Family Paws Sitting LLC"
-            width="1024"
-            height="1024"
-          />
-        </a>
-        <LanguageSelector onChange={onLanguageChange} />
-      </header>
+      <MarketingHeader
+        page="app"
+        onLanguageChange={onLanguageChange}
+        account={user ? accountControls : undefined}
+      />
       <main className={`portal${access === 'admin' ? ' portal-admin' : ''}`} id="main">
         <a className="portal-back" href="/home/">
           ← {labels.home}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import LanguageSelector from './language-selector';
+import { MarketingHeader } from './marketing-shell';
 
 /** An unauthenticated request checks API reachability without reading private records. */
 export async function checkApiConnection(signal: AbortSignal) {
@@ -64,18 +64,7 @@ export default function ApiConnection({
     <>
       {status !== 'ready' && (
         <>
-          <header className="portal-header">
-            <a className="brand" href="/home/">
-              <img
-                className="brand-logo"
-                src="/images/marketing/logo.png"
-                alt="Niu Niu Family Paws Sitting LLC"
-                width="1024"
-                height="1024"
-              />
-            </a>
-            <LanguageSelector onChange={onLanguageChange} />
-          </header>
+          <MarketingHeader page="app" onLanguageChange={onLanguageChange} />
           <main className="portal">
             <section className="portal-card" role={status === 'offline' ? 'alert' : 'status'}>
               <h1>
