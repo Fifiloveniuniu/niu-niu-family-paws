@@ -1,3 +1,4 @@
+import { englishCatalog, uiText, uiValue } from './i18n.ts';
 import CustomSelect from './custom-select';
 import { ApiError, apiJson } from './api-client';
 import React from 'react';
@@ -9,59 +10,8 @@ import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type House = components['schemas']['House'];
 type HouseWrite = components['schemas']['HouseWrite'];
-const englishMessages = {
-  title: 'Houses',
-  add: 'Add house',
-  edit: 'Edit house',
-  name: 'House name',
-  address: 'Address (optional)',
-  timezone: 'Time zone',
-  zoneHint: 'Choose the house’s local time zone. Future stays will use this time zone.',
-  zoneExample: 'For example: America/Los_Angeles',
-  filter: 'Show house',
-  all: 'All houses',
-  empty: 'No houses yet. Add your first house.',
-  save: 'Save house',
-  cancel: 'Cancel',
-  loading: 'Loading houses…',
-  saving: 'Saving…',
-  retry: 'Try again',
-  error: 'Couldn’t load or save houses. Please try again.',
-  conflict:
-    'This house changed elsewhere. Your draft is kept. Close it and reopen the latest house before saving.',
-  denied: 'Administrator access is required. Please sign in again.',
-  invalid: 'Check the house name and select a valid time zone.',
-  saved: 'House saved.',
-  noAddress: 'No address added',
-  intro: 'Manage each house’s name, address, and local time zone.',
-  choose: 'Choose a time zone',
-};
-const chineseMessages: typeof englishMessages = {
-  title: '房屋',
-  add: '添加房屋',
-  edit: '编辑房屋',
-  name: '房屋名称',
-  address: '地址（选填）',
-  timezone: '时区',
-  zoneHint: '请选择房屋所在地的时区。之后的寄养安排将使用该时区。',
-  zoneExample: '例如：America/Los_Angeles',
-  filter: '显示房屋',
-  all: '所有房屋',
-  empty: '暂无房屋，请添加第一处房屋。',
-  save: '保存房屋',
-  cancel: '取消',
-  loading: '正在加载房屋…',
-  saving: '正在保存…',
-  retry: '重试',
-  error: '未能加载或保存房屋，请重试。',
-  conflict: '房屋资料已在其他页面更新。草稿仍保留，请关闭后重新打开最新资料再修改。',
-  denied: '需要管理员权限，请重新登录。',
-  invalid: '请检查房屋名称，并选择有效的时区。',
-  saved: '房屋已保存。',
-  noAddress: '尚未填写地址',
-  intro: '管理各处房屋的名称、地址与当地时区。',
-  choose: '请选择时区',
-};
+const englishMessages = englishCatalog['ui.houses.labels'];
+
 function houseRequest<T>(path = '', body?: HouseWrite) {
   return apiJson<T>('/houses' + path, { body });
 }
@@ -73,7 +23,7 @@ export default function Houses({
   routable?: boolean;
 }) {
   const { i18n } = useTranslation();
-  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const labels = uiValue('ui.houses.labels', i18n.language);
   const [items, setItems] = React.useState<House[]>([]);
   const [selected, setSelected] = React.useState(initialSelected);
   React.useEffect(() => setSelected(initialSelected), [initialSelected]);
@@ -216,7 +166,7 @@ export default function Houses({
         !loading &&
         !error &&
         !items.some((house) => house.id === initialSelected) && (
-          <p role="alert">{i18n.language === 'zh' ? '未找到该房屋。' : 'Location not found.'}</p>
+          <p role="alert">{uiText('ui.houses.locationNotFound', {}, i18n.language)}</p>
         )}
       <ul className="house-list">
         {items

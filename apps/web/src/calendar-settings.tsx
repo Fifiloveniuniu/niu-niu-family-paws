@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
@@ -32,8 +33,7 @@ export default function CalendarSettingsDialog({
   minimumCapacity?: number;
 }) {
   const { i18n } = useTranslation();
-  const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   const [draft, setDraft] = React.useState(value);
   const form = React.useRef<HTMLFormElement>(null);
   const id = React.useId();
@@ -49,11 +49,11 @@ export default function CalendarSettingsDialog({
       title={
         creating
           ? room
-            ? translate('Add room', '添加房间')
-            : translate('Add house', '添加房屋')
+            ? uiText('ui.calendarSettings.addRoom')
+            : uiText('ui.calendarSettings.addHouse')
           : room
-            ? translate('Room settings', '房间设置')
-            : translate('House settings', '房屋设置')
+            ? uiText('ui.calendarSettings.roomSettings')
+            : uiText('ui.calendarSettings.houseSettings')
       }
       onClose={close}
     >
@@ -68,7 +68,7 @@ export default function CalendarSettingsDialog({
         <UnsavedChanges active={dirty} />
         {room && <p className="hc-setting-parent">{houseName}</p>}
         <label>
-          {room ? translate('Room name', '房间名称') : translate('House name', '房屋名称')}
+          {room ? uiText('ui.calendarSettings.roomName') : uiText('ui.calendarSettings.houseName')}
           <input
             required
             maxLength={120}
@@ -80,39 +80,33 @@ export default function CalendarSettingsDialog({
         {room ? (
           <>
             <label>
-              {translate('Maximum capacity', '最大容量')}
+              {uiText('ui.calendarSettings.maximumCapacity')}
               <input
                 type="number"
                 min={Math.max(1, minimumCapacity)}
                 step="0.01"
-                placeholder={translate('Not configured', '尚未配置')}
+                placeholder={uiText('ui.calendarSettings.notConfigured')}
                 value={draft.capacity}
                 onChange={(event) => field('capacity', event.target.value)}
               />
             </label>
             {minimumCapacity > 0 && (
               <p className="hc-setup-note">
-                {translate('Existing stays need at least', '现有托管至少需要')} {minimumCapacity}{' '}
-                {translate('capacity units at peak.', '容量单位（最高同时用量）。')}
+                {uiText('ui.calendarSettings.existingStaysNeedAtLeast')} {minimumCapacity}{' '}
+                {uiText('ui.calendarSettings.capacityUnitsAtPeak')}
               </p>
             )}
             <p className="hc-setup-note">
-              {translate(
-                'Capacity is weighted, not a pet count. Configure pet-type consumption below. One species at a time.',
-                '容量按规则计算，并非宠物数量。请在下方配置种类用量。同一时段仅容纳一种宠物。',
-              )}
+              {uiText('ui.calendarSettings.capacityIsWeightedNotAPetCountConfigurePet')}
             </p>
             {['dog', 'cat', 'rabbit'].map((species, index) => (
               <label key={species}>
-                {translate(
-                  ['Dog capacity usage', 'Cat capacity usage', 'Rabbit capacity usage'][index],
-                  ['狗容量用量', '猫容量用量', '兔容量用量'][index],
-                )}
+                {uiText('ui.calendarSettings.capacityUsage.' + species)}
                 <input
                   type="number"
                   min="0.01"
                   step="0.01"
-                  placeholder={translate('Not configured', '尚未配置')}
+                  placeholder={uiText('ui.calendarSettings.notConfigured')}
                   value={draft.costs?.[species] || ''}
                   onChange={(event) =>
                     setDraft({ ...draft, costs: { ...draft.costs, [species]: event.target.value } })
@@ -124,7 +118,7 @@ export default function CalendarSettingsDialog({
         ) : (
           <>
             <label>
-              {translate('Address (optional)', '地址（选填）')}
+              {uiText('ui.calendarSettings.addressOptional')}
               <input
                 maxLength={500}
                 value={draft.address}
@@ -132,7 +126,7 @@ export default function CalendarSettingsDialog({
               />
             </label>
             <label>
-              {translate('Time zone', '时区')}
+              {uiText('ui.calendarSettings.timeZone')}
               <input
                 required
                 list={id}
@@ -144,7 +138,7 @@ export default function CalendarSettingsDialog({
                     event.currentTarget.setCustomValidity('');
                   } catch {
                     event.currentTarget.setCustomValidity(
-                      translate('Choose a valid time zone.', '请选择有效时区。'),
+                      uiText('ui.calendarSettings.chooseAValidTimeZone'),
                     );
                   }
                 }}
@@ -156,10 +150,7 @@ export default function CalendarSettingsDialog({
               ))}
             </datalist>
             <p className="hc-setup-note">
-              {translate(
-                'The timeline uses your browser’s time zone. Per-house timeline conversion is not connected yet.',
-                '时间轴使用浏览器时区，尚未关联各房屋的时区转换。',
-              )}
+              {uiText('ui.calendarSettings.theTimelineUsesYourBrowserSTimeZonePer')}
             </p>
           </>
         )}
@@ -170,21 +161,23 @@ export default function CalendarSettingsDialog({
               className="hc-danger"
               disabled={!!removeReason}
               onClick={() => {
-                if (window.confirm(translate('Remove this empty location?', '移除此空位置？')))
+                if (window.confirm(uiText('ui.calendarSettings.removeThisEmptyLocation')))
                   onRemove();
               }}
             >
-              {room ? translate('Remove room', '移除房间') : translate('Remove house', '移除房屋')}
+              {room
+                ? uiText('ui.calendarSettings.removeRoom')
+                : uiText('ui.calendarSettings.removeHouse')}
             </button>
             {removeReason && <p className="hc-setup-note">{removeReason}</p>}
           </div>
         )}
         <div className="hc-settings-actions">
           <button className="hc-apply" type="submit">
-            {translate('Apply changes', '应用修改')}
+            {uiText('ui.calendarSettings.applyChanges')}
           </button>
           <button className="hc-manage" type="button" onClick={close}>
-            {translate('Cancel', '取消')}
+            {uiText('ui.calendarSettings.cancel')}
           </button>
         </div>
       </form>

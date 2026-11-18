@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import Modal from './modal';
@@ -7,7 +8,7 @@ export default function SiteAccountLink() {
   const [open, setOpen] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState('');
-  const zh = i18n.language === 'zh';
+
   async function signIn() {
     setBusy(true);
     setError('');
@@ -23,11 +24,7 @@ export default function SiteAccountLink() {
     } catch (cause) {
       const code = (cause as { code?: string }).code;
       if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request')
-        setError(
-          zh
-            ? '无法完成登录。请允许 Google 弹出窗口后重试。'
-            : 'Sign-in could not finish. Allow the Google popup and try again.',
-        );
+        setError(uiText('ui.siteAccountLink.signInCouldNotFinishAllowTheGooglePopup'));
     } finally {
       setBusy(false);
     }
@@ -71,18 +68,14 @@ export default function SiteAccountLink() {
           <circle cx="12" cy="8" r="4" />
           <path d="M4 21v-2a8 8 0 0 1 16 0v2" />
         </svg>
-        {i18n.language === 'zh'
-          ? signedIn
-            ? '打开应用'
-            : '登录'
-          : signedIn
-            ? 'Open app'
-            : 'Sign in'}
+        {signedIn
+          ? uiText('ui.siteAccountLink.openApp', {}, i18n.language)
+          : uiText('ui.siteAccountLink.signIn', {}, i18n.language)}
       </a>
       {open &&
         createPortal(
           <Modal
-            title={zh ? '欢迎回来' : 'Welcome back'}
+            title={uiText('ui.siteAccountLink.welcomeBack')}
             onClose={() => setOpen(false)}
             disabled={busy}
             className="marketing-sign-in"
@@ -90,24 +83,14 @@ export default function SiteAccountLink() {
             <span className="sign-in-flower" aria-hidden="true">
               ✿
             </span>
-            <p>
-              {zh
-                ? '使用您的 Google 账号，照顾每一个小爪印。'
-                : 'Your little world of care, all in one place.'}
-            </p>
+            <p>{uiText('ui.siteAccountLink.yourLittleWorldOfCareAllInOnePlace')}</p>
             <button className="button" disabled={busy} onClick={() => void signIn()}>
               {busy
-                ? zh
-                  ? '正在登录…'
-                  : 'Signing in…'
-                : zh
-                  ? '使用 Google 登录'
-                  : 'Continue with Google'}
+                ? uiText('ui.siteAccountLink.signingIn')
+                : uiText('ui.siteAccountLink.continueWithGoogle')}
             </button>
             <p className="sign-in-note">
-              {zh
-                ? '家长与团队成员使用同一个安全登录入口。'
-                : 'One secure sign-in for pet families and our team.'}
+              {uiText('ui.siteAccountLink.oneSecureSignInForPetFamiliesAndOur')}
             </p>
             {error && <p role="alert">{error}</p>}
           </Modal>,

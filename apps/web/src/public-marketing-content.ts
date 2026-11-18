@@ -1,6 +1,6 @@
 import { marketingPreview, previewContent } from './marketing-preview.ts';
 import { useEffect, useState } from 'react';
-export type PublicText = { en: string; zh: string };
+export type PublicText = { en: string; zh: string; [language: string]: string };
 export type PublicStory = { quote: PublicText; attribution: PublicText };
 export type PublicPhoto = { src: string; caption: PublicText; alt: PublicText };
 export type StatKey = 'petsCaredFor' | 'groomingAppointments' | 'groomersTrained';
@@ -31,7 +31,18 @@ const localized = (value: unknown): PublicText | undefined => {
     typeof data.zh === 'string' &&
     data.zh.trim() &&
     data.zh.length <= 2000
-    ? { en: data.en, zh: data.zh }
+    ? {
+        ...Object.fromEntries(
+          Object.entries(data).filter(
+            ([key, text]) =>
+              /^[a-z]{2,3}(?:-[a-z0-9]+)*$/i.test(key) &&
+              typeof text === 'string' &&
+              text.length <= 2000,
+          ),
+        ),
+        en: data.en,
+        zh: data.zh,
+      }
     : undefined;
 };
 /** Only explicitly approved public content; never read customer directories or private profiles. */

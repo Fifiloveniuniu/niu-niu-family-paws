@@ -97,7 +97,11 @@ export default function CustomSelect(props: Props) {
       if (!root.current?.contains(event.target as Node)) setOpen(false);
     };
     const scrolled = (event: Event) => {
-      if (!(event.target instanceof Node) || !menu.contains(event.target)) setOpen(false);
+      if (!(event.target instanceof Node) || !menu.contains(event.target)) {
+        const rect = trigger.current!.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > innerHeight) setOpen(false);
+        else position();
+      }
     };
     document.addEventListener('pointerdown', outside);
     window.addEventListener('resize', position);

@@ -1,3 +1,4 @@
+import { localeFor, uiText } from './i18n.ts';
 import { easeOutExpo } from './marketing-easing';
 import { marketingPreview } from './marketing-preview';
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
@@ -91,42 +92,38 @@ export function HomeSpaces() {
       tabIndex={0}
     >
       <div>
-        <p className="eyebrow">{zh ? '看看我们的小天地' : 'A LITTLE LOOK AROUND'}</p>
+        <p className="eyebrow">{uiText('ui.marketingHomeSections.aLittleLookAround')}</p>
         <h2 id="home-spaces-title">
-          {zh ? '小小天地，满满心意。' : 'Little spaces. Thoughtful details.'}
+          {uiText('ui.marketingHomeSections.littleSpacesThoughtfulDetails')}
         </h2>
-        <p>
-          {zh
-            ? '走进照护家庭与美容店，了解陪伴与学习发生的地方。'
-            : 'A peek at our care homes and grooming shop—the places for everyday care and new beginnings.'}
-        </p>
+        <p>{uiText('ui.marketingHomeSections.aPeekAtOurCareHomesAndGroomingShop')}</p>
         <a className="text-link" href="/spaces/">
-          {zh ? '走进我们的小天地' : 'Explore our spaces'} ↗
+          {uiText('ui.marketingHomeSections.exploreOurSpaces')} ↗
         </a>
         <a className="text-link" href="/academy/">
-          {zh ? '走进美容师课堂' : 'Meet the academy'} ↗
+          {uiText('ui.marketingHomeSections.meetTheAcademy')} ↗
         </a>
       </div>
       <div className="home-photo-pair">
         <figure data-space-photo="left">
           <img
             src="/images/marketing/grooming.png"
-            alt={zh ? '宠物美容护理' : 'Pet grooming and coat care'}
+            alt={uiText('ui.marketingHomeSections.petGroomingAndCoatCare')}
             width="1049"
             height="1400"
             loading="lazy"
           />
-          <figcaption>{zh ? '美容台上的小日常' : 'At the grooming table'}</figcaption>
+          <figcaption>{uiText('ui.marketingHomeSections.atTheGroomingTable')}</figcaption>
         </figure>
         <figure data-space-photo="right">
           <img
             src="/images/marketing/washing.png"
-            alt={zh ? '温柔的洗护时光' : 'A gentle wash and coat care'}
+            alt={uiText('ui.marketingHomeSections.aGentleWashAndCoatCare')}
             width="1049"
             height="1400"
             loading="lazy"
           />
-          <figcaption>{zh ? '温柔的洗护时光' : 'A little time for gentle care'}</figcaption>
+          <figcaption>{uiText('ui.marketingHomeSections.aLittleTimeForGentleCare')}</figcaption>
         </figure>
       </div>
     </section>
@@ -167,9 +164,9 @@ export function HomeNumbers() {
   const zh = i18n.language === 'zh';
   const content = usePublicMarketingContent();
   const metrics = [
-    ['petsCaredFor', zh ? '照顾过的小伙伴' : 'Pets cared for'],
-    ['groomingAppointments', zh ? '完成的美容服务' : 'Grooming appointments'],
-    ['groomersTrained', zh ? '培训过的美容师' : 'Groomers trained'],
+    ['petsCaredFor', uiText('ui.marketingHomeSections.petsCaredFor')],
+    ['groomingAppointments', uiText('ui.marketingHomeSections.groomingAppointments')],
+    ['groomersTrained', uiText('ui.marketingHomeSections.groomersTrained')],
   ] as const;
   return (
     <section
@@ -180,15 +177,9 @@ export function HomeNumbers() {
       aria-labelledby="home-numbers-title"
     >
       <div className="home-section-intro">
-        <p className="eyebrow">{zh ? '小爪印，成长的故事' : 'LITTLE PAWS, GROWING STORIES'}</p>
-        <h2 id="home-numbers-title">
-          {zh ? '每一份陪伴，都值得记录。' : 'Every little one counts.'}
-        </h2>
-        <p>
-          {zh
-            ? '每一次照顾、每一份成长，都是我们故事的一部分。'
-            : 'Every pet, every fresh coat, every new beginning. All part of our story.'}
-        </p>
+        <p className="eyebrow">{uiText('ui.marketingHomeSections.littlePawsGrowingStories')}</p>
+        <h2 id="home-numbers-title">{uiText('ui.marketingHomeSections.everyLittleOneCounts')}</h2>
+        <p>{uiText('ui.marketingHomeSections.everyPetEveryFreshCoatEveryNewBeginningAll')}</p>
       </div>
       <div className="number-grid">
         {metrics.map(([key, label]) => (
@@ -201,25 +192,21 @@ export function HomeNumbers() {
               <h3>{label}</h3>
               <p>
                 {marketingPreview
-                  ? zh
-                    ? '陪伴每一个小小成长'
-                    : 'Little moments. Growing stories.'
+                  ? uiText('ui.marketingHomeSections.littleMomentsGrowingStories')
                   : content.stats[key]
-                    ? (zh ? '已核实 · 截至 ' : 'Verified · as of ') +
-                      new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', {
+                    ? uiText('ui.marketingHomeSections.verifiedAsOf') +
+                      new Intl.DateTimeFormat(localeFor(i18n.language), {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
                       }).format(new Date(content.stats[key]!.asOf))
-                    : zh
-                      ? '核实后的数字即将公布'
-                      : 'Verified totals coming soon'}
+                    : uiText('ui.marketingHomeSections.verifiedTotalsComingSoon')}
               </p>
             </div>
           </article>
         ))}
       </div>
-      <p className="cute-note">{zh ? '小小爪印，大大的故事。' : 'Small paws. A growing story.'}</p>
+      <p className="cute-note">{uiText('ui.marketingHomeSections.smallPawsAGrowingStory')}</p>
     </section>
   );
 }
@@ -236,24 +223,20 @@ export function HomeStories() {
       aria-labelledby="home-stories-title"
     >
       <div className="home-section-intro">
-        <p className="eyebrow">{zh ? '来自共同的故事' : 'FROM ONE FAMILY TO ANOTHER'}</p>
+        <p className="eyebrow">{uiText('ui.marketingHomeSections.fromOneFamilyToAnother')}</p>
         <h2 id="home-stories-title">
-          {zh ? '家长们的暖心分享。' : 'Kind words from our families.'}
+          {uiText('ui.marketingHomeSections.kindWordsFromOurFamilies')}
         </h2>
-        <p>
-          {zh
-            ? '那些温暖的小瞬间，值得用自己的话说出来。'
-            : 'The little moments, told by the people who know them best.'}
-        </p>
+        <p>{uiText('ui.marketingHomeSections.theLittleMomentsToldByThePeopleWhoKnow')}</p>
       </div>
       <StoryQuotes stories={content.testimonials.slice(0, 1)} preview />
       {content.testimonials.length > 0 && (
         <a className="text-link" href="/about/#family-stories">
-          {zh ? '更多家长的故事' : 'More family stories'} ↗
+          {uiText('ui.marketingHomeSections.moreFamilyStories')} ↗
         </a>
       )}
       <a className="text-link" href="/academy/">
-        {zh ? '了解美容师成长课堂' : 'Explore Grooming Academy'} ↗
+        {uiText('ui.marketingHomeSections.exploreGroomingAcademy')} ↗
       </a>
     </section>
   );
@@ -267,15 +250,15 @@ export function HomeServiceExtras() {
         {
           id: 'grooming',
           kind: 'grooming' as const,
-          name: zh ? '宠物美容' : 'Pet grooming',
-          tag: zh ? '清爽可爱，刚刚好。' : 'A little freshen-up.',
+          name: uiText('ui.marketingHomeSections.petGrooming'),
+          tag: uiText('ui.marketingHomeSections.aLittleFreshenUp'),
           href: '/services/#grooming',
         },
         {
           id: 'training',
           kind: 'academy' as const,
-          name: zh ? '美容师成长课堂' : 'Grooming Academy',
-          tag: zh ? '每一剪，都是成长。' : 'Small steps. Skilled hands.',
+          name: uiText('ui.marketingHomeSections.groomingAcademy'),
+          tag: uiText('ui.marketingHomeSections.smallStepsSkilledHands'),
           href: '/academy/',
         },
       ].map((service) => (
@@ -284,7 +267,7 @@ export function HomeServiceExtras() {
             <ServiceSymbol kind={service.kind} />
           </span>
           <span>
-            <span className="eyebrow">{zh ? '新的开始' : 'A NEW CHAPTER'}</span>
+            <span className="eyebrow">{uiText('ui.marketingHomeSections.aNewChapter')}</span>
             <h3>{service.name}</h3>
             <p>{service.tag}</p>
           </span>

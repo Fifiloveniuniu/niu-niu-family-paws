@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Icon from './icons';
@@ -68,8 +69,8 @@ export default function Modal({
         <button
           className="icon-button"
           type="button"
-          aria-label={i18n.language === 'zh' ? '关闭' : 'Close'}
-          title={i18n.language === 'zh' ? '关闭' : 'Close'}
+          aria-label={uiText('ui.modal.close', {}, i18n.language)}
+          title={uiText('ui.modal.close', {}, i18n.language)}
           disabled={disabled}
           onClick={onClose}
         >

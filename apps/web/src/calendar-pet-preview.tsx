@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PetProfileAvatar, CalendarProfileLink } from './calendar-pet-photos';
@@ -22,8 +23,7 @@ export default function CalendarPetPreview({
   balance?: PetBalance;
 }) {
   const { i18n } = useTranslation();
-  const zh = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (zh ? cn : en);
+
   const [open, setOpen] = useDropdownState(false);
   const root = React.useRef<HTMLSpanElement>(null);
   const trigger = React.useRef<HTMLButtonElement>(null);
@@ -107,7 +107,7 @@ export default function CalendarPetPreview({
         ref={trigger}
         type="button"
         className="hc-pet-preview-trigger"
-        aria-label={`${translate('View pet details', '查看宠物详情')}: ${name}`}
+        aria-label={`${uiText('ui.calendarPetPreview.viewPetDetails')}: ${name}`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={open ? id : undefined}
@@ -145,7 +145,7 @@ export default function CalendarPetPreview({
           <button
             type="button"
             className="hc-pet-preview-close"
-            aria-label={translate('Close pet details', '关闭宠物详情')}
+            aria-label={uiText('ui.calendarPetPreview.closePetDetails')}
             onClick={() => close(true)}
           >
             <Icon name="close" />
@@ -155,44 +155,45 @@ export default function CalendarPetPreview({
             <div>
               <h3 id={`${id}-title`}>{name}</h3>
               <p>
-                {translate(
-                  species === 'dog' ? 'Dog' : species === 'cat' ? 'Cat' : 'Rabbit',
-                  species === 'dog' ? '狗' : species === 'cat' ? '猫' : '兔',
-                )}
+                {species === 'dog'
+                  ? uiText('ui.calendarPetPreview.dog')
+                  : species === 'cat'
+                    ? uiText('ui.calendarPetPreview.cat')
+                    : uiText('ui.calendarPetPreview.rabbit')}
               </p>
               <p>{status}</p>
             </div>
           </div>
           <dl>
             <div>
-              <dt>{translate('Owner', '家长')}</dt>
+              <dt>{uiText('ui.calendarPetPreview.owner')}</dt>
               <dd>{owner}</dd>
             </div>
             <div>
-              <dt>{translate('Weight', '体重')}</dt>
+              <dt>{uiText('ui.calendarPetPreview.weight')}</dt>
               <dd>N/A</dd>
             </div>
             <div>
-              <dt>{translate('Boarding balance', '寄养余额')}</dt>
-              <dd>{balance ? `${balance.days} ${translate('days', '天')}` : 'N/A'}</dd>
+              <dt>{uiText('ui.calendarPetPreview.boardingBalance')}</dt>
+              <dd>{balance ? `${balance.days} ${uiText('ui.calendarPetPreview.days')}` : 'N/A'}</dd>
             </div>
             {balance && (
               <div>
-                <dt>{translate('Valid dates', '有效期')}</dt>
+                <dt>{uiText('ui.calendarPetPreview.validDates')}</dt>
                 <dd>
                   {balance.validFrom} – {balance.validThrough}
                 </dd>
               </div>
             )}
             <div>
-              <dt>{translate('Location', '房屋与房间')}</dt>
+              <dt>{uiText('ui.calendarPetPreview.location')}</dt>
               <dd>{location}</dd>
             </div>
           </dl>
           <div className="hc-pet-preview-links">
             <CalendarProfileLink name={name} />
             <a href={'/app/balances/?pet=' + encodeURIComponent(name)}>
-              {translate('View balance', '查看余额')}
+              {uiText('ui.calendarPetPreview.viewBalance')}
             </a>
           </div>
         </div>

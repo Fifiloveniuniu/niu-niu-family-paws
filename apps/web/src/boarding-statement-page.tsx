@@ -1,3 +1,4 @@
+import { localeFor, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,8 +39,8 @@ export default function BoardingStatement({
 }) {
   const { i18n } = useTranslation();
   const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
-  const locale = isChinese ? 'zh-CN' : 'en-US';
+
+  const locale = localeFor(i18n.language);
   const [localFilters, setLocalFilters] = React.useState(() => ({
     ...emptyStatementFilters,
     pet: pets.some((p) => p.name === initialPet) ? initialPet! : 'all',
@@ -53,9 +54,9 @@ export default function BoardingStatement({
   const valid = validStatementRange(filters.from, filters.through);
   const filtered = JSON.stringify(filters) !== JSON.stringify(emptyStatementFilters);
   const labels: Record<StatementKind, string> = {
-    added: translate('Balance added', '增加余额'),
-    correction: translate('Balance correction', '余额更正'),
-    terms: translate('Policy update', '规则更新'),
+    added: uiText('ui.boardingStatementPage.balanceAdded'),
+    correction: uiText('ui.boardingStatementPage.balanceCorrection'),
+    terms: uiText('ui.boardingStatementPage.policyUpdate'),
   };
   const number = (value: number) => value.toLocaleString(locale);
   const time = (value: string) =>
@@ -70,15 +71,15 @@ export default function BoardingStatement({
     const csv = statementCsv(
       rows,
       [
-        translate('Recorded at (UTC)', '记录时间（UTC）'),
-        translate('Reference', '流水号'),
-        translate('Customer', '客户'),
-        translate('Pet', '宠物'),
-        translate('Activity', '类型'),
-        translate('Change (days)', '变动（天）'),
-        translate('Before (days)', '变动前（天）'),
-        translate('After (days)', '变动后（天）'),
-        translate('Note', '备注'),
+        uiText('ui.boardingStatementPage.recordedAtUtc'),
+        uiText('ui.boardingStatementPage.reference'),
+        uiText('ui.boardingStatementPage.customer'),
+        uiText('ui.boardingStatementPage.pet'),
+        uiText('ui.boardingStatementPage.activity'),
+        uiText('ui.boardingStatementPage.changeDays'),
+        uiText('ui.boardingStatementPage.beforeDays'),
+        uiText('ui.boardingStatementPage.afterDays'),
+        uiText('ui.boardingStatementPage.note'),
       ],
       labels,
     );
@@ -94,83 +95,88 @@ export default function BoardingStatement({
       <div className="hc-page-toolbar">
         <div className="hc-statement-actions">
           <button className="hc-manage" disabled={!rows.length || !valid} onClick={download}>
-            {translate('Export CSV', '导出 CSV')}
+            {uiText('ui.boardingStatementPage.exportCsv')}
           </button>
           {!hideFilters && (
             <button
               className="hc-apply"
               onClick={() => onManageBalance(filters.pet === 'all' ? '' : filters.pet)}
             >
-              {translate('Boarding balances', '寄养余额')}
+              {uiText('ui.boardingStatementPage.boardingBalances')}
             </button>
           )}
         </div>
       </div>
       <p className="hc-statement-note">
-        {translate(
-          'Recorded balance additions and corrections. Booking charges and cancellation restorations are not connected yet.',
-          '显示已记录的余额增加及更正，尚未接入预约扣减与取消返还。',
+        {uiText(
+          'ui.boardingStatementPage.recordedBalanceAdditionsAndCorrectionsBookingChargesAndCancellation',
         )}
       </p>
       {!hideFilters && <StatementFilterPanel pets={pets} filters={filters} onChange={setFilters} />}
-      <div className="hc-statement-totals" aria-label={translate('Filtered totals', '筛选后合计')}>
+      <div
+        className="hc-statement-totals"
+        aria-label={uiText('ui.boardingStatementPage.filteredTotals')}
+      >
         <div>
-          <small>{translate('Added', '增加')}</small>
+          <small>{uiText('ui.boardingStatementPage.added')}</small>
           <strong>
-            {valid ? number(totals.added) : 'N/A'} <span>{translate('days', '天')}</span>
+            {valid ? number(totals.added) : 'N/A'}{' '}
+            <span>{uiText('ui.boardingStatementPage.days')}</span>
           </strong>
         </div>
         <div>
-          <small>{translate('Removed by corrections', '更正减少')}</small>
+          <small>{uiText('ui.boardingStatementPage.removedByCorrections')}</small>
           <strong>
-            {valid ? number(totals.removed) : 'N/A'} <span>{translate('days', '天')}</span>
+            {valid ? number(totals.removed) : 'N/A'}{' '}
+            <span>{uiText('ui.boardingStatementPage.days')}</span>
           </strong>
         </div>
         <div>
-          <small>{translate('Net change', '净变动')}</small>
+          <small>{uiText('ui.boardingStatementPage.netChange')}</small>
           <strong>
-            {valid ? number(totals.net) : 'N/A'} <span>{translate('days', '天')}</span>
+            {valid ? number(totals.net) : 'N/A'}{' '}
+            <span>{uiText('ui.boardingStatementPage.days')}</span>
           </strong>
         </div>
       </div>
       <div
         className="hc-statement-table-wrap"
         role="region"
-        aria-label={translate('Transaction table', '交易明细表')}
+        aria-label={uiText('ui.boardingStatementPage.transactionTable')}
         tabIndex={0}
       >
         <div className="hc-statement-table-title">
           <h2>
-            {translate('Transaction history', '交易记录')} <span>{rows.length}</span>
+            {uiText('ui.boardingStatementPage.transactionHistory')} <span>{rows.length}</span>
           </h2>
           <small>
-            {translate('Local time', '当地时间')} ·{' '}
+            {uiText('ui.boardingStatementPage.localTime')} ·{' '}
             {Intl.DateTimeFormat().resolvedOptions().timeZone}
           </small>
         </div>
         <table className="hc-statement-table">
           <thead>
             <tr>
-              <th>{translate('Recorded', '记录时间')}</th>
-              <th>{translate('Pet / customer', '宠物 / 客户')}</th>
-              <th>{translate('Activity', '类型')}</th>
-              <th>{translate('Change (days)', '变动（天）')}</th>
-              <th>{translate('Pet balance after', '该宠物变动后余额')}</th>
+              <th>{uiText('ui.boardingStatementPage.recorded')}</th>
+              <th>{uiText('ui.boardingStatementPage.petCustomer')}</th>
+              <th>{uiText('ui.boardingStatementPage.activity')}</th>
+              <th>{uiText('ui.boardingStatementPage.changeDays')}</th>
+              <th>{uiText('ui.boardingStatementPage.petBalanceAfter')}</th>
               <th>
-                <span className="hc-sr-only">{translate('Details', '详情')}</span>
+                <span className="hc-sr-only">{uiText('ui.boardingStatementPage.details')}</span>
               </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((entry) => (
               <tr className="hc-statement-row" key={entry.pet + entry.id}>
-                <td data-label={translate('Recorded', '记录时间')}>
+                <td data-label={uiText('ui.boardingStatementPage.recorded')}>
                   <span>{time(entry.at)}</span>
                   <small className="hc-tx-ref" title={entry.id}>
                     {entry.id.slice(0, 8)}
                   </small>
                 </td>
-                <td data-label={translate('Pet / customer', '宠物 / 客户')}>
+                <td data-label={uiText('ui.boardingStatementPage.petCustomer')}>
                   <div className="hc-statement-pet">
                     <PetProfileAvatar name={entry.pet} className="hc-guest-avatar" />
                     <div>
@@ -179,27 +185,27 @@ export default function BoardingStatement({
                     </div>
                   </div>
                 </td>
-                <td data-label={translate('Activity', '类型')}>
+                <td data-label={uiText('ui.boardingStatementPage.activity')}>
                   <span className={'hc-tx-kind ' + entry.kind}>{labels[entry.kind]}</span>
                   {entry.reason && <small className="hc-tx-note">{entry.reason}</small>}
                 </td>
                 <td
-                  data-label={translate('Change (days)', '变动（天）')}
+                  data-label={uiText('ui.boardingStatementPage.changeDays')}
                   className={entry.delta > 0 ? 'hc-tx-positive' : ''}
                 >
                   {entry.delta > 0 ? '+' : ''}
                   {number(entry.delta)}
                 </td>
-                <td data-label={translate('Pet balance after', '该宠物变动后余额')}>
-                  {number(entry.after)} {translate('days', '天')}
+                <td data-label={uiText('ui.boardingStatementPage.petBalanceAfter')}>
+                  {number(entry.after)} {uiText('ui.boardingStatementPage.days')}
                 </td>
                 <td>
                   <button
                     className="hc-manage"
-                    aria-label={`${translate('View transaction', '查看交易')}: ${entry.pet} ${entry.id}`}
+                    aria-label={`${uiText('ui.boardingStatementPage.viewTransaction')}: ${entry.pet} ${entry.id}`}
                     onClick={() => setSelected(entry)}
                   >
-                    {translate('View', '查看')}
+                    {uiText('ui.boardingStatementPage.view')}
                   </button>
                 </td>
               </tr>
@@ -210,26 +216,22 @@ export default function BoardingStatement({
                   <div className="hc-statement-empty">
                     <h3>
                       {entries.length
-                        ? translate('No matching transactions', '没有符合筛选条件的交易')
-                        : translate('No transactions recorded yet', '尚无交易记录')}
+                        ? uiText('ui.boardingStatementPage.noMatchingTransactions')
+                        : uiText('ui.boardingStatementPage.noTransactionsRecordedYet')}
                     </h3>
                     <p>
                       {entries.length
-                        ? translate(
-                            'Change or reset your filters to see other entries.',
-                            '调整或重置筛选以查看其他记录。',
+                        ? uiText(
+                            'ui.boardingStatementPage.changeOrResetYourFiltersToSeeOtherEntries',
                           )
-                        : translate(
-                            'Add boarding balance to a pet to start their statement.',
-                            '为宠物增加寄养余额，即可开始记录明细。',
-                          )}
+                        : uiText('ui.boardingStatementPage.addBoardingBalanceToAPetToStartTheir')}
                     </p>
                     {filtered && (
                       <button
                         className="hc-manage"
                         onClick={() => setFilters({ ...emptyStatementFilters })}
                       >
-                        {translate('Clear filters', '清除筛选')}
+                        {uiText('ui.boardingStatementPage.clearFilters')}
                       </button>
                     )}
                   </div>
@@ -240,15 +242,12 @@ export default function BoardingStatement({
         </table>
       </div>
       <p className="hc-statement-footnote">
-        {translate(
-          'Totals reflect the filtered entries. Each row keeps that pet’s recorded balance after the transaction; it is not recalculated from the visible rows.',
-          '合计仅包含筛选后的记录。每行保留该宠物交易后的原始余额，不会根据当前可见记录重新计算。',
-        )}
+        {uiText('ui.boardingStatementPage.totalsReflectTheFilteredEntriesEachRowKeepsThat')}
       </p>
       {selected && (
         <Modal
           className="hc-transaction-dialog"
-          title={translate('Transaction details', '交易详情')}
+          title={uiText('ui.boardingStatementPage.transactionDetails')}
           onClose={() => setSelected(null)}
         >
           <div className="hc-transaction-heading">
@@ -260,40 +259,38 @@ export default function BoardingStatement({
           </div>
           <dl className="hc-transaction-details">
             <div>
-              <dt>{translate('Activity', '类型')}</dt>
+              <dt>{uiText('ui.boardingStatementPage.activity')}</dt>
               <dd>{labels[selected.kind]}</dd>
             </div>
             <div>
-              <dt>{translate('Recorded', '记录时间')}</dt>
+              <dt>{uiText('ui.boardingStatementPage.recorded')}</dt>
               <dd>{time(selected.at)}</dd>
             </div>
             <div>
-              <dt>{translate('Reference', '流水号')}</dt>
+              <dt>{uiText('ui.boardingStatementPage.reference')}</dt>
               <dd>{selected.id}</dd>
             </div>
             <div>
-              <dt>{translate('Change', '变动')}</dt>
+              <dt>{uiText('ui.boardingStatementPage.change')}</dt>
               <dd>
                 {selected.delta > 0 ? '+' : ''}
-                {number(selected.delta)} {translate('days', '天')}
+                {number(selected.delta)} {uiText('ui.boardingStatementPage.days')}
               </dd>
             </div>
             <div>
-              <dt>{translate('Before → after', '变动前 → 变动后')}</dt>
+              <dt>{uiText('ui.boardingStatementPage.beforeAfter')}</dt>
               <dd>
-                {number(selected.before)} → {number(selected.after)} {translate('days', '天')}
+                {number(selected.before)} → {number(selected.after)}{' '}
+                {uiText('ui.boardingStatementPage.days')}
               </dd>
             </div>
             <div>
-              <dt>{translate('Note', '备注')}</dt>
-              <dd>{selected.reason || translate('No note added', '未填写备注')}</dd>
+              <dt>{uiText('ui.boardingStatementPage.note')}</dt>
+              <dd>{selected.reason || uiText('ui.boardingStatementPage.noNoteAdded')}</dd>
             </div>
           </dl>
           <p className="hc-balance-preview">
-            {translate(
-              'Balance adjustment only. This entry has no linked boarding booking or payment.',
-              '仅为余额调整，此记录未关联寄养预约或付款。',
-            )}
+            {uiText('ui.boardingStatementPage.balanceAdjustmentOnlyThisEntryHasNoLinkedBoarding')}
           </p>
         </Modal>
       )}
@@ -313,26 +310,26 @@ export function StatementFilterPanel({
 }) {
   const { i18n } = useTranslation();
   const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   const setFilters = onChange;
   const valid = validStatementRange(filters.from, filters.through);
   const filtered = JSON.stringify(filters) !== JSON.stringify(emptyStatementFilters);
   const labels: Record<StatementKind, string> = {
-    added: translate('Balance added', '增加余额'),
-    correction: translate('Balance correction', '余额更正'),
-    terms: translate('Policy update', '规则更新'),
+    added: uiText('ui.boardingStatementPage.balanceAdded'),
+    correction: uiText('ui.boardingStatementPage.balanceCorrection'),
+    terms: uiText('ui.boardingStatementPage.policyUpdate'),
   };
   return (
     <section
       className="hc-statement-filters"
-      aria-label={translate('Statement filters', '明细筛选')}
+      aria-label={uiText('ui.boardingStatementPage.statementFilters')}
     >
       <div className="hc-filters-heading">
-        <h2>{translate('Filters', '筛选')}</h2>
+        <h2>{uiText('ui.boardingStatementPage.filters')}</h2>
         <button
           className="hc-clear"
-          aria-label={translate('Reset statement filters', '重置明细筛选')}
-          title={translate('Reset statement filters', '重置明细筛选')}
+          aria-label={uiText('ui.boardingStatementPage.resetStatementFilters')}
+          title={uiText('ui.boardingStatementPage.resetStatementFilters')}
           disabled={!filtered}
           onClick={() => setFilters({ ...emptyStatementFilters })}
         >
@@ -341,15 +338,15 @@ export function StatementFilterPanel({
       </div>
       <div>
         <label>
-          {translate('Customer', '客户')}
+          {uiText('ui.boardingStatementPage.customer')}
           <CustomSelect
-            aria-label={translate('Statement customer', '明细客户')}
+            aria-label={uiText('ui.boardingStatementPage.statementCustomer')}
             value={filters.customer}
             onChange={(event) =>
               setFilters({ ...filters, customer: event.target.value, pet: 'all' })
             }
           >
-            <option value="all">{translate('All customers', '全部客户')}</option>
+            <option value="all">{uiText('ui.boardingStatementPage.allCustomers')}</option>
             {[...new Map(pets.map((p) => [p.customer, p.customerName])).entries()].map(
               ([id, name]) => (
                 <option key={id} value={id}>
@@ -360,13 +357,13 @@ export function StatementFilterPanel({
           </CustomSelect>
         </label>
         <label>
-          {translate('Pet', '宠物')}
+          {uiText('ui.boardingStatementPage.pet')}
           <CustomSelect
-            aria-label={translate('Statement pet', '明细宠物')}
+            aria-label={uiText('ui.boardingStatementPage.statementPet')}
             value={filters.pet}
             onChange={(event) => setFilters({ ...filters, pet: event.target.value })}
           >
-            <option value="all">{translate('All pets', '全部宠物')}</option>
+            <option value="all">{uiText('ui.boardingStatementPage.allPets')}</option>
             {pets
               .filter((p) => filters.customer === 'all' || p.customer === filters.customer)
               .map((p) => (
@@ -377,31 +374,31 @@ export function StatementFilterPanel({
           </CustomSelect>
         </label>
         <label>
-          {translate('From', '开始日期')}
+          {uiText('ui.boardingStatementPage.from')}
           <input
-            aria-label={translate('Statement from', '明细开始日期')}
+            aria-label={uiText('ui.boardingStatementPage.statementFrom')}
             type="date"
             value={filters.from}
             onChange={(event) => setFilters({ ...filters, from: event.target.value })}
           />
         </label>
         <label>
-          {translate('Through', '结束日期')}
+          {uiText('ui.boardingStatementPage.through')}
           <input
-            aria-label={translate('Statement through', '明细结束日期')}
+            aria-label={uiText('ui.boardingStatementPage.statementThrough')}
             type="date"
             value={filters.through}
             onChange={(event) => setFilters({ ...filters, through: event.target.value })}
           />
         </label>
         <label>
-          {translate('Activity', '类型')}
+          {uiText('ui.boardingStatementPage.activity')}
           <CustomSelect
-            aria-label={translate('Statement activity', '明细类型')}
+            aria-label={uiText('ui.boardingStatementPage.statementActivity')}
             value={filters.kind}
             onChange={(event) => setFilters({ ...filters, kind: event.target.value })}
           >
-            <option value="all">{translate('All activity', '全部类型')}</option>
+            <option value="all">{uiText('ui.boardingStatementPage.allActivity')}</option>
             {Object.entries(labels).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
@@ -412,10 +409,7 @@ export function StatementFilterPanel({
       </div>
       {!valid && (
         <p role="alert" className="hc-range-feedback">
-          {translate(
-            'Choose a valid date range with the start on or before the end.',
-            '请选择有效日期范围，开始日期不能晚于结束日期。',
-          )}
+          {uiText('ui.boardingStatementPage.chooseAValidDateRangeWithTheStartOn')}
         </p>
       )}
     </section>

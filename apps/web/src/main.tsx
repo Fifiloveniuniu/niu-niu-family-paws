@@ -1,6 +1,13 @@
+import {
+  catalogs,
+  htmlLanguage,
+  localeFor,
+  resolveLanguage,
+  type Language,
+  uiText,
+} from './i18n.ts';
 import { marketingPreview, previewMessages } from './marketing-preview';
 import { FamilyStories } from './marketing-galleries';
-import { englishMessages, chineseMessages } from './marketing-messages';
 import MarketingHome from './marketing-home';
 import { CareStory, PetCareStories, VisitPreparation, StayPlanning } from './marketing-sections';
 import useRoute from './use-route';
@@ -23,11 +30,21 @@ import './marketing-system.css';
 const Portal = React.lazy(() => import('./portal'));
 
 void i18n.use(initReactI18next).init({
-  resources: {
-    en: { translation: { ...englishMessages, ...(marketingPreview ? previewMessages.en : {}) } },
-    zh: { translation: { ...chineseMessages, ...(marketingPreview ? previewMessages.zh : {}) } },
-  },
+  resources: Object.fromEntries(
+    Object.entries(catalogs).map(([code, resource]) => [
+      code,
+      {
+        translation: {
+          ...resource,
+          ...(marketingPreview
+            ? (previewMessages[code as keyof typeof previewMessages] ?? {})
+            : {}),
+        },
+      },
+    ]),
+  ),
   lng: 'en',
+  keySeparator: false,
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 });
@@ -50,29 +67,29 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const SectionHeading = 'h1';
   React.useEffect(() => {
     try {
-      if (localStorage.getItem('language') === 'zh') void i18n.changeLanguage('zh');
+      void i18n.changeLanguage(resolveLanguage(localStorage.getItem('language')));
     } catch {
       /* optional */
     }
   }, []);
   React.useEffect(() => {
-    document.documentElement.lang = chinese ? 'zh-Hans' : 'en';
+    document.documentElement.lang = htmlLanguage(i18n.language);
     const names: Record<string, string> = {
-      home: chinese ? '首页' : 'Home',
+      home: uiText('ui.main.home'),
       services: t('services'),
       about: t('approach'),
       faqs: t('questions'),
-      pricing: chinese ? '价格' : 'Pricing',
+      pricing: uiText('ui.main.pricing'),
       contact: t('contact'),
-      spaces: chinese ? '我们的小天地' : 'Our Spaces',
-      academy: chinese ? '美容师成长课堂' : 'Grooming Academy',
-      calendar: chinese ? '日历' : 'Calendar',
-      customers: chinese ? '客户' : 'Customers',
-      balances: chinese ? '寄养余额' : 'Balances',
-      settings: chinese ? '设置' : 'Settings',
-      personal: chinese ? '我的资料' : 'My profile',
-      login: chinese ? '登录' : 'Sign in',
-      'not-found': chinese ? '未找到页面' : 'Page not found',
+      spaces: uiText('ui.main.ourSpaces'),
+      academy: uiText('ui.main.groomingAcademy'),
+      calendar: uiText('ui.main.calendar'),
+      customers: uiText('ui.main.customers'),
+      balances: uiText('ui.main.balances'),
+      settings: uiText('ui.main.settings'),
+      personal: uiText('ui.main.myProfile'),
+      login: uiText('ui.main.signIn'),
+      'not-found': uiText('ui.main.pageNotFound'),
     };
     document.title = names[page] + ' · Niu Niu Family Paws';
   }, [page, route.path, chinese, t]);
@@ -87,7 +104,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
     } else if (!appVisible && animated) animateMarketingPageEntry();
     else window.scrollTo({ top: 0, behavior: 'instant' });
   }, [page, route.path, route.hash]);
-  function setLanguage(lang: 'en' | 'zh') {
+  function setLanguage(lang: Language) {
     void i18n.changeLanguage(lang);
     try {
       localStorage.setItem('language', lang);
@@ -101,7 +118,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
         <React.Suspense
           fallback={
             <main className="portal" role="status">
-              {chinese ? '正在加载…' : 'Loading…'}
+              {uiText('ui.main.loading')}
             </main>
           }
         >
@@ -174,14 +191,10 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
             {page === 'academy' && <AcademyPage />}
             {page === 'not-found' && (
               <section data-scroll-scene className="public-policy">
-                <h1>{chinese ? '未找到页面' : 'Page not found'}</h1>
-                <p>
-                  {chinese
-                    ? '请检查链接或返回首页。'
-                    : 'Check the link or return to the home page.'}
-                </p>
+                <h1>{uiText('ui.main.pageNotFound')}</h1>
+                <p>{uiText('ui.main.checkTheLinkOrReturnToTheHomePage')}</p>
                 <a className="button" href="/home/">
-                  {chinese ? '返回首页' : 'Back to home'}
+                  {uiText('ui.main.backToHome')}
                 </a>
               </section>
             )}

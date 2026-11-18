@@ -477,8 +477,7 @@ export interface components {
             name: string;
             email: string;
             phone: string;
-            /** @enum {string} */
-            language: "en" | "zh";
+            language: string;
             version: number;
             createdAt: string;
             updatedAt: string;
@@ -489,14 +488,12 @@ export interface components {
             name: string;
             email: string;
             phone: string;
-            /** @enum {string} */
-            language: "en" | "zh";
+            language: string;
             version: number;
         };
         ProfileWrite: {
             name: string;
-            /** @enum {string} */
-            language: "en" | "zh";
+            language: string;
             version: number;
         };
         CustomerPage: {

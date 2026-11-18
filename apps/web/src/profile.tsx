@@ -1,3 +1,12 @@
+import {
+  englishCatalog,
+  languageName,
+  localeFor,
+  profileLanguage,
+  supportedLanguages,
+  uiText,
+  uiValue,
+} from './i18n.ts';
 import CustomSelect from './custom-select';
 import { ApiError, apiOptionalJson } from './api-client';
 import React from 'react';
@@ -10,50 +19,8 @@ import type { components } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
 type ProfileWrite = components['schemas']['ProfileWrite'];
-const englishMessages = {
-  title: 'My profile',
-  intro: 'Tell us your name and which language you prefer.',
-  setup: 'Complete your profile to get started.',
-  name: 'Your name',
-  language: 'Your preferred language',
-  loginEmail: 'Google sign-in email',
-  identity:
-    'This profile belongs to your Google account. Your sign-in email can’t be changed here.',
-  existing:
-    'Already have a customer record? An administrator needs to verify it before linking your account.',
-  save: 'Save profile',
-  retry: 'Retry profile save',
-  saving: 'Saving profile…',
-  saved: 'Your profile is saved.',
-  loading: 'Loading your profile…',
-  reload: 'Try again',
-  error: 'Couldn’t load or save your profile. Please try again.',
-  conflict:
-    'Your profile was updated elsewhere. Your edits are still here. Choose Try again to get the saved profile; this will replace your unsaved edits.',
-  forbidden: 'We couldn’t verify access to your profile. Sign out and sign in again.',
-  invalid: 'Enter your name using 120 characters or fewer.',
-};
-const chineseMessages: typeof englishMessages = {
-  title: '我的资料',
-  intro: '填写您的姓名，并选择偏好的语言。',
-  setup: '请先填写您的资料。',
-  name: '您的姓名',
-  language: '您的首选语言',
-  loginEmail: 'Google 登录邮箱',
-  identity: '这份资料与您的 Google 账号关联，登录邮箱不能在这里修改。',
-  existing: '之前已经登记过客户资料？请联系管理员核实身份后再关联账号。',
-  save: '保存我的资料',
-  retry: '重试保存我的资料',
-  saving: '正在保存资料…',
-  saved: '您的资料已保存。',
-  loading: '正在加载资料…',
-  reload: '重试',
-  error: '资料加载或保存失败，请重试。',
-  conflict:
-    '资料已在其他页面更新，您还没保存的修改仍保留在这里。请点击“重试”获取最新资料后再编辑；重新加载会替换未保存的修改。',
-  forbidden: '暂时无法访问您的资料。请退出后重新登录。',
-  invalid: '请填写姓名，最多 120 个字符。',
-};
+const englishMessages = englishCatalog['ui.profile.labels'];
+
 function profileRequest(input?: ProfileWrite): Promise<Customer | null> {
   return apiOptionalJson<Customer>('/profile', { body: input });
 }
@@ -65,11 +32,11 @@ export default function Profile({
   showPets?: boolean;
 }) {
   const { i18n } = useTranslation();
-  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const labels = uiValue('ui.profile.labels', i18n.language);
   const [profile, setProfile] = React.useState<Customer | null>(null);
   const [input, setInput] = React.useState<ProfileWrite>({
     name: '',
-    language: i18n.language === 'zh' ? 'zh' : 'en',
+    language: profileLanguage(i18n.language),
     version: 0,
   });
   const [loaded, setLoaded] = React.useState(false);
@@ -106,7 +73,7 @@ export default function Profile({
         ? { name: current.name, language: current.language, version: current.version }
         : {
             name: '',
-            language: i18n.language === 'zh' ? ('zh' as const) : ('en' as const),
+            language: profileLanguage(i18n.language),
             version: 0,
           };
       baseline.current = JSON.stringify(next);
@@ -208,12 +175,15 @@ export default function Profile({
                 <CustomSelect
                   value={input.language}
                   onChange={(event) => {
-                    setInput({ ...input, language: event.target.value as 'en' | 'zh' });
+                    setInput({ ...input, language: event.target.value });
                     setSaved(false);
                   }}
                 >
-                  <option value="en">English</option>
-                  <option value="zh">简体中文</option>
+                  {supportedLanguages.map(({ code, name, htmlLang }) => (
+                    <option key={code} value={code} lang={htmlLang}>
+                      {name}
+                    </option>
+                  ))}
                 </CustomSelect>
               </label>
             </fieldset>
