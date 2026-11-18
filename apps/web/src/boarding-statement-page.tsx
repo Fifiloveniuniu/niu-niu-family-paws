@@ -1,3 +1,4 @@
+import CustomDateInput from './custom-date-input';
 import { localeFor, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import React from 'react';
@@ -375,20 +376,20 @@ export function StatementFilterPanel({
         </label>
         <label>
           {uiText('ui.boardingStatementPage.from')}
-          <input
+          <CustomDateInput
             aria-label={uiText('ui.boardingStatementPage.statementFrom')}
             type="date"
             value={filters.from}
-            onChange={(event) => setFilters({ ...filters, from: event.target.value })}
+            onChange={(value) => setFilters({ ...filters, from: value })}
           />
         </label>
         <label>
           {uiText('ui.boardingStatementPage.through')}
-          <input
+          <CustomDateInput
             aria-label={uiText('ui.boardingStatementPage.statementThrough')}
             type="date"
             value={filters.through}
-            onChange={(event) => setFilters({ ...filters, through: event.target.value })}
+            onChange={(value) => setFilters({ ...filters, through: value })}
           />
         </label>
         <label>

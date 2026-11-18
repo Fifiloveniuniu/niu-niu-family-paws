@@ -1,3 +1,4 @@
+import CustomDateInput from './custom-date-input';
 import { localeFor, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import React from 'react';
@@ -243,25 +244,25 @@ export default function PetBalances({
         <div className="hc-time-fields">
           <label>
             {uiText('ui.petBalances.validFrom')}
-            <input
+            <CustomDateInput
               required
               type="date"
               value={from}
-              onChange={(event) => {
-                setFrom(event.target.value);
+              onChange={(value) => {
+                setFrom(value);
                 setTemplate('');
               }}
             />
           </label>
           <label>
             {uiText('ui.petBalances.validThrough')}
-            <input
+            <CustomDateInput
               required
               type="date"
               min={from}
               value={through}
-              onChange={(event) => {
-                setThrough(event.target.value);
+              onChange={(value) => {
+                setThrough(value);
                 setTemplate('');
               }}
             />

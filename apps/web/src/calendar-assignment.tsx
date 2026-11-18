@@ -1,3 +1,4 @@
+import CustomDateInput from './custom-date-input';
 import { localeFor, speciesText, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import { localDateTimeValue } from './date-utils';
@@ -284,24 +285,24 @@ export default function AssignmentDialog({
           <div className="hc-time-fields">
             <label>
               {uiText('ui.calendarAssignment.arrival')}
-              <input
+              <CustomDateInput
                 type="datetime-local"
                 required
                 value={start}
-                onChange={(event) => {
-                  setStart(event.target.value);
+                onChange={(value) => {
+                  setStart(value);
                   invalidate();
                 }}
               />
             </label>
             <label>
               {uiText('ui.calendarAssignment.pickup')}
-              <input
+              <CustomDateInput
                 type="datetime-local"
                 required
                 value={end}
-                onChange={(event) => {
-                  setEnd(event.target.value);
+                onChange={(value) => {
+                  setEnd(value);
                   invalidate();
                 }}
               />
