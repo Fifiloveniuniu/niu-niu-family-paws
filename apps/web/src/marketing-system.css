@@ -918,13 +918,7 @@ header.marketing-header nav {
 }
 .marketing-site[data-scroll-enabled] .home-spaces .home-photo-pair figure {
   opacity: 1;
-  transform-origin: center;
-}
-.marketing-site[data-scroll-enabled] .home-spaces [data-space-photo='left'] {
-  transform: rotate(calc(-3deg - var(--photo-entry, 0) * 4deg + var(--photo-exit, 0) * 2deg));
-}
-.marketing-site[data-scroll-enabled] .home-spaces [data-space-photo='right'] {
-  transform: rotate(calc(3deg + var(--photo-entry, 0) * 4deg - var(--photo-exit, 0) * 2deg));
+  transform: none;
 }
 .home-numbers > .cute-note {
   width: fit-content;
@@ -1639,9 +1633,6 @@ header.marketing-header nav {
     margin-inline: 24px;
   }
 }
-.marketing-site .stay-planning .text-link {
-  gap: 6px;
-}
 .marketing-site .stay-planning .eyebrow {
   margin-bottom: 24px;
 }
@@ -1790,4 +1781,67 @@ header.marketing-header nav {
 .marketing-site .space-illustration > svg {
   min-width: 0;
   min-height: 0;
+}
+
+/* Align the editorial accents, photographs and footer as complete compositions. */
+.home-stories .home-section-intro {
+  max-width: none;
+}
+.home-stories .home-section-intro > .eyebrow {
+  text-align: center;
+}
+.home-numbers > .cute-note {
+  width: 100%;
+  text-align: center;
+}
+.marketing-site .home-story.cinematic-story[data-cinema-enabled] .home-numbers > .cute-note {
+  margin-inline: 0;
+  justify-self: center;
+}
+.home-story .number-grid article:last-child {
+  border: 0;
+}
+.marketing-site .home-photo-pair figcaption,
+.marketing-site .home-spaces .home-photo-pair figcaption {
+  width: 100%;
+  text-align: center;
+}
+.photo-grid figcaption {
+  text-align: center;
+  align-items: center;
+}
+.marketing-footer .footer-main {
+  justify-items: center;
+  text-align: center;
+}
+.marketing-footer .footer-brand {
+  width: 100%;
+  margin-inline: auto;
+}
+.marketing-footer .footer-brand .brand {
+  justify-content: center;
+}
+.marketing-footer .footer-brand > p {
+  margin-inline: auto;
+}
+.marketing-footer .footer-bottom {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+.marketing-site .button {
+  gap: 8px;
+}
+.marketing-site
+  .home-story.cinematic-story
+  .home-contact
+  .contact-status:is(:hover, :focus-visible) {
+  background: #fff;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  color: #2b4f3d;
+  -webkit-text-fill-color: #2b4f3d;
+  border-color: #fff;
 }

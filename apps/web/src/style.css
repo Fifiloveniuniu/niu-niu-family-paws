@@ -1583,9 +1583,10 @@ header nav [aria-current='location'] {
   height: 36px;
 }
 .marketing-site .text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  min-height: 44px;
+  line-height: 44px;
   font-size: 13px;
   font-weight: 600;
   text-decoration: underline;
@@ -1706,11 +1707,6 @@ header nav [aria-current='location'] {
   color: #657065;
   font-size: 14px;
   margin: 0;
-}
-.preparation-check {
-  flex: none;
-  margin-left: auto;
-  color: #6e876a;
 }
 .stay-planning {
   position: relative;
