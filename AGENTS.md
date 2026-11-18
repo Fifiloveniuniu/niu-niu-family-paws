@@ -11,6 +11,8 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 
 # Pull requests
 
+- Owner instruction (2026-11-17): do not push commits or open pull requests between 9:00 AM and 5:00 PM PST (UTC-08:00). Continue local development and validation during this window; defer pushes and PR creation until outside it.
+
 - All commits must have verified signatures. Sign commits with the authorized GitHub signing identity and check GitHub verification before merging.
 
 - Use a concise title that clearly describes the change.
