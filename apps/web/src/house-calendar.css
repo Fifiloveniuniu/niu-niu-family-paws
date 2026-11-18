@@ -1,19 +1,19 @@
 /* Calendar workspace and focused operational dialogs. */
 .hc {
-  --ink: #213c38;
-  --muted: #748681;
-  --line: #e3eae6;
+  --ink: #293f35;
+  --muted: #6c786b;
+  --line: #e3dfd3;
   --surface: #fff;
-  --brand: #2d6255;
-  --soft: #eef5f1;
-  --canvas: #f5f8f6;
+  --brand: #31594c;
+  --soft: #f0eee5;
+  --canvas: #faf8f2;
   max-width: 1600px;
   min-height: 100vh;
   margin: auto;
   padding: 22px 36px 32px;
   color: var(--ink);
   background: var(--canvas);
-  font-family: Arial, 'PingFang SC', sans-serif;
+  font-family: 'Paws Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 .hc *,
 .hc *::before,
@@ -41,7 +41,8 @@
 .hc h1,
 .hc h2,
 .hc h3 {
-  font-family: Arial, 'PingFang SC', sans-serif;
+  font-family: 'Paws Lora', 'Songti SC', 'STSong', serif;
+  font-weight: 400;
   letter-spacing: normal;
   color: var(--ink);
 }
@@ -3169,21 +3170,6 @@
   z-index: 10;
   margin: 0;
 }
-.hc-nav-brand {
-  font-size: 21px;
-  letter-spacing: 1px;
-  font-weight: 700;
-  color: var(--ink);
-  padding: 4px 14px 34px;
-}
-.hc-nav-brand small {
-  display: block;
-  font-size: 9px;
-  letter-spacing: 2px;
-  font-weight: 500;
-  margin-top: 6px;
-  color: var(--muted);
-}
 .hc-work-nav a {
   flex: none;
   justify-content: flex-start;
@@ -3324,9 +3310,6 @@
     width: 188px;
     padding: 28px 12px;
   }
-  .hc-nav-brand {
-    font-size: 19px;
-  }
   .hc-account-menu {
     right: 210px;
     top: 27px;
@@ -3359,9 +3342,6 @@
     border-top: 1px solid var(--line);
     background: #fff;
     box-shadow: 0 -4px 20px #244f4108;
-  }
-  .hc-nav-brand {
-    display: none;
   }
   .hc-work-nav a {
     flex: 1;
@@ -3491,5 +3471,32 @@
     max-height: 90dvh;
     border-radius: 16px 16px 0 0;
     padding: 24px;
+  }
+}
+
+/* Reuse the marketing badge, typography and warm palette in the workspace. */
+.hc-top {
+  align-items: center;
+  gap: 16px;
+}
+.hc-top > .brand {
+  margin-right: auto;
+  flex-shrink: 0;
+}
+.hc-top .language-selector {
+  flex-shrink: 0;
+}
+.hc-top .hc-account-menu {
+  position: relative;
+  inset: auto;
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  .hc-top {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hc-top .hc-account-menu {
+    margin: 0;
   }
 }

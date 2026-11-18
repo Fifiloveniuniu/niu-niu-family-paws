@@ -316,12 +316,18 @@ export default function HouseCalendar({
     <CalendarPhotoProvider>
       <main className="hc">
         <div className="hc-top">
-          <a href="/home/">
-            ✿ <strong>NIU NIU</strong> <span>FAMILY PAWS</span>
+          <a className="brand" href="/home/">
+            <img
+              className="brand-logo"
+              src="/images/marketing/logo.png"
+              alt="Niu Niu Family Paws Sitting LLC"
+              width="1024"
+              height="1024"
+            />
           </a>
+          {account}
           <LanguageSelector onChange={onLanguageChange} />
         </div>
-        {account}
         <p className="hc-demo">
           {translate(
             'Local preview · Calendar and balances use sample data. Customers use connected records.',
@@ -329,9 +335,6 @@ export default function HouseCalendar({
           )}
         </p>
         <nav className="hc-work-nav" aria-label={translate('Workspace', '工作区')}>
-          <div className="hc-nav-brand">
-            NIU NIU<small>FAMILY PAWS</small>
-          </div>
           {[
             ['/app/calendar/', 'Calendar', '日历', 'calendar'],
             ['/app/customers/', 'Customers', '客户', 'customers'],

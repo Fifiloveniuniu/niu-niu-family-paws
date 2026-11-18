@@ -66,7 +66,13 @@ export default function ApiConnection({
         <>
           <header className="portal-header">
             <a className="brand" href="/home/">
-              Niu Niu Family Paws
+              <img
+                className="brand-logo"
+                src="/images/marketing/logo.png"
+                alt="Niu Niu Family Paws Sitting LLC"
+                width="1024"
+                height="1024"
+              />
             </a>
             <LanguageSelector onChange={onLanguageChange} />
           </header>
