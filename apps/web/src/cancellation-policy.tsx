@@ -126,7 +126,7 @@ export default function CancellationPolicyPage({
         <article className="hc-policy-pending">
           <small>{translate('SHORT NOTICE', '临近到店')}</small>
           <strong>
-            {policy.shortPercent === '' ? '—' : policy.shortPercent}
+            {policy.shortPercent === '' ? 'N/A' : policy.shortPercent}
             <span>{policy.shortPercent === '' ? '' : '%'}</span>
           </strong>
           <h3>

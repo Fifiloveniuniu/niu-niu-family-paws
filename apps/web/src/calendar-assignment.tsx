@@ -554,11 +554,11 @@ export default function AssignmentDialog({
             <dl>
               <div>
                 <dt>{translate('Arrival', '到店时间')}</dt>
-                <dd>{valid ? new Date(start).toLocaleString(locale) : '—'}</dd>
+                <dd>{valid ? new Date(start).toLocaleString(locale) : 'N/A'}</dd>
               </div>
               <div>
                 <dt>{translate('Pickup', '接回时间')}</dt>
-                <dd>{valid ? new Date(end).toLocaleString(locale) : '—'}</dd>
+                <dd>{valid ? new Date(end).toLocaleString(locale) : 'N/A'}</dd>
               </div>
               <div>
                 <dt>{translate('House & room', '房屋与房间')}</dt>

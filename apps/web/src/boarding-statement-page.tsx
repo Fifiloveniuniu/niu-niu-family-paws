@@ -117,19 +117,19 @@ export default function BoardingStatement({
         <div>
           <small>{translate('Added', '增加')}</small>
           <strong>
-            {valid ? number(totals.added) : '—'} <span>{translate('days', '天')}</span>
+            {valid ? number(totals.added) : 'N/A'} <span>{translate('days', '天')}</span>
           </strong>
         </div>
         <div>
           <small>{translate('Removed by corrections', '更正减少')}</small>
           <strong>
-            {valid ? number(totals.removed) : '—'} <span>{translate('days', '天')}</span>
+            {valid ? number(totals.removed) : 'N/A'} <span>{translate('days', '天')}</span>
           </strong>
         </div>
         <div>
           <small>{translate('Net change', '净变动')}</small>
           <strong>
-            {valid ? number(totals.net) : '—'} <span>{translate('days', '天')}</span>
+            {valid ? number(totals.net) : 'N/A'} <span>{translate('days', '天')}</span>
           </strong>
         </div>
       </div>

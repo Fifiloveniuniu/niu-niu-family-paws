@@ -451,7 +451,7 @@ export default function PetBalances({
             <div className="hc-balance-metrics">
               <div>
                 <small>{translate('Recorded days', '记录天数')}</small>
-                <strong>{account ? account.days : '—'}</strong>
+                <strong>{account ? account.days : 'N/A'}</strong>
               </div>
               <div>
                 <small>{translate('Planned here', '本页已计划')}</small>
@@ -459,7 +459,7 @@ export default function PetBalances({
               </div>
               <div>
                 <small>{translate('Available to plan', '可计划天数')}</small>
-                <strong>{account ? account.days - planned : '—'}</strong>
+                <strong>{account ? account.days - planned : 'N/A'}</strong>
               </div>
             </div>
           )}
