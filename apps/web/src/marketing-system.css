@@ -65,8 +65,8 @@
   scroll-margin-top: calc(var(--marketing-header-height, 72px) + 24px);
 }
 header.marketing-header {
-  padding: 12px clamp(20px, 3vw, 48px);
-  min-height: 72px;
+  padding: 6px clamp(20px, 3vw, 48px);
+  min-height: 64px;
   gap: 24px;
 }
 .marketing-header .brand {
@@ -409,7 +409,7 @@ header.marketing-header nav {
 @media (max-width: 1180px) {
   header.marketing-header {
     justify-content: space-between;
-    min-height: 72px;
+    min-height: 64px;
   }
   .marketing-menu-toggle {
     display: flex;
@@ -433,7 +433,7 @@ header.marketing-header nav {
     top: 100%;
     left: 0;
     right: 0;
-    max-height: calc(100dvh - 72px);
+    max-height: calc(100dvh - var(--marketing-header-height, 64px));
     overflow: auto;
     padding: 20px 24px 28px;
     background: #faf8f2;
@@ -471,7 +471,7 @@ header.marketing-header nav {
 }
 @media (max-width: 760px) {
   header.marketing-header {
-    padding: 10px 20px;
+    padding: 6px 20px;
     flex-wrap: nowrap;
     gap: 12px;
   }
@@ -1879,4 +1879,10 @@ header.marketing-header nav {
 }
 .marketing-header[data-app-header] .header-actions {
   margin-left: auto;
+}
+
+/* Keep the same compact masthead on public and app pages. */
+.marketing-header .brand-logo {
+  width: 52px;
+  height: 52px;
 }
