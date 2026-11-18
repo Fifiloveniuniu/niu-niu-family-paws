@@ -66,12 +66,6 @@ export default function CalendarSettingsDialog({
         }}
       >
         <UnsavedChanges active={dirty} />
-        <p className="hc-setup-note">
-          {translate(
-            'Prototype settings · Changes apply to this preview only.',
-            '原型设置 · 修改仅应用于当前预览。',
-          )}
-        </p>
         {room && <p className="hc-setting-parent">{houseName}</p>}
         <label>
           {room ? translate('Room name', '房间名称') : translate('House name', '房屋名称')}
@@ -176,14 +170,7 @@ export default function CalendarSettingsDialog({
               className="hc-danger"
               disabled={!!removeReason}
               onClick={() => {
-                if (
-                  window.confirm(
-                    translate(
-                      'Remove this empty location from the preview?',
-                      '从预览中移除此空位置？',
-                    ),
-                  )
-                )
+                if (window.confirm(translate('Remove this empty location?', '移除此空位置？')))
                   onRemove();
               }}
             >
@@ -194,7 +181,7 @@ export default function CalendarSettingsDialog({
         )}
         <div className="hc-settings-actions">
           <button className="hc-apply" type="submit">
-            {translate('Apply to preview', '应用到预览')}
+            {translate('Apply changes', '应用修改')}
           </button>
           <button className="hc-manage" type="button" onClick={close}>
             {translate('Cancel', '取消')}

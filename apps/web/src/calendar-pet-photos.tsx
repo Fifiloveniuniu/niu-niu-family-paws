@@ -364,7 +364,7 @@ export function DemoBalanceLink({ customerId, petId }: { customerId: string; pet
   }, [customerId, petId]);
   return alias ? (
     <a className="language" href={'/app/balances/?pet=' + encodeURIComponent(alias)}>
-      {i18n.language === 'zh' ? '查看余额预览' : 'View balance preview'}
+      {i18n.language === 'zh' ? '查看余额' : 'View balance'}
     </a>
   ) : null;
 }

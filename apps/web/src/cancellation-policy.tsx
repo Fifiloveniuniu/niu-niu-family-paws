@@ -93,9 +93,7 @@ export default function CancellationPolicyPage({
       </div>
       <div className="hc-policy-summary">
         <div>
-          <span className="hc-draft-badge">
-            {translate('Draft · Preview only', '草稿 · 仅供预览')}
-          </span>
+          <span className="hc-draft-badge">{translate('Draft', '草稿')}</span>
           <h2>{policy.name || translate('Boarding cancellation', '寄养取消规则')}</h2>
           <p>{basis}</p>
         </div>
@@ -103,7 +101,7 @@ export default function CancellationPolicyPage({
       </div>
       {saved && (
         <p className="hc-notice" role="status">
-          {translate('Policy draft saved in this preview.', '政策草稿已保存在当前预览中。')}
+          {translate('Policy draft saved.', '政策草稿已保存。')}
         </p>
       )}
       <div className="hc-policy-cards">
@@ -164,8 +162,8 @@ export default function CancellationPolicyPage({
           </p>
           <p>
             {translate(
-              'Current bookings and balances are planning previews. This policy does not activate automatic deductions or refunds.',
-              '目前预约及余额仅用于计划预览，此政策不会启用自动扣减或返还。',
+              'This policy does not activate automatic deductions or refunds.',
+              '此政策不会启用自动扣减或返还。',
             )}
           </p>
         </section>

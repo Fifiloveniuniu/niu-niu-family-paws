@@ -349,12 +349,6 @@ export default function HouseCalendar({
             ))}
           </nav>
           <main className="hc-content" id="main">
-            <p className="hc-demo">
-              {translate(
-                'Local preview · Calendar and balances use sample data. Customers use connected records.',
-                '本地预览 · 日历与余额使用示例数据，客户页面使用已连接的资料',
-              )}
-            </p>
             <div data-retained-workspace data-customer-workspace hidden={view !== 'customers'}>
               {customers || (
                 <a className="hc-manage" href="/app/sign-in/">
@@ -871,8 +865,8 @@ export default function HouseCalendar({
                                                 if (
                                                   window.confirm(
                                                     translate(
-                                                      'Remove this placement from the preview? The pet profile is kept.',
-                                                      '从预览中移除此安排？宠物档案会保留。',
+                                                      'Remove this placement? The pet profile is kept.',
+                                                      '移除此安排？宠物档案会保留。',
                                                     ),
                                                   )
                                                 ) {
@@ -1024,9 +1018,7 @@ export default function HouseCalendar({
                     previous.filter((key) => key !== stay.house + '-' + stay.room),
                   );
                   setAssignment(false);
-                  setNotice(
-                    translate('Pet added to the preview schedule.', '宠物已添加至预览日程。'),
-                  );
+                  setNotice(translate('Pet added to the schedule.', '宠物已添加至日程。'));
                 }}
               />
             )}

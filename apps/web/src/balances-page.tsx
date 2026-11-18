@@ -84,9 +84,7 @@ export default function BalancesPage({
       <StatementFilterPanel pets={pets} filters={filters} onChange={changeFilters} />
       {new URLSearchParams(search).has('pet') &&
         !pets.some((p) => p.name === new URLSearchParams(search).get('pet')) && (
-          <p role="alert">
-            {translate('Pet not found in this planning preview.', '在此规划预览中未找到该宠物。')}
-          </p>
+          <p role="alert">{translate('Pet not found.', '未找到该宠物。')}</p>
         )}
       <div className="hc-balance-overview">
         {filters.pet !== 'all' ? (
