@@ -1,3 +1,4 @@
+import { marketingPreview, previewPrices } from './marketing-preview';
 import { PhotoGallery, StoryQuotes } from './marketing-galleries';
 import { usePublicMarketingContent } from './public-marketing-content';
 import { useTranslation } from 'react-i18next';
@@ -5,7 +6,7 @@ import { CareSymbol } from './story-landscape';
 import { GardenBlossom } from './garden-art';
 
 export function serviceContent(zh: boolean) {
-  return zh
+  const services = zh
     ? [
         {
           id: 'daycare',
@@ -74,11 +75,19 @@ export function serviceContent(zh: boolean) {
           kind: 'academy' as const,
         },
       ];
+  return marketingPreview
+    ? services.map((service) => ({
+        ...service,
+        note:
+          previewPrices[service.id][zh ? 'zh' : 'en'] +
+          (zh ? ' · 一起确认最适合的安排。' : ' · Let’s find the right arrangement together.'),
+      }))
+    : services;
 }
 export function ServiceSymbol({ kind }: { kind: 'day' | 'night' | 'grooming' | 'academy' }) {
   if (kind === 'day' || kind === 'night') return <CareSymbol kind={kind} />;
   return (
-    <svg className="care-symbol" viewBox="0 0 100 100" aria-hidden="true">
+    <svg className={`care-symbol care-symbol-${kind}`} viewBox="0 0 100 100" aria-hidden="true">
       <g
         fill="none"
         stroke="currentColor"
@@ -96,16 +105,35 @@ export function ServiceSymbol({ kind }: { kind: 'day' | 'night' | 'grooming' | '
               <circle cx="70" cy="72" r="10" />
               <path d="m64 64-38-46" />
             </g>
+            <g className="grooming-tuft" strokeWidth="2">
+              <path d="M44 15q-2 7 0 14" />
+              <path d="M50 13q-2 8 0 16" />
+              <path d="M56 15q-2 7 0 14" />
+            </g>
             <circle cx="50" cy="48" r="3" />
-            <path className="symbol-star" d="m79 26 2 5 6 2-6 2-2 6-2-6-6-2 6-2Z" />
+            <path
+              className="symbol-star"
+              d="m87 37 1.5 4.5 4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5-4.5-1.5 4.5-1.5Z"
+            />
           </>
         ) : (
           <>
-            <path
-              className="academy-book"
-              d="M50 30q-15-13-34-8v52q20-4 34 8 14-12 34-8V22q-19-5-34 8v52"
-            />
-            <path className="academy-lines" d="m25 36 15 5m-15 8 15 5m20-13 15-5m-15 18 15-5" />
+            <g className="academy-book">
+              <g className="academy-page-left">
+                <path d="M50 30q-15-13-34-8v52q20-4 34 8Z" />
+                <path className="academy-lines" pathLength="1" d="m25 36 15 5m-15 8 15 5" />
+              </g>
+              <g className="academy-page-right">
+                <path d="M50 30q15-13 34-8v52q-20-4-34 8Z" />
+                <path className="academy-lines" pathLength="1" d="m60 41 15-5m-15 18 15-5" />
+              </g>
+              <path className="academy-spine" d="M50 30v52" />
+              <path
+                className="academy-turning-page"
+                d="M50 30q15-13 34-8v52q-20-4-34 8Z"
+                fill="#faf8f2"
+              />
+            </g>
             <path className="symbol-star" d="m50 5 2 5 6 2-6 2-2 6-2-6-6-2 6-2Z" />
           </>
         )}
@@ -129,8 +157,8 @@ export function ServicesPage() {
       </div>
       <div className="service-guide-grid">
         {serviceContent(zh).map((service, index) => (
-          <article key={service.id} id={service.id} data-scroll-object="rise">
-            <div className="service-guide-art">
+          <article key={service.id} id={service.id}>
+            <div className="service-guide-art" data-icon-scene>
               <ServiceSymbol kind={service.kind} />
               <span>0{index + 1}</span>
             </div>
@@ -163,17 +191,28 @@ export function PricingPage() {
         <p className="eyebrow">{zh ? '先了解，再安排' : 'A LITTLE CLARITY, BEFORE YOU PLAN'}</p>
         <h1>{zh ? '清楚的价格，安心的计划。' : 'Good plans start with clarity.'}</h1>
         <p className="page-lead">
-          {zh
-            ? '服务价格与课程费用即将公布。请在确认安排前，先了解适用价格及完整条款。'
-            : 'Our service prices and course fees are on their way. Confirm a quote and the complete terms before making arrangements.'}
+          {marketingPreview
+            ? zh
+              ? '从日常照护到新的学习起点，找到适合你的安排。'
+              : 'From everyday care to a new craft, find the arrangement that fits your next chapter.'
+            : zh
+              ? '服务价格与课程费用即将公布。请在确认安排前，先了解适用价格及完整条款。'
+              : 'Our service prices and course fees are on their way. Confirm a quote and the complete terms before making arrangements.'}
         </p>
-        <div className="price-list">
+        <div id="service-prices" className="price-list">
           {serviceContent(zh).map((service, index) => (
             <article key={service.id}>
               <span className="row-number">0{index + 1}</span>
               <div>
-                <h2>{service.name}</h2>
-                <p>{service.note}</p>
+                <h2>
+                  {service.name}
+                  {marketingPreview && (
+                    <span className="preview-price">
+                      {previewPrices[service.id][zh ? 'zh' : 'en']}
+                    </span>
+                  )}
+                </h2>
+                <p>{marketingPreview ? service.body : service.note}</p>
               </div>
               <a
                 className="text-link"
@@ -184,15 +223,19 @@ export function PricingPage() {
             </article>
           ))}
         </div>
-        <aside className="package-note">
+        <aside id="boarding-packages" className="package-note">
           <span className="cute-note">
             {zh ? '为更长的陪伴' : 'For a little more time together'}
           </span>
           <h2>{zh ? '寄养套餐' : 'Boarding packages'}</h2>
           <p>
-            {zh
-              ? '套餐包含 30 天，从首次使用起有效三个月。价格按宠物类型与体重区间确定，具体价格与完整使用条款待公布。'
-              : 'Packages include 30 days, valid for three months from first use. Prices depend on pet type and weight band. Actual prices and complete usage terms will be published once confirmed.'}
+            {marketingPreview
+              ? zh
+                ? '30 天寄养套餐，从首次使用起有效三个月。根据宠物类型与体重区间，一起选择合适的套餐。'
+                : 'Thirty days of boarding, valid for three months from first use. We’ll help you choose a package for your pet’s type and weight band.'
+              : zh
+                ? '套餐包含 30 天，从首次使用起有效三个月。价格按宠物类型与体重区间确定，具体价格与完整使用条款待公布。'
+                : 'Packages include 30 days, valid for three months from first use. Prices depend on pet type and weight band. Actual prices and complete usage terms will be published once confirmed.'}
           </p>
         </aside>
       </section>
@@ -217,9 +260,13 @@ export function PricingPage() {
           </article>
         </div>
         <p className="policy-note">
-          {zh
-            ? '具体截止时间、少于 7 天或未到店的处理方式，以及返还形式尚待确认。预约前请确认完整条款；目前网站尚未开放实际付费预约。'
-            : 'Exact deadlines, shorter-notice and no-show terms, and the form of refund are still to be confirmed. Please confirm the complete terms before booking; paid bookings are not available through this website yet.'}
+          {marketingPreview
+            ? zh
+              ? '行程有变化，请尽早与我们联系。我们会一起核对预约安排与适用条款。'
+              : 'If your plans change, let us know as soon as you can. We’ll review your arrangement and the applicable terms together.'
+            : zh
+              ? '具体截止时间、少于 7 天或未到店的处理方式，以及返还形式尚待确认。预约前请确认完整条款；目前网站尚未开放实际付费预约。'
+              : 'Exact deadlines, shorter-notice and no-show terms, and the form of refund are still to be confirmed. Please confirm the complete terms before booking; paid bookings are not available through this website yet.'}
         </p>
         <a className="text-link" href="/services/">
           {zh ? '查看服务项目' : 'Explore our services'} ↗
@@ -243,12 +290,33 @@ export function ContactPage() {
           ? '告诉我们宠物的日常、希望安排的服务，或你想了解的美容课程。'
           : 'Tell us about your pet, the care you’re planning, or the grooming classes you’d like to explore.'}
       </p>
-      <p className="contact-status">{t('pending')}</p>
-      <p>
-        {zh
-          ? '电话、邮箱及地址将在确认后公布。'
-          : 'Our phone, email, and locations will appear here once confirmed.'}
-      </p>
+      {marketingPreview ? (
+        <dl className="contact-details">
+          <div>
+            <dt>{zh ? '聊聊你的计划' : 'Say hello'}</dt>
+            <dd>
+              <a href="mailto:hello@niuniufamilypaws.example">hello@niuniufamilypaws.example</a>
+            </dd>
+          </div>
+          <div>
+            <dt>{zh ? '欢迎来访' : 'Come by'}</dt>
+            <dd>
+              {zh
+                ? '周一至周六 · 上午 9 点至下午 6 点，预约到访。'
+                : 'Monday–Saturday · 9 am–6 pm. Visits by appointment.'}
+            </dd>
+          </div>
+        </dl>
+      ) : (
+        <>
+          <p className="contact-status">{t('pending')}</p>
+          <p>
+            {zh
+              ? '电话、邮箱及地址将在确认后公布。'
+              : 'Our phone, email, and locations will appear here once confirmed.'}
+          </p>
+        </>
+      )}
       <div className="contact-options">
         <a href="/services/">{zh ? '为宠物寻找照顾' : 'Care for my pet'} ↗</a>
         <a href="/academy/">{zh ? '了解美容师课程' : 'Learn to groom'} ↗</a>
@@ -265,12 +333,16 @@ export function SpacesPage() {
       <p className="eyebrow">{zh ? '欢迎走进我们的小天地' : 'A LITTLE LOOK AROUND'}</p>
       <h1>{zh ? '照顾发生的地方。' : 'Room for the little things.'}</h1>
       <p className="page-lead">
-        {zh
-          ? '了解我们的照护家庭与宠物美容店。真实空间、设备与地址照片即将更新。'
-          : 'Get to know our care homes and grooming shop. Our own space, equipment, and location galleries are being prepared.'}
+        {marketingPreview
+          ? zh
+            ? '走进照护家庭与美容店，看看日常陪伴、毛发护理与学习发生的地方。'
+            : 'Step into the places for everyday care, fresh coats and learning something new.'
+          : zh
+            ? '了解我们的照护家庭与宠物美容店。真实空间、设备与地址照片即将更新。'
+            : 'Get to know our care homes and grooming shop. Our own space, equipment, and location galleries are being prepared.'}
       </p>
       <div className="space-previews">
-        <article>
+        <article id="care-homes">
           <div className="space-illustration" aria-hidden="true">
             <svg viewBox="0 0 400 260">
               <path d="m50 120 150-100 150 100v120H50Z" fill="#dae4d2" />
@@ -282,21 +354,29 @@ export function SpacesPage() {
           <p className="cute-note">{zh ? '日常的小温暖' : 'A home-away feeling'}</p>
           <h2>{zh ? '照护家庭' : 'Our care homes'}</h2>
           <p>
-            {zh
-              ? '即将分享房间、休息区域和日常照顾空间的真实照片。'
-              : 'A closer look at rooms, resting areas, and everyday care spaces is coming soon.'}
+            {marketingPreview
+              ? zh
+                ? '熟悉的日常、安静的休息角落，让每一次陪伴都有自己的节奏。'
+                : 'Familiar routines and quiet resting corners, with room for each pet’s own rhythm.'
+              : zh
+                ? '即将分享房间、休息区域和日常照顾空间的真实照片。'
+                : 'A closer look at rooms, resting areas, and everyday care spaces is coming soon.'}
           </p>
         </article>
-        <article>
+        <article id="grooming-shop">
           <div className="space-illustration" aria-hidden="true">
             <ServiceSymbol kind="grooming" />
           </div>
           <p className="cute-note">{zh ? '用心打理每一剪' : 'A place for a little polish'}</p>
           <h2>{zh ? '美容店与设备' : 'The grooming shop & equipment'}</h2>
           <p>
-            {zh
-              ? '即将展示美容台、清洁区域、工具和学习环境。具体设施以真实图集为准。'
-              : 'Our gallery will introduce grooming stations, wash areas, tools, and the learning environment.'}
+            {marketingPreview
+              ? zh
+                ? '从清洁区域到美容台，再到细致的工具准备，每一步都从照顾小细节开始。'
+                : 'From the wash area to the grooming table, every stage begins with thoughtful preparation and the right tools.'
+              : zh
+                ? '即将展示美容台、清洁区域、工具和学习环境。具体设施以真实图集为准。'
+                : 'Our gallery will introduce grooming stations, wash areas, tools, and the learning environment.'}
           </p>
         </article>
       </div>
@@ -330,9 +410,13 @@ export function AcademyPage() {
           <p className="cute-note">{zh ? '从第一步开始' : 'Every expert starts somewhere'}</p>
           <h2>{zh ? '你的学习之旅' : 'Your learning journey'}</h2>
           <p>
-            {zh
-              ? '课程内容、师资介绍、所用设备、时间安排与学费将在确认后公布。请先了解完整课程信息，再决定报名。'
-              : 'Course content, instructor introductions, equipment, dates, and fees will be shared once confirmed. Review the complete course information before enrolling.'}
+            {marketingPreview
+              ? zh
+                ? '四个周末的小班课程，从安全使用工具、毛发准备与清洗，到基础修饰与造型练习，一步步建立信心。'
+                : 'Four weekends in a small learning group, exploring tool handling, coat preparation, bathing and foundational finishing—one thoughtful step at a time.'
+              : zh
+                ? '课程内容、师资介绍、所用设备、时间安排与学费将在确认后公布。请先了解完整课程信息，再决定报名。'
+                : 'Course content, instructor introductions, equipment, dates, and fees will be shared once confirmed. Review the complete course information before enrolling.'}
           </p>
           <a className="text-link" href="/contact/">
             {zh ? '关注课程信息' : 'Stay in touch about classes'} ↗
@@ -346,9 +430,13 @@ export function AcademyPage() {
         <p className="eyebrow">{zh ? '从课堂出发' : 'FROM THE LEARNING ROOM'}</p>
         <h2>{zh ? '小小进步，大大可能。' : 'Small steps. Growing confidence.'}</h2>
         <p>
-          {zh
-            ? '学员课堂照片、作品与获准分享的真实学习故事即将更新。'
-            : 'Student class photos, work, and first-hand stories will be shared here with their permission.'}
+          {marketingPreview
+            ? zh
+              ? '从第一次尝试，到更有信心地完成每一个步骤。'
+              : 'From the first attempt to a little more confidence with every step.'
+            : zh
+              ? '学员课堂照片、作品与获准分享的真实学习故事即将更新。'
+              : 'Student class photos, work, and first-hand stories will be shared here with their permission.'}
         </p>
         <StoryQuotes stories={content.studentStories} student />
       </section>

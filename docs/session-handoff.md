@@ -1,3 +1,7 @@
+## Marketing content preview ready for review — 2026-11-17
+
+Adds realistic development-only preview content, clearer production empty states, once-only verified counters and stacked uncropped mobile Spaces photos. Unapproved content remains absent from production. Local build/API typecheck,37 unit tests and3 content browser cases passed. Typography merged in PR82; no deployment.
+
 ## Welcome typography ready for review — 2026-11-17
 
 Isolated the owner-requested handwritten Home title into its own PR. Uses the existing licensed Caveat font and bilingual fallbacks. Production build and formatting checked before publication. No deployment. Other marketing refinements follow in separate PRs.

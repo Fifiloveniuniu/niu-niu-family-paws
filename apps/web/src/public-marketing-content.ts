@@ -1,3 +1,4 @@
+import { marketingPreview, previewContent } from './marketing-preview.ts';
 import { useEffect, useState } from 'react';
 export type PublicText = { en: string; zh: string };
 export type PublicStory = { quote: PublicText; attribution: PublicText };
@@ -84,45 +85,44 @@ export function parsePublicMarketingContent(input: unknown): PublicMarketingCont
     studentPhotos: photos(data.studentPhotos),
   };
 }
-export function usePublicMarketingContent() {
-  const [content, setContent] = useState(emptyContent);
-  useEffect(() => {
-    let disposed = false;
-    let timer: ReturnType<typeof setTimeout>;
-    let request: AbortController | undefined;
-    async function refresh() {
-      if (document.hidden || disposed) return;
-      clearTimeout(timer);
-      request?.abort();
+// One public snapshot per page load, shared by all marketing sections and replaying counters.
+let snapshot: Promise<PublicMarketingContent> | undefined;
+function loadPublicSnapshot() {
+  if (!snapshot) {
+    snapshot = (async () => {
       const controller = new AbortController();
-      request = controller;
       const timeout = setTimeout(() => controller.abort(), 5000);
       try {
         const response = await fetch('/marketing-content.json', {
           cache: 'no-store',
           signal: controller.signal,
         });
-        if (response.ok) {
-          const parsed = parsePublicMarketingContent(await response.json());
-          if (!disposed) setContent(parsed);
-        }
-      } catch {
-        /* Keep the last approved snapshot during a connection failure. */
+        if (!response.ok) throw new Error('Public content unavailable');
+        return parsePublicMarketingContent(await response.json());
       } finally {
         clearTimeout(timeout);
-        if (!disposed) timer = setTimeout(refresh, 60_000);
       }
-    }
-    const visible = () => {
-      if (!document.hidden) void refresh();
-    };
-    void refresh();
-    document.addEventListener('visibilitychange', visible);
+    })().catch((error) => {
+      snapshot = undefined;
+      throw error;
+    });
+  }
+  return snapshot;
+}
+export function usePublicMarketingContent() {
+  const [content, setContent] = useState(marketingPreview ? previewContent : emptyContent);
+  useEffect(() => {
+    if (marketingPreview) return;
+    let disposed = false;
+    void loadPublicSnapshot()
+      .then((parsed) => {
+        if (!disposed) setContent(parsed);
+      })
+      .catch(() => {
+        /* Preserve the honest empty state; another route can retry a failed connection. */
+      });
     return () => {
       disposed = true;
-      clearTimeout(timer);
-      request?.abort();
-      document.removeEventListener('visibilitychange', visible);
     };
   }, []);
   return content;

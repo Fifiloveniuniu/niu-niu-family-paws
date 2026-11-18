@@ -1263,6 +1263,12 @@ html:has(.marketing-header) {
   transform: rotate(calc(var(--sway, 0) * 5deg)) scaleY(calc(1 + var(--sway, 0) * 0.08));
 }
 
+.public-service-symbol {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+
 /* Fur contours and expressions reshape independently, without moving the copy. */
 .marketing-site[data-scroll-enabled]
   :is(
