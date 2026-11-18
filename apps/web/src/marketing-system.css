@@ -1641,6 +1641,9 @@ header.marketing-header nav {
     margin-inline: 24px;
   }
 }
+.marketing-site .stay-planning .text-link {
+  gap: 6px;
+}
 .marketing-site .stay-planning .eyebrow {
   margin-bottom: 24px;
 }
