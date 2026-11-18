@@ -319,3 +319,17 @@ Sample photos are clearly marked and do not show our actual spaces, students or 
 The shared flower can now leave either side of the scene and return later. Icons turn more noticeably. Animal ears move independently, noses tilt/reshape and mouths visibly open into a smile as you scroll or choose a chapter. The numbers section now has a paw, scissors and learning-book illustration for its three items. Reduce Motion keeps static artwork. Real totals remain pending, and nothing new has been deployed.
 
 共用花朵现在可以从场景左右两侧离开，随后再次出现。图标旋转更加明显；动物左右耳朵分别摆动，鼻子倾斜并改变形状，嘴巴随滚动或章节切换张开微笑。数字区域的三个项目分别配有爪印、剪刀和学习书本插画。“减少动态效果”保留静态插画。真实数字仍待核实，尚未部署新版本。
+
+
+## Updated marketing navigation — local preview
+
+On desktop, hover over Services, Our Spaces, About us or Pricing to see their section links. Keyboard users can Tab through the same links and use Escape to close. On phones, open Menu and tap the visible section links. The preview banner has been removed; the phone footer has extra space below Back to Home.
+
+电脑上，将鼠标移到服务项目、我们的小天地、关于我们或价格，即可查看子页面及章节链接。键盘可用 Tab 选择、Esc 关闭。手机上打开“菜单”即可点击各章节链接。预览横幅已移除，手机页脚的“回到首页”下方增加了留白。
+
+
+## Paired introductions and simpler footer — local preview
+
+Each pet now sits next to its own numbered introduction on phones and above it on desktop. The footer keeps the brand and copyright; use the navbar and its menus for navigation. Phone numbers have matching sizes, and background reveals wait for the chapter's halfway entry point.
+
+手机上，每只宠物都与对应的编号介绍放在一起；电脑上则在对应介绍上方。页脚保留品牌和版权信息，页面导航统一使用顶部菜单。手机数字字号已统一，背景在章节进入一半后开始展开。
