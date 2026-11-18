@@ -1,3 +1,7 @@
+## Compact app toolbar — local, 2026-11-18
+
+Removed app hc-title headings/descriptions while preserving actions. Calendar buttons are36px tall and right aligned; clock timezone dropdown sits left on the same desktop row and wraps on phones. Dropdown changes the clock only; booking/house timezone rules are unchanged. Production build/typecheck, formatting,12 bilingual page checks and four timezone/layout checks passed; actual localhost Chrome reviewed. No deployment.
+
 ## iPhone Safari story artwork — PR preparation, 2026-11-17
 
 Branch `fix/iphone-story-artwork`: reserves opening artwork space on narrow cinematic screens, gives the travelling sun explicit square dimensions and measures its actual rendered width, observes stage resizing, and uses solid SVG ink when no reveal gradient is needed to avoid WebKit dropping near-zero paint servers. English/Chinese WebKit regression passes opening separation, sun bounds through forward/reverse chapters, solid opening paint and short-screen fallback/re-entry. Explicitly clears the shared Chrome channel for the WebKit launch. Node24 production build,41 unit tests and focused formatting passed; actual localhost4180 Chrome phone preview confirmed artwork/text separation and no overflow. Screenshot: docs/screenshots/iphone-story-artwork.png. No deployment. Unrelated asset scripts and HEIC deletions remain local and excluded from this PR.
