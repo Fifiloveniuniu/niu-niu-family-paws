@@ -121,8 +121,8 @@ export default function BoardingStatement({
       </div>
       <p className="hc-statement-note">
         {translate(
-          'Local preview · Recorded balance additions and corrections. Booking charges and cancellation restorations are not connected yet.',
-          '本地预览 · 显示已记录的余额增加及更正，尚未接入预约扣减与取消返还。',
+          'Recorded balance additions and corrections. Booking charges and cancellation restorations are not connected yet.',
+          '显示已记录的余额增加及更正，尚未接入预约扣减与取消返还。',
         )}
       </p>
       {!hideFilters && <StatementFilterPanel pets={pets} filters={filters} onChange={setFilters} />}
@@ -270,7 +270,6 @@ export default function BoardingStatement({
               <strong>{selected.pet}</strong>
               <small>{selected.customerName}</small>
             </div>
-            <span className="hc-draft-badge">{translate('Preview entry', '预览记录')}</span>
           </div>
           <dl className="hc-transaction-details">
             <div>

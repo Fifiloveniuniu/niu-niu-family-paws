@@ -314,13 +314,6 @@ export default function Portal({
     );
   return (
     <>
-      {import.meta.env.MODE === 'test' && (
-        <aside className="local-test-banner" role="note">
-          {chinese
-            ? '本地测试 · 仅供测试的资料与示例照片'
-            : 'LOCAL TEST · Demo records and sample photos only'}
-        </aside>
-      )}
       <MarketingHeader
         page="app"
         onLanguageChange={onLanguageChange}
@@ -438,7 +431,7 @@ export default function Portal({
             </section>
             {!import.meta.env.DEV && ['calendar', 'balances'].includes(route.kind) && (
               <section className="customer-section">
-                <h2>{chinese ? '规划工具仍在预览中' : 'Planning tools are still in preview'}</h2>
+                <h2>{chinese ? '规划工具尚未开放' : 'Planning tools are not yet available'}</h2>
                 <p>
                   {chinese
                     ? '日历和余额尚未作为正式业务工具上线。'
