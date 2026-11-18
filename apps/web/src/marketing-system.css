@@ -1877,3 +1877,6 @@ header.marketing-header nav {
 .marketing-header[data-app-header] > .marketing-menu {
   margin-left: auto;
 }
+.marketing-header[data-app-header] .header-actions {
+  margin-left: auto;
+}
