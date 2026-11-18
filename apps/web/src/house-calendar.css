@@ -3699,3 +3699,6 @@
 .hc .hc-legend {
   padding: 8px 12px;
 }
+.hc .hc-room-heading {
+  border-top: 1px solid var(--line);
+}
