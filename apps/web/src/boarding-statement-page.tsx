@@ -13,7 +13,7 @@ import {
   type StatementKind,
   type StatementFilters,
 } from './boarding-statement';
-import { PetProfileAvatar, CalendarPhotoCredits } from './calendar-pet-photos';
+import { PetProfileAvatar, CalendarPhotoStatus } from './calendar-pet-photos';
 import Icon from './icons';
 import Modal from './modal';
 export default function BoardingStatement({
@@ -310,7 +310,7 @@ export default function BoardingStatement({
           </p>
         </Modal>
       )}
-      <CalendarPhotoCredits />
+      <CalendarPhotoStatus />
     </section>
   );
 }

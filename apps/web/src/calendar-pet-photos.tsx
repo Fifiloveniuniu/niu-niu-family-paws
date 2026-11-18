@@ -270,22 +270,12 @@ export function PetProfileAvatar({ name, className = '' }: { name: string; class
     </span>
   );
 }
-const safeLink = (url: string) => {
-  try {
-    return new URL(url).protocol === 'https:' ? url : undefined;
-  } catch {
-    return undefined;
-  }
-};
-export function CalendarPhotoCredits() {
+export function CalendarPhotoStatus() {
   const { i18n } = useTranslation();
   const isChinese = i18n.language === 'zh';
   const photos = React.useContext(Photos);
   const retry = React.useContext(RetryPhotos);
   const failed = Object.values(photos).some((photo) => photo.status === 'failed');
-  const credited = Object.entries(photos).filter(
-    ([, photo]) => photo.status === 'ready' && photo.profile?.photoCredit,
-  );
 
   return (
     <div className="hc-photo-info">
@@ -294,33 +284,6 @@ export function CalendarPhotoCredits() {
         <button className="hc-photo-retry" type="button" onClick={retry}>
           {isChinese ? '重试档案照片' : 'Retry profile photos'}
         </button>
-      )}
-      {credited.length > 0 && (
-        <details className="hc-photo-credits">
-          <summary>{isChinese ? '示例档案照片与来源' : 'Sample profile photos & credits'}</summary>
-          <p>
-            {isChinese
-              ? '日历示例名字关联到本地测试档案照片，不代表真实客户的宠物。'
-              : 'Calendar sample names use linked local demo profile photos, not real customer pets.'}
-          </p>
-          <ul>
-            {credited.map(([alias, { profile }]) => {
-              const credit = profile!.photoCredit!;
-              return (
-                <li key={alias}>
-                  <strong>{alias}</strong> · {profile!.name} · {credit.creator} ·{' '}
-                  <a href={safeLink(credit.sourcePage)} target="_blank" rel="noopener noreferrer">
-                    {isChinese ? '来源' : 'Source'}
-                  </a>{' '}
-                  ·{' '}
-                  <a href={safeLink(credit.licenseUrl)} target="_blank" rel="noopener noreferrer">
-                    {credit.license}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </details>
       )}
     </div>
   );
