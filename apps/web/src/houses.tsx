@@ -6,6 +6,7 @@ import React from 'react';
 import { navigate } from './routing';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
+import Rooms from './rooms';
 import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
@@ -189,6 +190,7 @@ export default function Houses({
                 <p>
                   {labels.timezone}: {house.timezone}
                 </p>
+                <Rooms houseId={house.id} addressReady={!!house.address?.trim()} />
               </div>
               <button
                 className="icon-button"

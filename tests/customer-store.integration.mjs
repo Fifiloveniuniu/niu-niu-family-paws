@@ -511,3 +511,60 @@ test('pet type and weight persist with ownership, versions, retries, legacy clie
   assert.equal(history.data().actor, 'admin');
   assert.ok([13, 14].includes(history.data().before.weightKg));
 });
+
+test('persisted rooms require a configured house, audit retries and protect occupied capacity', async (t) => {
+  const { roomStore } = await import('../apps/api/src/rooms.ts');
+  const { houseStore } = await import('../apps/api/src/houses.ts');
+  const app = initializeApp({ projectId: 'demo-niu-niu' }, 'rooms-' + randomUUID());
+  t.after(() => deleteApp(app));
+  const db = getFirestore(app, integrationDatabaseId);
+  const hid = randomUUID();
+  await houseStore(db).save(
+    hid,
+    {
+      name: '[TEST] House',
+      address: '[TEST] Address',
+      timezone: 'America/Los_Angeles',
+      version: 0,
+    },
+    'admin',
+  );
+  const store = roomStore(db);
+  const rid = randomUUID();
+  const input = { name: '[TEST] Room', capacity: 2, costs: { dog: 1, cat: 0.5 }, version: 0 };
+  const first = await store.save(hid, rid, input, 'admin');
+  assert.deepEqual(await store.save(hid, rid, input, 'admin'), first);
+  assert.equal((await store.list(hid)).items[0].id, rid);
+  const concurrent = await Promise.allSettled([
+    store.save(hid, rid, { ...input, name: '[TEST] A', version: 1 }, 'admin'),
+    store.save(hid, rid, { ...input, name: '[TEST] B', version: 1 }, 'other-admin'),
+  ]);
+  assert.equal(concurrent.filter((r) => r.status === 'fulfilled').length, 1);
+  await db.collection('bookings').doc(randomUUID()).set({
+    roomId: rid,
+    houseId: hid,
+    status: 'planned',
+    arrival: '2030-01-01T10:00:00Z',
+    pickup: '2030-01-03T10:00:00Z',
+    units: 2,
+    species: 'dog',
+  });
+  await assert.rejects(
+    store.save(hid, rid, { ...input, capacity: 1, version: 2 }, 'admin'),
+    Conflict,
+  );
+  await assert.rejects(
+    store.save(hid, rid, { ...input, costs: { dog: 2 }, version: 2 }, 'admin'),
+    Conflict,
+  );
+  const expanded = await store.save(hid, rid, { ...input, capacity: 3, version: 2 }, 'admin');
+  assert.equal(expanded.version, 3);
+  const audit = (await db.doc(`houses/${hid}/rooms/${rid}/history/3`).get()).data();
+  assert.equal(audit.actor, 'admin');
+  assert.equal(audit.before.capacity, 2);
+  assert.equal(audit.after.capacity, 3);
+  const missing = randomUUID();
+  await db.doc('houses/' + missing).set({ name: '[TEST] Legacy', address: '' });
+  await assert.rejects(store.save(missing, randomUUID(), input, 'admin'), PetInvalid);
+  assert.equal((await db.doc('houseSchedules/' + hid).get()).data().revision, 3);
+});

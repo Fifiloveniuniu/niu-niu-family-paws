@@ -79,3 +79,7 @@ Balances reuses PetBalances as an embedded page or focused dialog, sharing the e
 ## Statement inside Balances — 2026-11-16
 
 Latest local navigation is Calendar, Customers, Balances, Settings. Balances owns Overview and Statement subviews. Canonical statement links use #/balances?view=statement with optional encoded pet scope; legacy #/transactions links still resolve to the same nested statement and select Balances in primary navigation. The existing statement data, validation, details and CSV implementation are reused with a subordinate heading. The selected overview pet survives subview transitions in workspace state; full-page customer filters start at All customers, while pet-scoped dialog behavior is unchanged. Settings exposes cancellation policy only; Calendar retains saved house management. No API, ledger, auth or production-routing change.
+
+## Persisted rooms (local feature, not deployed)
+
+Admin room list/save endpoints use canonical houses/{houseId}/rooms/{roomId} records, versioned retry-safe writes and actor history. Rooms require an existing house with a completed address; capacity and configured species consumption must be positive. Unconfigured species cannot be booked. Room writes update the per-house houseSchedules revision lock for coordination with booking transactions. Capacity reductions below saved active occupancy and consumption changes while stays remain active are rejected, preserving the current assignment until a reviewed change policy exists. No deletion, pricing, turnover or approved business defaults are inferred.

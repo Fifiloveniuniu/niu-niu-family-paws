@@ -12,6 +12,8 @@
       }
     },
     "schemas": {
+      "RoomWrite": {"type": "object", "additionalProperties": false, "required": ["name", "capacity", "costs", "version"], "properties": {"name": {"type": "string", "minLength": 1, "maxLength": 120}, "capacity": {"type": "number", "exclusiveMinimum": 0, "maximum": 1000000}, "costs": {"type": "object", "additionalProperties": false, "properties": {"dog": {"type": "number", "exclusiveMinimum": 0, "maximum": 1000000}, "cat": {"type": "number", "exclusiveMinimum": 0, "maximum": 1000000}, "rabbit": {"type": "number", "exclusiveMinimum": 0, "maximum": 1000000}}}, "version": {"type": "integer", "minimum": 0}}},
+      "Room": {"allOf": [{"$ref": "#/components/schemas/RoomWrite"}, {"type": "object", "required": ["id", "houseId", "createdAt", "updatedAt"], "properties": {"id": {"type": "string", "format": "uuid"}, "houseId": {"type": "string", "format": "uuid"}, "createdAt": {"type": "string"}, "updatedAt": {"type": "string"}}}]},
       "HouseWrite": {"type": "object", "additionalProperties": false, "required": ["name", "address", "timezone", "version"], "properties": {"name": {"type": "string", "minLength": 1, "maxLength": 120}, "address": {"type": "string", "minLength": 1, "maxLength": 500}, "timezone": {"type": "string", "minLength": 1, "maxLength": 100}, "version": {"type": "integer", "minimum": 0}}},
       "House": {"allOf": [{"$ref": "#/components/schemas/HouseWrite"}, {"type": "object", "required": ["id", "createdAt", "updatedAt"], "properties": {"id": {"type": "string", "format": "uuid"}, "createdAt": {"type": "string"}, "updatedAt": {"type": "string"}}}]},
       "LinkState": {
@@ -186,6 +188,8 @@
     }
   ],
   "paths": {
+    "/api/houses/{houseId}/rooms": {"get":{"summary":"List saved rooms (administrator only)","parameters":[{"name":"houseId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"Saved rooms","content":{"application/json":{"schema":{"type":"object","required":["items"],"properties":{"items":{"type":"array","items":{"$ref":"#/components/schemas/Room"}}}}}}}}}},
+    "/api/houses/{houseId}/rooms/{id}": {"put":{"summary":"Save room configuration with version and occupancy checks (administrator only)","parameters":[{"name":"houseId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}},{"name":"id","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/RoomWrite"}}}},"responses":{"200":{"description":"Saved room","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Room"}}}}}}},
     "/api/houses": {"get": {"summary": "List houses (administrator only)", "responses": {"200": {"description": "Houses", "content": {"application/json": {"schema": {"type": "object", "required": ["items"], "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/House"}}}}}}}}}},
     "/api/houses/{id}": {"put": {"summary": "Create or edit a house (administrator only)", "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}], "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HouseWrite"}}}}, "responses": {"200": {"description": "Saved house", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/House"}}}}}}},
     "/api/account-link": {

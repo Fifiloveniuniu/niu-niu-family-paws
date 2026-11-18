@@ -1,3 +1,7 @@
+## Persisted room configuration — local, 2026-11-18
+
+Added canonical admin room list/save API and house-page room dialogs, with weighted capacity/species consumption, house-address prerequisite, transactional versions, retry-safe history and actual actors. Writes update the house scheduling lock; conflicting capacity reductions and changes to consumption while stays remain active are rejected. No deletion policy/default business capacities inferred. Build/API typecheck/formatting,48 unit tests,8 real isolated Firestore suites and2 bilingual responsive house/room browser workflows passed. Actual localhost Chrome Add room reviewed in tab30 with frontend-only UI fixtures. PR134 requires rebase after parent squash merge; upcoming stack synchronization will resolve before merging. No deployment.
+
 ## Persisted pet care details — local, 2026-11-18
 
 Canonical pets now save nullable type and weightKg through existing owner/admin versioned audited APIs. Old clients omitting fields preserve details; explicit null clears. Pet dialogs/cards show type/weight and N/A when unset; calendar info reads accessible profile weight. No pricing bands or weight-derived business rules invented. Build/API typecheck/formatting,47 unit tests,7 real isolated Firestore suites, bilingual pet-dialog case and4 avatar regressions passed. Actual localhost Chrome pet dialog reviewed in isolated tab30 using frontend-only UI fixtures plus demo Auth; no Firestore preview records created. PR133 merged after CI/signature verification; PR134 CI rerunning after retarget. No deployment.

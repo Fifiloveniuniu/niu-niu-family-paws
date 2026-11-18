@@ -51,6 +51,27 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
     }
     return route.fulfill({ json: house });
   });
+  const savedRooms: Record<string, any[]> = {};
+  await page.route('**/api/houses/*/rooms', (route) => {
+    const hid = route.request().url().split('/').at(-2)!;
+    return route.fulfill({ json: { items: savedRooms[hid] ?? [] } });
+  });
+  await page.route('**/api/houses/*/rooms/*', (route) => {
+    const parts = route.request().url().split('/');
+    const hid = parts.at(-3)!;
+    const id = parts.at(-1)!;
+    const body = route.request().postDataJSON();
+    const room = {
+      ...body,
+      id,
+      houseId: hid,
+      version: body.version + 1,
+      createdAt: '2026-11-18',
+      updatedAt: '2026-11-18',
+    };
+    savedRooms[hid] = [...(savedRooms[hid] ?? []).filter((r) => r.id !== id), room];
+    return route.fulfill({ json: room });
+  });
   await page.goto('/app/sign-in/');
   await page.evaluate(
     async ({ email }) => {
@@ -81,6 +102,19 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await expect(dialog.getByLabel('House name', { exact: true })).toHaveValue('Demo West');
   await dialog.getByRole('button', { name: 'Save house', exact: true }).click();
   await expect(section.getByRole('heading', { name: 'Demo West', exact: true })).toBeVisible();
+  await section.getByRole('button', { name: 'Add room', exact: true }).click();
+  let roomDialog = page.getByRole('dialog', { name: 'Add room', exact: true });
+  await roomDialog.getByLabel('Room name', { exact: true }).fill('[TEST] Oak');
+  await roomDialog.getByLabel('Maximum capacity', { exact: true }).fill('3');
+  await roomDialog.getByLabel('Dog', { exact: true }).fill('1');
+  await roomDialog.getByRole('button', { name: 'Save room', exact: true }).click();
+  await expect(section.getByText('[TEST] Oak', { exact: true })).toBeVisible();
+  await section.getByRole('button', { name: 'Edit room: [TEST] Oak', exact: true }).click();
+  roomDialog = page.getByRole('dialog', { name: 'Edit room', exact: true });
+  await expect(roomDialog.getByLabel('Maximum capacity', { exact: true })).toHaveValue('3');
+  await roomDialog.getByLabel('Maximum capacity', { exact: true }).fill('4');
+  await roomDialog.getByRole('button', { name: 'Save room', exact: true }).click();
+  expect(Object.values(savedRooms)[0][0].version).toBe(2);
   await section.getByRole('button', { name: 'Add house', exact: true }).click();
   await dialog.getByLabel('House name', { exact: true }).fill('Demo East');
   await dialog.getByLabel('Address', { exact: true }).fill('Synthetic east address');

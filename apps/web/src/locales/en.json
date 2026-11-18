@@ -921,5 +921,21 @@
   "ui.houseCalendar.practiceRoom": "Practice room",
   "ui.pets.species": "Pet type",
   "ui.pets.weightKg": "Weight (kg)",
-  "ui.pets.weightValue": "{{weight}} kg"
+  "ui.pets.weightValue": "{{weight}} kg",
+  "ui.rooms.title": "Rooms",
+  "ui.rooms.add": "Add room",
+  "ui.rooms.edit": "Edit room",
+  "ui.rooms.name": "Room name",
+  "ui.rooms.capacity": "Maximum capacity",
+  "ui.rooms.loading": "Loading rooms…",
+  "ui.rooms.empty": "No rooms yet.",
+  "ui.rooms.costHint": "Set capacity consumed by each pet type. Leave unavailable types empty. Existing stays keep their saved consumption; conflicting changes require review.",
+  "ui.rooms.conflict": "This room changed or the update conflicts with existing stays. Close and review the latest configuration before retrying.",
+  "ui.rooms.invalid": "Enter a name, positive capacity and valid pet usage. Complete the house address first.",
+  "ui.rooms.denied": "Administrator access is required.",
+  "ui.rooms.error": "Unable to load or save rooms. Try again.",
+  "ui.rooms.retry": "Try again",
+  "ui.rooms.save": "Save room",
+  "ui.rooms.saving": "Saving…",
+  "ui.rooms.cancel": "Cancel"
 }
