@@ -153,9 +153,7 @@ test('add-pet calendar selects available stays and grays out continuous unavaila
   page,
 }) => {
   await page.goto('/app/calendar/');
-  await page
-    .getByRole('button', { name: 'Room settings: Sample house A · Room 1', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Room settings: House A · Room 1', exact: true }).click();
   await page.getByLabel('Maximum capacity', { exact: true }).fill('4');
   await page.getByLabel('Dog capacity usage', { exact: true }).fill('1');
   await page.getByRole('button', { name: 'Apply to preview', exact: true }).click();
@@ -185,9 +183,7 @@ test('add-pet calendar selects available stays and grays out continuous unavaila
     'rgb(229, 231, 227)'
   )
     throw Error('Unavailable range is not gray');
-  await calendar
-    .getByRole('button', { name: 'Choose Sample house A · Room 1', exact: true })
-    .click();
+  await calendar.getByRole('button', { name: 'Choose House A · Room 1', exact: true }).click();
   await dialog.getByRole('button', { name: 'Review stay', exact: true }).waitFor();
   if (await dialog.getByRole('button', { name: 'Review stay', exact: true }).isDisabled())
     throw Error('Available stay not selectable');
@@ -276,9 +272,7 @@ test('stay review blocks insufficient balance and tracks planned coverage after 
 }) => {
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto('/app/calendar/');
-  await page
-    .getByRole('button', { name: 'Room settings: Sample house A · Room 1', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Room settings: House A · Room 1', exact: true }).click();
   await page.getByLabel('Maximum capacity', { exact: true }).fill('4');
   await page.getByLabel('Dog capacity usage', { exact: true }).fill('1');
   await page.getByRole('button', { name: 'Apply to preview', exact: true }).click();
@@ -299,7 +293,7 @@ test('stay review blocks insufficient balance and tracks planned coverage after 
   await reviewDays(page);
   await page.getByLabel('Required days', { exact: true }).fill('2');
   await page.getByRole('button', { name: 'Choose a room', exact: true }).click();
-  await page.getByRole('button', { name: 'Choose Sample house A · Room 1', exact: true }).click();
+  await page.getByRole('button', { name: 'Choose House A · Room 1', exact: true }).click();
   await page.getByRole('button', { name: 'Review stay', exact: true }).click();
   if (!(await page.getByRole('button', { name: 'Add to preview', exact: true }).isDisabled()))
     throw Error('Missing balance allowed stay');

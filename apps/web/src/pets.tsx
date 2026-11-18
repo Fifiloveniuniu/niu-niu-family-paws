@@ -378,8 +378,7 @@ export default function Pets({
               </h4>
               {pet.photoCredit && (
                 <p className="pet-photo-credit">
-                  {i18n.language === 'zh' ? '测试示例照片' : 'Test sample photo'} ·{' '}
-                  {pet.photoCredit.creator} ·{' '}
+                  {i18n.language === 'zh' ? '测试照片' : 'Test photo'} · {pet.photoCredit.creator} ·{' '}
                   <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">
                     {i18n.language === 'zh' ? '来源' : 'Source'}
                   </a>{' '}

@@ -93,7 +93,7 @@ export default function HouseCalendar({
     const index = initialStays.findIndex((petProfile) => petProfile.name === name);
     return index < 0 ? '4' : String(Math.floor(index / 3) + 1);
   };
-  const customerName = (id: string) => translate('Sample family', '示例家庭') + ' ' + id;
+  const customerName = (id: string) => translate('Family', '家庭') + ' ' + id;
   const [config, setConfig] = React.useState<Record<string, CalendarSettings>>({});
   const [roomFilter, setRoomFilter] = React.useState('all');
   const [speciesFilter, setSpeciesFilter] = React.useState('all');
@@ -184,7 +184,7 @@ export default function HouseCalendar({
   const timelinePercent = (dateValue: Date) =>
     ((dateValue.getTime() - from.getTime()) / (span * MILLISECONDS_PER_DAY)) * 100;
   const houseName = (h: number) =>
-    config['h' + h]?.name || translate('Sample house', '示例房屋') + ' ' + (h === 1 ? 'A' : 'B');
+    config['h' + h]?.name || translate('House', '房屋') + ' ' + (h === 1 ? 'A' : 'B');
   const roomName = (h: number, r: number) =>
     config[h + '-' + r]?.name || translate('Room', '房间') + ' ' + r;
   const roster = [
@@ -476,7 +476,7 @@ export default function HouseCalendar({
                     <span /> {translate('Local time', '当地时间')} ·{' '}
                     {now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                     <small>
-                      {translate('Sample timezone', '示例时区')}:{' '}
+                      {translate('Timezone', '时区')}:{' '}
                       {Intl.DateTimeFormat().resolvedOptions().timeZone}
                     </small>
                   </div>
@@ -1127,8 +1127,8 @@ export default function HouseCalendar({
                 <div className="hc-setup">
                   <p className="hc-setup-note">
                     {translate(
-                      'Saved house settings are separate from the sample calendar. Room setup is still in progress.',
-                      '保存的房屋设置与示例日历分开。房间设置仍在开发中。',
+                      'Saved house settings are separate from the calendar. Room setup is still in progress.',
+                      '保存的房屋设置与日历分开。房间设置仍在开发中。',
                     )}
                   </p>
                   <Houses />
@@ -1198,10 +1198,7 @@ export default function HouseCalendar({
                     {translate('View pet balance', '查看宠物余额')}
                   </button>
                   <p>
-                    {translate(
-                      'Illustrative stay only. No booking or attendance data is saved.',
-                      '仅为示例，不保存预约或交接记录。',
-                    )}
+                    {translate('No booking or attendance data is saved.', '不保存预约或交接记录。')}
                   </p>
                 </>
               )}
