@@ -1,3 +1,7 @@
+## Borderless dropdown item polish — local, 2026-11-18
+
+Dropdown fields now exactly match pet-search1px solid#dce5de borders, including timezone. Menu items have no border,6px gaps and sage#e7eee3 hover; selected rows keep green fill without borders. Empty/unmatched selected values show N/A. Prevented phone timezone label wrapping. Build/typecheck, full formatting and8 focused Chrome tests passed, including computed border equality, borderless/hover assertions and bilingual desktop/mobile interactions. Actual localhost Chrome confirmed all six Calendar dropdown borders match search. PR121 avatar popup passed CI/merged. No deployment.
+
 ## Calendar avatar info — local, 2026-11-18
 
 Hover, keyboard focus or tap a pet avatar for a top-layer info card with112px photo, type, status, owner, boarding balance/validity and room. Weight is not stored in current profiles, so it displays N/A; absent balances also display N/A. Uses existing authorized photos and local balance data, no invented metadata. Card supports Escape/close, pointer travel, viewport bounds and balance/profile links. Build/typecheck and four bilingual390/1440 hover/focus/tap/layout checks passed; actual localhost Chrome reviewed. Screenshots calendar-pet-info-{390,1440}.png. PR120 dropdowns passed CI/merged. No deployment.

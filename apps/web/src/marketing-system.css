@@ -1164,7 +1164,7 @@ header.marketing-header nav {
   cursor: pointer;
 }
 .marketing-header .language-menu-options button:hover {
-  background: #eee3d7;
+  background: #e7eee3;
 }
 .marketing-header .language-menu-options button[aria-checked='true'] {
   background: #31594c;
@@ -1201,7 +1201,7 @@ header.marketing-header nav {
   border-radius: 9px;
 }
 .marketing-header .nav-submenu a:hover {
-  background: #eee3d7;
+  background: #e7eee3;
 }
 .marketing-footer {
   border-top: 1px solid #d5dccf;

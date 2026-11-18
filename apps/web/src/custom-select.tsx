@@ -44,7 +44,7 @@ export default function CustomSelect(props: Props) {
   const popup = React.useRef<HTMLDivElement>(null);
   const listId = React.useId();
   const prefix = React.useRef({ text: '', at: 0 });
-  const selectedOption = options.find((item) => item.value === selected) ?? options[0];
+  const selectedOption = options.find((item) => item.value === selected);
 
   React.useLayoutEffect(() => {
     const parent =
@@ -224,7 +224,9 @@ export default function CustomSelect(props: Props) {
           if (!root.current?.contains(event.relatedTarget as Node)) setOpen(false);
         }}
       >
-        <span className="custom-select-value">{selectedOption?.label}</span>
+        <span className="custom-select-value">
+          {selected && selectedOption ? selectedOption.label : 'N/A'}
+        </span>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="m7 10 5 5 5-5" />
         </svg>
