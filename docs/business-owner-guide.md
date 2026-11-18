@@ -143,7 +143,9 @@ Choose a pet and enter arrival/pickup. Gray bands show the actual unavailable ti
 
 ## Pet balances and the new scheduling flow (local preview)
 
-Add pet now guides you through **Stay details → Choose room → Review**. Choose the pet, service, planned times and staff-reviewed required days. Gray room ranges remain unavailable. The review shows this pet’s balance check, required days and planning remainder; missing or insufficient eligible days blocks Add. Open **Add balance / Manage pet balance** from review without losing the stay draft.
+Add booking opens full screen and guides you through **Stay details → Choose room → Review**. Choose the pet and planned times, then choose an available room on the calendar. Gray room ranges remain unavailable, and configured room capacity still applies. There is no manual day count or capacity override. Until the billing-day rule is confirmed, usage and the resulting balance show N/A; saving the local schedule does not deduct or reserve credit. Open **Add balance / Manage pet balance** from review without losing the stay draft.
+
+“添加预约”以全屏打开，依次选择宠物与时间、在日历上选择可用房间，最后确认。灰色时段不可用，房间容量规则仍然生效。无需填写所需天数，也没有手动容量覆盖选项。计费天数规则确认前，使用天数与预计余额显示 N/A；保存本地安排不会扣减或预留额度。可从确认页打开余额管理，预约草稿会保留。
 
 Use **Boarding balances** in the calendar header to select a customer, pet for boarding. Set up its sample day credits, reviewed coverage dates. Save a named Policy template to reuse those dates for another pet of the same service, or select Custom dates. Templates do not share balances and reset when leaving/reloading the preview. Each addition/removal of days may include an optional reason and retains an adjustment history. Only boarding is supported; different pets do not share credits. Recorded days / Planned here / Available to plan are planning figures for this page. No real payment, reservation, deduction or package activation is saved. Leaving/reloading this page resets the sample data. Real day-counting and balance lifecycle still need your decisions.
 

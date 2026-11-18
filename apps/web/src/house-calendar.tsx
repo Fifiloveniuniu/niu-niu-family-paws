@@ -1004,7 +1004,7 @@ export default function HouseCalendar({
                 onClose={() => setAssignment(false)}
                 onApply={(stay) => {
                   if (
-                    !stay.coverage ||
+                    stay.coverage &&
                     validatePetCoverage(
                       balances[balanceKey(stay.name, stay.coverage.service)],
                       stay.name,
