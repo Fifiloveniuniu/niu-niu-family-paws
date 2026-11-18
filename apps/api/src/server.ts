@@ -3,6 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { localPhotos } from './local-photos.ts';
+import { balanceStore } from './balances.ts';
 import { roomStore } from './rooms.ts';
 import { houseStore } from './houses.ts';
 import { petStore } from './pets.ts';
@@ -44,6 +45,7 @@ const app = buildApp({
   },
   houses: houseStore(getFirestore()),
   rooms: roomStore(getFirestore()),
+  balances: balanceStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(), async (uid) => {
     const user = await auth.getUser(uid);

@@ -4,6 +4,74 @@
  */
 
 export interface paths {
+    "/api/customers/{customerId}/pets/{petId}/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read own pet balance and paginated recorded history; administrators may read any pet */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                    petId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Balance and history */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BoardingBalanceRead"];
+                    };
+                };
+            };
+        };
+        /** Audited idempotent administrator manual adjustment (no payment or automatic booking deduction) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                    petId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BoardingAdjustment"];
+                };
+            };
+            responses: {
+                /** @description Saved account */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BoardingAccount"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/houses/{houseId}/rooms": {
         parameters: {
             query?: never;
@@ -485,6 +553,50 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        BoardingAccount: {
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            /** @enum {string} */
+            service: "boarding";
+            days: number;
+            validFrom: string;
+            validThrough: string;
+            version: number;
+            createdAt: string;
+            updatedAt: string;
+        };
+        BoardingAdjustment: {
+            /** Format: uuid */
+            operationId: string;
+            version: number;
+            delta: number;
+            validFrom: string;
+            validThrough: string;
+            reason: string;
+        };
+        BoardingEvent: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            version: number;
+            delta: number;
+            daysAfter: number;
+            validFrom: string;
+            validThrough: string;
+            reason: string;
+            actor?: string;
+            at: string;
+        };
+        BoardingBalanceRead: {
+            account: components["schemas"]["BoardingAccount"] | null;
+            events: components["schemas"]["BoardingEvent"][];
+            nextCursor: number | null;
+        };
         RoomWrite: {
             name: string;
             capacity: number;

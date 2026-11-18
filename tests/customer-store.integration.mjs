@@ -568,3 +568,111 @@ test('persisted rooms require a configured house, audit retries and protect occu
   await assert.rejects(store.save(missing, randomUUID(), input, 'admin'), PetInvalid);
   assert.equal((await db.doc('houseSchedules/' + hid).get()).data().revision, 3);
 });
+
+test('boarding credits are atomic, per pet, audited and idempotent without implementing payments', async (t) => {
+  const { balanceStore } = await import('../apps/api/src/balances.ts');
+  const app = initializeApp({ projectId: 'demo-niu-niu' }, 'balances-' + randomUUID());
+  t.after(() => deleteApp(app));
+  const db = getFirestore(app, integrationDatabaseId);
+  const customers = firestoreStore(db);
+  const cid = randomUUID();
+  await customers.save(
+    cid,
+    { name: '[TEST] Balance owner', email: '', phone: '', language: 'en', version: 0 },
+    'admin',
+  );
+  await db.doc('customers/' + cid).update({ ownerUid: 'owner' });
+  const pets = petStore(db, { put: async () => {}, get: async () => Buffer.from('') });
+  const admin = { uid: 'admin', admin: true };
+  const owner = { uid: 'owner', google: true };
+  const pid = randomUUID(),
+    other = randomUUID();
+  await pets.save(admin, cid, pid, { name: '[TEST] Pet', version: 0 });
+  await pets.save(admin, cid, other, { name: '[TEST] Other', version: 0 });
+  const store = balanceStore(db);
+  const input = {
+    operationId: randomUUID(),
+    version: 0,
+    delta: 30,
+    validFrom: '2028-02-29',
+    validThrough: '2028-05-28',
+    reason: '',
+  };
+  const [first, retry] = await Promise.all([
+    store.adjust(admin, cid, pid, input),
+    store.adjust(admin, cid, pid, input),
+  ]);
+  assert.deepEqual(first, retry);
+  assert.equal(first.days, 30);
+  const ownRead = await store.read(owner, cid, pid);
+  assert.equal(ownRead.events.length, 1);
+  assert.equal(ownRead.events[0].actor, undefined);
+  assert.equal((await store.read(admin, cid, pid)).events[0].actor, 'admin');
+  await assert.rejects(store.read({ uid: 'other', google: true }, cid, pid), PetAccess);
+  await assert.rejects(
+    store.adjust(owner, cid, pid, { ...input, operationId: randomUUID() }),
+    PetAccess,
+  );
+  await assert.rejects(store.adjust(admin, cid, other, input), Conflict);
+  const edits = await Promise.allSettled([
+    store.adjust(admin, cid, pid, { ...input, operationId: randomUUID(), version: 1, delta: 5 }),
+    store.adjust(admin, cid, pid, { ...input, operationId: randomUUID(), version: 1, delta: 7 }),
+  ]);
+  assert.equal(edits.filter((r) => r.status === 'fulfilled').length, 1);
+  assert.ok(edits.some((r) => r.status === 'rejected' && r.reason instanceof Conflict));
+  assert.deepEqual(await store.adjust(admin, cid, pid, input), first); // Replay returns original result; never applies twice.
+  await assert.rejects(store.adjust(admin, cid, pid, { ...input, delta: 31 }), Conflict);
+  await assert.rejects(
+    store.adjust(admin, cid, pid, { ...input, operationId: randomUUID(), version: 2, delta: -100 }),
+    PetInvalid,
+  );
+  await assert.rejects(
+    store.adjust(admin, cid, pid, {
+      ...input,
+      operationId: randomUUID(),
+      version: 2,
+      delta: 1,
+      validFrom: '2027-02-29',
+    }),
+    PetInvalid,
+  );
+  const current = (await store.read(admin, cid, pid)).account;
+  assert.ok([35, 37].includes(current.days));
+  assert.equal(current.version, 2);
+  assert.equal((await store.read(admin, cid, other)).account, null);
+  const adjusted = await store.adjust(admin, cid, pid, {
+    ...input,
+    operationId: randomUUID(),
+    version: 2,
+    delta: -5,
+    reason: '[TEST] Correction',
+  });
+  assert.equal(adjusted.days, current.days - 5);
+  assert.equal((await store.read(owner, cid, pid)).events.length, 3);
+  const ops = await db.collection('balanceOperations').where('petId', '==', pid).get();
+  assert.equal(ops.size, 3);
+  assert.equal(ops.docs.filter((doc) => doc.data().before === null).length, 1);
+  const batch = db.batch();
+  for (let version = 4; version <= 55; version++)
+    batch.create(db.doc(`customers/${cid}/pets/${pid}/balances/boarding/events/${randomUUID()}`), {
+      id: randomUUID(),
+      customerId: cid,
+      petId: pid,
+      version,
+      delta: 0,
+      daysAfter: adjusted.days,
+      validFrom: input.validFrom,
+      validThrough: input.validThrough,
+      reason: '[TEST] Pagination',
+      actor: 'admin',
+      at: '2026-11-18T00:00:00Z',
+    });
+  await batch.commit();
+  const page1 = await store.read(owner, cid, pid);
+  assert.equal(page1.events.length, 50);
+  assert.equal(page1.nextCursor, 6);
+  const page2 = await store.read(owner, cid, pid, page1.nextCursor);
+  assert.equal(page2.events.length, 5);
+  assert.equal(page2.nextCursor, null);
+  assert.equal(new Set([...page1.events, ...page2.events].map((e) => e.version)).size, 55);
+});
