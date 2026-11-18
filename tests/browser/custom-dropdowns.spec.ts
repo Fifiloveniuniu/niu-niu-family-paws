@@ -18,6 +18,21 @@ for (const width of [390, 1440])
         name: language === 'en' ? 'Status' : '状态',
         exact: true,
       });
+      await expect(house).toBeVisible();
+      const fieldBorders = await page.evaluate(() => {
+        const search = getComputedStyle(document.querySelector('.hc-search input')!);
+        return [
+          ...document.querySelectorAll('.hc-calendar-workspace .custom-select-trigger'),
+        ].every((element) => {
+          const field = getComputedStyle(element);
+          return (
+            field.borderColor === search.borderColor &&
+            field.borderWidth === search.borderWidth &&
+            field.borderStyle === search.borderStyle
+          );
+        });
+      });
+      expect(fieldBorders).toBe(true);
       await house.click();
       await expect(page.getByRole('listbox')).toHaveCount(1);
       expect(

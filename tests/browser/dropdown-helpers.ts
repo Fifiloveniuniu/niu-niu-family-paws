@@ -1,4 +1,4 @@
-import { expect, type Locator } from '@playwright/test';
+import { type Locator } from '@playwright/test';
 
 /** Exercise the visible custom control rather than its hidden form field. */
 export async function chooseOption(
@@ -19,15 +19,6 @@ export async function chooseOption(
   } else {
     const list = page.getByRole('listbox');
     if (label) await list.getByRole('option', { name: label, exact: true }).click();
-    else {
-      const match = list.locator('[role="option"]').filter({ visible: true });
-      const index = await match.evaluateAll(
-        (items, selected) =>
-          items.findIndex((item) => item.getAttribute('data-value') === selected),
-        value ?? '',
-      );
-      expect(index, `Dropdown option ${value}`).toBeGreaterThanOrEqual(0);
-      await match.nth(index).click();
-    }
+    else await list.locator(`[role="option"][data-value=${JSON.stringify(value ?? '')}]`).click();
   }
 }
