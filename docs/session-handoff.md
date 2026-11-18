@@ -1,3 +1,7 @@
+## Continuous calendar label dividers — local, 2026-11-18
+
+Constrained sticky pet labels to compact row height and added their inset bottom divider, preventing labels from hiding the horizontal lines on the left panel. Chrome390/1440 containment checks and formatting passed. PR113 and114 merged; no deployment.
+
 ## Compact calendar — local, 2026-11-18
 
 Reduced filter/control spacing, date axis to62px, room/house headings to34px and pet rows to50px. Right-aligned action buttons retained. Production build/typecheck, formatting and four bilingual390/1440 layout checks passed; actual localhost Chrome previewed. No deployment.
