@@ -1,3 +1,4 @@
+import { localeFor, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,8 +43,7 @@ export default function PetBalances({
   onSave: (change: BalanceChange) => void;
 }) {
   const { i18n } = useTranslation();
-  const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   const [customer, setCustomer] = React.useState(
     embedded
       ? 'all'
@@ -77,21 +77,12 @@ export default function PetBalances({
       templateName
     );
   const messages: Record<string, string> = {
-    adjustment: translate('Enter a whole number of days.', '请填写整数天数。'),
-    terms: translate('Choose a valid date range.', '请选择有效日期范围。'),
-    negative: translate('The balance cannot go below zero.', '余额不能小于零。'),
-    planned: translate(
-      'This would leave a planned stay without coverage. Review those stays first.',
-      '此修改会使计划中的托管余额不足或失去覆盖，请先检查相关安排。',
-    ),
-    version: translate(
-      'The balance changed. Close the editor and try again.',
-      '余额已更新，请关闭编辑后重试。',
-    ),
-    operation: translate(
-      'This adjustment was already recorded differently. Reopen the editor.',
-      '此调整已以其他内容记录，请重新打开编辑。',
-    ),
+    adjustment: uiText('ui.petBalances.enterAWholeNumberOfDays'),
+    terms: uiText('ui.petBalances.chooseAValidDateRange'),
+    negative: uiText('ui.petBalances.theBalanceCannotGoBelowZero'),
+    planned: uiText('ui.petBalances.thisWouldLeaveAPlannedStayWithoutCoverageReview'),
+    version: uiText('ui.petBalances.theBalanceChangedCloseTheEditorAndTryAgain'),
+    operation: uiText('ui.petBalances.thisAdjustmentWasAlreadyRecordedDifferentlyReopenTheEditor'),
   };
   function open() {
     operationId.current = crypto.randomUUID();
@@ -142,12 +133,7 @@ export default function PetBalances({
   }
   function saveTemplate() {
     if (!templateName.trim() || !validBalanceDates(from, through)) {
-      setError(
-        translate(
-          'Name the template and choose a valid date range.',
-          '请填写模板名称及有效日期范围。',
-        ),
-      );
+      setError(uiText('ui.petBalances.nameTheTemplateAndChooseAValidDateRange'));
       return;
     }
     const item = {
@@ -178,8 +164,8 @@ export default function PetBalances({
     >
       <UnsavedChanges active={dirty} />
       <div className="hc-balance-editor-heading">
-        <h4>{translate('Add balance', '增加余额')}</h4>
-        <p>{translate('Boarding credit for this pet.', '此宠物的寄养额度。')}</p>
+        <h4>{uiText('ui.petBalances.addBalance')}</h4>
+        <p>{uiText('ui.petBalances.boardingCreditForThisPet')}</p>
       </div>
       {error && (
         <p className="hc-range-feedback" role="alert">
@@ -189,23 +175,23 @@ export default function PetBalances({
       <div className="hc-time-fields">
         {account && (
           <label>
-            {translate('Adjustment', '调整方式')}
+            {uiText('ui.petBalances.adjustment')}
             <CustomSelect
-              aria-label={translate('Adjustment', '调整方式')}
+              aria-label={uiText('ui.petBalances.adjustment')}
               value={mode}
               onChange={(event) => setMode(event.target.value)}
             >
-              <option value="add">{translate('Add days', '增加天数')}</option>
-              {account && <option value="remove">{translate('Remove days', '减少天数')}</option>}
+              <option value="add">{uiText('ui.petBalances.addDays')}</option>
+              {account && <option value="remove">{uiText('ui.petBalances.removeDays')}</option>}
             </CustomSelect>
           </label>
         )}
         <label>
           {mode === 'remove'
-            ? translate('Days to remove', '减少天数')
-            : translate('Days to add', '增加天数')}
+            ? uiText('ui.petBalances.daysToRemove')
+            : uiText('ui.petBalances.daysToAdd')}
           <input
-            aria-label={translate('Days', '天数')}
+            aria-label={uiText('ui.petBalances.days')}
             type="number"
             required
             min={account ? 0 : 1}
@@ -216,24 +202,24 @@ export default function PetBalances({
         </label>
       </div>
       <label>
-        {translate('Reason (optional)', '原因（选填）')}
+        {uiText('ui.petBalances.reasonOptional')}
         <input
-          aria-label={translate('Reason', '原因')}
+          aria-label={uiText('ui.petBalances.reason')}
           maxLength={500}
           value={reason}
           onChange={(event) => setReason(event.target.value)}
-          placeholder={translate('Why is this balance changing?', '此次余额调整的原因是什么？')}
+          placeholder={uiText('ui.petBalances.whyIsThisBalanceChanging')}
         />
       </label>
       <details className="hc-balance-policy" key={`${pet}-${service}-${editing}`} open={!account}>
         <summary>
-          {translate('Coverage policy', '使用规则')}
-          <small>{translate('Choose a template or set dates', '选择模板或填写日期')}</small>
+          {uiText('ui.petBalances.coveragePolicy')}
+          <small>{uiText('ui.petBalances.chooseATemplateOrSetDates')}</small>
         </summary>
         <label>
-          {translate('Policy template', '规则模板')}
+          {uiText('ui.petBalances.policyTemplate')}
           <CustomSelect
-            aria-label={translate('Policy template', '规则模板')}
+            aria-label={uiText('ui.petBalances.policyTemplate')}
             value={template}
             onChange={(event) => {
               setTemplate(event.target.value);
@@ -244,7 +230,7 @@ export default function PetBalances({
               }
             }}
           >
-            <option value="">{translate('Custom dates', '自定义日期')}</option>
+            <option value="">{uiText('ui.petBalances.customDates')}</option>
             {templates
               .filter((p) => p.service === service)
               .map((p) => (
@@ -256,7 +242,7 @@ export default function PetBalances({
         </label>
         <div className="hc-time-fields">
           <label>
-            {translate('Valid from', '有效起始日')}
+            {uiText('ui.petBalances.validFrom')}
             <input
               required
               type="date"
@@ -268,7 +254,7 @@ export default function PetBalances({
             />
           </label>
           <label>
-            {translate('Valid through', '有效截止日')}
+            {uiText('ui.petBalances.validThrough')}
             <input
               required
               type="date"
@@ -282,37 +268,34 @@ export default function PetBalances({
           </label>
         </div>
         <details className="hc-template-create">
-          <summary>{translate('Save dates as a template', '将日期保存为模板')}</summary>
+          <summary>{uiText('ui.petBalances.saveDatesAsATemplate')}</summary>
           <div className="hc-template-save">
             <label>
-              {translate('New template name', '新模板名称')}
+              {uiText('ui.petBalances.newTemplateName')}
               <input
                 maxLength={80}
                 value={templateName}
                 onChange={(event) => setTemplateName(event.target.value)}
-                placeholder={translate('Name this date range', '为此日期范围命名')}
+                placeholder={uiText('ui.petBalances.nameThisDateRange')}
               />
             </label>
             <button type="button" className="hc-manage" onClick={saveTemplate}>
-              {translate('Save template', '保存模板')}
+              {uiText('ui.petBalances.saveTemplate')}
             </button>
           </div>
         </details>
         <p className="hc-balance-preview">
-          {translate(
-            'Templates copy dates into this balance. Later changes do not alter other balances.',
-            '模板将日期复制到当前余额，后续修改不影响其他余额。',
-          )}
+          {uiText('ui.petBalances.templatesCopyDatesIntoThisBalanceLaterChangesDo')}
         </p>
       </details>
       <div className="hc-settings-actions">
         <button className="hc-manage" type="button" onClick={closeEditor}>
-          {translate('Cancel', '取消')}
+          {uiText('ui.petBalances.cancel')}
         </button>
         <button className="hc-apply" type="submit">
           {mode === 'remove'
-            ? translate('Save adjustment', '保存调整')
-            : translate('Add balance', '增加余额')}
+            ? uiText('ui.petBalances.saveAdjustment')
+            : uiText('ui.petBalances.addBalance')}
         </button>
       </div>
     </form>
@@ -338,25 +321,25 @@ export default function PetBalances({
                     }
                   }}
                 >
-                  {translate('View statement', '查看交易明细')} ↗
+                  {uiText('ui.petBalances.viewStatement')} ↗
                 </a>
                 <a className="hc-finance-link" href="/cancellation-policy/">
-                  {translate('Cancellation policy', '取消政策')} ↗
+                  {uiText('ui.petBalances.cancellationPolicy')} ↗
                 </a>
               </>
             )}
             {embedded && (
               <div className="hc-balance-sidebar-heading">
-                <h2>{translate('Pets', '宠物')}</h2>
+                <h2>{uiText('ui.petBalances.pets')}</h2>
                 <span>
                   {pets.filter((p) => customer === 'all' || p.customer === customer).length}
                 </span>
               </div>
             )}
             <label>
-              {translate('Customer', '客户')}
+              {uiText('ui.petBalances.customer')}
               <CustomSelect
-                aria-label={translate('Balance customer', '余额客户')}
+                aria-label={uiText('ui.petBalances.balanceCustomer')}
                 value={customer}
                 onChange={(event) => {
                   if (!confirmDiscardChanges(i18n.language, form.current)) return;
@@ -366,7 +349,7 @@ export default function PetBalances({
                   setEditing(false);
                 }}
               >
-                <option value="all">{translate('All customers', '全部客户')}</option>
+                <option value="all">{uiText('ui.petBalances.allCustomers')}</option>
                 {[...new Map(pets.map((p) => [p.customer, p.customerName])).entries()].map(
                   ([id, name]) => (
                     <option key={id} value={id}>
@@ -379,7 +362,7 @@ export default function PetBalances({
             <div
               className="hc-balance-pets"
               role="group"
-              aria-label={translate('Choose a pet', '选择宠物')}
+              aria-label={uiText('ui.petBalances.chooseAPet')}
             >
               {pets
                 .filter((p) => customer === 'all' || p.customer === customer)
@@ -387,7 +370,7 @@ export default function PetBalances({
                   <button
                     type="button"
                     key={p.name}
-                    aria-label={`${translate('Balance', '余额')}: ${p.name}`}
+                    aria-label={`${uiText('ui.petBalances.balance')}: ${p.name}`}
                     aria-pressed={pet === p.name}
                     onClick={() => switchPet(p.name)}
                   >
@@ -415,10 +398,10 @@ export default function PetBalances({
                     }
                   }}
                 >
-                  {translate('View statement', '查看交易明细')} ↗
+                  {uiText('ui.petBalances.viewStatement')} ↗
                 </a>
                 <a className="hc-finance-link" href="/cancellation-policy/">
-                  {translate('Cancellation policy', '取消政策')} ↗
+                  {uiText('ui.petBalances.cancellationPolicy')} ↗
                 </a>
               </div>
             )}
@@ -436,29 +419,26 @@ export default function PetBalances({
             {summaryOnly && <CalendarProfileLink name={pet} />}
             {(!editing || embedded) && (
               <button className="hc-apply" onClick={open}>
-                {translate('Add balance', '增加余额')}
+                {uiText('ui.petBalances.addBalance')}
               </button>
             )}
           </div>
 
           <p className="hc-balance-preview">
-            {translate(
-              'No payments, deductions or reservations are saved.',
-              '不保存付款、扣减或预留记录。',
-            )}
+            {uiText('ui.petBalances.noPaymentsDeductionsOrReservationsAreSaved')}
           </p>
           {(!editing || embedded) && (
             <div className="hc-balance-metrics">
               <div>
-                <small>{translate('Recorded days', '记录天数')}</small>
+                <small>{uiText('ui.petBalances.recordedDays')}</small>
                 <strong>{account ? account.days : 'N/A'}</strong>
               </div>
               <div>
-                <small>{translate('Planned here', '本页已计划')}</small>
+                <small>{uiText('ui.petBalances.plannedHere')}</small>
                 <strong>{planned}</strong>
               </div>
               <div>
-                <small>{translate('Available to plan', '可计划天数')}</small>
+                <small>{uiText('ui.petBalances.availableToPlan')}</small>
                 <strong>{account ? account.days - planned : 'N/A'}</strong>
               </div>
             </div>
@@ -466,7 +446,7 @@ export default function PetBalances({
           {account && (!editing || embedded) && (
             <div className="hc-balance-terms">
               <span>
-                {translate('Coverage', '覆盖日期')}{' '}
+                {uiText('ui.petBalances.coverage')}{' '}
                 <strong>
                   {account.validFrom} → {account.validThrough}
                 </strong>
@@ -475,13 +455,8 @@ export default function PetBalances({
           )}
           {!account && (!editing || embedded) && (
             <div className="hc-balance-empty">
-              <h4>{translate('No boarding balance yet', '暂无寄养余额')}</h4>
-              <p>
-                {translate(
-                  'Add boarding days and choose a policy template or date range.',
-                  '增加寄养天数，并选择规则模板或有效日期。',
-                )}
-              </p>
+              <h4>{uiText('ui.petBalances.noBoardingBalanceYet')}</h4>
+              <p>{uiText('ui.petBalances.addBoardingDaysAndChooseAPolicyTemplateOr')}</p>
             </div>
           )}
           {!embedded && editing
@@ -489,24 +464,24 @@ export default function PetBalances({
             : account &&
               !summaryOnly && (
                 <div className="hc-balance-history">
-                  <h4>{translate('Adjustment history', '调整记录')}</h4>
+                  <h4>{uiText('ui.petBalances.adjustmentHistory')}</h4>
                   {[...account.history].reverse().map((entry) => (
                     <div key={entry.id}>
                       <span className={entry.delta > 0 ? 'positive' : ''}>
                         {entry.delta > 0 ? '+' : ''}
-                        {entry.delta} {translate('days', '天')}
+                        {entry.delta} {uiText('ui.petBalances.days2')}
                       </span>
                       <div>
                         <strong>
-                          {entry.reason || translate('Balance adjustment', '余额调整')}
+                          {entry.reason || uiText('ui.petBalances.balanceAdjustment')}
                         </strong>
                         <small>
-                          {new Date(entry.at).toLocaleString(isChinese ? 'zh-CN' : 'en-US')} ·{' '}
-                          {translate('Adjustment', '调整')}
+                          {new Date(entry.at).toLocaleString(localeFor(i18n.language))} ·{' '}
+                          {uiText('ui.petBalances.adjustment2')}
                         </small>
                       </div>
                       <small>
-                        {entry.after} {translate('remaining', '剩余')}
+                        {entry.after} {uiText('ui.petBalances.remaining')}
                       </small>
                     </div>
                   ))}
@@ -517,7 +492,7 @@ export default function PetBalances({
       {embedded && editing && (
         <Modal
           className="hc-balance-edit-dialog"
-          title={translate('Add balance', '增加余额')}
+          title={uiText('ui.petBalances.addBalance')}
           onClose={closeEditor}
         >
           {editorForm}
@@ -530,7 +505,7 @@ export default function PetBalances({
   ) : (
     <Modal
       className="hc-balance-dialog"
-      title={translate('Boarding balances', '寄养余额')}
+      title={uiText('ui.petBalances.boardingBalances')}
       onClose={leave}
     >
       {content}

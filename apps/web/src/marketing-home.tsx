@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import { HomeSpaces, HomeNumbers, HomeStories, HomeServiceExtras } from './marketing-home-sections';
 import { useTranslation } from 'react-i18next';
 import type { CSSProperties } from 'react';
@@ -14,9 +15,9 @@ export default function MarketingHome() {
     { anchor: 'experience', label: t('cinemaExperience') },
     { anchor: 'services', label: t('services') },
     { anchor: 'about', label: t('approach') },
-    { anchor: 'spaces', label: i18n.language === 'zh' ? '我们的小天地' : 'Our Spaces' },
-    { anchor: 'numbers', label: i18n.language === 'zh' ? '小爪印的故事' : 'Our story in numbers' },
-    { anchor: 'stories', label: i18n.language === 'zh' ? '暖心分享' : 'Kind words' },
+    { anchor: 'spaces', label: uiText('ui.marketingHome.ourSpaces', {}, i18n.language) },
+    { anchor: 'numbers', label: uiText('ui.marketingHome.ourStoryInNumbers', {}, i18n.language) },
+    { anchor: 'stories', label: uiText('ui.marketingHome.kindWords', {}, i18n.language) },
     { anchor: 'faq', label: t('questions') },
     { anchor: 'contact', label: t('contact') },
   ];

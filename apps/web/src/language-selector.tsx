@@ -1,3 +1,4 @@
+import { languageName, localeFor, supportedLanguages, type Language, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +7,7 @@ export default function LanguageSelector({
   onChange,
   showIcon = false,
 }: {
-  onChange: (language: 'en' | 'zh') => void;
+  onChange: (language: Language) => void;
   showIcon?: boolean;
 }) {
   const { i18n } = useTranslation();
@@ -17,18 +18,14 @@ export default function LanguageSelector({
           <circle cx="12" cy="12" r="9" />
           <path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" />
         </svg>
-        <span>Language / 语言</span>
+        <span>{uiText('common.languageMenu')}</span>
       </span>
-      <CustomSelect
-        value={i18n.language === 'zh' ? 'zh' : 'en'}
-        onChange={(event) => onChange(event.target.value as 'en' | 'zh')}
-      >
-        <option value="en" lang="en">
-          English
-        </option>
-        <option value="zh" lang="zh-Hans">
-          简体中文
-        </option>
+      <CustomSelect value={i18n.language} onChange={(event) => onChange(event.target.value)}>
+        {supportedLanguages.map(({ code, name, htmlLang }) => (
+          <option key={code} value={code} lang={htmlLang}>
+            {name}
+          </option>
+        ))}
       </CustomSelect>
     </label>
   );

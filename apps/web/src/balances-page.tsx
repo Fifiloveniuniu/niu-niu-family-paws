@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import React from 'react';
 import { updateQuery } from './routing';
 import { useTranslation } from 'react-i18next';
@@ -35,8 +36,7 @@ export default function BalancesPage({
   onManageBalance: (pet: string) => void;
 }) {
   const { i18n } = useTranslation();
-  const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   function readFilters(): StatementFilters {
     const params = new URLSearchParams(search);
     const pet = params.get('pet') || initialPet || 'all';
@@ -73,7 +73,7 @@ export default function BalancesPage({
       <StatementFilterPanel pets={pets} filters={filters} onChange={changeFilters} />
       {new URLSearchParams(search).has('pet') &&
         !pets.some((p) => p.name === new URLSearchParams(search).get('pet')) && (
-          <p role="alert">{translate('Pet not found.', '未找到该宠物。')}</p>
+          <p role="alert">{uiText('ui.balancesPage.petNotFound')}</p>
         )}
       <div className="hc-balance-overview">
         {filters.pet !== 'all' ? (
@@ -92,13 +92,8 @@ export default function BalancesPage({
           />
         ) : (
           <section className="hc-all-balances">
-            <h2>{translate('Pet balances', '宠物余额')}</h2>
-            <p>
-              {translate(
-                'Balances belong to each pet. Choose a pet to make an adjustment.',
-                '余额归每只宠物所有，选择宠物后可进行调整。',
-              )}
-            </p>
+            <h2>{uiText('ui.balancesPage.petBalances')}</h2>
+            <p>{uiText('ui.balancesPage.balancesBelongToEachPetChooseAPetTo')}</p>
             <div>
               {scoped.map((p) => {
                 const account = accounts[balanceKey(p.name, 'boarding')];
@@ -112,8 +107,8 @@ export default function BalancesPage({
                     <span>{p.customerName}</span>
                     <b>
                       {account
-                        ? account.days + ' ' + translate('days', '天')
-                        : translate('Not configured', '尚未配置')}
+                        ? account.days + ' ' + uiText('ui.balancesPage.days')
+                        : uiText('ui.balancesPage.notConfigured')}
                     </b>
                   </button>
                 );

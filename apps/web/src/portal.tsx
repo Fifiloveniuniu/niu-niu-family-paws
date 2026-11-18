@@ -1,3 +1,4 @@
+import { englishCatalog, localeFor, type Language, uiText, uiValue } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
 import React from 'react';
 import { currentRoute, navigate, safeReturnTo } from './routing';
@@ -24,86 +25,18 @@ import { confirmDiscardChanges } from './unsaved-changes';
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
-const englishMessages = {
-  home: 'Back to website',
-  label: 'YOUR FAMILY PAWS ACCOUNT',
-  title: 'Welcome to Family Paws',
-  intro: 'Sign in with your Google account to continue.',
-  login: 'Continue with Google',
-  logout: 'Sign out',
-  checking: 'Checking your access…',
-  busy: 'Please wait…',
-  denied: 'Verified account required',
-  deniedBody:
-    'We could not verify access for this account. Try again or sign out and try your Google account again.',
-  refresh: 'Try again',
-  error: 'Something went wrong. Please try again.',
-  popup: 'Allow the Google sign-in window, then try again.',
-  network: 'Check your connection and try again.',
-  dashboard: 'Administrator dashboard',
-  welcome: 'Welcome back.',
-  account: 'Your account',
-  role: 'Administrator',
-  ready: 'Manage customers or update your own profile and pets.',
-  workspace: 'Workspace',
-  manage: 'Customer management',
-  personal: 'My profile & pets',
-  personalTitle: 'My profile & pets',
-  manageHint: 'View and update customer and pet details.',
-  personalHint: 'Your own profile and pets, linked to this Google account.',
-  customerTitle: 'Customer account',
-  employeeTitle: 'Staff account',
-  customerRole: 'Customer',
-  employeeRole: 'Staff',
-  customerNext: 'Manage your profile and pets below.',
-  employeeNext: 'Staff tools are on the way. You can manage your own profile and pets here.',
-  session: 'Using a shared device? Remember to sign out when you’re done.',
-};
-const chineseMessages: typeof englishMessages = {
-  home: '返回首页',
-  label: 'FAMILY PAWS 账号',
-  title: '欢迎来到 Family Paws',
-  intro: '使用您的 Google 账号登录，即可继续。',
-  login: '使用 Google 登录',
-  logout: '退出登录',
-  checking: '正在确认登录状态…',
-  busy: '请稍候…',
-  denied: '请验证您的账号',
-  deniedBody: '暂时无法确认您的登录状态。请重试，或退出后重新登录。',
-  refresh: '重试',
-  error: '操作未完成，请重试。',
-  popup: '请允许弹出 Google 登录窗口，然后重试。',
-  network: '请检查网络连接后重试。',
-  dashboard: '管理员控制台',
-  welcome: '欢迎回来。',
-  account: '您的账号',
-  role: '管理员',
-  ready: '管理客户资料，或打开自己的资料与宠物。',
-  workspace: '切换页面',
-  manage: '客户管理',
-  personal: '我的资料与宠物',
-  personalTitle: '我的资料与宠物',
-  manageHint: '查看和更新客户及宠物资料。',
-  personalHint: '用当前 Google 账号管理自己的资料与宠物。',
-  customerTitle: '客户账号',
-  employeeTitle: '员工账号',
-  customerRole: '客户',
-  employeeRole: '员工',
-  customerNext: '在这里管理您的个人资料与宠物。',
-  employeeNext: '员工功能尚未开放。您可以先管理自己的资料与宠物。',
-  session: '使用共用设备时，请记得在离开前退出登录。',
-};
+const englishMessages = englishCatalog['ui.portal.labels'];
 
 export default function Portal({
   onLanguageChange,
   active = true,
 }: {
   active?: boolean;
-  onLanguageChange: (language: 'en' | 'zh') => void;
+  onLanguageChange: (language: Language) => void;
 }) {
   const { i18n } = useTranslation();
-  const chinese = i18n.language === 'zh';
-  const labels = chinese ? chineseMessages : englishMessages;
+
+  const labels = uiValue('ui.portal.labels', i18n.language);
   const [user, setUser] = React.useState<User | null>(null);
   const [access, setAccess] = React.useState<
     'checking' | 'signed-out' | 'denied' | 'admin' | 'employee' | 'customer'
@@ -175,7 +108,7 @@ export default function Portal({
     }
   }
   async function login() {
-    auth.languageCode = chinese ? 'zh-CN' : 'en';
+    auth.languageCode = i18n.language;
     await setPersistence(auth, browserSessionPersistence);
     await signInWithPopup(auth, provider);
   }
@@ -251,11 +184,11 @@ export default function Portal({
     >
       <summary>
         <Icon name="account" />
-        <span>{chinese ? '账号' : 'Account'}</span>
+        <span>{uiText('ui.portal.account')}</span>
       </summary>
       <div>
         <p>{user?.email}</p>
-        <a href="/app/account/profile/">{chinese ? '我的资料' : 'My profile'}</a>
+        <a href="/app/account/profile/">{uiText('ui.portal.myProfile')}</a>
         <button
           disabled={busy}
           onClick={() => {
@@ -309,25 +242,21 @@ export default function Portal({
                 '/app/sign-in/?returnTo=' + encodeURIComponent(location.pathname + location.search)
               }
             >
-              {chinese ? '登录' : 'Sign in'}
+              {uiText('ui.portal.signIn')}
             </a>
           )
         }
         customers={
           <section>
-            <h1>{chinese ? '客户' : 'Customers'}</h1>
-            <p>
-              {chinese
-                ? '请使用管理员账号登录以管理客户和宠物。'
-                : 'Sign in with an administrator account to manage customers and pets.'}
-            </p>
+            <h1>{uiText('ui.portal.customers')}</h1>
+            <p>{uiText('ui.portal.signInWithAnAdministratorAccountToManageCustomers')}</p>
             <a
               className="hc-manage"
               href={
                 '/app/sign-in/?returnTo=' + encodeURIComponent(location.pathname + location.search)
               }
             >
-              {chinese ? '登录' : 'Sign in'}
+              {uiText('ui.portal.signIn')}
             </a>
           </section>
         }
@@ -351,9 +280,7 @@ export default function Portal({
             ? personal
               ? labels.personalTitle
               : workspace === 'houses'
-                ? chinese
-                  ? '房屋'
-                  : 'Houses'
+                ? uiText('ui.portal.houses')
                 : labels.dashboard
             : access === 'employee'
               ? labels.employeeTitle
@@ -401,7 +328,7 @@ export default function Portal({
               <div className="portal-actions session-actions">
                 {access !== 'denied' && (
                   <a className="language" href="/app/account/profile/">
-                    {chinese ? '我的资料' : 'My profile'}
+                    {uiText('ui.portal.myProfile')}
                   </a>
                 )}
                 {access === 'denied' && (
@@ -435,31 +362,27 @@ export default function Portal({
               <p className="eyebrow">{labels.workspace}</p>
               <nav className="workspace-buttons" aria-label={labels.workspace}>
                 {[
-                  ['/app/calendar/', 'Calendar', '日历', 'calendar'],
-                  ['/app/customers/', 'Customers', '客户', 'customers'],
-                  ['/app/balances/', 'Balances', '寄养余额', 'balances'],
-                  ['/app/settings/', 'Settings', '设置', 'settings'],
-                ].map(([href, en, zh, kind]) => (
+                  ['/app/calendar/', 'calendar'],
+                  ['/app/customers/', 'customers'],
+                  ['/app/balances/', 'balances'],
+                  ['/app/settings/', 'settings'],
+                ].map(([href, kind]) => (
                   <a
                     key={kind}
                     className="language"
                     href={href}
                     aria-current={route.kind === kind ? 'page' : undefined}
                   >
-                    {chinese ? zh : en}
+                    {uiText('common.navigation.' + kind)}
                   </a>
                 ))}
               </nav>
             </section>
             {!import.meta.env.DEV && ['calendar', 'balances'].includes(route.kind) && (
               <section className="customer-section">
-                <h2>{chinese ? '规划工具尚未开放' : 'Planning tools are not yet available'}</h2>
-                <p>
-                  {chinese
-                    ? '日历和余额尚未作为正式业务工具上线。'
-                    : 'Calendar and balance planning are not yet released as live business tools.'}
-                </p>
-                <a href="/app/customers/">{chinese ? '管理客户' : 'Manage customers'}</a>
+                <h2>{uiText('ui.portal.planningToolsAreNotYetAvailable')}</h2>
+                <p>{uiText('ui.portal.calendarAndBalancePlanningAreNotYetReleasedAs')}</p>
+                <a href="/app/customers/">{uiText('ui.portal.manageCustomers')}</a>
               </section>
             )}
             <div

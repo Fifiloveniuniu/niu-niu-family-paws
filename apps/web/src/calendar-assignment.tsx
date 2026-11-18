@@ -1,3 +1,4 @@
+import { localeFor, speciesText, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import { localDateTimeValue } from './date-utils';
 import { sampleDateAtOffset, sampleDayOffset } from './calendar-time';
@@ -48,8 +49,7 @@ export default function AssignmentDialog({
   onManageBalance: (pet: string, service: BalanceService) => void;
 }) {
   const { i18n } = useTranslation();
-  const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   const [pet, setPet] = React.useState('');
   const [start, setStart] = React.useState(localDateTimeValue(sampleDateAtOffset(anchor, 0)));
   const [end, setEnd] = React.useState('');
@@ -86,21 +86,21 @@ export default function AssignmentDialog({
           Number(candidateRoom.costs?.[selected!.species]),
         );
   const reasons: Record<Exclude<PlacementIssue, null>, string> = {
-    dates: translate('Choose a pet and valid times first', '请先选择宠物和有效时间'),
-    duplicate: translate('Pet already has a stay at this time', '该宠物在此时段已有安排'),
-    species: translate('Another species is staying here', '此时段有其他种类的宠物'),
-    overdue: translate('Overdue pickup · availability needs review', '接回逾期 · 可用性需核实'),
-    boundary: translate('Back-to-back stay · turnover rule needed', '相邻时段 · 需确认周转规则'),
-    capacity: translate('Not enough capacity for the whole stay', '整个托管时段内容量不足'),
-    unconfigured: translate('Configure room capacity and pet usage', '请配置房间容量和宠物用量'),
+    dates: uiText('ui.calendarAssignment.chooseAPetAndValidTimesFirst'),
+    duplicate: uiText('ui.calendarAssignment.petAlreadyHasAStayAtThisTime'),
+    species: uiText('ui.calendarAssignment.anotherSpeciesIsStayingHere'),
+    overdue: uiText('ui.calendarAssignment.overduePickupAvailabilityNeedsReview'),
+    boundary: uiText('ui.calendarAssignment.backToBackStayTurnoverRuleNeeded'),
+    capacity: uiText('ui.calendarAssignment.notEnoughCapacityForTheWholeStay'),
+    unconfigured: uiText('ui.calendarAssignment.configureRoomCapacityAndPetUsage'),
   };
   const rangeReasons = {
     ...reasons,
-    capacity: translate('At capacity', '容量已满'),
-    species: translate('Different pet type', '其他种类宠物'),
-    duplicate: translate('Pet already scheduled', '宠物已有安排'),
-    unconfigured: translate('Setup needed', '需要配置'),
-    overdue: translate('Pickup overdue', '接回逾期'),
+    capacity: uiText('ui.calendarAssignment.atCapacity'),
+    species: uiText('ui.calendarAssignment.differentPetType'),
+    duplicate: uiText('ui.calendarAssignment.petAlreadyScheduled'),
+    unconfigured: uiText('ui.calendarAssignment.setupNeeded'),
+    overdue: uiText('ui.calendarAssignment.pickupOverdue'),
   };
   const detailsValid = valid && !!service;
   const account = balances[balanceKey(pet, service)];
@@ -118,7 +118,7 @@ export default function AssignmentDialog({
     day.setDate(day.getDate() + i);
     return day;
   });
-  const locale = isChinese ? 'zh-CN' : 'en-US';
+  const locale = localeFor(i18n.language);
   const calendarEnd = new Date(calendarStart);
   calendarEnd.setDate(calendarEnd.getDate() + 7);
   const viewFrom = dayOffset(localDateTimeValue(calendarStart));
@@ -199,7 +199,7 @@ export default function AssignmentDialog({
   return (
     <Modal
       className={'hc-assignment-dialog hc-wizard-stage-' + step}
-      title={translate('Add booking', '添加预约')}
+      title={uiText('ui.calendarAssignment.addBooking')}
       onClose={close}
     >
       <form
@@ -229,11 +229,14 @@ export default function AssignmentDialog({
           });
         }}
       >
-        <ol className="hc-wizard-progress" aria-label={translate('Scheduling steps', '安排步骤')}>
+        <ol
+          className="hc-wizard-progress"
+          aria-label={uiText('ui.calendarAssignment.schedulingSteps')}
+        >
           {[
-            translate('Stay details', '托管详情'),
-            translate('Choose room', '选择房间'),
-            translate('Review', '确认'),
+            uiText('ui.calendarAssignment.stayDetails'),
+            uiText('ui.calendarAssignment.chooseRoom'),
+            uiText('ui.calendarAssignment.review'),
           ].map((label, index) => (
             <li
               key={index}
@@ -247,27 +250,22 @@ export default function AssignmentDialog({
         </ol>
         <UnsavedChanges active={dirty} />
         <p className="hc-wizard-caption">
-          {translate('Times shown in your browser’s time zone.', '时间按浏览器当地时区显示。')}
+          {uiText('ui.calendarAssignment.timesShownInYourBrowserSTimeZone')}
         </p>
         <section
           className="hc-wizard-step"
           data-booking-step="1"
           hidden={step !== 1}
-          aria-label={translate('Stay details', '托管详情')}
+          aria-label={uiText('ui.calendarAssignment.stayDetails')}
         >
           <div className="hc-step-intro">
-            <h3>{translate('Who’s staying, and when?', '哪只宠物，何时托管？')}</h3>
-            <p>
-              {translate(
-                'Choose your guest and their planned arrival and pickup.',
-                '选择宠物及计划到店、接回时间。',
-              )}
-            </p>
+            <h3>{uiText('ui.calendarAssignment.whoSStayingAndWhen')}</h3>
+            <p>{uiText('ui.calendarAssignment.chooseYourGuestAndTheirPlannedArrivalAndPickup')}</p>
           </div>
           <label>
-            {translate('Pet', '宠物')}
+            {uiText('ui.calendarAssignment.pet')}
             <CustomSelect
-              aria-label={translate('Pet', '宠物')}
+              aria-label={uiText('ui.calendarAssignment.pet')}
               required
               value={pet}
               onChange={(event) => {
@@ -275,22 +273,17 @@ export default function AssignmentDialog({
                 invalidate();
               }}
             >
-              <option value="">{translate('Select a pet', '选择宠物')}</option>
+              <option value="">{uiText('ui.calendarAssignment.selectAPet')}</option>
               {pets.map((petProfile) => (
                 <option key={petProfile.name} value={petProfile.name}>
-                  {petProfile.name} ·{' '}
-                  {translate(
-                    petProfile.species,
-                    { dog: '狗', cat: '猫', rabbit: '兔' }[petProfile.species] ||
-                      petProfile.species,
-                  )}
+                  {petProfile.name} · {speciesText(petProfile.species)}
                 </option>
               ))}
             </CustomSelect>
           </label>
           <div className="hc-time-fields">
             <label>
-              {translate('Arrival', '到店时间')}
+              {uiText('ui.calendarAssignment.arrival')}
               <input
                 type="datetime-local"
                 required
@@ -302,7 +295,7 @@ export default function AssignmentDialog({
               />
             </label>
             <label>
-              {translate('Pickup', '接回时间')}
+              {uiText('ui.calendarAssignment.pickup')}
               <input
                 type="datetime-local"
                 required
@@ -316,7 +309,7 @@ export default function AssignmentDialog({
           </div>
           {end && finish <= begin && (
             <p className="hc-range-feedback" role="alert">
-              {translate('Pickup must be after arrival.', '接回时间必须晚于到店时间。')}
+              {uiText('ui.calendarAssignment.pickupMustBeAfterArrival')}
             </p>
           )}
         </section>
@@ -324,7 +317,7 @@ export default function AssignmentDialog({
           className="hc-wizard-step"
           data-booking-step="2"
           hidden={step !== 2}
-          aria-label={translate('Choose room', '选择房间')}
+          aria-label={uiText('ui.calendarAssignment.chooseRoom')}
         >
           <div className="hc-step-stay">
             <PetProfileAvatar name={pet} className="hc-guest-avatar" />
@@ -333,20 +326,20 @@ export default function AssignmentDialog({
               <span>{valid ? rangeLabel(begin, finish) : ''}</span>
             </div>
             <button type="button" className="hc-text-button" onClick={() => setStep(1)}>
-              {translate('Edit', '修改')}
+              {uiText('ui.calendarAssignment.edit')}
             </button>
           </div>
           <section
             className="hc-schedule-picker"
-            aria-label={translate('Room availability calendar', '房间可用日历')}
+            aria-label={uiText('ui.calendarAssignment.roomAvailabilityCalendar')}
           >
             <div className="hc-schedule-heading">
-              <h3>{translate('Choose a room on the calendar', '在日历上选择房间')}</h3>
+              <h3>{uiText('ui.calendarAssignment.availableSpace')}</h3>
               <div>
                 <button
                   type="button"
-                  title={translate('Previous week', '上一周')}
-                  aria-label={translate('Previous week', '上一周')}
+                  title={uiText('ui.calendarAssignment.previousWeek')}
+                  aria-label={uiText('ui.calendarAssignment.previousWeek')}
                   onClick={() => setWeek(week - 1)}
                 >
                   ‹
@@ -357,8 +350,8 @@ export default function AssignmentDialog({
                 </span>
                 <button
                   type="button"
-                  title={translate('Next week', '下一周')}
-                  aria-label={translate('Next week', '下一周')}
+                  title={uiText('ui.calendarAssignment.nextWeek')}
+                  aria-label={uiText('ui.calendarAssignment.nextWeek')}
                   onClick={() => setWeek(week + 1)}
                 >
                   ›
@@ -366,19 +359,16 @@ export default function AssignmentDialog({
               </div>
             </div>
             <p className="hc-setup-note">
-              {translate(
-                'Gray bands show unavailable time ranges. Enter arrival and pickup, then choose a room or tap a free starting time. The full stay must fit.',
-                '灰色条表示不可用时段。填写到店和接回时间后，选择房间或点击空白处选开始时间。整个托管时段都必须可用。',
-              )}
+              {uiText('ui.calendarAssignment.grayBandsShowUnavailableTimeRangesEnterArrivalAnd')}
             </p>
             <div
               className="hc-schedule-scroll"
               tabIndex={0}
-              aria-label={translate('Scroll room availability calendar', '滚动房间可用日历')}
+              aria-label={uiText('ui.calendarAssignment.scrollRoomAvailabilityCalendar')}
             >
               <div className="hc-range-calendar">
                 <div className="hc-range-axis">
-                  <div>{translate('House / room', '房屋 / 房间')}</div>
+                  <div>{uiText('ui.calendarAssignment.houseRoom')}</div>
                   <div className="hc-range-dates">
                     {days.map((day) => (
                       <div
@@ -395,7 +385,7 @@ export default function AssignmentDialog({
                   <React.Fragment key={candidateHouse.id}>
                     <div className="hc-range-house">{candidateHouse.name}</div>
                     {!candidateHouse.rooms.length && (
-                      <p className="hc-room-empty">{translate('No rooms yet', '暂无房间')}</p>
+                      <p className="hc-room-empty">{uiText('ui.calendarAssignment.noRoomsYet')}</p>
                     )}
                     {candidateHouse.rooms.map((candidateRoom) => {
                       const unavailable = selected
@@ -426,17 +416,14 @@ export default function AssignmentDialog({
                               title={
                                 problem
                                   ? reasons[problem]
-                                  : translate(
-                                      'Choose this room for the entered times',
-                                      '选择此房间及已填写的时段',
-                                    )
+                                  : uiText('ui.calendarAssignment.chooseThisRoomForTheEnteredTimes')
                               }
-                              aria-label={`${translate('Choose', '选择')} ${candidateHouse.name} · ${candidateRoom.name}`}
+                              aria-label={`${uiText('ui.calendarAssignment.choose')} ${candidateHouse.name} · ${candidateRoom.name}`}
                               onClick={() => chooseRange(candidateHouse, candidateRoom)}
                             >
                               {picked && !problem
-                                ? translate('Selected', '已选择')
-                                : translate('Choose room', '选择房间')}
+                                ? uiText('ui.calendarAssignment.selected')
+                                : uiText('ui.calendarAssignment.chooseRoom')}
                             </button>
                           </div>
                           <div
@@ -466,7 +453,7 @@ export default function AssignmentDialog({
                                 type="button"
                                 className={'hc-time-request' + (picked ? ' picked' : '')}
                                 style={{ left: `${left}%`, width: `${right - left}%` }}
-                                aria-label={`${translate('Choose', '选择')} ${candidateHouse.name} · ${candidateRoom.name} · ${rangeLabel(begin, finish)}`}
+                                aria-label={`${uiText('ui.calendarAssignment.choose')} ${candidateHouse.name} · ${candidateRoom.name} · ${rangeLabel(begin, finish)}`}
                                 aria-pressed={picked}
                                 onClick={(event) => {
                                   event.stopPropagation();
@@ -474,16 +461,13 @@ export default function AssignmentDialog({
                                 }}
                               >
                                 {picked
-                                  ? translate('Selected', '已选择')
-                                  : translate('Choose', '选择')}
+                                  ? uiText('ui.calendarAssignment.selected')
+                                  : uiText('ui.calendarAssignment.choose')}
                               </button>
                             )}
                             {!selected && (
                               <span className="hc-time-placeholder">
-                                {translate(
-                                  'Select a pet to see availability',
-                                  '选择宠物以查看可用时段',
-                                )}
+                                {uiText('ui.calendarAssignment.selectAPetToSeeAvailability')}
                               </span>
                             )}
                           </div>
@@ -497,11 +481,11 @@ export default function AssignmentDialog({
             <div className="hc-schedule-legend">
               <span>
                 <i />
-                {translate('Available time', '可用时段')}
+                {uiText('ui.calendarAssignment.availableTime')}
               </span>
               <span>
                 <i className="unavailable" />
-                {translate('Unavailable time range', '不可用时段')}
+                {uiText('ui.calendarAssignment.unavailableTimeRange')}
               </span>
             </div>
             {feedback && (
@@ -527,44 +511,31 @@ export default function AssignmentDialog({
           className="hc-wizard-step"
           data-booking-step="3"
           hidden={step !== 3}
-          aria-label={translate('Review stay', '确认托管')}
+          aria-label={uiText('ui.calendarAssignment.reviewStay')}
         >
           <div className="hc-step-intro">
-            <h3>{translate('Everything ready for their stay?', '托管安排确认好了吗？')}</h3>
-            <p>
-              {translate(
-                'Review the details before adding this stay to the calendar.',
-                '添加到日历前，请核对以下详情。',
-              )}
-            </p>
+            <h3>{uiText('ui.calendarAssignment.everythingReadyForTheirStay')}</h3>
+            <p>{uiText('ui.calendarAssignment.reviewTheDetailsBeforeAddingThisStayToThe')}</p>
           </div>
           <div className="hc-review-card">
             <div className="hc-review-guest">
               <PetProfileAvatar name={pet} className="hc-guest-avatar" />
               <div>
                 <strong>{pet}</strong>
-                <small>
-                  {selected
-                    ? translate(
-                        selected.species,
-                        { dog: '狗', cat: '猫', rabbit: '兔' }[selected.species] ||
-                          selected.species,
-                      )
-                    : ''}
-                </small>
+                <small>{selected ? speciesText(selected.species) : ''}</small>
               </div>
             </div>
             <dl>
               <div>
-                <dt>{translate('Arrival', '到店时间')}</dt>
+                <dt>{uiText('ui.calendarAssignment.arrival')}</dt>
                 <dd>{valid ? new Date(start).toLocaleString(locale) : 'N/A'}</dd>
               </div>
               <div>
-                <dt>{translate('Pickup', '接回时间')}</dt>
+                <dt>{uiText('ui.calendarAssignment.pickup')}</dt>
                 <dd>{valid ? new Date(end).toLocaleString(locale) : 'N/A'}</dd>
               </div>
               <div>
-                <dt>{translate('House & room', '房屋与房间')}</dt>
+                <dt>{uiText('ui.calendarAssignment.houseRoom2')}</dt>
                 <dd>
                   {chosenHouse?.name} · {chosenRoom?.name}
                 </dd>
@@ -573,19 +544,19 @@ export default function AssignmentDialog({
           </div>
           <div className="hc-coverage-card needs-review" aria-live="polite">
             <div>
-              <h4>{translate('Boarding balance', '寄养余额')}</h4>
+              <h4>{uiText('ui.calendarAssignment.boardingBalance')}</h4>
             </div>
             <dl>
               <div>
-                <dt>{translate('Available to plan', '可计划天数')}</dt>
+                <dt>{uiText('ui.calendarAssignment.availableToPlan')}</dt>
                 <dd>{availableDays ?? 'N/A'}</dd>
               </div>
               <div>
-                <dt>{translate('This stay', '本次托管')}</dt>
+                <dt>{uiText('ui.calendarAssignment.thisStay')}</dt>
                 <dd>N/A</dd>
               </div>
               <div>
-                <dt>{translate('After planning', '计划后剩余')}</dt>
+                <dt>{uiText('ui.calendarAssignment.afterPlanning')}</dt>
                 <dd>N/A</dd>
               </div>
             </dl>
@@ -595,36 +566,28 @@ export default function AssignmentDialog({
               onClick={() => onManageBalance(pet, service)}
             >
               {account
-                ? translate('Manage pet balance', '管理宠物余额')
-                : translate('Add balance', '增加余额')}
+                ? uiText('ui.calendarAssignment.managePetBalance')
+                : uiText('ui.calendarAssignment.addBalance')}
             </button>
-            <p>
-              {translate(
-                'Day usage awaits the billing rule. Saving this schedule does not deduct or reserve balance days.',
-                '使用天数待计费规则确定后计算。保存此安排不会扣减或预留余额天数。',
-              )}
-            </p>
+            <p>{uiText('ui.calendarAssignment.dayUsageAwaitsTheBillingRuleSavingThisSchedule')}</p>
           </div>
           <p className="hc-review-note">
-            {translate(
-              'This does not create a paid booking or record a check-in.',
-              '不创建付费预约或记录入住。',
-            )}
+            {uiText('ui.calendarAssignment.thisDoesNotCreateAPaidBookingOrRecord')}
           </p>
         </section>
         <div className="hc-wizard-footer">
           <div className="hc-wizard-secondary">
             {step > 1 && (
               <button className="hc-manage" type="button" onClick={() => setStep(step - 1)}>
-                ← {translate('Back', '返回')}
+                ← {uiText('ui.calendarAssignment.back')}
               </button>
             )}
             <button className="hc-manage" type="button" onClick={close}>
-              {translate('Cancel', '取消')}
+              {uiText('ui.calendarAssignment.cancel')}
             </button>
           </div>
           <span>
-            {translate('Step', '第')} {step} {translate('of 3', '步，共 3 步')}
+            {uiText('ui.calendarAssignment.step')} {step} {uiText('ui.calendarAssignment.of3')}
           </span>
           <button
             className="hc-apply"
@@ -637,10 +600,10 @@ export default function AssignmentDialog({
             }
           >
             {step === 1
-              ? translate('Choose a room', '选择房间')
+              ? uiText('ui.calendarAssignment.chooseARoom')
               : step === 2
-                ? translate('Review stay', '确认托管')
-                : translate('Add to calendar', '添加到日历')}{' '}
+                ? uiText('ui.calendarAssignment.reviewStay')
+                : uiText('ui.calendarAssignment.addToCalendar')}{' '}
             <span aria-hidden="true">{step === 3 ? '✓' : '→'}</span>
           </button>
         </div>

@@ -85,13 +85,15 @@ test('API rejects role injection and invalid input, passes trusted actor, and re
     { ...body, name: '   ' },
     { ...body, email: 'not-email' },
     { ...body, version: -1 },
-    { ...body, language: 'fr' },
+    { ...body, language: 'not_a_language' },
     { ...body, phone: 'x'.repeat(41) },
   ])
     assert.equal((await put(payload)).statusCode, 400);
   assert.equal((await put(body)).statusCode, 200);
   assert.equal(saved.input.name, 'Test customer');
   assert.equal(saved.actor, 'trusted');
+  assert.equal((await put({ ...body, language: 'fr' })).statusCode, 200);
+  assert.equal(saved.input.language, 'fr');
   assert.equal((await put({ ...body, version: 2 })).statusCode, 409);
   const error = await put({ ...body, version: 3 });
   assert.equal(error.statusCode, 500);

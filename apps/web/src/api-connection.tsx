@@ -1,3 +1,4 @@
+import { type Language, uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarketingHeader } from './marketing-shell';
@@ -16,11 +17,11 @@ export default function ApiConnection({
   children,
 }: {
   active: boolean;
-  onLanguageChange: (language: 'en' | 'zh') => void;
+  onLanguageChange: (language: Language) => void;
   children: React.ReactNode;
 }) {
   const { i18n } = useTranslation();
-  const chinese = i18n.language === 'zh';
+
   const [status, setStatus] = React.useState<'checking' | 'ready' | 'offline'>('checking');
   const [connectedOnce, setConnectedOnce] = React.useState(false);
   const [retry, setRetry] = React.useState(0);
@@ -69,20 +70,12 @@ export default function ApiConnection({
             <section className="portal-card" role={status === 'offline' ? 'alert' : 'status'}>
               <h1>
                 {status === 'checking'
-                  ? chinese
-                    ? '正在连接…'
-                    : 'Connecting…'
-                  : chinese
-                    ? '无法连接服务器'
-                    : 'Unable to connect'}
+                  ? uiText('ui.apiConnection.connecting')
+                  : uiText('ui.apiConnection.unableToConnect')}
               </h1>
               {status === 'offline' && (
                 <>
-                  <p>
-                    {chinese
-                      ? '暂时无法连接服务器。请检查网络连接，稍后重试。'
-                      : 'We can’t reach the server right now. Check your connection and try again.'}
-                  </p>
+                  <p>{uiText('ui.apiConnection.weCanTReachTheServerRightNowCheck')}</p>
                   <button
                     className="button"
                     onClick={() => {
@@ -90,10 +83,10 @@ export default function ApiConnection({
                       setRetry((value) => value + 1);
                     }}
                   >
-                    {chinese ? '重试' : 'Try again'}
+                    {uiText('ui.apiConnection.tryAgain')}
                   </button>
                   <p>
-                    <a href="/home/">{chinese ? '返回网站' : 'Back to website'}</a>
+                    <a href="/home/">{uiText('ui.apiConnection.backToWebsite')}</a>
                   </p>
                 </>
               )}

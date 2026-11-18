@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import { apiResponse } from './api-client';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -183,28 +184,16 @@ export function PhotoSignIn() {
     <div className="hc-photo-access">
       <p>
         {status === 'admin'
-          ? isChinese
-            ? '需要管理员登录才能查看私密宠物照片。'
-            : 'Administrator sign-in is required for private pet photos.'
-          : isChinese
-            ? '登录后查看已保存的宠物照片，当前表单会保留。'
-            : 'Sign in to view saved pet photos. Your open form will stay here.'}
+          ? uiText('ui.calendarPetPhotos.administratorSignInIsRequiredForPrivatePetPhotos')
+          : uiText('ui.calendarPetPhotos.signInToViewSavedPetPhotosYourOpen')}
       </p>
       <button type="button" className="hc-photo-retry" disabled={busy} onClick={connect}>
         {busy
-          ? isChinese
-            ? '正在连接…'
-            : 'Connecting…'
-          : isChinese
-            ? '登录查看照片'
-            : 'Sign in for pet photos'}
+          ? uiText('ui.calendarPetPhotos.connecting')
+          : uiText('ui.calendarPetPhotos.signInForPetPhotos')}
       </button>
       {error && (
-        <p role="alert">
-          {isChinese
-            ? '无法登录，请重试并允许登录弹窗。'
-            : 'Sign-in failed. Try again and allow the sign-in popup.'}
-        </p>
+        <p role="alert">{uiText('ui.calendarPetPhotos.signInFailedTryAgainAndAllowTheSign')}</p>
       )}
     </div>
   );
@@ -226,25 +215,17 @@ export function PetProfileAvatar({
   React.useEffect(() => setBroken(false), [photo?.url]);
   const ready = photo?.status === 'ready' && !broken;
   const title = photo?.profile
-    ? (isChinese ? `档案：${photo.profile.name}` : `Profile: ${photo.profile.name}`) +
+    ? uiText('ui.calendarPetPhotos.profile', { name: photo.profile.name }) +
       (photo.profile.photoCredit
         ? ` · ${photo.profile.photoCredit.creator} · ${photo.profile.photoCredit.license}`
         : '')
-    : isChinese
-      ? '尚无可访问的档案照片'
-      : 'No accessible profile photo';
+    : uiText('ui.calendarPetPhotos.noAccessibleProfilePhoto');
   const placeholder =
     access === 'sign-in' || access === 'admin'
-      ? isChinese
-        ? '登录后查看档案照片'
-        : 'Sign in to view profile photo'
+      ? uiText('ui.calendarPetPhotos.signInToViewProfilePhoto')
       : photo?.status === 'failed' || broken
-        ? isChinese
-          ? '照片加载失败'
-          : 'Photo unavailable'
-        : isChinese
-          ? '尚无档案照片'
-          : 'No profile photo';
+        ? uiText('ui.calendarPetPhotos.photoUnavailable')
+        : uiText('ui.calendarPetPhotos.noProfilePhoto');
   return (
     <span
       className={'hc-profile-photo ' + className}
@@ -254,7 +235,7 @@ export function PetProfileAvatar({
       {ready ? (
         <img
           src={photo.url}
-          alt={isChinese ? `${name} 的档案照片` : `${name} profile photo`}
+          alt={uiText('ui.calendarPetPhotos.profilePhoto', { name: name })}
           loading="lazy"
           decoding="async"
           onError={() => setBroken(true)}
@@ -290,7 +271,7 @@ export function CalendarPhotoStatus() {
       <PhotoSignIn />
       {failed && (
         <button className="hc-photo-retry" type="button" onClick={retry}>
-          {isChinese ? '重试档案照片' : 'Retry profile photos'}
+          {uiText('ui.calendarPetPhotos.retryProfilePhotos')}
         </button>
       )}
     </div>
@@ -307,7 +288,7 @@ export function CalendarProfileLink({ name }: { name: string }) {
       className="hc-manage"
       href={'/app/customers/' + profile.customerId + '/pets/' + profile.id + '/'}
     >
-      {i18n.language === 'zh' ? '查看宠物档案' : 'View pet profile'}
+      {uiText('ui.calendarPetPhotos.viewPetProfile', {}, i18n.language)}
     </a>
   );
 }
@@ -335,7 +316,7 @@ export function DemoBalanceLink({ customerId, petId }: { customerId: string; pet
   }, [customerId, petId]);
   return alias ? (
     <a className="language" href={'/app/balances/?pet=' + encodeURIComponent(alias)}>
-      {i18n.language === 'zh' ? '查看余额' : 'View balance'}
+      {uiText('ui.calendarPetPhotos.viewBalance', {}, i18n.language)}
     </a>
   ) : null;
 }

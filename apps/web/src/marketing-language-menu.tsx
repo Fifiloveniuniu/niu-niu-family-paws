@@ -1,3 +1,4 @@
+import { languageName, localeFor, supportedLanguages, type Language, uiText } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
 import { useEffect, useId, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -5,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 export default function MarketingLanguageMenu({
   onChange,
 }: {
-  onChange: (language: 'en' | 'zh') => void;
+  onChange: (language: Language) => void;
 }) {
   const { i18n } = useTranslation();
   const [open, setOpen] = useDropdownState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const id = useId();
-  const language = i18n.language === 'zh' ? 'zh' : 'en';
+  const language = i18n.language;
   useEffect(() => {
     const close = (event: PointerEvent) => {
       if (!root.current?.contains(event.target as Node)) setOpen(false);
@@ -59,7 +60,7 @@ export default function MarketingLanguageMenu({
       <button
         ref={trigger}
         className="language-menu-trigger"
-        aria-label={`Language / 语言: ${language === 'zh' ? '简体中文' : 'English'}`}
+        aria-label={uiText('common.languageMenuCurrent', { name: languageName(language) })}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={id}
@@ -73,25 +74,25 @@ export default function MarketingLanguageMenu({
           <circle cx="12" cy="12" r="9" />
           <path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" />
         </svg>
-        <span>{language === 'zh' ? '简体中文' : 'English'}</span>
+        <span>{languageName(language)}</span>
         <svg className="language-chevron" viewBox="0 0 24 24" aria-hidden="true">
           <path d="m7 10 5 5 5-5" />
         </svg>
       </button>
       {open && (
-        <div id={id} role="menu" aria-label="Language / 语言" className="language-menu-options">
-          {(
-            [
-              ['en', 'English'],
-              ['zh', '简体中文'],
-            ] as const
-          ).map(([value, label]) => (
+        <div
+          id={id}
+          role="menu"
+          aria-label={uiText('common.languageMenu')}
+          className="language-menu-options"
+        >
+          {supportedLanguages.map(({ code: value, name: label, htmlLang }) => (
             <button
               key={value}
               type="button"
               role="menuitemradio"
               aria-checked={language === value}
-              lang={value === 'zh' ? 'zh-Hans' : 'en'}
+              lang={htmlLang}
               onClick={() => {
                 onChange(value);
                 setOpen(false);

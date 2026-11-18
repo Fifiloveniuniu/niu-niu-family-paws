@@ -1,3 +1,4 @@
+import { localeFor, type Language, uiText } from './i18n.ts';
 import CalendarPetPreview from './calendar-pet-preview';
 import CustomSelect from './custom-select';
 import { initialStays } from './calendar-fixtures';
@@ -45,15 +46,14 @@ export default function HouseCalendar({
   account,
   identityEpoch = 0,
 }: {
-  onLanguageChange: (lang: 'en' | 'zh') => void;
+  onLanguageChange: (lang: Language) => void;
   customers?: React.ReactNode;
   personal?: React.ReactNode;
   account?: React.ReactNode;
   identityEpoch?: number;
 }) {
   const { i18n } = useTranslation();
-  const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   const route = routeUrl();
   const parsed = currentRoute();
   const path = parsed.path;
@@ -94,7 +94,7 @@ export default function HouseCalendar({
     const index = initialStays.findIndex((petProfile) => petProfile.name === name);
     return index < 0 ? '4' : String(Math.floor(index / 3) + 1);
   };
-  const customerName = (id: string) => translate('Family', '家庭') + ' ' + id;
+  const customerName = (id: string) => uiText('ui.houseCalendar.family') + ' ' + id;
   const [config, setConfig] = React.useState<Record<string, CalendarSettings>>({});
   const [roomFilter, setRoomFilter] = React.useState('all');
   const [speciesFilter, setSpeciesFilter] = React.useState('all');
@@ -164,7 +164,7 @@ export default function HouseCalendar({
   const before = { day: 0, week: 3, month: 7, year: 30 }[scale];
   const from = new Date(focusDate.getTime() + (offset * span - before) * MILLISECONDS_PER_DAY);
   const to = new Date(from.getTime() + span * MILLISECONDS_PER_DAY);
-  const locale = isChinese ? 'zh-CN' : 'en-US';
+  const locale = localeFor(i18n.language);
   const date = (
     value: Date,
     options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' },
@@ -172,10 +172,10 @@ export default function HouseCalendar({
   const dateAtOffset = (dayOffset: number) => sampleDateAtOffset(anchor, dayOffset);
   const status = (stay: Stay) =>
     stay.status === 'in'
-      ? translate('Checked in', '已入住')
+      ? uiText('ui.houseCalendar.checkedIn')
       : stay.status === 'out'
-        ? translate('Checked out', '已离店')
-        : translate('Not checked in', '未入住');
+        ? uiText('ui.houseCalendar.checkedOut')
+        : uiText('ui.houseCalendar.notCheckedIn');
   const ticks =
     scale === 'day'
       ? Array.from({ length: 12 }, (_, i) => new Date(from.getTime() + i * 2 * 3600000))
@@ -191,9 +191,9 @@ export default function HouseCalendar({
   const timelinePercent = (dateValue: Date) =>
     ((dateValue.getTime() - from.getTime()) / (span * MILLISECONDS_PER_DAY)) * 100;
   const houseName = (h: number) =>
-    config['h' + h]?.name || translate('House', '房屋') + ' ' + (h === 1 ? 'A' : 'B');
+    config['h' + h]?.name || uiText('ui.houseCalendar.house') + ' ' + (h === 1 ? 'A' : 'B');
   const roomName = (h: number, r: number) =>
-    config[h + '-' + r]?.name || translate('Room', '房间') + ' ' + r;
+    config[h + '-' + r]?.name || uiText('ui.houseCalendar.room') + ' ' + r;
   const roster = [
     ...initialStays.map((stay) => ({ name: stay.name, species: stay.species })),
     { name: 'Willow', species: 'dog' },
@@ -291,7 +291,7 @@ export default function HouseCalendar({
     updateQuery({ view: value });
   }
   const scales = (
-    <div className="hc-scales" role="tablist" aria-label={translate('Calendar view', '日历视图')}>
+    <div className="hc-scales" role="tablist" aria-label={uiText('ui.houseCalendar.calendarView')}>
       {scaleValues.map((v, i) => (
         <button
           key={v}
@@ -313,7 +313,7 @@ export default function HouseCalendar({
             document.getElementById('hc-tab-' + scaleValues[next])?.focus();
           }}
         >
-          {translate(['Day', 'Weeks', 'Month', 'Year'][i], ['日', '周', '月', '年'][i])}
+          {uiText('ui.houseCalendar.scale.' + v)}
         </button>
       ))}
     </div>
@@ -328,13 +328,13 @@ export default function HouseCalendar({
           onLanguageChange={onLanguageChange}
           account={account}
           navigation={
-            <nav className="app-header-nav" aria-label={translate('Workspace', '工作区')}>
+            <nav className="app-header-nav" aria-label={uiText('ui.houseCalendar.workspace')}>
               {[
-                ['/app/calendar/', 'Calendar', '日历', 'calendar'],
-                ['/app/customers/', 'Customers', '客户', 'customers'],
-                ['/app/balances/', 'Balances', '寄养余额', 'balances'],
-                ['/app/settings/', 'Settings', '设置', 'settings'],
-              ].map(([href, en, cn, key]) => (
+                ['/app/calendar/', 'calendar'],
+                ['/app/customers/', 'customers'],
+                ['/app/balances/', 'balances'],
+                ['/app/settings/', 'settings'],
+              ].map(([href, key]) => (
                 <a
                   key={key}
                   href={
@@ -355,7 +355,7 @@ export default function HouseCalendar({
                             : 'settings'
                     }
                   />
-                  <span>{translate(en, cn)}</span>
+                  <span>{uiText('common.navigation.' + key)}</span>
                 </a>
               ))}
             </nav>
@@ -366,7 +366,7 @@ export default function HouseCalendar({
             <div data-retained-workspace data-customer-workspace hidden={view !== 'customers'}>
               {customers || (
                 <a className="hc-manage" href="/app/sign-in/">
-                  {translate('Sign in to manage customers', '登录以管理客户')}
+                  {uiText('ui.houseCalendar.signInToManageCustomers')}
                 </a>
               )}
             </div>
@@ -391,39 +391,27 @@ export default function HouseCalendar({
             <div hidden={view !== 'settings'}>
               {parsed.locations ? (
                 <div className="hc-settings-locations">
-                  <a href="/app/settings/">← {translate('Settings', '设置')}</a>
+                  <a href="/app/settings/">← {uiText('ui.houseCalendar.settings')}</a>
                   <Houses key={route} initialSelected={parsed.locationId} routable />
                 </div>
               ) : (
                 <div className="hc-settings-cards">
                   <section>
-                    <h2>{translate('Locations and timezones', '房屋与时区')}</h2>
-                    <p>
-                      {translate(
-                        'Manage saved house details and each location’s local timezone.',
-                        '管理已保存的房屋资料及各处房屋的当地时区。',
-                      )}
-                    </p>
+                    <h2>{uiText('ui.houseCalendar.locationsAndTimezones')}</h2>
+                    <p>{uiText('ui.houseCalendar.manageSavedHouseDetailsAndEachLocationSLocal')}</p>
                     {admin ? (
                       <a className="hc-manage" href="/app/settings/locations/">
-                        {translate('Manage locations', '管理房屋')}
+                        {uiText('ui.houseCalendar.manageLocations')}
                       </a>
                     ) : (
-                      <a href="/app/sign-in/">
-                        {translate('Sign in to manage houses', '登录以管理房屋')}
-                      </a>
+                      <a href="/app/sign-in/">{uiText('ui.houseCalendar.signInToManageHouses')}</a>
                     )}
                   </section>
                   <section>
-                    <h2>{translate('Cancellation policy', '取消政策')}</h2>
-                    <p>
-                      {translate(
-                        'Review notice periods and credit restoration terms.',
-                        '查看取消期限及额度返还规则。',
-                      )}
-                    </p>
+                    <h2>{uiText('ui.houseCalendar.cancellationPolicy')}</h2>
+                    <p>{uiText('ui.houseCalendar.reviewNoticePeriodsAndCreditRestorationTerms')}</p>
                     <a className="hc-manage" href="/cancellation-policy/">
-                      {translate('Cancellation policy', '取消政策')}
+                      {uiText('ui.houseCalendar.cancellationPolicy')}
                     </a>
                   </section>
                 </div>
@@ -432,7 +420,7 @@ export default function HouseCalendar({
 
             <div className="hc-calendar-workspace" hidden={view !== 'calendar'}>
               {parsed.bookingId && !stays.some((stay) => stay.id === parsed.bookingId) && (
-                <p role="alert">{translate('Booking not found.', '未找到该预约。')}</p>
+                <p role="alert">{uiText('ui.houseCalendar.bookingNotFound')}</p>
               )}
               <div className="hc-page-toolbar">
                 <div className="hc-page-toolbar-actions">
@@ -442,37 +430,37 @@ export default function HouseCalendar({
                       onClick={() => setAssignment(null)}
                     >
                       <Icon name="plus" />
-                      {translate('Add booking', '添加预约')}
+                      {uiText('ui.houseCalendar.addBooking')}
                     </button>
                     <button
                       className="hc-manage hc-add-house"
-                      title={translate('Add house', '添加房屋')}
-                      aria-label={translate('Add house', '添加房屋')}
+                      title={uiText('ui.houseCalendar.addHouse')}
+                      aria-label={uiText('ui.houseCalendar.addHouse')}
                       onClick={() => setSettings({ house: nextId.current++, creating: true })}
                     >
                       <Icon name="plus" />
-                      {translate('Add house', '添加房屋')}
+                      {uiText('ui.houseCalendar.addHouse')}
                     </button>
                     {admin ? (
                       <button
                         className="hc-settings hc-top-icon"
-                        title={translate('Manage houses & rooms', '管理房屋与房间')}
-                        aria-label={translate('Manage houses & rooms', '管理房屋与房间')}
+                        title={uiText('ui.houseCalendar.manageHousesRooms')}
+                        aria-label={uiText('ui.houseCalendar.manageHousesRooms')}
                         onClick={() => setManage(true)}
                       >
                         <Icon name="settings" />
                       </button>
                     ) : (
                       <a className="hc-manage" href="/app/sign-in/">
-                        {translate('Sign in to manage houses', '登录以管理房屋')}
+                        {uiText('ui.houseCalendar.signInToManageHouses')}
                       </a>
                     )}
                   </div>
                   <div className="hc-clock-controls">
                     <label>
-                      <span>{translate('Timezone', '时区')}</span>
+                      <span>{uiText('ui.houseCalendar.timezone')}</span>
                       <CustomSelect
-                        aria-label={translate('Clock timezone', '时钟时区')}
+                        aria-label={uiText('ui.houseCalendar.clockTimezone')}
                         value={clockTimezone}
                         onChange={(event) => setClockTimezone(event.target.value)}
                       >
@@ -498,13 +486,13 @@ export default function HouseCalendar({
                   {notice}
                 </p>
               )}
-              <section className="hc-filters" aria-label={translate('Filters', '筛选')}>
+              <section className="hc-filters" aria-label={uiText('ui.houseCalendar.filters')}>
                 <div className="hc-filters-heading">
-                  <h2>{translate('Filters', '筛选')}</h2>
+                  <h2>{uiText('ui.houseCalendar.filters')}</h2>
                   <button
                     className="hc-clear"
-                    title={translate('Clear filters', '清除筛选')}
-                    aria-label={translate('Clear filters', '清除筛选')}
+                    title={uiText('ui.houseCalendar.clearFilters')}
+                    aria-label={uiText('ui.houseCalendar.clearFilters')}
                     disabled={
                       house === 'all' &&
                       roomFilter === 'all' &&
@@ -535,9 +523,9 @@ export default function HouseCalendar({
                 </div>
                 <div className="hc-filter-fields">
                   <label>
-                    {translate('House', '房屋')}
+                    {uiText('ui.houseCalendar.house')}
                     <CustomSelect
-                      aria-label={translate('House', '房屋')}
+                      aria-label={uiText('ui.houseCalendar.house')}
                       value={house}
                       onChange={(event) => {
                         setHouse(event.target.value);
@@ -545,7 +533,7 @@ export default function HouseCalendar({
                         updateQuery({ house: event.target.value, room: null });
                       }}
                     >
-                      <option value="all">{translate('All houses', '全部房屋')}</option>
+                      <option value="all">{uiText('ui.houseCalendar.allHouses')}</option>
                       {locations.map(({ id: h }) => (
                         <option key={h} value={h}>
                           {houseName(h)}
@@ -554,16 +542,16 @@ export default function HouseCalendar({
                     </CustomSelect>
                   </label>
                   <label>
-                    {translate('Room', '房间')}
+                    {uiText('ui.houseCalendar.room')}
                     <CustomSelect
-                      aria-label={translate('Room', '房间')}
+                      aria-label={uiText('ui.houseCalendar.room')}
                       value={roomFilter}
                       onChange={(event) => {
                         setRoomFilter(event.target.value);
                         updateQuery({ room: event.target.value });
                       }}
                     >
-                      <option value="all">{translate('All rooms', '全部房间')}</option>
+                      <option value="all">{uiText('ui.houseCalendar.allRooms')}</option>
                       {locations
                         .filter((h) => house === 'all' || house === String(h.id))
                         .flatMap(({ id: h, rooms }) =>
@@ -576,49 +564,49 @@ export default function HouseCalendar({
                     </CustomSelect>
                   </label>
                   <label>
-                    {translate('Pet type', '宠物种类')}
+                    {uiText('ui.houseCalendar.petType')}
                     <CustomSelect
-                      aria-label={translate('Pet type', '宠物种类')}
+                      aria-label={uiText('ui.houseCalendar.petType')}
                       value={speciesFilter}
                       onChange={(event) => {
                         setSpeciesFilter(event.target.value);
                         updateQuery({ species: event.target.value });
                       }}
                     >
-                      <option value="all">{translate('All types', '全部种类')}</option>
-                      <option value="dog">{translate('Dog', '狗')}</option>
-                      <option value="cat">{translate('Cat', '猫')}</option>
-                      <option value="rabbit">{translate('Rabbit', '兔')}</option>
+                      <option value="all">{uiText('ui.houseCalendar.allTypes')}</option>
+                      <option value="dog">{uiText('ui.houseCalendar.dog')}</option>
+                      <option value="cat">{uiText('ui.houseCalendar.cat')}</option>
+                      <option value="rabbit">{uiText('ui.houseCalendar.rabbit')}</option>
                     </CustomSelect>
                   </label>
                   <label>
-                    {translate('Status', '状态')}
+                    {uiText('ui.houseCalendar.status')}
                     <CustomSelect
-                      aria-label={translate('Status', '状态')}
+                      aria-label={uiText('ui.houseCalendar.status')}
                       value={statusFilter}
                       onChange={(event) => {
                         setStatusFilter(event.target.value);
                         updateQuery({ status: event.target.value });
                       }}
                     >
-                      <option value="all">{translate('All statuses', '全部状态')}</option>
-                      <option value="in">{translate('Checked in', '已入住')}</option>
-                      <option value="upcoming">{translate('Not checked in', '未入住')}</option>
-                      <option value="out">{translate('Checked out', '已离店')}</option>
-                      <option value="overdue">{translate('Pickup overdue', '接回逾期')}</option>
+                      <option value="all">{uiText('ui.houseCalendar.allStatuses')}</option>
+                      <option value="in">{uiText('ui.houseCalendar.checkedIn')}</option>
+                      <option value="upcoming">{uiText('ui.houseCalendar.notCheckedIn')}</option>
+                      <option value="out">{uiText('ui.houseCalendar.checkedOut')}</option>
+                      <option value="overdue">{uiText('ui.houseCalendar.pickupOverdue')}</option>
                     </CustomSelect>
                   </label>
                   <label>
-                    {translate('Customer', '客户')}
+                    {uiText('ui.houseCalendar.customer')}
                     <CustomSelect
-                      aria-label={translate('Customer', '客户')}
+                      aria-label={uiText('ui.houseCalendar.customer')}
                       value={customerFilter}
                       onChange={(event) => {
                         setCustomerFilter(event.target.value);
                         updateQuery({ customer: event.target.value });
                       }}
                     >
-                      <option value="all">{translate('All customers', '全部客户')}</option>
+                      <option value="all">{uiText('ui.houseCalendar.allCustomers')}</option>
                       {['1', '2', '3', '4'].map((id) => (
                         <option key={id} value={id}>
                           {customerName(id)}
@@ -627,9 +615,9 @@ export default function HouseCalendar({
                     </CustomSelect>
                   </label>
                   <label className="hc-search">
-                    {translate('Find a pet', '查找宠物')}
+                    {uiText('ui.houseCalendar.findAPet')}
                     <input
-                      placeholder={translate('Search pet name…', '搜索宠物名字…')}
+                      placeholder={uiText('ui.houseCalendar.searchPetName')}
                       value={query}
                       onChange={(event) => {
                         setQuery(event.target.value);
@@ -642,13 +630,13 @@ export default function HouseCalendar({
 
               <section
                 className="hc-calendar"
-                aria-label={translate('Pet stay timeline', '宠物托管时间轴')}
+                aria-label={uiText('ui.houseCalendar.petStayTimeline')}
               >
                 <div className="hc-range">
                   <div>
                     <button
-                      title={translate('Previous period', '上一时段')}
-                      aria-label={translate('Previous period', '上一时段')}
+                      title={uiText('ui.houseCalendar.previousPeriod')}
+                      aria-label={uiText('ui.houseCalendar.previousPeriod')}
                       onClick={() => {
                         setOffset(offset - 1);
                         updateQuery({
@@ -669,11 +657,11 @@ export default function HouseCalendar({
                         updateQuery({ date: null });
                       }}
                     >
-                      {translate('Today', '今天')}
+                      {uiText('ui.houseCalendar.today')}
                     </button>
                     <button
-                      title={translate('Next period', '下一时段')}
-                      aria-label={translate('Next period', '下一时段')}
+                      title={uiText('ui.houseCalendar.nextPeriod')}
+                      aria-label={uiText('ui.houseCalendar.nextPeriod')}
                       onClick={() => {
                         setOffset(offset + 1);
                         updateQuery({
@@ -699,20 +687,18 @@ export default function HouseCalendar({
                   role="tabpanel"
                   aria-labelledby={'hc-tab-' + scale}
                   tabIndex={0}
-                  aria-label={translate('Scroll timeline horizontally', '可横向滚动时间轴')}
+                  aria-label={uiText('ui.houseCalendar.scrollTimelineHorizontally')}
                 >
                   <div className={'hc-grid hc-' + scale}>
                     {nowPos >= 0 && nowPos <= 100 && (
                       <div className="hc-now-overlay">
                         <div style={{ left: `${nowPos}%` }}>
-                          <span className="hc-now-badge">{translate('Now', '现在')}</span>
+                          <span className="hc-now-badge">{uiText('ui.houseCalendar.now')}</span>
                         </div>
                       </div>
                     )}
                     <div className="hc-axis">
-                      <div className="hc-label">
-                        {translate('House / room / pet', '房屋 / 房间 / 宠物')}
-                      </div>
+                      <div className="hc-label">{uiText('ui.houseCalendar.houseRoomPet')}</div>
                       <div className="hc-track hc-ticks">
                         {ticks.map((dateValue, i) => (
                           <div
@@ -761,20 +747,20 @@ export default function HouseCalendar({
                                 visible.filter((stay) => stay.house === h && stay.status === 'in')
                                   .length
                               }{' '}
-                              {translate('in care', '只在店')}
+                              {uiText('ui.houseCalendar.inCare')}
                             </small>
                             <button
                               className="hc-settings"
-                              title={translate('House settings', '房屋设置')}
-                              aria-label={`${translate('House settings', '房屋设置')}: ${houseName(h)}`}
+                              title={uiText('ui.houseCalendar.houseSettings')}
+                              aria-label={`${uiText('ui.houseCalendar.houseSettings')}: ${houseName(h)}`}
                               onClick={() => setSettings({ house: h })}
                             >
                               <Icon name="settings" />
                             </button>
                             <button
                               className="hc-settings"
-                              title={translate('Add room', '添加房间')}
-                              aria-label={translate('Add room', '添加房间')}
+                              title={uiText('ui.houseCalendar.addRoom')}
+                              aria-label={uiText('ui.houseCalendar.addRoom')}
                               onClick={() =>
                                 setSettings({ house: h, room: nextId.current++, creating: true })
                               }
@@ -784,10 +770,7 @@ export default function HouseCalendar({
                           </div>
                           {!rooms.length && (
                             <p className="hc-empty">
-                              {translate(
-                                'No rooms yet. Add a room to place pets.',
-                                '暂无房间，添加后可安排宠物。',
-                              )}
+                              {uiText('ui.houseCalendar.noRoomsYetAddARoomToPlacePets')}
                             </p>
                           )}
                           {rooms
@@ -822,21 +805,21 @@ export default function HouseCalendar({
                                     >
                                       {closed ? '▸' : '▾'} &nbsp;{roomName(h, r)}
                                       <small>
-                                        {rows.length} {translate('pets', '只宠物')}
+                                        {rows.length} {uiText('ui.houseCalendar.pets')}
                                       </small>
                                     </button>
                                     <button
                                       className="hc-settings"
-                                      title={translate('Room settings', '房间设置')}
-                                      aria-label={`${translate('Room settings', '房间设置')}: ${houseName(h)} · ${roomName(h, r)}`}
+                                      title={uiText('ui.houseCalendar.roomSettings')}
+                                      aria-label={`${uiText('ui.houseCalendar.roomSettings')}: ${houseName(h)} · ${roomName(h, r)}`}
                                       onClick={() => setSettings({ house: h, room: r })}
                                     >
                                       <Icon name="settings" />
                                     </button>
                                     <button
                                       className="hc-settings"
-                                      title={translate('Add pet', '添加宠物')}
-                                      aria-label={`${translate('Add pet', '添加宠物')}: ${houseName(h)} · ${roomName(h, r)}`}
+                                      title={uiText('ui.houseCalendar.addPet')}
+                                      aria-label={`${uiText('ui.houseCalendar.addPet')}: ${houseName(h)} · ${roomName(h, r)}`}
                                       onClick={() => setAssignment({ house: h, room: r })}
                                     >
                                       <Icon name="plus" />
@@ -844,7 +827,7 @@ export default function HouseCalendar({
                                   </div>
                                   {!closed && !rows.length && (
                                     <p className="hc-room-empty">
-                                      {translate('No stays assigned', '尚未安排托管')}
+                                      {uiText('ui.houseCalendar.noStaysAssigned')}
                                     </p>
                                   )}
                                   {!closed &&
@@ -875,20 +858,18 @@ export default function HouseCalendar({
                                               className="hc-remove-pet"
                                               title={
                                                 stay.status === 'in'
-                                                  ? translate(
-                                                      'Record pickup before removing an in-care pet',
-                                                      '在店宠物需先记录接回',
+                                                  ? uiText(
+                                                      'ui.houseCalendar.recordPickupBeforeRemovingAnInCarePet',
                                                     )
-                                                  : translate('Remove placement', '移除安排')
+                                                  : uiText('ui.houseCalendar.removePlacement')
                                               }
-                                              aria-label={`${translate('Remove placement', '移除安排')}: ${stay.name}`}
+                                              aria-label={`${uiText('ui.houseCalendar.removePlacement')}: ${stay.name}`}
                                               disabled={stay.status === 'in'}
                                               onClick={() => {
                                                 if (
                                                   window.confirm(
-                                                    translate(
-                                                      'Remove this placement? The pet profile is kept.',
-                                                      '移除此安排？宠物档案会保留。',
+                                                    uiText(
+                                                      'ui.houseCalendar.removeThisPlacementThePetProfileIsKept',
                                                     ),
                                                   )
                                                 ) {
@@ -898,9 +879,8 @@ export default function HouseCalendar({
                                                     ),
                                                   );
                                                   setNotice(
-                                                    translate(
-                                                      'Placement removed. Pet profile kept.',
-                                                      '已移除安排，宠物档案保留。',
+                                                    uiText(
+                                                      'ui.houseCalendar.placementRemovedPetProfileKept',
                                                     ),
                                                   );
                                                 }
@@ -926,7 +906,7 @@ export default function HouseCalendar({
                                                   left: `${Math.max(0, left)}%`,
                                                   width: `${Math.min(100, actualEnd) - Math.max(0, left)}%`,
                                                 }}
-                                                aria-label={`${stay.name}: ${status(stay)}, ${date(dateAtOffset(stay.start))} – ${date(dateAtOffset(stay.end))}${stay.overdue ? ' · ' + translate('Pickup overdue', '接回逾期') : ''}`}
+                                                aria-label={`${stay.name}: ${status(stay)}, ${date(dateAtOffset(stay.start))} – ${date(dateAtOffset(stay.end))}${stay.overdue ? ' · ' + uiText('ui.houseCalendar.pickupOverdue') : ''}`}
                                                 onClick={() =>
                                                   navigate(
                                                     '/app/calendar/bookings/' +
@@ -938,7 +918,7 @@ export default function HouseCalendar({
                                               >
                                                 <span>
                                                   {stay.overdue
-                                                    ? translate('Pickup overdue', '接回逾期')
+                                                    ? uiText('ui.houseCalendar.pickupOverdue')
                                                     : date(dateAtOffset(stay.start)) +
                                                       ' – ' +
                                                       date(dateAtOffset(stay.end))}
@@ -956,7 +936,7 @@ export default function HouseCalendar({
                       ))}
                     {!visible.length && (
                       <p className="hc-empty">
-                        {translate('No pets match these filters.', '没有符合筛选条件的宠物。')}
+                        {uiText('ui.houseCalendar.noPetsMatchTheseFilters')}
                       </p>
                     )}
                   </div>
@@ -964,19 +944,19 @@ export default function HouseCalendar({
                 <div className="hc-legend">
                   <span>
                     <i className="in" />
-                    {translate('Checked in', '已入住')}
+                    {uiText('ui.houseCalendar.checkedIn')}
                   </span>
                   <span>
                     <i className="upcoming" />
-                    {translate('Upcoming · not checked in', '即将到来 · 未入住')}
+                    {uiText('ui.houseCalendar.upcomingNotCheckedIn')}
                   </span>
                   <span>
                     <i className="out" />
-                    {translate('Checked out', '已离店')}
+                    {uiText('ui.houseCalendar.checkedOut')}
                   </span>
                   <span>
                     <i className="overdue" />
-                    {translate('Pickup overdue · still in care', '接回逾期 · 仍在店')}
+                    {uiText('ui.houseCalendar.pickupOverdueStillInCare')}
                   </span>
                 </div>
               </section>
@@ -1015,12 +995,7 @@ export default function HouseCalendar({
                       balancePlans,
                     ).code !== 'ok'
                   ) {
-                    setNotice(
-                      translate(
-                        'Review this pet’s balance before adding the stay.',
-                        '请先核对该宠物的余额。',
-                      ),
-                    );
+                    setNotice(uiText('ui.houseCalendar.reviewThisPetSBalanceBeforeAddingTheStay'));
                     return;
                   }
                   setStays((previous) => [...previous, stay]);
@@ -1034,7 +1009,7 @@ export default function HouseCalendar({
                     previous.filter((key) => key !== stay.house + '-' + stay.room),
                   );
                   setAssignment(false);
-                  setNotice(translate('Pet added to the schedule.', '宠物已添加至日程。'));
+                  setNotice(uiText('ui.houseCalendar.petAddedToTheSchedule'));
                 }}
               />
             )}
@@ -1103,13 +1078,10 @@ export default function HouseCalendar({
                     ? stays.some(
                         (stay) => stay.house === settings.house && stay.room === settings.room,
                       )
-                      ? translate(
-                          'Remove placements first. In-care pets cannot be removed.',
-                          '请先移除安排。在店宠物不能移除。',
-                        )
+                      ? uiText('ui.houseCalendar.removePlacementsFirstInCarePetsCannotBeRemoved')
                       : undefined
                     : locations.find((h) => h.id === settings.house)?.rooms.length
-                      ? translate('Remove this house’s rooms first.', '请先移除此房屋的房间。')
+                      ? uiText('ui.houseCalendar.removeThisHouseSRoomsFirst')
                       : undefined
                 }
                 room={!!settings.room}
@@ -1134,17 +1106,14 @@ export default function HouseCalendar({
             )}
             {manage && admin && (
               <Modal
-                title={translate('Manage houses & rooms', '管理房屋与房间')}
+                title={uiText('ui.houseCalendar.manageHousesRooms')}
                 onClose={() => {
                   if (confirmDiscardChanges(i18n.language)) setManage(false);
                 }}
               >
                 <div className="hc-setup">
                   <p className="hc-setup-note">
-                    {translate(
-                      'Saved house settings are separate from the calendar. Room setup is still in progress.',
-                      '保存的房屋设置与日历分开。房间设置仍在开发中。',
-                    )}
+                    {uiText('ui.houseCalendar.savedHouseSettingsAreSeparateFromTheCalendarRoom')}
                   </p>
                   <Houses />
                 </div>
@@ -1165,37 +1134,37 @@ export default function HouseCalendar({
                     <h2>{selected.name}</h2>
                     <button
                       onClick={() => dialog.current?.close()}
-                      aria-label={translate('Close', '关闭')}
+                      aria-label={uiText('ui.houseCalendar.close')}
                     >
                       ×
                     </button>
                   </div>
                   <p className={'hc-status ' + selected.status}>
                     {status(selected)}
-                    {selected.overdue ? ' · ' + translate('Pickup overdue', '接回逾期') : ''}
+                    {selected.overdue ? ' · ' + uiText('ui.houseCalendar.pickupOverdue') : ''}
                   </p>
                   <dl>
-                    <dt>{translate('Customer', '客户')}</dt>
+                    <dt>{uiText('ui.houseCalendar.customer')}</dt>
                     <dd>{customerName(customerFor(selected.name))}</dd>
-                    <dt>{translate('Location', '位置')}</dt>
+                    <dt>{uiText('ui.houseCalendar.location')}</dt>
                     <dd>
                       {houseName(selected.house)} · {roomName(selected.house, selected.room)}
                     </dd>
-                    <dt>{translate('Planned arrival', '计划到店')}</dt>
+                    <dt>{uiText('ui.houseCalendar.plannedArrival')}</dt>
                     <dd>{dateAtOffset(selected.start).toLocaleString(locale)}</dd>
-                    <dt>{translate('Planned pickup', '计划接回')}</dt>
+                    <dt>{uiText('ui.houseCalendar.plannedPickup')}</dt>
                     <dd>{dateAtOffset(selected.end).toLocaleString(locale)}</dd>
-                    <dt>{translate('Actual arrival', '实际到店')}</dt>
+                    <dt>{uiText('ui.houseCalendar.actualArrival')}</dt>
                     <dd>
                       {selected.status === 'upcoming'
-                        ? translate('Not recorded', '未记录')
+                        ? uiText('ui.houseCalendar.notRecorded')
                         : dateAtOffset(selected.start).toLocaleString(locale)}
                     </dd>
-                    <dt>{translate('Actual pickup', '实际接回')}</dt>
+                    <dt>{uiText('ui.houseCalendar.actualPickup')}</dt>
                     <dd>
                       {selected.status === 'out'
                         ? dateAtOffset(selected.end).toLocaleString(locale)
-                        : translate('Not recorded', '未记录')}
+                        : uiText('ui.houseCalendar.notRecorded')}
                     </dd>
                   </dl>
                   <CalendarProfileLink name={selected.name} />
@@ -1210,11 +1179,9 @@ export default function HouseCalendar({
                         pendingBalance.current = null;
                     }}
                   >
-                    {translate('View pet balance', '查看宠物余额')}
+                    {uiText('ui.houseCalendar.viewPetBalance')}
                   </button>
-                  <p>
-                    {translate('No booking or attendance data is saved.', '不保存预约或交接记录。')}
-                  </p>
+                  <p>{uiText('ui.houseCalendar.noBookingOrAttendanceDataIsSaved')}</p>
                 </>
               )}
             </dialog>

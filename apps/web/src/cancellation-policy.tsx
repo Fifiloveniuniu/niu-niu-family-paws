@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,8 +27,7 @@ export default function CancellationPolicyPage({
   onSave: (value: CancellationPolicy) => void;
 }) {
   const { i18n } = useTranslation();
-  const isChinese = i18n.language === 'zh';
-  const translate = (en: string, cn: string) => (isChinese ? cn : en);
+
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState(policy);
   const [error, setError] = React.useState('');
@@ -49,12 +49,7 @@ export default function CancellationPolicyPage({
           Number(draft.shortPercent) < 0 ||
           Number(draft.shortPercent) > 100))
     ) {
-      setError(
-        translate(
-          'Use whole notice days, with the full-refund cutoff later than the half-refund cutoff. Restoration must be 0–100%.',
-          '请使用整数提前天数，全额返还期限应大于半额返还期限；返还比例须为 0–100%。',
-        ),
-      );
+      setError(uiText('ui.cancellationPolicy.useWholeNoticeDaysWithTheFullRefundCutoff'));
       return;
     }
     onSave({ ...draft, name: draft.name.trim() });
@@ -63,10 +58,10 @@ export default function CancellationPolicyPage({
   }
   const basis =
     policy.basis === 'hours'
-      ? translate('Elapsed time · 24 hours per day', '实际时长 · 每天 24 小时')
+      ? uiText('ui.cancellationPolicy.elapsedTime24HoursPerDay')
       : policy.basis === 'calendar'
-        ? translate('Calendar days · house timezone', '日历天 · 房屋时区')
-        : translate('Cutoff calculation pending', '截止时间计算方式待确认');
+        ? uiText('ui.cancellationPolicy.calendarDaysHouseTimezone')
+        : uiText('ui.cancellationPolicy.cutoffCalculationPending');
   return (
     <section className="hc-finance-page">
       <div className="hc-page-toolbar">
@@ -79,122 +74,90 @@ export default function CancellationPolicyPage({
           }}
         >
           <Icon name="edit" />
-          {translate('Edit policy', '编辑政策')}
+          {uiText('ui.cancellationPolicy.editPolicy')}
         </button>
       </div>
       <div className="hc-policy-summary">
         <div>
-          <span className="hc-draft-badge">{translate('Draft', '草稿')}</span>
-          <h2>{policy.name || translate('Boarding cancellation', '寄养取消规则')}</h2>
+          <span className="hc-draft-badge">{uiText('ui.cancellationPolicy.draft')}</span>
+          <h2>{policy.name || uiText('ui.cancellationPolicy.boardingCancellation')}</h2>
           <p>{basis}</p>
         </div>
-        <span>{translate('Applies to boarding balance', '适用于寄养余额')}</span>
+        <span>{uiText('ui.cancellationPolicy.appliesToBoardingBalance')}</span>
       </div>
       {saved && (
         <p className="hc-notice" role="status">
-          {translate('Policy draft saved.', '政策草稿已保存。')}
+          {uiText('ui.cancellationPolicy.policyDraftSaved')}
         </p>
       )}
       <div className="hc-policy-cards">
         <article>
-          <small>{translate('FULL RESTORATION', '全额返还')}</small>
+          <small>{uiText('ui.cancellationPolicy.fullRestoration')}</small>
           <strong>
             100<span>%</span>
           </strong>
           <h3>
-            {translate(`${policy.fullDays} days before arrival`, `到店前 ${policy.fullDays} 天`)}
+            {uiText('ui.cancellationPolicy.daysBeforeArrival', { fullDays: policy.fullDays })}
           </h3>
-          <p>
-            {translate('Return the full eligible booking balance.', '返还符合条件的全部预约余额。')}
-          </p>
+          <p>{uiText('ui.cancellationPolicy.returnTheFullEligibleBookingBalance')}</p>
         </article>
         <article>
-          <small>{translate('PARTIAL RESTORATION', '部分返还')}</small>
+          <small>{uiText('ui.cancellationPolicy.partialRestoration')}</small>
           <strong>
             50<span>%</span>
           </strong>
           <h3>
-            {translate(`${policy.halfDays} days before arrival`, `到店前 ${policy.halfDays} 天`)}
+            {uiText('ui.cancellationPolicy.daysBeforeArrival2', { halfDays: policy.halfDays })}
           </h3>
-          <p>
-            {translate(
-              'Return half of the eligible booking balance.',
-              '返还符合条件的预约余额的一半。',
-            )}
-          </p>
+          <p>{uiText('ui.cancellationPolicy.returnHalfOfTheEligibleBookingBalance')}</p>
         </article>
         <article className="hc-policy-pending">
-          <small>{translate('SHORT NOTICE', '临近到店')}</small>
+          <small>{uiText('ui.cancellationPolicy.shortNotice')}</small>
           <strong>
             {policy.shortPercent === '' ? 'N/A' : policy.shortPercent}
             <span>{policy.shortPercent === '' ? '' : '%'}</span>
           </strong>
           <h3>
-            {translate(
-              `Less than ${policy.halfDays} days before arrival`,
-              `距到店不足 ${policy.halfDays} 天`,
-            )}
+            {uiText('ui.cancellationPolicy.lessThanDaysBeforeArrival', {
+              halfDays: policy.halfDays,
+            })}
           </h3>
           <p>
             {policy.shortPercent === ''
-              ? translate('Restoration percentage has not been set.', '返还比例尚未设置。')
-              : translate('Draft percentage, awaiting activation.', '草稿比例，尚未启用。')}
+              ? uiText('ui.cancellationPolicy.restorationPercentageHasNotBeenSet')
+              : uiText('ui.cancellationPolicy.draftPercentageAwaitingActivation')}
           </p>
         </article>
       </div>
       <div className="hc-policy-details">
         <section>
-          <h2>{translate('How balance is restored', '余额如何返还')}</h2>
+          <h2>{uiText('ui.cancellationPolicy.howBalanceIsRestored')}</h2>
           <p>
-            {translate(
-              'The intended workflow returns eligible credit to the original pet’s boarding balance and records a cancellation entry in the statement.',
-              '目标流程是将符合条件的额度返还至原宠物的寄养余额，并在明细中记录取消返还。',
-            )}
+            {uiText('ui.cancellationPolicy.theIntendedWorkflowReturnsEligibleCreditToTheOriginal')}
           </p>
           <p>
-            {translate(
-              'This policy does not activate automatic deductions or refunds.',
-              '此政策不会启用自动扣减或返还。',
-            )}
+            {uiText('ui.cancellationPolicy.thisPolicyDoesNotActivateAutomaticDeductionsOrRefunds')}
           </p>
         </section>
         <section>
-          <h2>{translate('Still to confirm', '仍需确认')}</h2>
+          <h2>{uiText('ui.cancellationPolicy.stillToConfirm')}</h2>
           <ul>
-            <li>
-              {translate(
-                'Balance unit and treatment of fractional refunds',
-                '余额单位及非整数返还处理',
-              )}
-            </li>
-            <li>
-              {translate(
-                'Exact cutoff boundaries and business timezone',
-                '准确的截止边界及营业时区',
-              )}
-            </li>
-            <li>
-              {translate(
-                'No-shows, used credit and expired credit',
-                '未到店、已使用及已过期额度的处理',
-              )}
-            </li>
+            <li>{uiText('ui.cancellationPolicy.balanceUnitAndTreatmentOfFractionalRefunds')}</li>
+            <li>{uiText('ui.cancellationPolicy.exactCutoffBoundariesAndBusinessTimezone')}</li>
+            <li>{uiText('ui.cancellationPolicy.noShowsUsedCreditAndExpiredCredit')}</li>
           </ul>
         </section>
       </div>
       {editing && (
         <Modal
-          title={translate('Edit cancellation policy', '编辑取消政策')}
+          title={uiText('ui.cancellationPolicy.editCancellationPolicy')}
           onClose={close}
           className="hc-policy-dialog"
         >
           <form ref={form} className="hc-settings-form" onSubmit={save}>
             <UnsavedChanges active={dirty} />
             <p className="hc-balance-preview">
-              {translate(
-                'Save a draft for review. Leaving a field unconfigured keeps that rule pending.',
-                '保存供核对的草稿，未配置的规则会保持待确认。',
-              )}
+              {uiText('ui.cancellationPolicy.saveADraftForReviewLeavingAFieldUnconfigured')}
             </p>
             {error && (
               <p role="alert" className="hc-range-feedback">
@@ -202,7 +165,7 @@ export default function CancellationPolicyPage({
               </p>
             )}
             <label>
-              {translate('Policy name (optional)', '政策名称（选填）')}
+              {uiText('ui.cancellationPolicy.policyNameOptional')}
               <input
                 maxLength={80}
                 value={draft.name}
@@ -211,7 +174,7 @@ export default function CancellationPolicyPage({
             </label>
             <div className="hc-time-fields">
               <label>
-                {translate('Full restoration notice (days)', '全额返还提前天数')}
+                {uiText('ui.cancellationPolicy.fullRestorationNoticeDays')}
                 <input
                   required
                   type="number"
@@ -222,7 +185,7 @@ export default function CancellationPolicyPage({
                 />
               </label>
               <label>
-                {translate('Half restoration notice (days)', '半额返还提前天数')}
+                {uiText('ui.cancellationPolicy.halfRestorationNoticeDays')}
                 <input
                   required
                   type="number"
@@ -234,40 +197,40 @@ export default function CancellationPolicyPage({
               </label>
             </div>
             <label>
-              {translate('Short-notice restoration (%)', '临近到店返还比例（%）')}
+              {uiText('ui.cancellationPolicy.shortNoticeRestoration')}
               <input
                 type="number"
                 min="0"
                 max="100"
                 step="0.01"
-                placeholder={translate('Not configured', '尚未配置')}
+                placeholder={uiText('ui.cancellationPolicy.notConfigured')}
                 value={draft.shortPercent}
                 onChange={(event) => setDraft({ ...draft, shortPercent: event.target.value })}
               />
             </label>
             <label>
-              {translate('Notice calculation', '提前时间计算')}
+              {uiText('ui.cancellationPolicy.noticeCalculation')}
               <CustomSelect
                 value={draft.basis}
                 onChange={(event) =>
                   setDraft({ ...draft, basis: event.target.value as CancellationPolicy['basis'] })
                 }
               >
-                <option value="">{translate('Not configured', '尚未配置')}</option>
+                <option value="">{uiText('ui.cancellationPolicy.notConfigured')}</option>
                 <option value="hours">
-                  {translate('Elapsed time (24 hours per day)', '实际时长（每天 24 小时）')}
+                  {uiText('ui.cancellationPolicy.elapsedTime24HoursPerDay2')}
                 </option>
                 <option value="calendar">
-                  {translate('Calendar days in the house timezone', '按房屋时区计算日历天')}
+                  {uiText('ui.cancellationPolicy.calendarDaysInTheHouseTimezone')}
                 </option>
               </CustomSelect>
             </label>
             <div className="hc-settings-actions">
               <button type="button" className="hc-manage" onClick={close}>
-                {translate('Cancel', '取消')}
+                {uiText('ui.cancellationPolicy.cancel')}
               </button>
               <button className="hc-apply" type="submit">
-                {translate('Save policy draft', '保存政策草稿')}
+                {uiText('ui.cancellationPolicy.savePolicyDraft')}
               </button>
             </div>
           </form>

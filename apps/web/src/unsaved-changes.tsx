@@ -1,3 +1,4 @@
+import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,9 +18,7 @@ export function confirmDiscardChanges(
   )
     return true;
   return window.confirm(
-    language === 'zh'
-      ? '还有修改未保存，继续操作会丢失这些内容。确定放弃修改吗？'
-      : 'You have unsaved changes. Continue and discard them?',
+    uiText('ui.unsavedChanges.youHaveUnsavedChangesContinueAndDiscardThem', {}, language),
   );
 }
 
@@ -43,9 +42,11 @@ export default function UnsavedChanges({ active }: { active: boolean }) {
   }, [active]);
   return active ? (
     <p ref={notice} className="unsaved-notice" role="status">
-      {i18n.language === 'zh'
-        ? '修改尚未保存。请保存后再刷新或关闭页面。'
-        : 'You have unsaved changes. Save before refreshing or closing this page.'}
+      {uiText(
+        'ui.unsavedChanges.youHaveUnsavedChangesSaveBeforeRefreshingOrClosing',
+        {},
+        i18n.language,
+      )}
     </p>
   ) : null;
 }

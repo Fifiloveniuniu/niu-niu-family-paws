@@ -1,3 +1,12 @@
+import {
+  englishCatalog,
+  languageName,
+  localeFor,
+  profileLanguage,
+  supportedLanguages,
+  uiText,
+  uiValue,
+} from './i18n.ts';
 import CustomSelect from './custom-select';
 import { findCustomerById, findPetCustomer } from './customer-lookup';
 import { ApiError, apiJson, apiOptionalJson } from './api-client';
@@ -13,71 +22,15 @@ import { AdminAccountLink } from './account-link';
 import type { components } from '../../../packages/contracts/generated';
 type Customer = components['schemas']['Customer'];
 type CustomerWrite = components['schemas']['CustomerWrite'];
-const englishMessages = {
-  title: 'Customers',
-  intro: 'Choose a customer to view and manage their pets.',
-  add: 'Add customer',
-  edit: 'Edit customer',
-  name: 'Customer name',
-  email: 'Email (optional)',
-  phone: 'Phone (optional)',
-  language: 'Preferred language',
-  save: 'Save customer',
-  cancel: 'Cancel',
-  loading: 'Loading customers…',
-  saving: 'Saving…',
-  empty: 'No customers yet. Add your first customer to get started.',
-  more: 'Load more customers',
-  reload: 'Try again',
-  saved: 'Customer saved.',
-  error: 'Couldn’t load or save customers. Please try again.',
-  conflict:
-    'This record changed since you opened it. Your edits are kept below. Choose Try again, compare the latest record, and reopen it before saving.',
-  forbidden: 'Administrator access is required. Sign out and sign in again.',
-  invalid: 'Check the name, email, and field lengths, then try again.',
-  retry: 'Retry save',
-  noContact: 'No contact details added',
-  search: 'Search customers',
-  searchHint: 'Customer name or email (starts with)',
-  noMatches: 'No matching customers.',
-  loginEmail: 'Google sign-in email',
-};
-const chineseMessages: typeof englishMessages = {
-  title: '客户',
-  intro: '选择客户，即可查看和管理其宠物。',
-  add: '添加客户',
-  edit: '编辑客户',
-  name: '客户姓名',
-  email: '邮箱（选填）',
-  phone: '电话（选填）',
-  language: '首选语言',
-  save: '保存客户',
-  cancel: '取消',
-  loading: '正在加载客户…',
-  saving: '正在保存…',
-  empty: '暂无客户。请添加第一位客户。',
-  more: '加载更多客户',
-  reload: '重试',
-  saved: '客户已保存。',
-  error: '未能加载或保存客户，请重试。',
-  conflict:
-    '客户资料已在其他页面更新，您还没保存的修改仍保留在这里。请点击“重试”，核对最新资料后重新打开编辑。',
-  forbidden: '需要管理员权限。请退出后重新登录。',
-  invalid: '请检查姓名、邮箱格式和内容长度，然后重试。',
-  retry: '重试保存',
-  noContact: '尚未填写联系方式',
-  search: '搜索客户',
-  searchHint: '输入姓名或邮箱的开头',
-  noMatches: '没有找到匹配的客户。',
-  loginEmail: 'Google 登录邮箱',
-};
+const englishMessages = englishCatalog['ui.customers.labels'];
+
 function customerRequest<T>(path: string, body?: CustomerWrite) {
   return apiJson<T>('/customers' + path, { body });
 }
 export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
   const { i18n } = useTranslation();
-  const chinese = i18n.language === 'zh';
-  const labels = chinese ? chineseMessages : englishMessages;
+
+  const labels = uiValue('ui.customers.labels', i18n.language);
   const [onlyMine, setOnlyMine] = React.useState(false);
   const [ownCustomer, setOwnCustomer] = React.useState<Customer | null>(null);
   const [ownLoading, setOwnLoading] = React.useState(false);
@@ -191,7 +144,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
           language: customer.language,
           version: customer.version,
         }
-      : { name: '', email: '', phone: '', language: chinese ? 'zh' : 'en', version: 0 };
+      : { name: '', email: '', phone: '', language: profileLanguage(i18n.language), version: 0 };
     baseline.current = JSON.stringify(input);
     setEditor({ id: customer?.id ?? crypto.randomUUID(), input });
   }
@@ -322,13 +275,13 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
         </button>
       </div>
       <p className="customer-intro">{labels.intro}</p>
-      <section className="customer-filters" aria-label={chinese ? '客户筛选' : 'Customer filters'}>
+      <section className="customer-filters" aria-label={uiText('ui.customers.customerFilters')}>
         <div className="hc-filters-heading">
-          <h2>{chinese ? '筛选' : 'Filters'}</h2>
+          <h2>{uiText('ui.customers.filters')}</h2>
           <button
             className="icon-button"
-            title={chinese ? '清除客户筛选' : 'Clear customer filters'}
-            aria-label={chinese ? '清除客户筛选' : 'Clear customer filters'}
+            title={uiText('ui.customers.clearCustomerFilters')}
+            aria-label={uiText('ui.customers.clearCustomerFilters')}
             onClick={resetFilters}
           >
             <Icon name="reset" />
@@ -372,25 +325,19 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
             checked={onlyMine}
             onChange={(event) => void setOwnershipFilter(event.target.checked)}
           />
-          {chinese ? '只看我的宠物' : 'Only my pets'}
+          {uiText('ui.customers.onlyMyPets')}
         </label>
-        {ownLoading && (
-          <p role="status">{chinese ? '正在加载自己的资料…' : 'Loading your own profile…'}</p>
-        )}
+        {ownLoading && <p role="status">{uiText('ui.customers.loadingYourOwnProfile')}</p>}
         {ownError && (
           <p role="alert">
-            {chinese ? '无法加载自己的资料，请重试。' : 'Could not load your profile. Try again.'}
+            {uiText('ui.customers.couldNotLoadYourProfileTryAgain')}
             <button className="language" onClick={() => void setOwnershipFilter(true)}>
               {labels.reload}
             </button>
           </p>
         )}
         {onlyMine && !ownLoading && !ownError && !ownCustomer && (
-          <p>
-            {chinese
-              ? '请先在账号菜单中保存个人资料。'
-              : 'Save your profile from the Account menu to find your own pets.'}
-          </p>
+          <p>{uiText('ui.customers.saveYourProfileFromTheAccountMenuToFind')}</p>
         )}
       </section>
       <div className="customer-pet-layout">
@@ -399,7 +346,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
           tabIndex={-1}
           className="customer-directory-panel"
           role="region"
-          aria-label={chinese ? '客户列表' : 'Customer list'}
+          aria-label={uiText('ui.customers.customerList')}
         >
           {message && <p role="status">{labels[message]}</p>}
           {error && <p role="alert">{labels[error]}</p>}
@@ -420,9 +367,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                 />
                 {!editor.input.version && (
                   <p className="customer-intro">
-                    {chinese
-                      ? '保存联系方式不会创建登录账号或发送邮件。'
-                      : 'Saving contact details does not create a login or send an email.'}
+                    {uiText('ui.customers.savingContactDetailsDoesNotCreateALoginOr')}
                   </p>
                 )}
                 <fieldset disabled={saving || uncertain}>
@@ -481,12 +426,15 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                       onChange={(event) =>
                         setEditor({
                           ...editor,
-                          input: { ...editor.input, language: event.target.value as 'en' | 'zh' },
+                          input: { ...editor.input, language: event.target.value },
                         })
                       }
                     >
-                      <option value="en">English</option>
-                      <option value="zh">简体中文</option>
+                      {supportedLanguages.map(({ code, name, htmlLang }) => (
+                        <option key={code} value={code} lang={htmlLang}>
+                          {name}
+                        </option>
+                      ))}
                     </CustomSelect>
                   </label>
                 </fieldset>
@@ -522,9 +470,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                   ? labels.noMatches
                   : labels.empty
                 : loaded
-                  ? chinese
-                    ? `已显示 ${visibleItems.length} 位客户`
-                    : `${visibleItems.length} customers shown`
+                  ? uiText('ui.customers.customersShown', { count: visibleItems.length })
                   : ''}
             </p>
             {(error === 'error' || error === 'conflict') && !uncertain && (
@@ -560,11 +506,8 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                       {labels.loginEmail}: {customer.loginEmail}
                     </p>
                   )}
-                  <span
-                    className="customer-language"
-                    lang={customer.language === 'zh' ? 'zh-Hans' : 'en'}
-                  >
-                    {customer.language === 'zh' ? '简体中文' : 'English'}
+                  <span className="customer-language" lang={customer.language}>
+                    {languageName(customer.language)}
                   </span>
                 </div>
                 <div className="customer-row-actions">
@@ -580,8 +523,8 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                   {!customer.loginEmail && (
                     <button
                       className="icon-button"
-                      title={chinese ? '关联 Google 账号' : 'Link Google account'}
-                      aria-label={`${chinese ? '关联 Google 账号' : 'Link Google account'}: ${customer.name}`}
+                      title={uiText('ui.customers.linkGoogleAccount')}
+                      aria-label={`${uiText('ui.customers.linkGoogleAccount')}: ${customer.name}`}
                       onClick={() => setLinkCustomer(customer.id)}
                     >
                       <Icon name="link" />
@@ -593,7 +536,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
           </ul>
           {linkCustomer && (
             <Modal
-              title={chinese ? '关联 Google 账号' : 'Link a Google account'}
+              title={uiText('ui.customers.linkAGoogleAccount')}
               disabled={linkBusy}
               onClose={() => setLinkCustomer(null)}
             >
@@ -622,7 +565,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
           tabIndex={-1}
           className="admin-pets"
           role="region"
-          aria-label={chinese ? '所选客户的宠物' : 'Selected customer pets'}
+          aria-label={uiText('ui.customers.selectedCustomerPets')}
         >
           {petCustomer ? (
             <>
@@ -634,7 +577,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                     directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
                   }}
                 >
-                  {chinese ? '← 客户列表' : '← Customers'}
+                  {uiText('ui.customers.customers')}
                 </button>
                 <h3>{petCustomer.name}</h3>
                 {petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}
@@ -649,17 +592,13 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                 key={petCustomer.id}
                 customerId={petCustomer.id}
                 onReady={revealPets}
-                title={chinese ? '客户的宠物' : 'Customer’s pets'}
+                title={uiText('ui.customers.customerSPets')}
               />
             </>
           ) : (
             <div className="pet-selection-empty">
-              <h3>{chinese ? '客户的宠物' : 'Customer’s pets'}</h3>
-              <p>
-                {chinese
-                  ? '从客户列表中选择一位客户，查看和管理其宠物。'
-                  : 'Select a customer from the list to view and manage their pets.'}
-              </p>
+              <h3>{uiText('ui.customers.customerSPets')}</h3>
+              <p>{uiText('ui.customers.selectACustomerFromTheListToViewAnd')}</p>
             </div>
           )}
         </div>

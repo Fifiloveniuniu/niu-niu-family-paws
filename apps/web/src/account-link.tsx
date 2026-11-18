@@ -1,80 +1,11 @@
+import { englishCatalog, localeFor, uiValue } from './i18n.ts';
 import { apiJson } from './api-client';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { components } from '../../../packages/contracts/generated';
 type State = components['schemas']['LinkState'];
-const englishMessages = {
-  title: 'Link a Google account',
-  intro:
-    'For an existing customer who has not created a personal profile yet. Give the code to the customer privately, then verify their identity before approving.',
-  generate: 'Generate linking code',
-  regenerate: 'Replace linking code',
-  once: 'This code is shown once. Share it privately. It expires in 24 hours; a replacement invalidates the previous code and request.',
-  refresh: 'Check status',
-  approve: 'Approve account link',
-  reject: 'Reject request',
-  cancel: 'Cancel linking code',
-  verify:
-    'Verify that this Google email belongs to this customer before approving. Approval gives this account access to the customer’s existing profile, pets and private photos.',
-  email: 'Verified Google email',
-  error:
-    'Couldn’t complete account linking. Check the status and try again. The code may be expired, replaced or already used, or the account may already have a profile.',
-  confirm:
-    'Have you verified this customer and Google email? Approve access to their existing profile, pets and private photos?',
-  replace: 'Replace this code and cancel any pending request?',
-  busy: 'Please wait…',
-  requestTitle: 'Already registered with us?',
-  requestIntro:
-    'Ask an administrator for a linking code to connect your existing customer and pet records. Submit it here, then wait for the administrator to verify and approve your account. No records are shared before approval.',
-  code: 'Linking code',
-  submit: 'Request account link',
-  pending: 'Request submitted. An administrator needs to verify and approve your Google account.',
-  note: 'If you already saved a separate personal profile, ask the administrator for help. The website will not merge or overwrite records automatically.',
-  status: 'Status',
-  expires: 'Expires',
-  none: 'No linking request',
-  open: 'Waiting for customer',
-  requested: 'Waiting for administrator approval',
-  approved: 'Account linked',
-  rejected: 'Request rejected',
-  cancelled: 'Code cancelled or replaced',
-  expired: 'Code expired',
-};
-const chineseMessages: typeof englishMessages = {
-  title: '关联 Google 账号',
-  intro: '适用于已有客户、但尚未创建个人资料的账号。请私下把关联码交给客户，核实身份后再批准申请。',
-  generate: '生成关联码',
-  regenerate: '重新生成关联码',
-  once: '关联码只显示这一次，请私下交给客户。24 小时内有效；重新生成后，旧码及其待审核申请会失效。',
-  refresh: '查看最新状态',
-  approve: '批准关联',
-  reject: '拒绝申请',
-  cancel: '取消关联码',
-  verify:
-    '请先核实此 Google 邮箱属于这位客户。批准后，该账号即可查看和编辑原有个人资料、宠物及私密照片。',
-  email: '已验证的 Google 邮箱',
-  error:
-    '关联未完成，请查看最新状态后重试。关联码可能已过期、被替换或使用，账号也可能已经有个人资料。',
-  confirm: '已核实这位客户和 Google 邮箱吗？批准后，该账号将能访问原有个人资料、宠物及私密照片。',
-  replace: '确定重新生成吗？旧关联码和待审核申请将失效。',
-  busy: '请稍候…',
-  requestTitle: '之前已登记过资料？',
-  requestIntro:
-    '请向管理员索取关联码，用来关联已有客户和宠物资料。在这里提交后，等待管理员核实并批准。批准前，账号无法访问原资料。',
-  code: '关联码',
-  submit: '申请关联账号',
-  pending: '申请已提交，请等待管理员核实您的 Google 账号并批准。',
-  note: '如果已经另存了一份个人资料，请联系管理员处理。网站不会自动合并或覆盖两份资料。',
-  status: '状态',
-  expires: '有效期至',
-  none: '暂无关联申请',
-  open: '等待客户提交',
-  requested: '等待管理员批准',
-  approved: '账号已关联',
-  rejected: '申请已被拒绝',
-  cancelled: '关联码已取消或替换',
-  expired: '关联码已过期',
-};
+const englishMessages = englishCatalog['ui.accountLink.labels'];
+
 function linkRequest<T>(path: string, method = 'GET', body?: unknown) {
   return apiJson<T>(path, { method, body });
 }
@@ -88,7 +19,7 @@ export function AdminAccountLink({
   onBusyChange?: (busy: boolean) => void;
 }) {
   const { i18n } = useTranslation();
-  const messages = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const messages = uiValue('ui.accountLink.labels', i18n.language);
   const [state, setState] = React.useState<State | null>(null);
   const [code, setCode] = React.useState('');
   const [busy, setBusy] = React.useState(false);
@@ -165,7 +96,7 @@ export function AdminAccountLink({
           {state.expiresAt && (
             <p>
               {messages.expires}:{' '}
-              {new Date(state.expiresAt).toLocaleString(i18n.language === 'zh' ? 'zh-CN' : 'en-US')}
+              {new Date(state.expiresAt).toLocaleString(localeFor(i18n.language))}
             </p>
           )}
           {code && (
@@ -221,7 +152,7 @@ export function AccountLinkRequest({
   onPending: (pending: boolean) => void;
 }) {
   const { i18n } = useTranslation();
-  const messages = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const messages = uiValue('ui.accountLink.labels', i18n.language);
   const [code, setCode] = React.useState('');
   const [status, setStatus] = React.useState('none');
   const [busy, setBusy] = React.useState(false);

@@ -130,7 +130,7 @@ test('profile validates edits, rejects stale writes, and never exposes raw store
     { name: ' ' },
     { name: 'x'.repeat(121) },
     { name: 'bad\nname' },
-    { language: 'fr' },
+    { language: 'not_a_language' },
     { version: -1 },
   ])
     assert.equal((await put({ ...input, ...invalid })).statusCode, 400);

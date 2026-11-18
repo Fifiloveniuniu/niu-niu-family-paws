@@ -84,13 +84,7 @@
             "type": "string",
             "maxLength": 40
           },
-          "language": {
-            "type": "string",
-            "enum": [
-              "en",
-              "zh"
-            ]
-          },
+          "language": { "type": "string", "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$", "maxLength": 35 },
           "version": {
             "type": "integer",
             "minimum": 1
@@ -133,13 +127,7 @@
             "type": "string",
             "maxLength": 40
           },
-          "language": {
-            "type": "string",
-            "enum": [
-              "en",
-              "zh"
-            ]
-          },
+          "language": { "type": "string", "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$", "maxLength": 35 },
           "version": {
             "type": "integer",
             "minimum": 0
@@ -152,7 +140,7 @@
         "required": ["name", "language", "version"],
         "properties": {
           "name": { "type": "string", "minLength": 1, "maxLength": 120 },
-          "language": { "type": "string", "enum": ["en", "zh"] },
+          "language": { "type": "string", "pattern": "^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$", "maxLength": 35 },
           "version": { "type": "integer", "minimum": 0 }
         }
       },

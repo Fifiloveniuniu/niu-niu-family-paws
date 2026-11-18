@@ -1,3 +1,4 @@
+import { englishCatalog, uiText, uiValue } from './i18n.ts';
 import { ApiError, apiJson, apiBlob } from './api-client';
 import React from 'react';
 import { updateQuery } from './routing';
@@ -9,72 +10,8 @@ import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
 type PetWrite = components['schemas']['PetWrite'];
-const englishMessages = {
-  title: 'Pets',
-  own: 'My pets',
-  intro: 'Each pet has its own profile. You can add a photo now or later.',
-  add: 'Add pet',
-  edit: 'Edit pet',
-  name: 'Pet name',
-  photo: 'Pet photo (optional)',
-  hint: 'JPEG, PNG or WebP, up to 3 MB and 16 megapixels. Photos are private to the owner and administrators.',
-  noPhoto: 'No photo yet',
-  save: 'Save pet',
-  retry: 'Retry pet save',
-  cancel: 'Cancel',
-  loading: 'Loading pets…',
-  saving: 'Saving pet…',
-  empty: 'No pets yet. Add your first pet.',
-  more: 'Load more pets',
-  reload: 'Try again',
-  saved: 'Pet saved.',
-  error: 'Couldn’t load or save pets. Please try again.',
-  invalid: 'Enter a pet name (up to 120 characters) and choose a valid photo within the limits.',
-  forbidden: 'You don’t have access to these pets. Sign out and sign in again.',
-  conflict:
-    'This pet changed elsewhere. Your edits are kept. Choose Try again and reopen the latest pet before saving.',
-  photoError: 'Couldn’t load this private photo.',
-  photoRetry: 'Retry photo',
-  selected: 'New photo selected. Save the pet to upload it.',
-  search: 'Search pet names',
-  searchHint: 'Start of pet name',
-  noMatches: 'No matching pets.',
-  customer: 'Customer',
-  manage: 'Manage these pets',
-};
-const chineseMessages: typeof englishMessages = {
-  title: '宠物',
-  own: '我的宠物',
-  intro: '为每只宠物单独添加资料，照片可以以后再补。',
-  add: '添加宠物',
-  edit: '编辑宠物',
-  name: '宠物名字',
-  photo: '宠物照片（选填）',
-  hint: '支持 JPEG、PNG 或 WebP，最大 3 MB、1600 万像素。仅宠物主人和管理员可查看照片。',
-  noPhoto: '尚未添加照片',
-  save: '保存宠物',
-  retry: '重试保存宠物',
-  cancel: '取消',
-  loading: '正在加载宠物…',
-  saving: '正在保存宠物…',
-  empty: '还没有添加宠物，先添加一只吧。',
-  more: '加载更多宠物',
-  reload: '重试',
-  saved: '宠物资料已保存。',
-  error: '宠物资料加载或保存失败，请重试。',
-  invalid: '请填写宠物名字（最多 120 个字符），并检查照片格式和大小。',
-  forbidden: '暂时无法访问这些宠物的资料。请退出后重新登录。',
-  conflict:
-    '宠物资料已在其他页面更新，您还没保存的修改仍保留在这里。请点击“重试”，再打开最新资料编辑。',
-  photoError: '照片加载失败。',
-  photoRetry: '重新加载照片',
-  selected: '已选好新照片，点击“保存宠物”后才会上传。',
-  search: '搜索宠物名字',
-  searchHint: '输入宠物名字的开头',
-  noMatches: '没有找到符合条件的宠物。',
-  customer: '客户',
-  manage: '管理这些宠物',
-};
+const englishMessages = englishCatalog['ui.pets.labels'];
+
 function readFile(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -85,7 +22,7 @@ function readFile(file: Blob): Promise<string> {
 }
 function PetPhoto({ pet }: { pet: Pet }) {
   const { i18n } = useTranslation();
-  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const labels = uiValue('ui.pets.labels', i18n.language);
   const [url, setUrl] = React.useState('');
   const [failed, setFailed] = React.useState(false);
   const [retry, setRetry] = React.useState(0);
@@ -143,7 +80,7 @@ export default function Pets({
   onReady?: () => void;
 }) {
   const { i18n } = useTranslation();
-  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const labels = uiValue('ui.pets.labels', i18n.language);
   const headingId = React.useId();
   const [items, setItems] = React.useState<Pet[]>([]);
   const [cursor, setCursor] = React.useState<string | null>(null);
@@ -378,9 +315,9 @@ export default function Pets({
               </h4>
               {pet.photoCredit && (
                 <p className="pet-photo-credit">
-                  {i18n.language === 'zh' ? '测试照片' : 'Test photo'} · {pet.photoCredit.creator} ·{' '}
+                  {uiText('ui.pets.testPhoto', {}, i18n.language)} · {pet.photoCredit.creator} ·{' '}
                   <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">
-                    {i18n.language === 'zh' ? '来源' : 'Source'}
+                    {uiText('ui.pets.source', {}, i18n.language)}
                   </a>{' '}
                   ·{' '}
                   <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">
@@ -407,7 +344,7 @@ export default function Pets({
         !cursor &&
         !error &&
         !items.some((p) => p.id === selectedPetId) && (
-          <p role="alert">{i18n.language === 'zh' ? '未找到该宠物。' : 'Pet not found.'}</p>
+          <p role="alert">{uiText('ui.pets.petNotFound', {}, i18n.language)}</p>
         )}
       {loading ? (
         <p role="status">{labels.loading}</p>
@@ -443,7 +380,7 @@ export function PetSearch({
   onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void;
 }) {
   const { i18n } = useTranslation();
-  const labels = i18n.language === 'zh' ? chineseMessages : englishMessages;
+  const labels = uiValue('ui.pets.labels', i18n.language);
   const [search, setSearch] = React.useState(
     () => new URLSearchParams(location.search).get('petSearch') || '',
   );
