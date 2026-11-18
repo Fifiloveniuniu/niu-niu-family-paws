@@ -1,3 +1,4 @@
+import { easeOutExpo } from './marketing-easing';
 import { animateCinematicTarget, jumpCinematicTarget } from './cinematic-scroll';
 
 let transition: { hash: string; cancel: () => void } | undefined;
@@ -33,11 +34,25 @@ export function scrollMarketingTarget(hash: string, animated = false) {
       return;
     }
   }
-  let cancelled = false;
-  const animations: Animation[] = [];
+  const destination = hash && hash !== '#main' ? document.getElementById(hash.slice(1)) : undefined;
+  if (hash && hash !== '#main' && !destination) {
+    jump();
+    return;
+  }
+  const from = window.scrollY;
+  const header = document.querySelector('.marketing-header')?.getBoundingClientRect().height ?? 0;
+  const target = destination
+    ? Math.max(
+        0,
+        Math.min(
+          document.documentElement.scrollHeight - innerHeight,
+          from + destination.getBoundingClientRect().top - header - 16,
+        ),
+      )
+    : 0;
+  let frame = 0;
   const cancel = () => {
-    cancelled = true;
-    animations.forEach((animation) => animation.cancel());
+    cancelAnimationFrame(frame);
     main.removeAttribute('data-marketing-transition');
     window.removeEventListener('wheel', cancel);
     window.removeEventListener('touchstart', cancel);
@@ -56,59 +71,19 @@ export function scrollMarketingTarget(hash: string, animated = false) {
     }
   };
   transition = { hash, cancel };
-  preference.addEventListener('change', handlePreference);
   main.setAttribute('data-marketing-transition', '');
   window.addEventListener('wheel', cancel, { passive: true });
   window.addEventListener('touchstart', cancel, { passive: true });
   window.addEventListener('keydown', handleKey);
-  void (async () => {
-    const story = stage.closest<HTMLElement>('[data-cinematic-story]');
-    const panels = Array.from(stage.querySelectorAll<HTMLElement>('[data-cinematic-panel]'));
-    const anchors = [
-      'main',
-      ...Array.from(story?.querySelectorAll<HTMLElement>('[data-cinema-anchor]') ?? []).map(
-        (marker) => marker.dataset.cinemaAnchor,
-      ),
-    ];
-    const destinationIndex = anchors.indexOf(hash.slice(1));
-    const headerBottom =
-      document.querySelector('.marketing-header')?.getBoundingClientRect().bottom ?? 0;
-    const outgoing =
-      stage.querySelector<HTMLElement>('[data-cinematic-panel][aria-hidden="false"]') ??
-      panels.find((panel) => {
-        const bounds = panel.getBoundingClientRect();
-        return bounds.bottom > headerBottom + 20 && bounds.top < innerHeight;
-      }) ??
-      stage;
-    const currentIndex = Math.max(0, panels.indexOf(outgoing));
-    const direction = destinationIndex >= 0 && destinationIndex < currentIndex ? -1 : 1;
-    const exit = outgoing.animate(
-      [{ transform: 'translateY(0)' }, { transform: `translateY(${-direction * 110}%)` }],
-      { duration: 240, easing: 'cubic-bezier(.55,.05,.9,.5)', fill: 'forwards' },
-    );
-    animations.push(exit);
-    await exit.finished.catch(() => {});
-    if (cancelled) return;
-    // Select the requested chapter, not the still-active chapter from before the jump.
-    const incoming = panels[destinationIndex] ?? stage;
-    const entrance = incoming.animate(
-      [{ transform: `translateY(${direction * 110}%)` }, { transform: 'translateY(0)' }],
-      { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' },
-    );
-    animations.push(entrance);
-    // Hold the destination outside the viewport until its scroll pose is ready.
-    entrance.pause();
-    entrance.currentTime = 0;
-    jump();
-    await new Promise<void>((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-    );
-    if (cancelled) return;
-    exit.cancel();
-    entrance.play();
-    await entrance.finished.catch(() => {});
-    if (!cancelled) cancel();
-  })();
+  preference.addEventListener('change', handlePreference);
+  const start = performance.now();
+  const update = (now: number) => {
+    const progress = Math.min(1, (now - start) / 850);
+    window.scrollTo({ top: from + (target - from) * easeOutExpo(progress), behavior: 'instant' });
+    if (progress < 1) frame = requestAnimationFrame(update);
+    else cancel();
+  };
+  frame = requestAnimationFrame(update);
 }
 
 /** Page changes animate the content alone; the navbar stays fixed and route-selected. */

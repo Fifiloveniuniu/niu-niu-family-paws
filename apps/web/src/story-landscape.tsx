@@ -6,6 +6,7 @@ export default function StoryLandscape() {
   const mask = useId();
   return (
     <>
+      <div className="chapter-window" aria-hidden="true" />
       <svg
         className="story-landscape"
         viewBox="0 0 1440 900"
@@ -62,7 +63,9 @@ export function CareSymbol({ kind }: { kind: 'day' | 'night' | 'heart' | 'orbit'
         <>
           <g className="symbol-rays" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             {Array.from({ length: 12 }, (_, index) => (
-              <path key={index} d="M50 9v11" transform={`rotate(${index * 30} 50 50)`} />
+              <g key={index} transform={`rotate(${index * 30} 50 50)`}>
+                <path className="symbol-ray" d="M50 9v11" />
+              </g>
             ))}
           </g>
           <path
@@ -72,6 +75,7 @@ export function CareSymbol({ kind }: { kind: 'day' | 'night' | 'heart' | 'orbit'
           />
           <path
             className="symbol-glint"
+            pathLength="1"
             d="M44 37q-10 4-10 14"
             fill="none"
             stroke="#fffaf0"
@@ -99,6 +103,7 @@ export function CareSymbol({ kind }: { kind: 'day' | 'night' | 'heart' | 'orbit'
         <>
           <path
             className="symbol-heart"
+            pathLength="1"
             d="M50 79C-8 43 28 4 50 31C72 4 108 43 50 79Z"
             fill="none"
             stroke="currentColor"
@@ -106,6 +111,7 @@ export function CareSymbol({ kind }: { kind: 'day' | 'night' | 'heart' | 'orbit'
           />
           <path
             className="symbol-glint"
+            pathLength="1"
             d="M23 39q-4 11 5 20"
             fill="none"
             stroke="currentColor"

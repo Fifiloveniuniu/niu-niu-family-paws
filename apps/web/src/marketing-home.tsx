@@ -5,7 +5,7 @@ import './cinematic-story.css';
 import HomeIllustration from './home-illustration';
 import StoryLandscape, { CareSymbol } from './story-landscape';
 import { PetPortrait } from './marketing-sections';
-import { GardenArch, GardenBranch, GardenBlossom } from './garden-art';
+import { GardenArch, GardenBranch, GardenBlossom, GardenFlower } from './garden-art';
 
 export default function MarketingHome() {
   const { t, i18n } = useTranslation();
@@ -59,7 +59,6 @@ export default function MarketingHome() {
               <a className="button" href="#experience">
                 {t('homeDiscover')} <span aria-hidden="true">↓</span>
               </a>
-              <p className="small-signature">{t('homeSignature')}</p>
             </div>
             <div className="hero-world" aria-hidden="true">
               <GardenArch />
@@ -72,8 +71,9 @@ export default function MarketingHome() {
               <div className="garden-flower hero-flower" data-scroll-object="bloom">
                 <GardenBlossom />
               </div>
-              <span className="world-orbit orbit-one" data-scroll-object="orbit" />
-              <span className="world-orbit orbit-two" data-scroll-object="orbit-reverse" />
+              <svg className="world-trail" viewBox="0 0 600 540" aria-hidden="true">
+                <path pathLength="1" d="M60 170C110 20 440 20 520 180S570 470 430 470" />
+              </svg>
               <div className="world-dog" data-scroll-object="hero-pet">
                 <HomeIllustration />
               </div>
@@ -89,7 +89,6 @@ export default function MarketingHome() {
             </div>
             <div className="scene-caption">
               <span>01 / NIU NIU FAMILY PAWS</span>
-              <span>{t('homeScroll')} ↓</span>
             </div>
           </div>
         </section>
@@ -124,23 +123,17 @@ export default function MarketingHome() {
             >
               <GardenBranch mirrored />
             </div>
-            <div className="experience-portraits" aria-hidden="true">
-              <div className="experience-pet experience-dog" data-scroll-object="pet-left">
-                <PetPortrait species="dog" />
-              </div>
-              <div className="experience-pet experience-cat" data-scroll-object="pet-center">
-                <PetPortrait species="cat" />
-              </div>
-              <div className="experience-pet experience-rabbit" data-scroll-object="pet-right">
-                <PetPortrait species="rabbit" />
-              </div>
-            </div>
-            <ol className="experience-steps">
-              {[1, 2, 3].map((number) => (
-                <li key={number} data-scroll-object={'step-' + number}>
-                  <span className="step-marker">0{number}</span>
-                  <h3>{t('experience' + number)}</h3>
-                  <p>{t('experience' + number + 'Body')}</p>
+            <ol className="experience-steps experience-portraits">
+              {(['dog', 'cat', 'rabbit'] as const).map((species, index) => (
+                <li key={species}>
+                  <div className={`experience-pet experience-${species}`} aria-hidden="true">
+                    <PetPortrait species={species} />
+                  </div>
+                  <div className="experience-step-copy">
+                    <span className="step-marker">0{index + 1}</span>
+                    <h3>{t('experience' + (index + 1))}</h3>
+                    <p>{t('experience' + (index + 1) + 'Body')}</p>
+                  </div>
                 </li>
               ))}
             </ol>
@@ -231,12 +224,7 @@ export default function MarketingHome() {
           aria-labelledby="home-questions-title"
         >
           <div className="question-art" aria-hidden="true">
-            <span className="question-flower" data-scroll-object="bloom">
-              <GardenBlossom />
-            </span>
-            <span className="question-branch" data-scroll-object="leaf-right">
-              <GardenBranch mirrored />
-            </span>
+            <GardenFlower />
           </div>
           <div data-scroll-object="rise">
             <p className="eyebrow">{t('homeQuestionsLabel')}</p>
@@ -283,21 +271,16 @@ export default function MarketingHome() {
           ))}
         </nav>
         <div className="cinema-controls">
+          <a href="#main" data-cinema-previous hidden>
+            {t('cinemaPrevious')} ↑
+          </a>
           <span className="cinema-count" aria-hidden="true">
             <span data-cinema-count>01</span> / {String(chapters.length).padStart(2, '0')}
           </span>
           <span className="cinema-progress" aria-hidden="true">
             <span />
           </span>
-          <a href="#main" data-cinema-previous hidden>
-            {t('cinemaPrevious')} ↑
-          </a>
-          <a
-            href="#experience"
-            data-cinema-next
-            data-next-label={t('cinemaNext')}
-            data-restart-label={t('cinemaRestart')}
-          >
+          <a href="#experience" data-cinema-next>
             {t('cinemaNext')} ↓
           </a>
         </div>

@@ -1,3 +1,7 @@
+## Cinematic story refinements ready for review — 2026-11-17
+
+PR82 typography and PR83 public-content preview are merged. This change adds direct endpoint object transitions on click, reversible scroll-driven internal geometry, chapter-centered fading backgrounds/contrast, paired pet introductions, consistent controls and the attached FAQ flower with clipped moving stem/straight final route/white center. Node24 build, formatting and41 unit tests passed. All29 motion/scroll/preview browser cases passed across broad/focused reruns; updated the superseded chapter7 flower assertion and included Home-return route handling. Local Chrome reviewed at localhost4190. Navigation enhancements remain a separate PR. No deployment.
+
 ## Marketing content preview ready for review — 2026-11-17
 
 Adds realistic development-only preview content, clearer production empty states, once-only verified counters and stacked uncropped mobile Spaces photos. Unapproved content remains absent from production. Local build/API typecheck,37 unit tests and3 content browser cases passed. Typography merged in PR82; no deployment.

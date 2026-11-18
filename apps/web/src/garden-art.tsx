@@ -1,7 +1,10 @@
+import { useId } from 'react';
+
 /** Original decorative vector artwork, shared by the public garden scenes. */
 export function GardenBranch({ mirrored = false }: { mirrored?: boolean }) {
   return (
     <svg
+      className="garden-branch"
       viewBox="0 0 220 400"
       aria-hidden="true"
       focusable="false"
@@ -29,17 +32,75 @@ export function GardenBranch({ mirrored = false }: { mirrored?: boolean }) {
 }
 
 export function GardenBlossom() {
+  const mask = useId();
   return (
     <svg viewBox="0 0 160 160" aria-hidden="true" focusable="false">
-      <g fill="currentColor">
+      <defs>
+        <mask id={mask}>
+          <rect width="160" height="160" fill="white" />
+          <circle
+            cx="80"
+            cy="80"
+            r="24"
+            fill="black"
+            style={{ opacity: 'var(--flower-green, 0)' }}
+          />
+        </mask>
+      </defs>
+      <g fill="currentColor" mask={`url(#${mask})`}>
         {[0, 60, 120, 180, 240, 300].map((angle) => (
           <g key={angle} transform={`rotate(${angle} 80 80)`}>
             <ellipse className="garden-petal" cx="80" cy="42" rx="23" ry="36" />
           </g>
         ))}
       </g>
-      <circle className="garden-core" cx="80" cy="80" r="24" fill="#f6e5bc" />
-      <circle cx="80" cy="80" r="13" fill="#b28353" opacity=".65" />
+      <circle
+        className="garden-core"
+        cx="80"
+        cy="80"
+        r="24"
+        fill="#f6e5bc"
+        style={{ opacity: 'calc(1 - var(--flower-green, 0))' }}
+      />
+      <circle className="garden-center" cx="80" cy="80" r="13" fill="#b28353" opacity=".65" />
+    </svg>
+  );
+}
+
+/** A single coordinate system keeps the blossom attached to its stem. */
+export function GardenFlower() {
+  return (
+    <svg
+      className="question-whole-flower"
+      viewBox="0 -15 240 320"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g className="question-stem-and-leaves">
+        <path
+          className="question-flower-stem"
+          d="M120 90V360"
+          fill="none"
+          stroke="#597b68"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        <path
+          d="M120 218Q49 219 51 161q67 3 69 57ZM120 253q70-4 69-62-65 5-69 62Z"
+          fill="#8ca58a"
+        />
+        <path d="m120 218-46-35m46 70 46-39" fill="none" stroke="#597b68" strokeWidth="2" />
+      </g>
+      <svg
+        className="question-flower-dock"
+        x="40"
+        y="0"
+        width="160"
+        height="160"
+        viewBox="0 0 160 160"
+      >
+        <GardenBlossom />
+      </svg>
     </svg>
   );
 }
