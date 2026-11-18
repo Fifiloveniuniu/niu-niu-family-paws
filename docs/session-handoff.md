@@ -1,3 +1,7 @@
+## Profile header cleanup — local, 2026-11-18
+
+Removed bilingual Visit website account-menu link. Removed outer duplicate My profile heading and promoted the form heading to h1, retaining its accessible section label and existing styling. Production build/typecheck and formatting passed; actual localhost Chrome confirmed one visible profile heading, only the profile account link, and no overflow. Chinese reload reached the translated page, but browser tab became unavailable before final Chinese checks; do not claim those completed. PR118 readability passed CI and merged. No deployment.
+
 ## Calendar readability — local, 2026-11-18
 
 Increased name/date weight and size, set supporting schedule text to12px or more, darkened status/booking/filter/legend text and enlarged phone filter inputs to16px. Wider sticky labels and centered booking bars preserve50px rows and single dividers. Scoped to calendar workspace. Production build/typecheck, formatting and16 bilingual390/1440 checks across day/week/month/year passed; actual localhost Chrome reviewed and desktop/Chinese phone images inspected. Screenshots calendar-readable-{desktop,phone-zh}.png. PR117 merged. No deployment.
