@@ -92,6 +92,7 @@ test('every chapter keeps bilingual copy accessible on mobile and desktop with s
           true,
         );
         const clipped = await panels.nth(index).evaluate((panel) => {
+          if (panel.classList.contains('home-spaces') && innerWidth <= 760) return []; // Photo chapter scrolls; dedicated tests check each image/caption.
           const top = document.querySelector('.marketing-header')!.getBoundingClientRect().bottom;
           const bottom = document.querySelector('.cinema-controls')!.getBoundingClientRect().top;
           return [...panel.querySelectorAll('h1,h2,h3,p,a')]

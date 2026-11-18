@@ -347,3 +347,10 @@ Open http://localhost:4180/home/ to review the updated site. On phones, Menu has
 Chapters3 and6 now show each service or milestone on its own full-width row. The sun’s rays fade away as the moon appears, and return when you scroll backward. The last chapter keeps its green background expanded as you scroll down toward the footer. Preview at http://localhost:4180/home/; not deployed yet.
 
 首页第3及第6章中，每个服务或数字项目各占一整行。太阳光芒会在月亮出现时淡出，向上滚动时恢复。第9章向下滚动至页脚时，绿色背景保持展开。当前仅为本地预览，尚未发布。
+
+
+## Full-width mobile Home photos — local preview, 2026-11-17
+
+Home photos now fill the phone’s content width, with their captions underneath and matching24px corners. Scroll inside the photo chapter to see both complete portraits; the existing Next control still advances the story. The opening flower stays clear of the sun and wording, and the final flower sits above its text. “MAKE ROOM FOR THE DETAILS” now has more space underneath. Preview at http://localhost:4180/home/; not deployed.
+
+手机首页照片现占满内容宽度，说明文字位于各自照片下方，四角统一为24px圆角。在照片章节内向下滚动可查看两张完整照片，也可继续使用“下一章”按钮。开场花朵与太阳、文字保持间距；最后一章的花朵位于文字上方。安排计划区域的小标题下方也增加了留白。目前仅在本地预览，尚未发布。

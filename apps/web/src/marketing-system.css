@@ -1624,3 +1624,54 @@ header.marketing-header nav {
     line-height: 1.2;
   }
 }
+
+/* Consistent corners and readable photo captions across the public site. */
+.marketing-site {
+  --paws-panel-radius: 24px;
+}
+.marketing-site :is(.home-photo-pair img, .photo-open, .stay-planning, .package-note),
+.marketing-site .home-story.cinematic-story .home-services .service-path[href] {
+  border-radius: var(--paws-panel-radius);
+}
+.marketing-site .stay-planning .eyebrow {
+  margin-bottom: 24px;
+}
+@media (max-width: 760px) {
+  .home-spaces .home-photo-pair {
+    max-width: none;
+    gap: 28px;
+  }
+  .home-spaces .home-photo-pair figure {
+    display: block;
+    width: 100%;
+  }
+  .home-spaces .home-photo-pair figcaption {
+    margin-top: 12px;
+    font-size: 13px;
+    text-align: left;
+  }
+  .marketing-site .home-spaces .home-photo-pair img,
+  .marketing-site .home-story[data-cinema-enabled] .home-spaces .home-photo-pair img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    border-radius: var(--paws-panel-radius);
+  }
+  .marketing-site[data-scroll-enabled] .home-spaces .home-photo-pair figure {
+    transform: none;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .home-spaces {
+    align-content: start;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+    scrollbar-width: thin;
+    padding-bottom: 88px;
+    scroll-padding-block: 24px 88px;
+  }
+  .home-spaces:focus-visible {
+    outline: 2px solid #a76547;
+    outline-offset: -4px;
+  }
+}

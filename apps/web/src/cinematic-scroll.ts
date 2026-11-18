@@ -63,8 +63,23 @@ export function installCinematicStory(story: HTMLElement) {
   // Offstage holds avoid repeated full-width left/right crossings.
   const flowerFor = (index: number) => {
     const pose = poses[index].flower;
-    if (innerWidth > 760 || anchors[index] === 'contact') return pose;
-    return [anchors[index] === 'main' ? 0.7 : pose[0], 0.01, pose[2], pose[3]];
+    if (innerWidth > 760) return pose;
+    if (anchors[index] === 'main')
+      return [
+        24 / Math.max(1, stage.clientWidth - 38.5),
+        8 / Math.max(1, stage.clientHeight - 38.5),
+        pose[2],
+        pose[3],
+      ];
+    if (anchors[index] === 'contact') {
+      const slot = panels[index].querySelector<HTMLElement>('.contact-bloom');
+      const size = 46;
+      const y = slot
+        ? (slot.offsetTop + (slot.offsetHeight - size) / 2) / Math.max(1, stage.clientHeight - size)
+        : 0.2;
+      return [0.5, y, 140, pose[3]];
+    }
+    return [pose[0], 0.01, pose[2], pose[3]];
   };
   const next = story.querySelector<HTMLAnchorElement>('[data-cinema-next]');
   const previous = story.querySelector<HTMLAnchorElement>('[data-cinema-previous]');
@@ -577,6 +592,7 @@ export function installCinematicStory(story: HTMLElement) {
   const resize = new ResizeObserver(schedule);
   resize.observe(story);
   window.addEventListener('scroll', schedule, { passive: true });
+  stage.addEventListener('scroll', schedule, { capture: true, passive: true });
   window.addEventListener('resize', schedule);
   window.addEventListener('pageshow', schedule);
   window.addEventListener('wheel', interrupt, { passive: true });
@@ -591,6 +607,7 @@ export function installCinematicStory(story: HTMLElement) {
     preference.removeEventListener('change', reduce);
     main.removeAttribute('data-marketing-transition');
     window.removeEventListener('scroll', schedule);
+    stage.removeEventListener('scroll', schedule, true);
     window.removeEventListener('resize', schedule);
     window.removeEventListener('pageshow', schedule);
     window.removeEventListener('wheel', interrupt);

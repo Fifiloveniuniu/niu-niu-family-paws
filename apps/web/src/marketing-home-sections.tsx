@@ -88,6 +88,7 @@ export function HomeSpaces() {
       data-cinematic-panel
       data-scroll-scene
       aria-labelledby="home-spaces-title"
+      tabIndex={0}
     >
       <div>
         <p className="eyebrow">{zh ? '看看我们的小天地' : 'A LITTLE LOOK AROUND'}</p>
