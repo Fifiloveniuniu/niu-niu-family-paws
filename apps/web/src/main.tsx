@@ -14,6 +14,7 @@ import useMarketingHeader from './use-marketing-header';
 import { MarketingHeader, MarketingFooter } from './marketing-shell';
 import { ServicesPage, PricingPage, ContactPage, SpacesPage, AcademyPage } from './marketing-pages';
 import React from 'react';
+import ApiConnection from './api-connection';
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 import './style.css';
@@ -104,7 +105,9 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
             </main>
           }
         >
-          <Portal active={appVisible} onLanguageChange={setLanguage} />
+          <ApiConnection active={appVisible} onLanguageChange={setLanguage}>
+            <Portal active={appVisible} onLanguageChange={setLanguage} />
+          </ApiConnection>
         </React.Suspense>
       </div>
     ) : null;
