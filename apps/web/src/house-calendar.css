@@ -3905,3 +3905,169 @@
 .hc-assignment-dialog .hc-range-room-name {
   border-right: 0;
 }
+
+/* Leave room for field borders and focus outlines inside the scroll viewport. */
+.hc-assignment-dialog .hc-wizard-step:not([hidden]) {
+  padding: 24px 8px;
+  scroll-padding: 8px;
+  gap: 24px;
+}
+.hc-assignment-dialog .hc-wizard-step[data-booking-step='1'] > *,
+.hc-assignment-dialog .hc-wizard-step[data-booking-step='3'] > * {
+  width: 100%;
+  max-width: 860px;
+  margin-inline: auto;
+}
+.hc-assignment-dialog .hc-settings-form label {
+  min-width: 0;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #526457;
+}
+.hc-assignment-dialog .hc-time-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.hc .hc-assignment-dialog .hc-settings-form input,
+.hc .hc-assignment-dialog .custom-select-trigger {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 11px 12px;
+  border: 1px solid #dce5de;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #293f35;
+  background: #fff;
+}
+.hc .hc-assignment-dialog input:focus-visible,
+.hc .hc-assignment-dialog .custom-select-trigger:focus-visible {
+  outline: 2px solid #86b9a7;
+  outline-offset: 2px;
+}
+.hc-assignment-dialog .hc-step-intro h3 {
+  font-size: 24px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.hc-assignment-dialog .hc-step-intro p,
+.hc-assignment-dialog .hc-step-stay div > span,
+.hc-assignment-dialog .hc-review-card dt,
+.hc-assignment-dialog .hc-review-guest small,
+.hc-assignment-dialog .hc-review-note,
+.hc-assignment-dialog .hc-coverage-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #526457;
+}
+.hc-assignment-dialog .hc-review-card dd {
+  font-size: 16px;
+  color: #293f35;
+  overflow-wrap: anywhere;
+}
+.hc-assignment-dialog .hc-wizard-progress li {
+  font-size: 13px;
+  color: #526457;
+}
+.hc-assignment-dialog .hc-wizard-caption,
+.hc-assignment-dialog .hc-wizard-footer > span {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #526457;
+}
+.hc .hc-assignment-dialog .hc-wizard-footer button {
+  min-height: 44px;
+  font-size: 14px !important;
+}
+@media (max-width: 700px) {
+  .hc-assignment-dialog .hc-time-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hc-assignment-dialog .hc-wizard-progress li {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+@media (max-width: 480px) {
+  .hc-assignment-dialog .hc-wizard-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 0 4px;
+  }
+  .hc-assignment-dialog .hc-wizard-footer > .hc-apply {
+    order: -1;
+    width: 100%;
+  }
+  .hc-assignment-dialog .hc-wizard-secondary {
+    justify-content: center;
+  }
+}
+.hc-assignment-dialog .hc-step-stay strong,
+.hc-assignment-dialog .hc-schedule-heading h3,
+.hc-assignment-dialog .hc-coverage-card h4 {
+  font-size: 16px;
+  color: #293f35;
+}
+.hc-assignment-dialog .hc-schedule-heading {
+  flex-wrap: wrap;
+}
+.hc-assignment-dialog .hc-schedule-heading > div,
+.hc-assignment-dialog .hc-range-dates > div,
+.hc-assignment-dialog .hc-range-dates small,
+.hc-assignment-dialog .hc-range-axis > div:first-child,
+.hc-assignment-dialog .hc-schedule-legend,
+.hc-assignment-dialog .hc-time-unavailable span,
+.hc-assignment-dialog .hc-time-placeholder {
+  font-size: 12px;
+  color: #526457;
+}
+.hc-assignment-dialog .hc-schedule-legend {
+  flex-wrap: wrap;
+}
+.hc-assignment-dialog .hc-range-calendar {
+  --room-label: 180px;
+}
+.hc-assignment-dialog .hc-range-house,
+.hc-assignment-dialog .hc-range-room-name strong {
+  font-size: 14px;
+  color: #405b4b;
+}
+.hc-assignment-dialog .hc-range-room {
+  height: 80px;
+}
+.hc-assignment-dialog .hc-range-room-name {
+  padding-block: 8px;
+  gap: 4px;
+}
+.hc-assignment-dialog .hc-range-room-name button {
+  min-height: 32px;
+  font-size: 12px;
+  color: #31594c;
+}
+.hc-assignment-dialog .hc-time-request {
+  top: 23px;
+  font-size: 12px;
+  color: #31594c;
+}
+.hc-assignment-dialog .hc-time-request.picked {
+  color: #fff;
+}
+.hc-assignment-dialog .hc-coverage-card {
+  border-color: #dce5de;
+  background: #faf8f2;
+}
+.hc-assignment-dialog .hc-coverage-card dt {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #526457;
+}
+.hc-assignment-dialog .hc-coverage-card > .hc-text-button {
+  font-size: 14px;
+}
+.hc-assignment-dialog .hc-range-room-name button:disabled {
+  color: #6c786b;
+  opacity: 0.65;
+}

@@ -1,3 +1,7 @@
+## Booking field clipping/readability — local, 2026-11-18
+
+Added8px horizontal scroll-viewport padding so complete borders and4px focus outlines fit. Fields use16px text and48px minimum controls; labels/body14px with darker contrast. Details/review content capped at860px on desktop. Phone primary action stacks above secondary actions; room-picker labels, dates/statuses and review copy enlarged. Kept24px/12px outer clearance and all existing validations. Build/typecheck, formatting and10 focused bilingual320/390/1440 tests passed, including complete saves and focused-field containment at short568px height. Six Chrome/WebKit geometry smokes passed; actual localhost Chrome focused field inspected. Screenshots booking-readable-{desktop,phone}.png. PR125 spacing passed CI/merged. During initial preview refresh, browser tool accepted beforeunload warning; any draft there may have been discarded. Subsequent reviews use a separate tab. No deployment.
+
 ## Booking modal edge spacing — local, 2026-11-18
 
 Owner refined full-screen request: Add booking now has24px viewport clearance on desktop and12px on phones, with rounded corners. Heading/actions remain fixed and content scrolls. Focused formatting and all four bilingual390/1440 complete-booking regression checks passed, including exact inset geometry. Screenshot booking-modal-edge-spacing-phone.png. No deployment.
