@@ -198,6 +198,10 @@ export function PhotoSignIn() {
     </div>
   );
 }
+export function useCalendarPet(name: string) {
+  return React.useContext(Photos)[name]?.profile;
+}
+
 export function PetProfileAvatar({
   name,
   className = '',

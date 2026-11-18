@@ -918,5 +918,8 @@
   "ui.autocomplete.noMatches": "No matches",
   "ui.calendarAssignment.customer": "Customer",
   "ui.calendarAssignment.freeSpace": "Available space",
-  "ui.houseCalendar.practiceRoom": "Practice room"
+  "ui.houseCalendar.practiceRoom": "Practice room",
+  "ui.pets.species": "Pet type",
+  "ui.pets.weightKg": "Weight (kg)",
+  "ui.pets.weightValue": "{{weight}} kg"
 }

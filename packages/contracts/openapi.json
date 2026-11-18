@@ -27,6 +27,8 @@
           "id": { "type": "string", "format": "uuid" },
           "customerId": { "type": "string", "format": "uuid", "readOnly": true },
           "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "species": {"type": "string", "nullable": true, "enum": ["dog", "cat", "rabbit", null]},
+          "weightKg": {"type": "number", "nullable": true, "exclusiveMinimum": 0, "maximum": 1000},
           "photo": { "type": "string", "nullable": true, "readOnly": true, "description": "Opaque image revision; photos require authenticated API access." },
           "photoCredit": { "type": "object", "readOnly": true, "additionalProperties": false, "required": ["creator", "sourcePage", "license", "licenseUrl"], "properties": { "creator": { "type": "string" }, "sourcePage": { "type": "string" }, "license": { "type": "string" }, "licenseUrl": { "type": "string" } } },
           "version": { "type": "integer", "minimum": 1 },
@@ -37,6 +39,8 @@
         "type": "object", "additionalProperties": false, "required": ["name", "version"],
         "properties": {
           "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "species": {"type": "string", "nullable": true, "enum": ["dog", "cat", "rabbit", null]},
+          "weightKg": {"type": "number", "nullable": true, "exclusiveMinimum": 0, "maximum": 1000},
           "version": { "type": "integer", "minimum": 0 },
           "photoData": { "type": "string", "minLength": 1, "maxLength": 4194304, "description": "Optional base64 JPEG, PNG or WebP, at most 3 MiB and 16 megapixels. Omit to preserve the saved photo." }
         }

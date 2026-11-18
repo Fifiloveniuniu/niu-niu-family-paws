@@ -1,3 +1,7 @@
+## Persisted pet care details — local, 2026-11-18
+
+Canonical pets now save nullable type and weightKg through existing owner/admin versioned audited APIs. Old clients omitting fields preserve details; explicit null clears. Pet dialogs/cards show type/weight and N/A when unset; calendar info reads accessible profile weight. No pricing bands or weight-derived business rules invented. Build/API typecheck/formatting,47 unit tests,7 real isolated Firestore suites, bilingual pet-dialog case and4 avatar regressions passed. Actual localhost Chrome pet dialog reviewed in isolated tab30 using frontend-only UI fixtures plus demo Auth; no Firestore preview records created. PR133 merged after CI/signature verification; PR134 CI rerunning after retarget. No deployment.
+
 ## Selectable available space — local, 2026-11-18
 
 Room chooser paints explicit green free-span buttons alongside gray blocked spans; selection preserves the requested duration and rechecks whole-stay capacity/species/duplicate/overdue constraints. Added an empty configured Practice room only in isolated test-mode fixtures (not production data or approved capacity). Build/formatting and47 unit tests passed;10 booking regressions and4 bilingual390/1440 practice-room/free-span browser cases passed. Actual localhost Chrome free-space selection reviewed in isolated tab29. PR133/autocomplete passed CI; not deployed.
