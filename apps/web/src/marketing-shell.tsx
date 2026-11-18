@@ -157,6 +157,8 @@ export function MarketingHeader({
           {submenu('services', '/services/', t('services'), [
             ['/services/#daycare', t('day')],
             ['/services/#boarding', t('night')],
+            ['/services/#drop-in', zh ? '上门照护' : 'Drop-in visits'],
+            ['/services/#dog-walking', zh ? '遛狗服务' : 'Dog walking'],
             ['/services/#grooming', zh ? '宠物美容' : 'Pet grooming'],
             ['/academy/', zh ? '美容师成长课堂' : 'Grooming Academy'],
           ])}

@@ -142,7 +142,7 @@ export const englishMessages = {
   homeServicesLabel: 'FIND YOUR STARTING POINT',
   homeServicesTitle: 'Care for every chapter.',
   homeServicesIntro:
-    'Explore the kind of care you have in mind. The service guide explains what to discuss next.',
+    'Explore everyday care, drop-in visits, dog walking, grooming and learning. Find the details in our service guide.',
   homeDayLabel: 'WHEN YOUR DAY TAKES YOU ELSEWHERE',
   homeDayBody: 'A place to begin planning daytime care.',
   homeNightLabel: 'WHEN YOU’RE AWAY OVERNIGHT',
@@ -288,7 +288,7 @@ export const chineseMessages: typeof englishMessages = {
   trust3Body: '提出问题，分享顾虑，一起确认安排是否适合您的宠物。',
   homeServicesLabel: '从您需要的照护开始',
   homeServicesTitle: '每一阶段，用心陪伴。',
-  homeServicesIntro: '先找到适合您计划的服务方向，再通过服务指南了解下一步需要沟通的事项。',
+  homeServicesIntro: '探索日常照护、上门照护、遛狗、美容与学习，通过服务指南了解具体安排。',
   homeDayLabel: '当白天的行程带您出门',
   homeDayBody: '从这里，开始了解日间照护。',
   homeNightLabel: '当您需要出门过夜',

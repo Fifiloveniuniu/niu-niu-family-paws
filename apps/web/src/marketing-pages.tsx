@@ -6,7 +6,14 @@ import { CareSymbol } from './story-landscape';
 import { GardenBlossom } from './garden-art';
 
 export function serviceContent(zh: boolean) {
-  const services = zh
+  const services: {
+    id: string;
+    name: string;
+    tag: string;
+    body: string;
+    note: string;
+    kind: 'day' | 'night' | 'grooming' | 'academy' | 'visit' | 'walk';
+  }[] = zh
     ? [
         {
           id: 'daycare',
@@ -75,16 +82,73 @@ export function serviceContent(zh: boolean) {
           kind: 'academy' as const,
         },
       ];
+  services.splice(
+    2,
+    0,
+    {
+      id: 'drop-in',
+      name: zh ? '上门照护' : 'Drop-in visits',
+      tag: zh ? '为宠物送去照顾' : 'A little care, right at home',
+      body: zh
+        ? '上门探望并照顾宠物，关心它们的日常所需。'
+        : 'Visits to provide care for your pets in their own home.',
+      note: zh
+        ? '请先确认照护内容、服务范围、探访时长、时间及价格。'
+        : 'Confirm care tasks, service area, visit length, availability, and pricing with us.',
+      kind: 'visit' as const,
+    },
+    {
+      id: 'dog-walking',
+      name: zh ? '遛狗服务' : 'Dog walking',
+      tag: zh ? '出门走走，陪伴左右' : 'A walk and a little company',
+      body: zh
+        ? '陪伴爱犬外出散步，照顾它的日常活动需求。'
+        : 'Walks for your dog, with company along the way.',
+      note: zh
+        ? '请先确认爱犬需求、服务范围、散步时长、时间及价格。'
+        : 'Confirm your dog’s needs, service area, walk length, availability, and pricing with us.',
+      kind: 'walk' as const,
+    },
+  );
   return marketingPreview
     ? services.map((service) => ({
         ...service,
-        note:
-          previewPrices[service.id][zh ? 'zh' : 'en'] +
-          (zh ? ' · 一起确认最适合的安排。' : ' · Let’s find the right arrangement together.'),
+        note: previewPrices[service.id]
+          ? previewPrices[service.id][zh ? 'zh' : 'en'] +
+            (zh ? ' · 一起确认最适合的安排。' : ' · Let’s find the right arrangement together.')
+          : service.note,
       }))
     : services;
 }
-export function ServiceSymbol({ kind }: { kind: 'day' | 'night' | 'grooming' | 'academy' }) {
+export function ServiceSymbol({
+  kind,
+}: {
+  kind: 'day' | 'night' | 'grooming' | 'academy' | 'visit' | 'walk';
+}) {
+  if (kind === 'visit' || kind === 'walk')
+    return (
+      <svg className={`care-symbol care-symbol-${kind}`} viewBox="0 0 100 100" aria-hidden="true">
+        <g
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {kind === 'visit' ? (
+            <>
+              <path d="m16 44 34-28 34 28M24 38v44h52V38" />
+              <path d="M50 68c-19-11-13-25-4-20l4 4 4-4c9-5 15 9-4 20Z" />
+            </>
+          ) : (
+            <>
+              <path d="M18 72h64M28 68V48l10-10 12 10h18l8 10v10M38 38V26l12 6v16M28 52l-10-8M40 58v10m22-10v10M50 32q20 0 20-16" />
+              <circle cx="42" cy="34" r="1" />
+            </>
+          )}
+        </g>
+      </svg>
+    );
   if (kind === 'day' || kind === 'night') return <CareSymbol kind={kind} />;
   return (
     <svg className={`care-symbol care-symbol-${kind}`} viewBox="0 0 100 100" aria-hidden="true">
@@ -208,7 +272,8 @@ export function PricingPage() {
                   {service.name}
                   {marketingPreview && (
                     <span className="preview-price">
-                      {previewPrices[service.id][zh ? 'zh' : 'en']}
+                      {previewPrices[service.id]?.[zh ? 'zh' : 'en'] ??
+                        (zh ? '价格待确认' : 'Confirm pricing')}
                     </span>
                   )}
                 </h2>
