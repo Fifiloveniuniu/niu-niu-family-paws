@@ -35,7 +35,7 @@ test('chapter clicks animate the sun, reused flower, marker and internal SVG par
   expect(end.moon).toBe('22');
   expect(end.sun).not.toBe(middle.sun);
   await expect(page.locator('[data-cinema-previous]')).toBeVisible();
-  await expect(page.locator('[data-cinema-next]')).toHaveText('Restart story ↑');
+  await expect(page.locator('[data-cinema-next]')).toBeHidden();
   await expect(page.locator('.home-contact h2')).toHaveCSS('color', 'rgb(255, 250, 240)');
   await expect(page.locator('.cinema-controls')).toHaveCSS('color', 'rgb(255, 250, 240)');
   await expect(page.locator('.pet-forehead,.pet-hairline')).toHaveCount(0);
@@ -91,8 +91,8 @@ test('manual scroll is reversible and previous/next controls work in both langua
     await page.locator('select').selectOption('zh');
     if (width === 390) await page.locator('.marketing-menu-toggle').click();
     await pose(0.2);
-    await expect(page.locator('[data-cinema-previous]')).toHaveText('上一章 ↑');
-    await expect(page.locator('[data-cinema-next]')).toHaveText('下一章 ↓');
+    await expect(page.locator('[data-cinema-previous]')).toHaveText('上一个 ↑');
+    await expect(page.locator('[data-cinema-next]')).toHaveText('下一个 ↓');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
@@ -118,12 +118,15 @@ test('direct chapter links restore exact poses and manual input interrupts click
   await page.waitForTimeout(150);
   await page.mouse.wheel(0, -100);
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  expect(['3', '8']).toContain(
+    await page.locator('[data-cinema-enabled]').getAttribute('data-active-chapter'),
+  );
   await page.locator('.cinema-rail a[href="#main"]').click();
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
   expect(await page.evaluate(() => scrollY)).toBe(0);
 });
 
-test('the shared flower exits both sides and returns while icon rotation is stronger and reversible', async ({
+test('the shared flower holds offstage without zigzags while icon rotation stays strong and reversible', async ({
   page,
 }) => {
   const pose = async (chapter: number) => {
@@ -158,15 +161,19 @@ test('the shared flower exits both sides and returns while icon rotation is stro
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 950 });
     await page.goto('/home/');
-    const left = await pose(1);
-    expect(left.right).toBeLessThan(left.stageLeft);
-    const visible = await pose(2);
-    expect(visible.right).toBeGreaterThan(visible.stageLeft);
-    expect(visible.left).toBeLessThan(visible.stageRight);
-    const right = await pose(3);
-    expect(right.left).toBeGreaterThan(right.stageRight);
-    await pose(4);
-    expect(await pose(1)).toEqual(left);
+    const outside = await pose(1);
+    expect(outside.left).toBeGreaterThan(outside.stageRight);
+    for (const chapter of [2, 3, 4, 5]) {
+      const held = await pose(chapter);
+      expect(held.left).toBeGreaterThan(held.stageRight);
+      expect(Math.abs(held.left - outside.left)).toBeLessThan(width * 0.1);
+    }
+    const seventh = await pose(6);
+    expect(seventh.left).toBeGreaterThan(seventh.stageRight);
+    const returned = await pose(7);
+    expect(returned.right).toBeGreaterThan(returned.stageLeft);
+    expect(returned.left).toBeLessThan(returned.stageRight);
+    expect(await pose(1)).toEqual(outside);
     const first = await pose(2.1);
     const later = await pose(2.4);
     expect(later.rotation).not.toBe(first.rotation);
@@ -247,4 +254,952 @@ test('each animal has independent readable ear, nose and opening-mouth motion wh
   await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
   await expect(page.locator('.pet-ear-left').first()).toHaveCSS('transform', 'none');
   await expect(page.locator('.pet-mouth-opening').first()).toHaveCSS('transform', 'none');
+});
+
+test('foliage paints past its SVG box and noncircular icons reshape without spinning', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/#experience');
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator('.garden-branch').first()).toHaveCSS('overflow', 'visible');
+  for (const panel of await page.locator('[data-cinematic-panel]').all())
+    await expect(panel).toHaveCSS('overflow', 'visible');
+  await pose(0.6);
+  // Probe the overflow contract independently of the current, stem-attached leaf pose.
+  const probe = page.locator('.experience-vine.vine-left .garden-leaves > path').first();
+  await probe.evaluate((e) => ((e as SVGElement).style.translate = '240px 0'));
+  const visible = await page.screenshot();
+  await page
+    .locator('.garden-branch')
+    .evaluateAll((branches) =>
+      branches.forEach((branch) => ((branch as SVGSVGElement).style.overflow = 'hidden')),
+    );
+  const clipped = await page.screenshot();
+  const sharp = (await import('sharp')).default;
+  const a = await sharp(visible).ensureAlpha().raw().toBuffer(),
+    b = await sharp(clipped).ensureAlpha().raw().toBuffer();
+  let changed = 0;
+  for (let i = 0; i < a.length; i += 4)
+    if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 12)
+      changed++;
+  expect(changed).toBeGreaterThan(50);
+  await probe.evaluate((e) => (e as SVGElement).style.removeProperty('translate'));
+  await page
+    .locator('.garden-branch')
+    .evaluateAll((branches) =>
+      branches.forEach((branch) => (branch as SVGSVGElement).style.removeProperty('overflow')),
+    );
+  async function pose(chapter: number) {
+    await page.evaluate(async (value) => {
+      const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+        stage = s.querySelector<HTMLElement>('.cinematic-stage')!,
+        header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      const count = s.querySelectorAll('[data-cinematic-panel]').length;
+      scrollTo({
+        top:
+          s.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((s.clientHeight - stage.clientHeight) * value) / (count - 1),
+        behavior: 'instant',
+      });
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      );
+    }, chapter);
+  }
+  const sample = () =>
+    page.evaluate(() => ({
+      upright: [
+        ...document.querySelectorAll('.home-services .care-symbol,.home-services .symbol-star'),
+      ].map((part) => {
+        const m = new DOMMatrixReadOnly(getComputedStyle(part).transform);
+        return { b: m.b, c: m.c };
+      }),
+      left: getComputedStyle(document.querySelector('.home-services .academy-page-left')!)
+        .transform,
+      right: getComputedStyle(document.querySelector('.home-services .academy-page-right')!)
+        .transform,
+      lines: getComputedStyle(document.querySelector('.home-services .academy-lines')!)
+        .strokeDashoffset,
+    }));
+  await pose(2.1);
+  const first = await sample();
+  await pose(2.4);
+  const later = await sample();
+  for (const pose of [first, later])
+    for (const part of pose.upright) {
+      expect(Math.abs(part.b)).toBeLessThan(0.001);
+      expect(Math.abs(part.c)).toBeLessThan(0.001);
+    }
+  expect(later.left).not.toBe(first.left);
+  expect(later.right).not.toBe(first.right);
+  expect(later.lines).not.toBe(first.lines);
+  await pose(2.1);
+  expect(await sample()).toEqual(first);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 650 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+  }
+  await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+  await expect(page.locator('.home-services .academy-page-left')).toHaveCSS('transform', 'none');
+});
+
+test('internal SVG geometry morphs reversibly and restores with reduced motion', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const selector =
+    '.home-services .symbol-crescent,.home-services .symbol-star,.home-services .academy-page-left > path:first-child,.home-services .grooming-blade > path';
+  const sample = () =>
+    page.locator(selector).evaluateAll((parts) => parts.map((e) => e.getAttribute('d')));
+  const pose = async (chapter: number) => {
+    await page.evaluate(async (chapter) => {
+      const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+      const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          story.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((story.clientHeight - stage.clientHeight) * chapter) / 8,
+        behavior: 'instant',
+      });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    }, chapter);
+  };
+  await pose(2.1);
+  const first = await sample();
+  expect(first.length).toBeGreaterThan(4);
+  await pose(2.4);
+  const later = await sample();
+  first.forEach((shape, i) => expect(later[i]).not.toBe(shape));
+  await pose(2.1);
+  expect(await sample()).toEqual(first);
+  await page.setViewportSize({ width: 1440, height: 650 });
+  await page.locator('.home-services').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(100);
+  const shortFirst = await sample();
+  await page.mouse.wheel(0, 120);
+  await page.waitForTimeout(100);
+  expect(await sample()).not.toEqual(shortFirst);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+  const restored = await sample();
+  await page.mouse.wheel(0, 150);
+  await page.waitForTimeout(100);
+  expect(await sample()).toEqual(restored);
+});
+
+test('service illustrations tell separate reversible stories in their own viewport positions', async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/services/');
+    await page.evaluate(() => document.fonts.ready);
+    const arts = page.locator('[data-icon-scene]');
+    await expect(arts).toHaveCount(4);
+    const geometry = (index: number) =>
+      arts
+        .nth(index)
+        .locator('svg')
+        .evaluate((svg) =>
+          [...svg.querySelectorAll('path,circle')].map((e) => [
+            e.getAttribute('d'),
+            e.getAttribute('cx'),
+            e.getAttribute('cy'),
+          ]),
+        );
+    const pose = async (index: number, progress: number) => {
+      await arts.nth(index).evaluate(async (art, progress) => {
+        const box = art.getBoundingClientRect();
+        scrollTo({
+          top: scrollY + box.top - innerHeight + (innerHeight + box.height) * progress,
+          behavior: 'instant',
+        });
+        await new Promise<void>((r) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => r())),
+        );
+      }, progress);
+    };
+    for (let index = 0; index < 4; index++) {
+      await pose(index, 0.5);
+      const first = await geometry(index);
+      await pose(index, 0.8);
+      const later = await geometry(index);
+      expect(later, `icon ${index} at ${width}`).not.toEqual(first);
+      await pose(index, 0.5);
+      expect(await geometry(index)).toEqual(first);
+      await expect(arts.nth(index).locator('svg')).toBeInViewport();
+    }
+    await expect(page.locator('.grooming-tuft path')).toHaveCount(3);
+    await expect(page.locator('.academy-turning-page')).toHaveCount(1);
+    // Each row follows its own viewport position rather than inheriting one page value.
+    const progress = await arts.evaluateAll((es) =>
+      es.map((e) => (e as HTMLElement).style.getPropertyValue('--care-progress')),
+    );
+    expect(new Set(progress).size).toBeGreaterThan(1);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+    await expect(page.locator('.grooming-tuft path').first()).toHaveAttribute(
+      'd',
+      'M44 15q-2 7 0 14',
+    );
+    await expect(page.locator('.academy-turning-page')).toHaveAttribute(
+      'd',
+      'M50 30q15-13 34-8v52q-20-4-34 8Z',
+    );
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+  }
+});
+
+test('chapter clicks launch with exponential ease while structural icon parts stay attached', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const progress = await page.evaluate(async () => {
+    document.querySelector<HTMLAnchorElement>('.cinema-rail a[href="#services"]')!.click();
+    await new Promise((r) => setTimeout(r, 120));
+    return Number(
+      (document.querySelector('[data-cinema-enabled]') as HTMLElement).style.getPropertyValue(
+        '--cinema-progress',
+      ),
+    );
+  });
+  expect(progress).toBeGreaterThan(0.1);
+  expect(progress).toBeLessThan(0.25);
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await page.goto('/services/');
+  const art = page.locator('[data-icon-scene]').nth(2);
+  const pose = async (progress: number) =>
+    art.evaluate(async (e, progress) => {
+      const b = e.getBoundingClientRect();
+      scrollTo({
+        top: scrollY + b.top - innerHeight + (innerHeight + b.height) * progress,
+        behavior: 'instant',
+      });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    }, progress);
+  const pieces = () =>
+    art
+      .locator('.symbol-star')
+      .evaluateAll((es) => es.map((e) => (e as SVGElement).style.translate));
+  await pose(0.25);
+  const early = await pieces();
+  expect(early[0]).not.toBe('');
+  expect(
+    await art
+      .locator('.grooming-blade')
+      .evaluateAll((es) => es.map((e) => (e as SVGElement).style.translate)),
+  ).toEqual(['', '']);
+  await pose(0.65);
+  expect(await pieces()).not.toEqual(early);
+  await pose(0.25);
+  expect(await pieces()).toEqual(early);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-scroll-enabled]')).toHaveCount(0);
+  expect(await pieces()).toEqual(['']);
+});
+
+test('centered background fades paint chapter changes and pet eyes follow the flower reversibly', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  await page.evaluate(() => document.fonts.ready);
+  const pose = async (chapter: number) =>
+    page.evaluate(async (chapter) => {
+      const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+        stage = s.querySelector<HTMLElement>('.cinematic-stage')!;
+      const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          s.getBoundingClientRect().top +
+          scrollY -
+          header +
+          ((s.clientHeight - stage.clientHeight) * chapter) / 8,
+        behavior: 'instant',
+      });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    }, chapter);
+  const sample = () =>
+    page.evaluate(() => ({
+      aperture: (document.querySelector('.chapter-window') as HTMLElement).style.cssText,
+      eyes: [...document.querySelectorAll('.experience-portraits .pet-eye')].map((e) => [
+        e.getAttribute('cx'),
+        e.getAttribute('cy'),
+      ]),
+      heads: [...document.querySelectorAll('.experience-portraits .pet-face')].map(
+        (e) => (e as SVGElement).style.rotate,
+      ),
+    }));
+  await pose(0.25);
+  const first = await sample();
+  await pose(7.6);
+  const visible = await page.screenshot();
+  await page
+    .locator('.chapter-window')
+    .evaluate((e) => ((e as HTMLElement).style.visibility = 'hidden'));
+  const hidden = await page.screenshot();
+  const sharp = (await import('sharp')).default;
+  const a = await sharp(visible).raw().toBuffer(),
+    b = await sharp(hidden).raw().toBuffer();
+  let changed = 0;
+  for (let i = 0; i < a.length; i += 3)
+    if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 10)
+      changed++;
+  expect(changed).toBeGreaterThan(1000);
+  await page
+    .locator('.chapter-window')
+    .evaluate((e) => (e as HTMLElement).style.removeProperty('visibility'));
+  await pose(0.65);
+  const later = await sample();
+  expect(later.aperture).not.toBe(first.aperture);
+  expect(later.eyes).not.toEqual(first.eyes);
+  expect(later.heads).toEqual(first.heads);
+  await pose(0.25);
+  expect(await sample()).toEqual(first);
+  await page.locator('.cinema-rail a[href="#contact"]').click();
+  await page.waitForTimeout(100);
+  await page.locator('.cinema-rail a[href="#experience"]').click();
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+  await expect(page.locator('.experience-scene')).toHaveAttribute('aria-hidden', 'false');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.chapter-window')).toBeHidden();
+  await expect(page.locator('.experience-portraits .pet-eye').first()).toHaveAttribute('cx', '91');
+  expect(
+    await page
+      .locator('.experience-portraits .pet-face')
+      .first()
+      .evaluate((e) => (e as SVGElement).style.rotate),
+  ).toBe('');
+});
+
+test('icons keep their hinges, spine and complete geometry throughout the full motion range', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/services/');
+  await page.evaluate(() => document.fonts.ready);
+  const audit = await page.evaluate(async () => {
+    const { createShapeMorpher } = await import('/apps/web/src/shape-morphs.ts');
+    const arts = [...document.querySelectorAll<HTMLElement>('[data-icon-scene]')];
+    const original = arts.map((art) =>
+      [...art.querySelectorAll('path')].map((e) => e.getAttribute('d')),
+    );
+    const morphers = arts.map(createShapeMorpher);
+    let hingeGap = 0,
+      spineGap = 0;
+    const invalid: string[] = [];
+    for (let step = 0; step <= 50; step++) {
+      morphers.forEach((m) => m.update(step / 50));
+      const point = (selector: string, x: number, y: number) => {
+        const e = document.querySelector<SVGGraphicsElement>(selector)!;
+        return new DOMPoint(x, y).matrixTransform(e.getScreenCTM()!);
+      };
+      const a = point('.grooming-blade:not(.reverse)', 50, 48),
+        b = point('.grooming-blade.reverse', 50, 48);
+      hingeGap = Math.max(hingeGap, Math.hypot(a.x - b.x, a.y - b.y));
+      const l = point('.academy-page-left', 50, 30),
+        r = point('.academy-page-right', 50, 30);
+      spineGap = Math.max(spineGap, Math.hypot(l.x - r.x, l.y - r.y));
+      for (const art of arts)
+        for (const shape of art.querySelectorAll<SVGGraphicsElement>('path,circle,ellipse')) {
+          const box = shape.getBBox();
+          if (
+            ![box.x, box.y, box.width, box.height].every(Number.isFinite) ||
+            shape.getAttribute('d')?.includes('NaN')
+          )
+            invalid.push(`${step}:${shape.className.baseVal}`);
+        }
+    }
+    morphers.forEach((m) => m.dispose());
+    return {
+      hingeGap,
+      spineGap,
+      invalid,
+      restored:
+        JSON.stringify(original) ===
+        JSON.stringify(
+          arts.map((art) => [...art.querySelectorAll('path')].map((e) => e.getAttribute('d'))),
+        ),
+    };
+  });
+  expect(audit.hingeGap).toBeLessThan(0.01);
+  expect(audit.spineGap).toBeLessThan(0.01);
+  expect(audit.invalid).toEqual([]);
+  expect(audit.restored).toBe(true);
+});
+
+test('the background boundary changes only the ink above it, including part of a word', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  await page.evaluate(() => document.fonts.ready);
+  const pose = async (value: number) =>
+    page.evaluate(async (value) => {
+      const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+        stage = s.querySelector<HTMLElement>('.cinematic-stage')!;
+      const h = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          s.getBoundingClientRect().top +
+          scrollY -
+          h +
+          ((s.clientHeight - stage.clientHeight) * value) / 8,
+        behavior: 'instant',
+      });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    }, value);
+  await pose(7.8);
+  const heading = page.locator('.home-contact h2');
+  // Exercise a heading across the feather independently of its editorial layout position.
+  await heading.evaluate(async (e) => {
+    const { sceneField } = await import('/apps/web/src/scene-field.ts');
+    const layer = document.querySelector<HTMLElement>('.chapter-window')!,
+      rect = layer.getBoundingClientRect();
+    const field = sceneField(
+      rect.width,
+      rect.height,
+      Number(layer.style.getPropertyValue('--scene-progress')),
+      {
+        center: {
+          x: Number(layer.style.getPropertyValue('--scene-center-x')),
+          y: Number(layer.style.getPropertyValue('--scene-center-y')),
+        },
+        hard: layer.style.getPropertyValue('--scene-hard-edge') === '1',
+      },
+    );
+    const box = e.getBoundingClientRect(),
+      r = (field.inner + field.outer) / 2,
+      angle = (-Math.PI * 5) / 6;
+    const x = rect.left + field.cx + Math.cos(angle) * r,
+      y = rect.top + field.cy + Math.sin(angle) * r;
+    (e as HTMLElement).style.translate =
+      `${x - (box.left + box.width / 2)}px ${y - (box.top + box.height / 2)}px`;
+    dispatchEvent(new Event('resize'));
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+  });
+  const state = () =>
+    heading.evaluate((e) => ({
+      ink: (e as HTMLElement).style.getPropertyValue('--scene-ink'),
+      mask: (e as HTMLElement).style.getPropertyValue('--scene-copy-mask'),
+    }));
+  const first = await state();
+  const box = (await heading.boundingBox())!;
+  const field = await page.locator('.chapter-window').evaluate(async (e) => {
+    const { sceneField } = await import('/apps/web/src/scene-field.ts');
+    const box = e.getBoundingClientRect();
+    return {
+      ...sceneField(
+        box.width,
+        box.height,
+        Number((e as HTMLElement).style.getPropertyValue('--scene-progress')),
+        {
+          center: {
+            x: Number((e as HTMLElement).style.getPropertyValue('--scene-center-x')),
+            y: Number((e as HTMLElement).style.getPropertyValue('--scene-center-y')),
+          },
+          hard: (e as HTMLElement).style.getPropertyValue('--scene-hard-edge') === '1',
+        },
+      ),
+      left: box.left,
+      top: box.top,
+    };
+  });
+  const sharp = (await import('sharp')).default;
+  const shot = await page.screenshot();
+  const { data, info } = await sharp(shot)
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  let leftDark = 0,
+    leftWhite = 0,
+    rightWhite = 0;
+  for (
+    let y = Math.max(0, Math.ceil(box.y));
+    y < Math.min(info.height, Math.floor(box.y + 80));
+    y++
+  )
+    for (
+      let x = Math.max(0, Math.ceil(box.x));
+      x < Math.min(info.width, Math.floor(box.x + box.width));
+      x++
+    ) {
+      const i = (y * info.width + x) * info.channels,
+        r = data[i],
+        g = data[i + 1],
+        b = data[i + 2];
+      const white = Math.abs(r - 255) + Math.abs(g - 250) + Math.abs(b - 240) < 5;
+      const dark = Math.abs(r - 43) + Math.abs(g - 79) + Math.abs(b - 61) < 5;
+      const radius = Math.hypot(x - field.left - field.cx, y - field.top - field.cy);
+      if (radius > field.outer + 1) {
+        if (white) leftWhite++;
+        if (dark) leftDark++;
+      } else if (radius < field.inner - 1 && white) rightWhite++;
+    }
+  expect(leftDark).toBeGreaterThan(20);
+  expect(leftWhite).toBeLessThan(5);
+  expect(rightWhite).toBeGreaterThan(50);
+  await pose(7.9);
+  await pose(7.8);
+  expect(await state()).toEqual(first);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('[data-scene-ink]')).toHaveCount(0);
+  await expect(page.locator('[data-scene-paints]')).toHaveCount(0);
+});
+
+test('opening motion, inward plants and entrance-led icon actions stay readable', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const story = page.locator('[data-cinema-enabled]');
+  const opening = () =>
+    story.evaluate((e) => Number((e as HTMLElement).style.getPropertyValue('--intro-progress')));
+  const first = await opening();
+  expect(first).toBeLessThan(1);
+  await page.waitForTimeout(120);
+  expect(await opening()).toBeGreaterThan(first);
+  await expect.poll(opening).toBe(1);
+  const pose = async (chapter: number) =>
+    page.evaluate(async (chapter) => {
+      const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+        stage = s.querySelector<HTMLElement>('.cinematic-stage')!;
+      const h = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      scrollTo({
+        top:
+          s.getBoundingClientRect().top +
+          scrollY -
+          h +
+          ((s.clientHeight - stage.clientHeight) * chapter) / 8,
+        behavior: 'instant',
+      });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    }, chapter);
+  await pose(0.55);
+  const before = await page
+    .locator('.experience-vine')
+    .evaluateAll((es) => es.map((e) => parseFloat(getComputedStyle(e).translate)));
+  await pose(0.95);
+  const after = await page
+    .locator('.experience-vine')
+    .evaluateAll((es) => es.map((e) => parseFloat(getComputedStyle(e).translate)));
+  expect(after[0] - before[0]).toBeGreaterThan(80);
+  expect(before[1] - after[1]).toBeGreaterThan(80);
+  const care = () =>
+    page
+      .locator('.home-services')
+      .evaluate((e) => Number((e as HTMLElement).style.getPropertyValue('--care-progress')));
+  await pose(1.55);
+  const entered = await care();
+  await pose(2);
+  const settled = await care();
+  await pose(2.4);
+  const leaving = await care();
+  expect(settled - entered).toBeGreaterThan((leaving - settled) * 2);
+  await pose(1);
+  expect(
+    await page
+      .locator('.experience-heading h2')
+      .evaluate((e) => parseFloat(getComputedStyle(e).paddingBottom)),
+  ).toBeGreaterThan(4);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await pose(2);
+  for (const arrow of await page.locator('.home-services .path-arrow').all()) {
+    await expect(arrow).toBeVisible();
+    await expect(arrow).toHaveText('↗');
+    expect(await arrow.evaluate((e) => getComputedStyle(e).webkitTextFillColor)).not.toBe(
+      'rgba(0, 0, 0, 0)',
+    );
+  }
+});
+
+test('moon paint and centered background share exact physical coordinates', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/#contact');
+  await page.evaluate(async () => {
+    const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+      stage = s.querySelector<HTMLElement>('.cinematic-stage')!;
+    const h = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+    scrollTo({
+      top:
+        s.getBoundingClientRect().top +
+        scrollY -
+        h +
+        ((s.clientHeight - stage.clientHeight) * 7.58) / 8,
+      behavior: 'instant',
+    });
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+  });
+  const errors = await page.evaluate(async () => {
+    const { sceneField } = await import('/apps/web/src/scene-field.ts');
+    const layer = document.querySelector<HTMLElement>('.chapter-window')!,
+      stage = layer.getBoundingClientRect();
+    const field = sceneField(
+      stage.width,
+      stage.height,
+      Number(layer.style.getPropertyValue('--scene-progress')),
+      {
+        center: {
+          x: Number(layer.style.getPropertyValue('--scene-center-x')),
+          y: Number(layer.style.getPropertyValue('--scene-center-y')),
+        },
+        hard: layer.style.getPropertyValue('--scene-hard-edge') === '1',
+      },
+    );
+    return [
+      ...document.querySelectorAll<SVGGraphicsElement>('.story-sun [style*="scene-paint-"]'),
+    ].map((shape) => {
+      const paint = shape.style.fill || shape.style.stroke;
+      const id = paint.match(/#([^\)"']+)/)![1];
+      const gradient = document.getElementById(id)!;
+      const matrix = shape.getScreenCTM()!;
+      if (Math.abs(matrix.a * matrix.d - matrix.b * matrix.c) < 1e-8) return 0;
+      const transform = (
+        gradient as unknown as SVGRadialGradientElement
+      ).gradientTransform.baseVal.consolidate()!.matrix;
+      const physical = matrix.multiply(transform);
+      const center = new DOMPoint(0, 0).matrixTransform(physical);
+      const r = Number(gradient.getAttribute('r'));
+      const a = new DOMPoint(r, 0).matrixTransform(physical),
+        b = new DOMPoint(0, r).matrixTransform(physical);
+      return Math.max(
+        Math.hypot(center.x - stage.left - field.cx, center.y - stage.top - field.cy),
+        Math.abs(Math.hypot(a.x - center.x, a.y - center.y) - field.outer),
+        Math.abs(Math.hypot(b.x - center.x, b.y - center.y) - field.outer),
+      );
+    });
+  });
+  expect(errors.length).toBeGreaterThan(10);
+  expect(Math.max(...errors)).toBeLessThan(0.01);
+});
+
+test('chapter clicks from the footer animate the real scroll position before arrival', async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/home/');
+    await page.evaluate(async () => {
+      scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
+      await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+    });
+    await expect(page.locator('.marketing-footer')).toBeInViewport();
+    const from = await page.evaluate(() => scrollY);
+    // Dispatch without Playwright auto-scrolling an offscreen rail into view first.
+    await page
+      .locator('.cinema-rail a[href="#services"]')
+      .evaluate((e: HTMLAnchorElement) => e.click());
+    await page.waitForTimeout(140);
+    const middle = await page.evaluate(() => scrollY);
+    expect(middle).toBeLessThan(from - 100);
+    expect(middle).toBeGreaterThan(2500);
+    await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+    await expect(page.locator('.home-services')).toHaveAttribute('aria-hidden', 'false');
+    const delta = await page.evaluate(() => {
+      const s = document.querySelector<HTMLElement>('[data-cinema-enabled]')!,
+        stage = s.querySelector<HTMLElement>('.cinematic-stage')!;
+      const h = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+      const target =
+        s.getBoundingClientRect().top +
+        scrollY -
+        h +
+        ((s.clientHeight - stage.clientHeight) * 2) / 8;
+      return Math.abs(scrollY - target);
+    });
+    expect(delta).toBeLessThan(1);
+  }
+});
+
+test('Home links scroll smoothly back from the footer, including short-screen flow', async ({
+  page,
+}) => {
+  for (const height of [950, 650])
+    for (const link of ['.marketing-header .brand']) {
+      await page.setViewportSize({ width: 1440, height });
+      await page.goto('/home/');
+      await page.evaluate(() =>
+        scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }),
+      );
+      await expect(page.locator('.marketing-footer')).toBeInViewport();
+      const from = await page.evaluate(() => scrollY);
+      await page.locator(link).click();
+      await page.waitForTimeout(130);
+      const middle = await page.evaluate(() => scrollY);
+      expect(middle).toBeGreaterThan(10);
+      expect(middle).toBeLessThan(from - 100);
+      await expect(page.locator('.marketing-site')).not.toHaveAttribute(
+        'data-marketing-transition',
+      );
+      expect(await page.evaluate(() => scrollY)).toBe(0);
+    }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/home/');
+  await page.evaluate(() =>
+    scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }),
+  );
+  await page.locator('.marketing-header .brand').click();
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+});
+
+test('background expansion follows the incoming chapter center during scroll and chapter clicks', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const alignment = () =>
+    page.evaluate(() => {
+      const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+      const stage = story.querySelector<HTMLElement>('.cinematic-stage')!.getBoundingClientRect();
+      const panel = story.querySelectorAll('[data-cinematic-panel]')[8].getBoundingClientRect();
+      const layer = story.querySelector<HTMLElement>('.chapter-window')!;
+      return {
+        x: Number(layer.style.getPropertyValue('--scene-center-x')),
+        y: Number(layer.style.getPropertyValue('--scene-center-y')),
+        expectedX: panel.left + panel.width / 2 - stage.left,
+        expectedY: panel.top + panel.height / 2 - stage.top,
+        viewportCenter: stage.height / 2,
+      };
+    });
+  await page.evaluate(async () => {
+    const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+    const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+    const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+    scrollTo(
+      0,
+      story.getBoundingClientRect().top +
+        scrollY -
+        header +
+        ((story.clientHeight - stage.clientHeight) * 7.4) / 8,
+    );
+    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+  });
+  const native = await alignment();
+  expect(Math.abs(native.y - native.expectedY)).toBeLessThan(0.01);
+  expect(Math.abs(native.y - native.viewportCenter)).toBeGreaterThan(100);
+  await page.goto('/home/');
+  await page.locator('.cinema-rail a[href="#contact"]').click();
+  await page.waitForTimeout(100);
+  const clicked = await alignment();
+  expect(Math.abs(clicked.x - clicked.expectedX)).toBeLessThan(0.01);
+  expect(Math.abs(clicked.y - clicked.expectedY)).toBeLessThan(0.01);
+  await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+});
+
+test('progress controls stay visible for every chapter or hidden for the whole story across viewport changes', async ({
+  page,
+}) => {
+  await page.goto('/home/');
+  for (const [width, height] of [
+    [390, 844],
+    [1440, 809],
+    [760, 810],
+    [1440, 950],
+    [844, 390],
+  ]) {
+    await page.setViewportSize({ width, height });
+    const enabled = height >= 810;
+    await expect(page.locator('[data-cinema-enabled]')).toHaveCount(enabled ? 1 : 0);
+    for (let chapter = 0; chapter < 9; chapter++) {
+      await page.evaluate(
+        async ({ chapter, enabled }) => {
+          const story = document.querySelector<HTMLElement>('[data-cinematic-story]')!;
+          const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+          if (enabled) {
+            const header = document
+              .querySelector('.marketing-header')!
+              .getBoundingClientRect().height;
+            scrollTo(
+              0,
+              story.getBoundingClientRect().top +
+                scrollY -
+                header +
+                ((story.clientHeight - stage.clientHeight) * chapter) / 8,
+            );
+          } else story.querySelectorAll('[data-cinematic-panel]')[chapter].scrollIntoView();
+          await new Promise<void>((r) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => r())),
+          );
+        },
+        { chapter, enabled },
+      );
+      const controls = page.locator('.cinema-controls');
+      if (!enabled) await expect(controls).toBeHidden();
+      else {
+        await expect(controls).toBeInViewport({ ratio: 1 });
+        expect(
+          await controls.evaluate((e) => {
+            const r = e.getBoundingClientRect();
+            return !!document
+              .elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)
+              ?.closest('.cinema-controls');
+          }),
+        ).toBe(true);
+      }
+    }
+  }
+});
+
+test('Experience pets arrive at their settled places and gather on departure, reversibly', async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/home/');
+    const pose = async (chapter: number) =>
+      page.evaluate(async (chapter) => {
+        const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+        const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+        const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+        scrollTo(
+          0,
+          story.getBoundingClientRect().top +
+            scrollY -
+            header +
+            ((story.clientHeight - stage.clientHeight) * chapter) / 8,
+        );
+        await new Promise<void>((r) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => r())),
+        );
+      }, chapter);
+    const sample = () =>
+      page.locator('.experience-portraits').evaluate((e) => {
+        const boxes = [...e.querySelectorAll('.experience-pet')].map((p) =>
+          p.getBoundingClientRect(),
+        );
+        return {
+          transforms: [...e.querySelectorAll('.experience-pet')].map(
+            (p) => getComputedStyle(p).transform,
+          ),
+          spread: Math.hypot(
+            boxes[2].x + boxes[2].width / 2 - boxes[0].x - boxes[0].width / 2,
+            boxes[2].y + boxes[2].height / 2 - boxes[0].y - boxes[0].height / 2,
+          ),
+          gap: parseFloat(getComputedStyle(e).gap),
+        };
+      });
+    await pose(0.65);
+    const entry = await sample();
+    await pose(1);
+    const settled = await sample();
+    if (width > 760) expect(entry.spread).toBeGreaterThan(settled.spread + 10);
+    expect(entry.transforms).not.toEqual(settled.transforms);
+    expect(settled.transforms).toEqual(Array(3).fill('matrix(1, 0, 0, 1, 0, 0)'));
+    await pose(1.4);
+    const leaving = await sample();
+    expect(leaving.spread).toBeLessThan(settled.spread - 10);
+
+    await pose(1);
+    expect(await sample()).toEqual(settled);
+    await pose(0.65);
+    expect(await sample()).toEqual(entry);
+    await page.locator('[data-cinema-next]').click();
+    await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+    await page.locator('[data-cinema-previous]').click();
+    await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+    expect(await sample()).toEqual(settled);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const staticPose = await sample();
+    await page.mouse.wheel(0, 250);
+    await page.waitForTimeout(80);
+    expect(await sample()).toEqual(staticPose);
+    expect(staticPose.transforms).toEqual(['none', 'none', 'none']);
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+  }
+});
+
+test('green reveal waits for half entry and shrinks only after half the final chapter leaves', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  const at = async (chapter: number, departure = 0) =>
+    page.evaluate(
+      async ({ chapter, departure }) => {
+        const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+        const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+        const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+        scrollTo(
+          0,
+          story.getBoundingClientRect().top +
+            scrollY -
+            header +
+            ((story.clientHeight - stage.clientHeight) * chapter) / 8 +
+            stage.clientHeight * departure,
+        );
+        await new Promise<void>((r) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => r())),
+        );
+        return Number(
+          story
+            .querySelector<HTMLElement>('.chapter-window')!
+            .style.getPropertyValue('--scene-progress'),
+        );
+      },
+      { chapter, departure },
+    );
+  expect(await at(7.49)).toBe(0);
+  expect(await at(7.6)).toBeGreaterThan(0);
+  expect(await at(8)).toBe(1);
+  await page.evaluate(() => {
+    const spacer = document.createElement('div');
+    spacer.style.height = '2000px';
+    document.body.append(spacer);
+  });
+  expect(await at(8, 0.4)).toBeCloseTo(1, 2);
+  expect(await at(8, 0.75)).toBeCloseTo(0.5, 2);
+});
+
+test('chapter button object motion stays between its displayed start and final poses', async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/home/#experience');
+    await expect(page.locator('[data-cinema-enabled]')).toHaveAttribute('data-active-chapter', '1');
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+    for (const target of ['faq', 'main']) {
+      const frames = await page.evaluate(async (target) => {
+        const read = () => {
+          const flower = document.querySelector<HTMLElement>('.shared-flower')!;
+          const sun = document.querySelector<SVGElement>('.story-sun')!;
+          return [
+            flower.style.left,
+            flower.style.top,
+            flower.style.width,
+            sun.style.left,
+            sun.style.top,
+          ].map(parseFloat);
+        };
+        const frames = [read()];
+        document
+          .querySelector<HTMLAnchorElement>(`[data-chapter-link][href="#${target}"]`)!
+          .click();
+        const until = performance.now() + 1200;
+        do {
+          await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+          frames.push(read());
+        } while (performance.now() < until);
+        return frames;
+      }, target);
+      const first = frames[0],
+        last = frames.at(-1)!;
+      for (const frame of frames)
+        for (let i = 0; i < frame.length; i++) {
+          expect(frame[i]).toBeGreaterThanOrEqual(Math.min(first[i], last[i]) - 1);
+          expect(frame[i]).toBeLessThanOrEqual(Math.max(first[i], last[i]) + 1);
+        }
+    }
+  }
 });

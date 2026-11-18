@@ -90,10 +90,14 @@ export default function useRoute(language: string, initialPath = '/') {
         url.pathname === location.pathname &&
         url.search === location.search &&
         !url.hash &&
-        anchor.closest('.marketing-header')
+        (anchor.closest('.marketing-header') || anchor.closest('.marketing-footer'))
       ) {
         event.preventDefault();
-        animateMarketingPageEntry();
+        if (url.pathname === '/home/') {
+          url.hash = 'main';
+          navigate(url.href);
+          scrollMarketingTarget('#main', true);
+        } else animateMarketingPageEntry();
         return;
       }
 

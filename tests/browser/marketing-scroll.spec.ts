@@ -115,7 +115,7 @@ test('every chapter keeps bilingual copy accessible on mobile and desktop with s
             })
             .map((element) => element.textContent);
         });
-        expect(covered).toEqual([]);
+        expect(covered, `${width} ${lang} chapter ${index}`).toEqual([]);
       }
     }
   }

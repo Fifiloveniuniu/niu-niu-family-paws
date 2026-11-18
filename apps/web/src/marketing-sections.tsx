@@ -6,7 +6,6 @@ export function PetPortrait({ species }: { species: 'dog' | 'cat' | 'rabbit' }) 
   return (
     <svg viewBox="0 0 240 200" aria-hidden="true" focusable="false">
       <circle cx="120" cy="102" r="85" fill="currentColor" opacity=".14" />
-      <path d="M39 173q81-15 162 0" fill="none" stroke="currentColor" opacity=".35" />
       <g className="pet-face">
         {species === 'rabbit' ? (
           <g className="pet-ears" fill="#e9dcc6" stroke="#86745e" strokeWidth="2">
@@ -114,7 +113,12 @@ export function PetCareStories() {
 export function CareStory() {
   const { t } = useTranslation();
   return (
-    <section data-scroll-scene className="care-story" aria-labelledby="care-story-title">
+    <section
+      id="care-approach"
+      data-scroll-scene
+      className="care-story"
+      aria-labelledby="care-story-title"
+    >
       <span className="story-flower" aria-hidden="true" data-scroll-object="portrait">
         ✿
       </span>

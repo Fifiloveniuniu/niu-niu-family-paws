@@ -28,7 +28,17 @@ export default function HomeIllustration() {
       <g className="pet-face">
         <g className="pet-ears" fill="#875338">
           <path className="pet-ear pet-ear-left" d="M188 263q-64-81-44-105 33-26 94 21" />
-          <path className="pet-ear pet-ear-right" d="M316 179q69-45 91-16 18 31-50 105" />
+          <g className="pet-ear pet-ear-right">
+            <path d="M316 179q69-45 91-16 18 31-50 105" />
+            <path
+              className="hero-ear-accents"
+              d="M390 125l1-18m20 26 9-16m-1 35 17-7"
+              fill="none"
+              stroke="#b87855"
+              strokeWidth="5"
+              strokeLinecap="round"
+            />
+          </g>
         </g>
         <path
           className="pet-head"
@@ -57,12 +67,6 @@ export default function HomeIllustration() {
       <circle cx="274" cy="334" r="12" fill="#ddb754" />
       <rect x="177" y="405" width="70" height="25" rx="12" fill="#d49764" />
       <rect x="305" y="405" width="69" height="25" rx="12" fill="#d49764" />
-      <path
-        d="M99 125l5-18m-24 18-11-9m45 28 16-6"
-        stroke="#b87855"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
     </svg>
   );
 }
