@@ -1,3 +1,7 @@
+## Booking modal edge spacing — local, 2026-11-18
+
+Owner refined full-screen request: Add booking now has24px viewport clearance on desktop and12px on phones, with rounded corners. Heading/actions remain fixed and content scrolls. Focused formatting and all four bilingual390/1440 complete-booking regression checks passed, including exact inset geometry. Screenshot booking-modal-edge-spacing-phone.png. No deployment.
+
 ## Consistent unset-value readouts — local, 2026-11-18
 
 Changed remaining unset balance, statement, policy and booking-review readouts from em dash to N/A, preserving real zero values and empty editable fields. Build/typecheck, focused formatting and local Chrome missing-balance/invalid-statement checks passed. WebKit phone smoke also passed custom selection and full-screen booking sizing for the combined UI. No deployment.

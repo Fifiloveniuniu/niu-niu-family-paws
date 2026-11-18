@@ -3851,16 +3851,17 @@
   box-shadow: 0 12px 30px #293f351a;
 }
 
-/* Full-screen scheduling keeps its heading and actions visible. */
+/* Near-full-screen scheduling keeps space around the dialog. */
 .hc .app-dialog.hc-assignment-dialog {
-  width: 100vw;
-  max-width: 100vw;
-  height: 100dvh;
-  max-height: 100dvh;
-  margin: 0;
+  --booking-edge: 24px;
+  width: calc(100vw - 2 * var(--booking-edge));
+  max-width: calc(100vw - 2 * var(--booking-edge));
+  height: calc(100dvh - 2 * var(--booking-edge));
+  max-height: calc(100dvh - 2 * var(--booking-edge));
+  margin: auto;
   padding: 24px 28px 0;
-  border: 0;
-  border-radius: 0;
+  border: 1px solid var(--line);
+  border-radius: 20px;
 }
 .hc .app-dialog.hc-assignment-dialog[open] {
   display: flex;
@@ -3892,6 +3893,8 @@
 }
 @media (max-width: 700px) {
   .hc .app-dialog.hc-assignment-dialog {
+    --booking-edge: 12px;
+    border-radius: 16px;
     padding: 16px 16px 0;
     padding-bottom: env(safe-area-inset-bottom);
   }
