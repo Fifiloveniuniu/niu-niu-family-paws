@@ -3,18 +3,20 @@ import { useTranslation } from 'react-i18next';
 
 export default function LanguageSelector({
   onChange,
+  showIcon = false,
 }: {
   onChange: (language: 'en' | 'zh') => void;
+  showIcon?: boolean;
 }) {
   const { i18n } = useTranslation();
   return (
-    <label className="language-selector">
+    <label className={`language-selector${showIcon ? ' language-selector-with-icon' : ''}`}>
       <span>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="9" />
           <path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" />
         </svg>
-        Language / 语言
+        <span>Language / 语言</span>
       </span>
       <select
         value={i18n.language === 'zh' ? 'zh' : 'en'}

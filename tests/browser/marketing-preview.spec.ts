@@ -32,7 +32,10 @@ test('sample chapter copy fits English and Chinese on phones and desktop', async
     for (const lang of ['en', 'zh']) {
       await page.goto('/home/?preview=sample');
       if (width < 1000) await page.locator('.marketing-menu-toggle').click();
-      await page.locator('select').selectOption(lang);
+      await page.locator('.language-menu-trigger').click();
+      await page
+        .getByRole('menuitemradio', { name: lang === 'zh' ? '简体中文' : 'English' })
+        .click();
       if (width < 1000) await page.locator('.marketing-menu-toggle').click();
       for (let chapter = 0; chapter < 9; chapter++) {
         const clipped = await page.evaluate(async (chapter) => {

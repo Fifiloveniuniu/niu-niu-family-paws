@@ -88,7 +88,8 @@ test('manual scroll is reversible and previous/next controls work in both langua
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 950 });
     if (width === 390) await page.locator('.marketing-menu-toggle').click();
-    await page.locator('select').selectOption('zh');
+    await page.locator('.language-menu-trigger').click();
+    await page.getByRole('menuitemradio', { name: '简体中文' }).click();
     if (width === 390) await page.locator('.marketing-menu-toggle').click();
     await pose(0.2);
     await expect(page.locator('[data-cinema-previous]')).toHaveText('上一个 ↑');
