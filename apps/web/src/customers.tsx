@@ -1,3 +1,4 @@
+import { withoutLanguage } from './language-url.ts';
 import {
   englishCatalog,
   languageName,
@@ -177,7 +178,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       if (alive.current) setSaving(false);
     }
   }
-  const route = routeUrl();
+  const route = withoutLanguage(routeUrl());
   const parsedRoute = currentRoute();
   React.useEffect(() => {
     const params = new URLSearchParams(route.split('?')[1] || '');
