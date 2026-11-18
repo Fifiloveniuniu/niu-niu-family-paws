@@ -913,5 +913,8 @@
   "ui.datePicker.applyDateTime": "应用日期与时间",
   "ui.houses.addressMissing": "请编辑此房屋以补全必填地址。",
   "ui.houseCalendar.viewAddress": "查看地址",
-  "ui.houseCalendar.houseAddress": "房屋地址"
+  "ui.houseCalendar.houseAddress": "房屋地址",
+  "ui.autocomplete.chooseOption": "请从列表中选择一项。",
+  "ui.autocomplete.noMatches": "没有匹配项",
+  "ui.calendarAssignment.customer": "客户"
 }

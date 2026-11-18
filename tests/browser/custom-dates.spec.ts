@@ -48,7 +48,10 @@ for (const width of [390, 1440])
       await expect(calendar).toHaveCount(0);
       await expect(pickup).toBeFocused();
       await pickup.click();
-      await booking.getByRole('combobox', { name: label('Pet', '宠物'), exact: true }).click();
+      await booking.getByRole('combobox', { name: label('Customer', '客户'), exact: true }).focus();
+      await booking
+        .getByRole('combobox', { name: label('Customer', '客户'), exact: true })
+        .press('ArrowDown');
       await expect(calendar).toHaveCount(0);
       await expect(page.getByRole('listbox')).toHaveCount(1);
       await page.keyboard.press('Escape');

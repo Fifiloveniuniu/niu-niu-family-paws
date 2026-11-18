@@ -1,5 +1,6 @@
 import { uiText } from './i18n.ts';
 import React from 'react';
+import CustomAutocomplete from './custom-autocomplete';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
@@ -36,7 +37,6 @@ export default function CalendarSettingsDialog({
 
   const [draft, setDraft] = React.useState(value);
   const form = React.useRef<HTMLFormElement>(null);
-  const id = React.useId();
   const dirty = JSON.stringify(draft) !== JSON.stringify(value);
   function close() {
     if (confirmDiscardChanges(i18n.language, form.current)) onClose();
@@ -129,28 +129,17 @@ export default function CalendarSettingsDialog({
             </label>
             <label>
               {uiText('ui.calendarSettings.timeZone')}
-              <input
+              <CustomAutocomplete
+                label={uiText('ui.calendarSettings.timeZone')}
                 required
-                list={id}
                 value={draft.timezone}
-                onChange={(event) => field('timezone', event.target.value)}
-                onInput={(event) => {
-                  try {
-                    new Intl.DateTimeFormat('en', { timeZone: event.currentTarget.value });
-                    event.currentTarget.setCustomValidity('');
-                  } catch {
-                    event.currentTarget.setCustomValidity(
-                      uiText('ui.calendarSettings.chooseAValidTimeZone'),
-                    );
-                  }
-                }}
+                options={['UTC', ...Intl.supportedValuesOf('timeZone')].map((zone) => ({
+                  value: zone,
+                  label: zone,
+                }))}
+                onChange={(value) => field('timezone', value)}
               />
             </label>
-            <datalist id={id}>
-              {['UTC', ...Intl.supportedValuesOf('timeZone')].map((zone) => (
-                <option key={zone} value={zone} />
-              ))}
-            </datalist>
             <p className="hc-setup-note">
               {uiText('ui.calendarSettings.theTimelineUsesYourBrowserSTimeZonePer')}
             </p>

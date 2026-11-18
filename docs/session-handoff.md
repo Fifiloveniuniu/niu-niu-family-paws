@@ -1,3 +1,7 @@
+## Customer-first booking autocomplete — local, 2026-11-18
+
+Booking detail order is customer, own pets, dates. Added reusable exclusive custom autocomplete: empty input lists permitted options, typing filters, keyboard selection and rich pet rows (type icon, private-photo avatar/fallback, name). Customer changes clear pet selection. Both house timezone datalists now use it too; no native suggestion menus remain. Build/API typecheck/formatting,46 unit tests and20 focused browser workflows passed across English/Chinese and320/390/1440 layouts. Actual localhost Chrome flow reviewed in isolated tab28. PR130/date picker and PR131/required-address merged after CI and verified signatures. These scheduling controls still use dev-only fixtures; canonical backend integration remains outstanding. No deployment.
+
 ## Required house addresses — local, 2026-11-18
 
 House API and both house editors require nonblank addresses. Existing missing addresses remain readable and are flagged for completion; Calendar has a location-pin address dialog showing N/A until configured. No business address invented. Build/API typecheck/formatting and46 unit tests passed,10 bilingual booking regressions and2 house browser workflows passed; actual localhost Chrome address dialog reviewed in isolated tab27. Date picker PR130 passed CI with verified signature. No deployment.
