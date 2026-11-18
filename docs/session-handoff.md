@@ -1,3 +1,7 @@
+## Single calendar dividers — local, 2026-11-18
+
+Removed duplicate room top/legend top borders and moved pet dividers inside the existing row footprint. Sticky labels and tracks now paint the same single-pixel boundary without adjacent doubled lines. Four bilingual390/1440 Chrome checks passed for label alignment, border ownership and no overflow; actual localhost Chrome previewed and rendered image reviewed. No deployment.
+
 ## Continuous calendar label dividers — local, 2026-11-18
 
 Constrained sticky pet labels to compact row height and added their inset bottom divider, preventing labels from hiding the horizontal lines on the left panel. Chrome390/1440 containment checks and formatting passed. PR113 and114 merged; no deployment.
