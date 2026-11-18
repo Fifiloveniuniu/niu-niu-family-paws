@@ -320,39 +320,41 @@ export default function HouseCalendar({
           page="app"
           onLanguageChange={onLanguageChange}
           account={account}
+          navigation={
+            <nav className="app-header-nav" aria-label={translate('Workspace', '工作区')}>
+              {[
+                ['/app/calendar/', 'Calendar', '日历', 'calendar'],
+                ['/app/customers/', 'Customers', '客户', 'customers'],
+                ['/app/balances/', 'Balances', '寄养余额', 'balances'],
+                ['/app/settings/', 'Settings', '设置', 'settings'],
+              ].map(([href, en, cn, key]) => (
+                <a
+                  key={key}
+                  href={
+                    key === 'balances' && balancePagePet && balancePagePet !== 'all'
+                      ? href + '?pet=' + encodeURIComponent(balancePagePet)
+                      : href
+                  }
+                  aria-current={view === key ? 'page' : undefined}
+                >
+                  <Icon
+                    name={
+                      key === 'calendar'
+                        ? 'calendar'
+                        : key === 'customers'
+                          ? 'customers'
+                          : key === 'balances'
+                            ? 'balance'
+                            : 'settings'
+                    }
+                  />
+                  <span>{translate(en, cn)}</span>
+                </a>
+              ))}
+            </nav>
+          }
         />
         <div className="hc-body">
-          <nav className="hc-work-nav" aria-label={translate('Workspace', '工作区')}>
-            {[
-              ['/app/calendar/', 'Calendar', '日历', 'calendar'],
-              ['/app/customers/', 'Customers', '客户', 'customers'],
-              ['/app/balances/', 'Balances', '寄养余额', 'balances'],
-              ['/app/settings/', 'Settings', '设置', 'settings'],
-            ].map(([href, en, cn, key]) => (
-              <a
-                key={key}
-                href={
-                  key === 'balances' && balancePagePet && balancePagePet !== 'all'
-                    ? href + '?pet=' + encodeURIComponent(balancePagePet)
-                    : href
-                }
-                aria-current={view === key ? 'page' : undefined}
-              >
-                <Icon
-                  name={
-                    key === 'calendar'
-                      ? 'calendar'
-                      : key === 'customers'
-                        ? 'customers'
-                        : key === 'balances'
-                          ? 'balance'
-                          : 'settings'
-                  }
-                />
-                <span>{translate(en, cn)}</span>
-              </a>
-            ))}
-          </nav>
           <main className="hc-content" id="main">
             <div data-retained-workspace data-customer-workspace hidden={view !== 'customers'}>
               {customers || (
