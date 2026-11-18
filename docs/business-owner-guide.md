@@ -361,3 +361,10 @@ Home photos now fill the phone’s content width, with their captions underneath
 Desktop Home chapter3 shows services in two columns; chapter6 shows three large milestone columns. Phones retain full-width rows. Chapter7’s quote uses larger italic serif text with a slim clay-colored line and a smaller family attribution. Review at http://localhost:4180/home/; not deployed.
 
 电脑首页第3章采用两列服务卡片，第6章采用三列大数字展示；手机继续保持每项一整行。第7章的引文使用更大的衬线斜体字，配以细陶土色竖线和较小的署名。当前仅为本地预览，尚未发布。
+
+
+## Centered animated icons — local preview, 2026-11-17
+
+The hair gathers when the scissors close and spreads when they reopen. Scroll backward to retrace it. Icons stay centered inside their frames while their internal shapes animate. Review Home, Services and Our Spaces at http://localhost:4180/home/. Not deployed yet.
+
+剪刀合拢时，毛发向中间靠拢；剪刀张开时，毛发向两侧展开。向上滚动可沿原轨迹返回。图标在内部图形变化时仍保持在外框中央。当前仅为本地预览，尚未发布。
