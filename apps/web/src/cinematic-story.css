@@ -621,6 +621,7 @@
 /* One celestial body changes silhouette; rays fold away as stars unfold. */
 .home-story.cinematic-story[data-cinema-enabled] .journey-rays {
   transform: rotate(var(--journey-turn, 0deg)) scale(calc(1 - var(--celestial-morph, 0)));
+  opacity: max(0, calc(0.45 * (1 - var(--celestial-morph, 0) * 2)));
 }
 .home-story.cinematic-story[data-cinema-enabled] .journey-stars {
   transform: scale(var(--celestial-morph, 0));
