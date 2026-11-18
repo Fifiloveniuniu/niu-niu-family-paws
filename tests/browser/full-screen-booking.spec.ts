@@ -20,6 +20,9 @@ for (const width of [390, 1440])
         .getByLabel(translate('House name', '房屋名称'), { exact: true })
         .fill('[TEST] House');
       await page
+        .getByLabel(translate('Address', '地址'), { exact: true })
+        .fill('[TEST] Synthetic address');
+      await page
         .getByRole('button', { name: translate('Apply changes', '应用修改'), exact: true })
         .click();
       const house = page.locator('.hc-house').filter({ hasText: '[TEST] House' });

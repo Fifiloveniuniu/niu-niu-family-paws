@@ -103,6 +103,7 @@ export function houseRoutes(api: FastifyInstance, store: HouseStore) {
         };
         if (
           !input.name ||
+          !input.address ||
           containsControlCharacters(input.name + input.address) ||
           !validTimezone(input.timezone)
         )

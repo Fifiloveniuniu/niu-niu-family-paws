@@ -34,7 +34,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-16.
 
 ## 3. Houses, rooms and capacity — confirmed latest model
 
-- Manage multiple houses, each with its own rooms, address and timezone. Provide create/remove house and add/remove room actions; permanent deletion/history semantics still require a production policy. Prototype removal is limited to empty locations.
+- Manage multiple houses, each with its own rooms, required address and timezone. Legacy houses missing an address must be visibly flagged for completion; Calendar provides a saved-address view. Provide create/remove house and add/remove room actions; permanent deletion/history semantics still require a production policy. Prototype removal is limited to empty locations.
 - **No individual spaces/slots as managed entities.** Earlier House → Room → Space proposals are superseded by **House → Room**.
 - Houses UI is split: house/room selection on the left; selected room’s details and capacity rules on the right. Stack sensibly on phones.
 - Each room has a **maximum capacity**, not just a fixed pet count.

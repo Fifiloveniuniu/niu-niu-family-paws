@@ -62,7 +62,7 @@ export default function CalendarSettingsDialog({
         className="hc-settings-form"
         onSubmit={(event) => {
           event.preventDefault();
-          onApply({ ...draft, name: draft.name.trim() });
+          onApply({ ...draft, name: draft.name.trim(), address: draft.address.trim() });
         }}
       >
         <UnsavedChanges active={dirty} />
@@ -120,6 +120,8 @@ export default function CalendarSettingsDialog({
             <label>
               {uiText('ui.calendarSettings.addressOptional')}
               <input
+                required
+                pattern={String.raw`.*\S.*`}
                 maxLength={500}
                 value={draft.address}
                 onChange={(event) => field('address', event.target.value)}

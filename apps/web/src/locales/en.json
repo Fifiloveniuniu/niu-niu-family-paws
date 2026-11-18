@@ -341,7 +341,7 @@
   "ui.calendarSettings.existingStaysNeedAtLeast": "Existing stays need at least",
   "ui.calendarSettings.capacityUnitsAtPeak": "capacity units at peak.",
   "ui.calendarSettings.capacityIsWeightedNotAPetCountConfigurePet": "Capacity is weighted, not a pet count. Configure pet-type consumption below. One species at a time.",
-  "ui.calendarSettings.addressOptional": "Address (optional)",
+  "ui.calendarSettings.addressOptional": "Address",
   "ui.calendarSettings.timeZone": "Time zone",
   "ui.calendarSettings.chooseAValidTimeZone": "Choose a valid time zone.",
   "ui.calendarSettings.theTimelineUsesYourBrowserSTimeZonePer": "The timeline uses your browser’s time zone. Per-house timeline conversion is not connected yet.",
@@ -511,7 +511,7 @@
     "add": "Add house",
     "edit": "Edit house",
     "name": "House name",
-    "address": "Address (optional)",
+    "address": "Address",
     "timezone": "Time zone",
     "zoneHint": "Choose the house’s local time zone. Future stays will use this time zone.",
     "zoneExample": "For example: America/Los_Angeles",
@@ -910,5 +910,8 @@
   "ui.datePicker.close": "Close",
   "ui.datePicker.invalidDate": "Enter a valid date as YYYY-MM-DD.",
   "ui.datePicker.invalidDateTime": "Enter a valid date and time as YYYY-MM-DD HH:mm.",
-  "ui.datePicker.applyDateTime": "Apply date and time"
+  "ui.datePicker.applyDateTime": "Apply date and time",
+  "ui.houses.addressMissing": "Address required — edit this house to complete setup.",
+  "ui.houseCalendar.viewAddress": "View address",
+  "ui.houseCalendar.houseAddress": "House address"
 }

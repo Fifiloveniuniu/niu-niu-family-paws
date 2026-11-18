@@ -182,6 +182,9 @@ export default function Houses({
                   )}
                 </h3>
                 <p>{house.address || labels.noAddress}</p>
+                {!house.address?.trim() && (
+                  <p role="status">{uiText('ui.houses.addressMissing')}</p>
+                )}
                 <p>
                   {labels.timezone}: {house.timezone}
                 </p>
@@ -229,6 +232,8 @@ export default function Houses({
               <label>
                 {labels.address}
                 <input
+                  required
+                  pattern={String.raw`.*\S.*`}
                   maxLength={500}
                   autoComplete="street-address"
                   value={editor.input.address}
