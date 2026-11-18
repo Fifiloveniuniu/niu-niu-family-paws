@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, type Page } from '@playwright/test';
 async function coverStay(page: Page, days = '10') {
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
@@ -42,7 +43,7 @@ test('calendar prototype manages empty locations and time-aware pet placement', 
   await p.getByLabel('Dog capacity usage', { exact: true }).fill('1');
   await p.getByRole('button', { name: 'Apply to preview', exact: true }).click();
   await p.getByRole('button', { name: 'Add booking', exact: true }).click();
-  await p.getByLabel('Pet', { exact: true }).selectOption('Willow');
+  await chooseOption(p.getByLabel('Pet', { exact: true }), 'Willow');
   const times = await p.evaluate(() => {
     const a = new Date();
     a.setHours(10, 0, 0, 0);
@@ -59,17 +60,19 @@ test('calendar prototype manages empty locations and time-aware pet placement', 
   const houseId = await p
     .getByRole('dialog')
     .getByLabel('House', { exact: true })
-    .locator('option')
+    .locator('xpath=..')
+    .locator('select option')
     .filter({ hasText: 'Preview West' })
     .getAttribute('value');
-  await p.getByRole('dialog').getByLabel('House', { exact: true }).selectOption(houseId!);
+  await chooseOption(p.getByRole('dialog').getByLabel('House', { exact: true }), houseId!);
   const roomId = await p
     .getByRole('dialog')
     .getByLabel('Room', { exact: true })
-    .locator('option')
+    .locator('xpath=..')
+    .locator('select option')
     .filter({ hasText: 'Oak' })
     .getAttribute('value');
-  await p.getByRole('dialog').getByLabel('Room', { exact: true }).selectOption(roomId!);
+  await chooseOption(p.getByRole('dialog').getByLabel('Room', { exact: true }), roomId!);
   await p.getByRole('button', { name: 'Review stay', exact: true }).click();
   await coverStay(p);
   await p.getByRole('button', { name: 'Add to preview', exact: true }).click();
@@ -91,7 +94,7 @@ test('calendar prototype manages empty locations and time-aware pet placement', 
   if (!(await p.getByRole('button', { name: 'Remove placement: Mochi', exact: true }).isDisabled()))
     throw Error('In care removal allowed');
   await p.getByRole('button', { name: 'Add booking', exact: true }).click();
-  await p.getByLabel('Pet', { exact: true }).selectOption('Miso');
+  await chooseOption(p.getByLabel('Pet', { exact: true }), 'Miso');
   await p.getByLabel('Arrival', { exact: true }).fill(times[0]);
   await p.getByLabel('Pickup', { exact: true }).fill(times[1]);
   await reviewDays(p);
@@ -100,7 +103,8 @@ test('calendar prototype manages empty locations and time-aware pet placement', 
     !(await p
       .getByRole('dialog')
       .getByLabel('House', { exact: true })
-      .locator('option[value="1"]')
+      .locator('xpath=..')
+      .locator('select option[value="1"]')
       .evaluate((e) => (e as HTMLOptionElement).disabled))
   )
     throw Error('Unconfigured house enabled');
@@ -108,7 +112,7 @@ test('calendar prototype manages empty locations and time-aware pet placement', 
   p.once('dialog', (d) => d.accept());
   await p.getByRole('button', { name: 'Cancel', exact: true }).click();
   await p.setViewportSize({ width: 390, height: 844 });
-  await p.locator('.language-selector select').selectOption('zh');
+  await chooseOption(p.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   if (await p.evaluate(() => document.documentElement.scrollWidth > innerWidth))
     throw Error('Mobile overflow');
   await p.screenshot({ path: 'test-results/calendar-mobile-zh.png', fullPage: true });
@@ -123,10 +127,10 @@ test('customer filtering combines with other filters and calendar tabs support k
 }) => {
   await page.goto('/app/calendar/');
   const filters = page.getByRole('region', { name: 'Filters', exact: true });
-  await filters.getByRole('combobox', { name: 'Customer', exact: true }).selectOption('1');
+  await chooseOption(filters.getByRole('combobox', { name: 'Customer', exact: true }), '1');
   await page.getByRole('button', { name: 'Remove placement: Luna', exact: true }).waitFor();
   if ((await page.locator('.hc-pet').count()) !== 3) throw Error('Customer filter');
-  await filters.getByRole('combobox', { name: 'Status', exact: true }).selectOption('in');
+  await chooseOption(filters.getByRole('combobox', { name: 'Status', exact: true }), 'in');
   if ((await page.locator('.hc-pet').count()) !== 2) throw Error('Customer/status filter');
   await filters.getByRole('button', { name: 'Clear filters', exact: true }).click();
   if ((await page.locator('.hc-pet').count()) !== 9) throw Error('Clear customer filter');
@@ -141,8 +145,8 @@ test('customer filtering combines with other filters and calendar tabs support k
   await page.getByRole('tabpanel', { name: 'Day', exact: true }).waitFor();
   await weeks.click();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('.language-selector select').selectOption('zh');
-  await page.getByRole('combobox', { name: '客户', exact: true }).selectOption('2');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
+  await chooseOption(page.getByRole('combobox', { name: '客户', exact: true }), '2');
   if ((await page.locator('.hc-pet').count()) !== 3) throw Error('Chinese customer filter');
   if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth))
     throw Error('Mobile overflow');
@@ -159,7 +163,7 @@ test('add-pet calendar selects available stays and grays out continuous unavaila
   await page.getByRole('button', { name: 'Apply to preview', exact: true }).click();
   await page.getByRole('button', { name: 'Add booking', exact: true }).click();
   const dialog = page.getByRole('dialog');
-  await dialog.getByRole('combobox', { name: 'Pet', exact: true }).selectOption('Willow');
+  await chooseOption(dialog.getByRole('combobox', { name: 'Pet', exact: true }), 'Willow');
   const dates = await page.evaluate(() => {
     const a = new Date();
     a.setHours(11, 0, 0, 0);
@@ -200,9 +204,9 @@ test('add-pet calendar selects available stays and grays out continuous unavaila
   await dialog.getByRole('button', { name: 'Add to preview', exact: true }).click();
   await page.getByRole('button', { name: 'Remove placement: Willow', exact: true }).waitFor();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('.language-selector select').selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.getByRole('button', { name: '添加预约', exact: true }).click();
-  await page.getByRole('combobox', { name: '宠物', exact: true }).selectOption('Miso');
+  await chooseOption(page.getByRole('combobox', { name: '宠物', exact: true }), 'Miso');
   await page.getByLabel('到店时间', { exact: true }).fill(dates[0]);
   await page.getByLabel('接回时间', { exact: true }).fill(dates[1]);
   await page.getByLabel('所需天数', { exact: true }).fill('1');
@@ -221,7 +225,7 @@ test('boarding balance history stays separate by pet and rejects invalid adjustm
   await page.goto('/app/calendar/');
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   await page.getByLabel('Days', { exact: true }).fill('3');
   await page.getByLabel('Reason', { exact: true }).fill('[TEST] opening days');
@@ -242,7 +246,7 @@ test('boarding balance history stays separate by pet and rejects invalid adjustm
   if (await page.getByRole('button', { name: 'Daycare', exact: true }).count())
     throw Error('Daycare must not be offered');
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
-  await page.getByLabel('Adjustment', { exact: true }).selectOption('remove');
+  await chooseOption(page.getByLabel('Adjustment', { exact: true }), 'remove');
   await page.getByLabel('Days', { exact: true }).fill('4');
   await page.getByLabel('Reason', { exact: true }).fill('[TEST] invalid correction');
   await page.getByRole('button', { name: 'Save adjustment', exact: true }).click();
@@ -258,10 +262,10 @@ test('boarding balance history stays separate by pet and rejects invalid adjustm
     throw Error('Invalid adjustment added history');
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('.language-selector select').selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.getByRole('button', { name: /^Mochi: 已入住/ }).click();
   await page.getByRole('button', { name: '查看宠物余额', exact: true }).click();
-  await page.getByLabel('余额客户', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('余额客户', { exact: true }), 'all');
   if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth))
     throw Error('Balance mobile overflow');
   await page.screenshot({ path: 'test-results/pet-balances-mobile-zh.png' });
@@ -277,7 +281,7 @@ test('stay review blocks insufficient balance and tracks planned coverage after 
   await page.getByLabel('Dog capacity usage', { exact: true }).fill('1');
   await page.getByRole('button', { name: 'Apply to preview', exact: true }).click();
   await page.getByRole('button', { name: 'Add booking', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Pet', exact: true }).selectOption('Willow');
+  await chooseOption(page.getByRole('combobox', { name: 'Pet', exact: true }), 'Willow');
   const dates = await page.evaluate(() => {
     const a = new Date();
     a.setDate(a.getDate() + 1);
@@ -311,7 +315,7 @@ test('stay review blocks insufficient balance and tracks planned coverage after 
   await page.getByRole('button', { name: 'Add to preview', exact: true }).click();
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   await page.getByRole('button', { name: 'Balance: Willow', exact: true }).click();
   const metrics = await page.locator('.hc-balance-metrics strong').allTextContents();
   if (metrics.join() !== '3,2,1') throw Error('Planned balance not tracked: ' + metrics.join());
@@ -324,7 +328,7 @@ test('balance policy templates reuse dates without sharing credits and reasons a
   await page.goto('/app/calendar/');
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   await page.locator('.hc-template-create summary').click();
   await page.getByRole('button', { name: 'Save template', exact: true }).click();
@@ -340,9 +344,9 @@ test('balance policy templates reuse dates without sharing credits and reasons a
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   await page.getByRole('button', { name: 'Balance: Biscuit', exact: true }).click();
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
-  await page
-    .getByLabel('Policy template', { exact: true })
-    .selectOption({ label: 'Reviewed boarding dates' });
+  await chooseOption(page.getByLabel('Policy template', { exact: true }), {
+    label: 'Reviewed boarding dates',
+  });
   if ((await page.getByLabel('Valid through', { exact: true }).inputValue()) !== '2026-12-31')
     throw Error('Template dates not copied');
   await page.getByLabel('Valid through', { exact: true }).fill('2026-11-30');
@@ -351,7 +355,7 @@ test('balance policy templates reuse dates without sharing credits and reasons a
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
   await page.getByRole('button', { name: 'View pet balance', exact: true }).click();
-  await page.getByLabel('Balance customer', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('Balance customer', { exact: true }), 'all');
   if ((await page.locator('.hc-balance-metrics strong').first().textContent()) !== '10')
     throw Error('Template shared credits');
   await page.getByText('2026-01-01 → 2026-12-31', { exact: true }).waitFor();
@@ -359,16 +363,16 @@ test('balance policy templates reuse dates without sharing credits and reasons a
   if ((await page.locator('.hc-balance-policy').getAttribute('open')) !== null)
     throw Error('Adjustment policy should be collapsed');
   await page.locator('.hc-balance-policy>summary').click();
-  await page
-    .getByLabel('Policy template', { exact: true })
-    .selectOption({ label: 'Reviewed boarding dates' });
+  await chooseOption(page.getByLabel('Policy template', { exact: true }), {
+    label: 'Reviewed boarding dates',
+  });
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await page.getByRole('button', { name: 'Close', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('.language-selector select').selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.getByRole('button', { name: /^Mochi: 已入住/ }).click();
   await page.getByRole('button', { name: '查看宠物余额', exact: true }).click();
-  await page.getByLabel('余额客户', { exact: true }).selectOption('all');
+  await chooseOption(page.getByLabel('余额客户', { exact: true }), 'all');
   await page.getByRole('button', { name: '增加余额', exact: true }).click();
   if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth))
     throw Error('Setup mobile overflow');

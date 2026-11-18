@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PetBalance } from './pet-balance';
@@ -341,7 +342,7 @@ export function StatementFilterPanel({
       <div>
         <label>
           {translate('Customer', '客户')}
-          <select
+          <CustomSelect
             aria-label={translate('Statement customer', '明细客户')}
             value={filters.customer}
             onChange={(event) =>
@@ -356,11 +357,11 @@ export function StatementFilterPanel({
                 </option>
               ),
             )}
-          </select>
+          </CustomSelect>
         </label>
         <label>
           {translate('Pet', '宠物')}
-          <select
+          <CustomSelect
             aria-label={translate('Statement pet', '明细宠物')}
             value={filters.pet}
             onChange={(event) => setFilters({ ...filters, pet: event.target.value })}
@@ -373,7 +374,7 @@ export function StatementFilterPanel({
                   {p.name}
                 </option>
               ))}
-          </select>
+          </CustomSelect>
         </label>
         <label>
           {translate('From', '开始日期')}
@@ -395,7 +396,7 @@ export function StatementFilterPanel({
         </label>
         <label>
           {translate('Activity', '类型')}
-          <select
+          <CustomSelect
             aria-label={translate('Statement activity', '明细类型')}
             value={filters.kind}
             onChange={(event) => setFilters({ ...filters, kind: event.target.value })}
@@ -406,7 +407,7 @@ export function StatementFilterPanel({
                 {label}
               </option>
             ))}
-          </select>
+          </CustomSelect>
         </label>
       </div>
       {!valid && (

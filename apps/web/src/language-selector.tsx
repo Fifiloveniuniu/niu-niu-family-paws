@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,7 +19,7 @@ export default function LanguageSelector({
         </svg>
         <span>Language / 语言</span>
       </span>
-      <select
+      <CustomSelect
         value={i18n.language === 'zh' ? 'zh' : 'en'}
         onChange={(event) => onChange(event.target.value as 'en' | 'zh')}
       >
@@ -28,7 +29,7 @@ export default function LanguageSelector({
         <option value="zh" lang="zh-Hans">
           简体中文
         </option>
-      </select>
+      </CustomSelect>
     </label>
   );
 }

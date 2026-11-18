@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 
 test('customer list selects the correct pets in bilingual responsive panels and protects drafts', async ({
@@ -137,9 +138,7 @@ test('customer list selects the correct pets in bilingual responsive panels and 
   await expect(right.getByRole('heading', { name: '示例豆豆', exact: true })).toBeVisible();
   await expect(right.getByRole('heading', { name: 'Sample Mochi', exact: true })).toHaveCount(0);
   for (const language of ['en', 'zh']) {
-    await page
-      .getByRole('combobox', { name: 'Language / 语言', exact: true })
-      .selectOption(language);
+    await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), language);
     await expect(
       page
         .locator('.customer-directory-panel')

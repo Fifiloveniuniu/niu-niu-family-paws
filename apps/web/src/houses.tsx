@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import { ApiError, apiJson } from './api-client';
 import React from 'react';
 import { navigate } from './routing';
@@ -189,7 +190,7 @@ export default function Houses({
       {!!items.length && (
         <label className="house-filter">
           {labels.filter}
-          <select
+          <CustomSelect
             value={selected}
             disabled={blocked}
             onChange={(event) => {
@@ -207,7 +208,7 @@ export default function Houses({
                 {house.name}
               </option>
             ))}
-          </select>
+          </CustomSelect>
         </label>
       )}
       {!loading && !items.length && !error && <p>{labels.empty}</p>}

@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import { initialStays } from './calendar-fixtures';
 import { sampleDateAtOffset, MILLISECONDS_PER_DAY } from './calendar-time';
 import { localDateKey } from './date-utils';
@@ -470,7 +471,7 @@ export default function HouseCalendar({
                   <div className="hc-clock-controls">
                     <label>
                       <span>{translate('Timezone', '时区')}</span>
-                      <select
+                      <CustomSelect
                         aria-label={translate('Clock timezone', '时钟时区')}
                         value={clockTimezone}
                         onChange={(event) => setClockTimezone(event.target.value)}
@@ -480,7 +481,7 @@ export default function HouseCalendar({
                             {zone.replaceAll('_', ' ')}
                           </option>
                         ))}
-                      </select>
+                      </CustomSelect>
                     </label>
                     <time>
                       {now.toLocaleTimeString(locale, {
@@ -535,7 +536,7 @@ export default function HouseCalendar({
                 <div className="hc-filter-fields">
                   <label>
                     {translate('House', '房屋')}
-                    <select
+                    <CustomSelect
                       aria-label={translate('House', '房屋')}
                       value={house}
                       onChange={(event) => {
@@ -550,11 +551,11 @@ export default function HouseCalendar({
                           {houseName(h)}
                         </option>
                       ))}
-                    </select>
+                    </CustomSelect>
                   </label>
                   <label>
                     {translate('Room', '房间')}
-                    <select
+                    <CustomSelect
                       aria-label={translate('Room', '房间')}
                       value={roomFilter}
                       onChange={(event) => {
@@ -572,11 +573,11 @@ export default function HouseCalendar({
                             </option>
                           )),
                         )}
-                    </select>
+                    </CustomSelect>
                   </label>
                   <label>
                     {translate('Pet type', '宠物种类')}
-                    <select
+                    <CustomSelect
                       aria-label={translate('Pet type', '宠物种类')}
                       value={speciesFilter}
                       onChange={(event) => {
@@ -588,11 +589,11 @@ export default function HouseCalendar({
                       <option value="dog">{translate('Dog', '狗')}</option>
                       <option value="cat">{translate('Cat', '猫')}</option>
                       <option value="rabbit">{translate('Rabbit', '兔')}</option>
-                    </select>
+                    </CustomSelect>
                   </label>
                   <label>
                     {translate('Status', '状态')}
-                    <select
+                    <CustomSelect
                       aria-label={translate('Status', '状态')}
                       value={statusFilter}
                       onChange={(event) => {
@@ -605,11 +606,11 @@ export default function HouseCalendar({
                       <option value="upcoming">{translate('Not checked in', '未入住')}</option>
                       <option value="out">{translate('Checked out', '已离店')}</option>
                       <option value="overdue">{translate('Pickup overdue', '接回逾期')}</option>
-                    </select>
+                    </CustomSelect>
                   </label>
                   <label>
                     {translate('Customer', '客户')}
-                    <select
+                    <CustomSelect
                       aria-label={translate('Customer', '客户')}
                       value={customerFilter}
                       onChange={(event) => {
@@ -623,7 +624,7 @@ export default function HouseCalendar({
                           {customerName(id)}
                         </option>
                       ))}
-                    </select>
+                    </CustomSelect>
                   </label>
                   <label className="hc-search">
                     {translate('Find a pet', '查找宠物')}

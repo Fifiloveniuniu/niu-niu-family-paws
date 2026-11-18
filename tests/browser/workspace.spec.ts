@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 
 test('administrator switches to own profile and pets without losing drafts or bypassing revoked access', async ({
@@ -121,7 +122,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   );
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect(page.getByRole('textbox', { name: 'Your name', exact: true })).toBeVisible();
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await page.setViewportSize({ width: 400, height: 860 });
   await claims(false);
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));

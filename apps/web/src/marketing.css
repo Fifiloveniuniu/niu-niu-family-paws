@@ -1101,7 +1101,7 @@ header.marketing-header .language-selector > span {
   overflow: hidden;
   clip-path: inset(50%);
 }
-header.marketing-header .language-selector select {
+header.marketing-header .language-selector :is(select, .custom-select-trigger) {
   border-radius: 24px;
   background: transparent;
   font-size: 12px;
@@ -1195,7 +1195,7 @@ header.marketing-header .language-selector select {
     min-width: 0;
     width: 92px;
   }
-  header.marketing-header .language-selector select {
+  header.marketing-header .language-selector :is(select, .custom-select-trigger) {
     padding-inline: 6px;
     font-size: 11px;
   }

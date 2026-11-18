@@ -1,3 +1,7 @@
+## Shared custom dropdowns — local, 2026-11-18
+
+Replaced all20 visible native selectors with one accessible custom component, retaining hidden native fields for form semantics. Cream/green marketing panels,6px item gaps, light-green focus borders and transparent selected-item borders. Shared open-state coordination covers selectors, language, navigation and account menus; only one opens at a time. Keyboard navigation/typeahead, disabled choices, viewport-aware top-layer menus and modal focus preserved. Updated browser helpers for custom interactions. Build/typecheck, full formatting,41 unit tests and8 focused Chrome tests passed (bilingual390/1440, modal, account/profile and language persistence). Actual localhost Chrome reviewed. Screenshots custom-dropdown-{390,1440}.png. PR119 cleanup passed CI/merged. No deployment.
+
 ## Profile header cleanup — local, 2026-11-18
 
 Removed bilingual Visit website account-menu link. Removed outer duplicate My profile heading and promoted the form heading to h1, retaining its accessible section label and existing styling. Production build/typecheck and formatting passed; actual localhost Chrome confirmed one visible profile heading, only the profile account link, and no overflow. Chinese reload reached the translated page, but browser tab became unavailable before final Chinese checks; do not claim those completed. PR118 readability passed CI and merged. No deployment.

@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 test('admin manages multiple houses in dialogs with retry safety, filtering and bilingual responsive layout', async ({
   page,
@@ -77,7 +78,7 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await dialog.getByLabel('House name', { exact: true }).fill('Demo East');
   await dialog.getByLabel('Time zone', { exact: true }).fill('Asia/Shanghai');
   await dialog.getByRole('button', { name: 'Save house', exact: true }).click();
-  await page.getByRole('combobox', { name: 'Show house', exact: true }).selectOption('');
+  await chooseOption(page.getByRole('combobox', { name: 'Show house', exact: true }), '');
   await expect(section.getByRole('heading', { level: 3 })).toHaveCount(2);
   await section.getByRole('button', { name: 'Edit house: Demo West', exact: true }).click();
   await dialog.getByLabel('House name', { exact: true }).fill('Demo West updated');
@@ -91,16 +92,14 @@ test('admin manages multiple houses in dialogs with retry safety, filtering and 
   await expect(
     section.getByRole('heading', { name: 'Demo West updated', exact: true }),
   ).toBeVisible();
-  await page.getByRole('combobox', { name: 'Show house', exact: true }).selectOption('');
+  await chooseOption(page.getByRole('combobox', { name: 'Show house', exact: true }), '');
   for (const language of ['en', 'zh']) {
     await page
       .getByRole('dialog')
       .first()
       .getByRole('button', { name: /^(Close|关闭)$/ })
       .click();
-    await page
-      .getByRole('combobox', { name: 'Language / 语言', exact: true })
-      .selectOption(language);
+    await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), language);
     await page
       .getByRole('button', {
         name: language === 'zh' ? '管理房屋与房间' : 'Manage houses & rooms',

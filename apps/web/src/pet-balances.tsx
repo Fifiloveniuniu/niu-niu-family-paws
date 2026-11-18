@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
@@ -189,14 +190,14 @@ export default function PetBalances({
         {account && (
           <label>
             {translate('Adjustment', '调整方式')}
-            <select
+            <CustomSelect
               aria-label={translate('Adjustment', '调整方式')}
               value={mode}
               onChange={(event) => setMode(event.target.value)}
             >
               <option value="add">{translate('Add days', '增加天数')}</option>
               {account && <option value="remove">{translate('Remove days', '减少天数')}</option>}
-            </select>
+            </CustomSelect>
           </label>
         )}
         <label>
@@ -231,7 +232,7 @@ export default function PetBalances({
         </summary>
         <label>
           {translate('Policy template', '规则模板')}
-          <select
+          <CustomSelect
             aria-label={translate('Policy template', '规则模板')}
             value={template}
             onChange={(event) => {
@@ -251,7 +252,7 @@ export default function PetBalances({
                   {p.name}
                 </option>
               ))}
-          </select>
+          </CustomSelect>
         </label>
         <div className="hc-time-fields">
           <label>
@@ -354,7 +355,7 @@ export default function PetBalances({
             )}
             <label>
               {translate('Customer', '客户')}
-              <select
+              <CustomSelect
                 aria-label={translate('Balance customer', '余额客户')}
                 value={customer}
                 onChange={(event) => {
@@ -373,7 +374,7 @@ export default function PetBalances({
                     </option>
                   ),
                 )}
-              </select>
+              </CustomSelect>
             </label>
             <div
               className="hc-balance-pets"

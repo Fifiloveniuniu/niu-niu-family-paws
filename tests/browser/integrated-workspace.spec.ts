@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 
 test('four ordered tabs connect customer records, balance preview, statement and settings', async ({
@@ -43,7 +44,7 @@ test('four ordered tabs connect customer records, balance preview, statement and
   await nav.getByRole('link', { name: 'Balances', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Balances', exact: true })).toBeVisible();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await page.getByLabel('Statement pet', { exact: true }).selectOption('Mochi');
+  await chooseOption(page.getByLabel('Statement pet', { exact: true }), 'Mochi');
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   await page.getByLabel('Days', { exact: true }).fill('12');
   await page.getByLabel('Valid from', { exact: true }).fill('2026-01-01');
@@ -85,7 +86,7 @@ test('four ordered tabs connect customer records, balance preview, statement and
   await nav.getByRole('link', { name: 'Settings', exact: true }).click();
   await page.screenshot({ path: 'test-results/integrated-workspace-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
   await expect(page.getByRole('navigation').getByRole('link')).toHaveText([
     '日历',
     '客户',

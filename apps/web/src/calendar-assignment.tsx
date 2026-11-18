@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import { localDateTimeValue } from './date-utils';
 import { sampleDateAtOffset, sampleDayOffset } from './calendar-time';
 import React from 'react';
@@ -297,7 +298,7 @@ export default function AssignmentDialog({
           </div>
           <label>
             {translate('Pet', '宠物')}
-            <select
+            <CustomSelect
               aria-label={translate('Pet', '宠物')}
               required
               value={pet}
@@ -317,7 +318,7 @@ export default function AssignmentDialog({
                   )}
                 </option>
               ))}
-            </select>
+            </CustomSelect>
           </label>
           <div className="hc-time-fields">
             <label>
@@ -590,7 +591,7 @@ export default function AssignmentDialog({
             </label>
             <label>
               {translate('House', '房屋')}
-              <select
+              <CustomSelect
                 aria-label={translate('House', '房屋')}
                 value={house}
                 onChange={(event) => {
@@ -613,11 +614,11 @@ export default function AssignmentDialog({
                     </option>
                   );
                 })}
-              </select>
+              </CustomSelect>
             </label>
             <label>
               {translate('Room', '房间')}
-              <select
+              <CustomSelect
                 aria-label={translate('Room', '房间')}
                 value={room}
                 onChange={(event) => {
@@ -635,7 +636,7 @@ export default function AssignmentDialog({
                     </option>
                   );
                 })}
-              </select>
+              </CustomSelect>
             </label>
           </details>
           {valid && chosenRoom && problem && (

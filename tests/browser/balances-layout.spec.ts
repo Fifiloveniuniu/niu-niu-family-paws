@@ -1,3 +1,4 @@
+import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
 test('balances share customer/pet filters with statement and keep focused edits', async ({
   page,
@@ -26,10 +27,10 @@ test('balances share customer/pet filters with statement and keep focused edits'
   await expect(panel.getByRole('button', { name: 'Add balance', exact: true })).toBeFocused();
   await expect(panel.locator('.hc-balance-metrics strong').first()).toHaveText('30');
   await expect(page.locator('.hc-statement-row')).toContainText('[TEST] Initial boarding credit');
-  await page.getByLabel('Statement pet', { exact: true }).selectOption('Miso');
+  await chooseOption(page.getByLabel('Statement pet', { exact: true }), 'Miso');
   await expect(panel.getByRole('heading', { name: 'Miso', exact: true })).toBeVisible();
   await expect(page.locator('.hc-statement-row')).toHaveCount(0);
-  await page.getByLabel('Statement pet', { exact: true }).selectOption('Mochi');
+  await chooseOption(page.getByLabel('Statement pet', { exact: true }), 'Mochi');
   await expect(page.locator('.hc-statement-row')).toHaveCount(1);
   await page.screenshot({ path: 'test-results/balances-layout-desktop.png', fullPage: true });
   for (const width of [820, 700, 390, 320]) {
@@ -39,12 +40,12 @@ test('balances share customer/pet filters with statement and keep focused edits'
     );
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('combobox', { name: 'Language / 语言', exact: true }).selectOption('zh');
-  await page.getByLabel('明细宠物', { exact: true }).selectOption('Miso');
+  await chooseOption(page.getByRole('button', { name: /^Language \/ 语言:/ }), 'zh');
+  await chooseOption(page.getByLabel('明细宠物', { exact: true }), 'Miso');
   await page.getByRole('button', { name: '增加余额', exact: true }).click();
   await expect(page.getByRole('dialog', { name: '增加余额', exact: true })).toBeVisible();
   await page.screenshot({ path: 'test-results/balances-editor-mobile-zh.png' });
   await page.getByRole('button', { name: '取消', exact: true }).click();
-  await page.getByLabel('明细宠物', { exact: true }).selectOption('Mochi');
+  await chooseOption(page.getByLabel('明细宠物', { exact: true }), 'Mochi');
   await page.screenshot({ path: 'test-results/balances-layout-mobile-zh.png', fullPage: true });
 });

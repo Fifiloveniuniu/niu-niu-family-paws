@@ -1,3 +1,4 @@
+import CustomSelect from './custom-select';
 import { ApiError, apiOptionalJson } from './api-client';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -204,7 +205,7 @@ export default function Profile({
               </label>
               <label>
                 {labels.language}
-                <select
+                <CustomSelect
                   value={input.language}
                   onChange={(event) => {
                     setInput({ ...input, language: event.target.value as 'en' | 'zh' });
@@ -213,7 +214,7 @@ export default function Profile({
                 >
                   <option value="en">English</option>
                   <option value="zh">简体中文</option>
-                </select>
+                </CustomSelect>
               </label>
             </fieldset>
             <button

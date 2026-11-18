@@ -48,7 +48,7 @@
   color: #a76547;
 }
 .marketing-site :is(a, button, summary),
-.marketing-header :is(a, button, summary, select),
+.marketing-header :is(a, button, summary, :is(select, .custom-select-trigger)),
 .marketing-footer a {
   cursor: pointer;
 }
@@ -1174,7 +1174,7 @@ header.marketing-header nav {
   background: #406b5b;
 }
 .marketing-header .language-menu-options button:focus-visible {
-  outline: 2px solid #a76547;
+  outline: 2px solid #b6c2b0;
   outline-offset: 1px;
 }
 @media (max-width: 1180px) {
@@ -1671,7 +1671,7 @@ header.marketing-header nav {
     scroll-padding-block: 24px 88px;
   }
   .home-spaces:focus-visible {
-    outline: 2px solid #a76547;
+    outline: 2px solid #b6c2b0;
     outline-offset: -4px;
   }
 }
