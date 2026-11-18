@@ -1728,15 +1728,7 @@ header nav [aria-current='location'] {
   color: #586658;
   margin: 0 0 24px;
 }
-.planning-rule {
-  position: absolute;
-  bottom: 0;
-  left: 48px;
-  right: 48px;
-  height: 3px;
-  background: #a7b39a;
-  transform-origin: left;
-}
+
 @media (max-width: 760px) {
   .marketing-site .scroll-invitation {
     margin: 0 24px 32px;
@@ -1769,9 +1761,5 @@ header nav [aria-current='location'] {
   }
   .visit-preparation .section-heading {
     margin-bottom: 12px;
-  }
-  .planning-rule {
-    left: 24px;
-    right: 24px;
   }
 }

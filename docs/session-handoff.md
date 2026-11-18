@@ -1,3 +1,7 @@
+## Planning section/footer breathing room and removed bottom bar — 2026-11-17
+
+Removed the decorative planning-rule bottom bar and its unused CSS per the owner’s follow-up. Added responsive bottom spacing between the Services “MAKE ROOM FOR THE DETAILS” panel and the footer:48px on phones, growing to80px desktop. Actual localhost Chrome390/1440 walkthrough measured48/80px and confirmed the visual gap. Node24 build and Prettier passed. Review screenshots: docs/screenshots/planning-footer-gap-*.png. No deployment. Delivery: [PR92](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/92); GitHub verified the implementation commit signature and required CI is checked before merge. Preserve other WIP and the final combined deployment boundary.
+
 ## Desktop chapter layouts and editorial quote — 2026-11-17
 
 Latest owner clarification supersedes PR89's desktop full-width rows: chapter3 now uses a two-column service grid on widths above760px; chapter6 uses three centered milestone columns with larger artwork/numerals and restrained vertical dividers. Phone layouts remain one item per full-width row. Chapter7's quote now uses larger italic serif lettering (responsive26–36px desktop,22px mobile), a clay-colored rule and smaller spaced attribution; other quote sections and approved-content rules are unchanged.

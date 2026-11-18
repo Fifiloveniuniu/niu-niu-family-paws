@@ -1633,6 +1633,9 @@ header.marketing-header nav {
 .marketing-site .home-story.cinematic-story .home-services .service-path[href] {
   border-radius: var(--paws-panel-radius);
 }
+.marketing-site .stay-planning {
+  margin-bottom: clamp(48px, 6vw, 80px);
+}
 .marketing-site .stay-planning .eyebrow {
   margin-bottom: 24px;
 }
