@@ -252,6 +252,50 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   assert.equal(available.status, 200);
   assert.equal(JSON.stringify(available.body).includes('Private pet'), false);
   assert.equal((await own(balancePath)).body.account.days, 30);
+  const corrected = await adm(balancePath, {
+    ...adjustment,
+    operationId: randomUUID(),
+    version: 1,
+    delta: -2,
+    reason: '[TEST] Correction',
+  });
+  assert.equal(corrected.body.days, 28);
+  const service = balanceStore(db);
+  for (let index = 0; index < 51; index++)
+    await service.adjust({ uid: admin.localId, admin: true }, cid, pid, {
+      ...adjustment,
+      operationId: randomUUID(),
+      version: index + 2,
+      delta: 0,
+      reason: '[TEST] Recorded note ' + index,
+    });
+  const eventsPage = await own('/workspace/events');
+  assert.equal(eventsPage.status, 200);
+  assert.equal(eventsPage.body.items.length, 50);
+  assert.ok(eventsPage.body.nextCursor);
+  assert.ok(
+    eventsPage.body.items.every((row) => row.customer.id === cid && row.event.actor === undefined),
+  );
+  const rest = await own('/workspace/events?cursor=' + eventsPage.body.nextCursor);
+  assert.equal(rest.body.items.length, 3);
+  assert.equal(rest.body.nextCursor, null);
+  assert.equal(
+    new Set([...eventsPage.body.items, ...rest.body.items].map((row) => row.event.id)).size,
+    53,
+  );
+  const additions = await own('/workspace/events?kind=added');
+  assert.equal(additions.body.items.length, 1);
+  assert.equal(additions.body.items[0].event.delta, 30);
+  const corrections = await own('/workspace/events?kind=correction');
+  assert.equal(corrections.body.items[0].event.daysAfter, 28);
+  assert.equal(corrections.body.items[0].event.delta, -2);
+  assert.equal((await own('/workspace/events?customerId=' + otherCid)).status, 403);
+  assert.equal((await adm('/workspace/events?customerId=' + otherCid)).body.items.length, 0);
+  assert.equal(
+    (await own('/workspace/events?through=2020-01-01T00%3A00%3A00.000Z')).body.items.length,
+    0,
+  );
+  assert.equal((await adm('/workspace/events?petId=' + pid)).status, 400);
   const batch = db.batch();
   const instant = '2026-11-18T00:00:00.000Z';
   const petData = (cid, id, index) => ({
