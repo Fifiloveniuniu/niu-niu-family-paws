@@ -276,7 +276,7 @@
   "ui.calendarAssignment.availableSpace": "可用空间",
   "ui.calendarAssignment.previousWeek": "上一周",
   "ui.calendarAssignment.nextWeek": "下一周",
-  "ui.calendarAssignment.grayBandsShowUnavailableTimeRangesEnterArrivalAnd": "灰色条表示不可用时段。填写到店和接回时间后，选择房间或点击空白处选开始时间。整个托管时段都必须可用。",
+  "ui.calendarAssignment.grayBandsShowUnavailableTimeRangesEnterArrivalAnd": "绿色区域表示可用空间，灰色区域不可用。选择绿色区域以安排整个住宿时段，然后核对日期。",
   "ui.calendarAssignment.scrollRoomAvailabilityCalendar": "滚动房间可用日历",
   "ui.calendarAssignment.houseRoom": "房屋 / 房间",
   "ui.calendarAssignment.noRoomsYet": "暂无房间",
@@ -916,5 +916,7 @@
   "ui.houseCalendar.houseAddress": "房屋地址",
   "ui.autocomplete.chooseOption": "请从列表中选择一项。",
   "ui.autocomplete.noMatches": "没有匹配项",
-  "ui.calendarAssignment.customer": "客户"
+  "ui.calendarAssignment.customer": "客户",
+  "ui.calendarAssignment.freeSpace": "可用空间",
+  "ui.houseCalendar.practiceRoom": "练习房间"
 }

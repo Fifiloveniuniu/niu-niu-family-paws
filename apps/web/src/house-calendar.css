@@ -4071,3 +4071,32 @@
   color: #6c786b;
   opacity: 0.65;
 }
+.hc-time-available {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  margin: 0;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: #e7eee3;
+  color: #31594c;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  cursor: pointer;
+}
+.hc-time-available:hover,
+.hc-time-available:focus-visible {
+  background: #d2e4d5;
+  outline: 2px solid #86b9a7;
+  outline-offset: -2px;
+}
+.hc-time-available:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.hc-time-request {
+  z-index: 2;
+}

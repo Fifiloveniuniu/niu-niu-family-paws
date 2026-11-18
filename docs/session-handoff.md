@@ -1,3 +1,7 @@
+## Selectable available space — local, 2026-11-18
+
+Room chooser paints explicit green free-span buttons alongside gray blocked spans; selection preserves the requested duration and rechecks whole-stay capacity/species/duplicate/overdue constraints. Added an empty configured Practice room only in isolated test-mode fixtures (not production data or approved capacity). Build/formatting and47 unit tests passed;10 booking regressions and4 bilingual390/1440 practice-room/free-span browser cases passed. Actual localhost Chrome free-space selection reviewed in isolated tab29. PR133/autocomplete passed CI; not deployed.
+
 ## Customer-first booking autocomplete — local, 2026-11-18
 
 Booking detail order is customer, own pets, dates. Added reusable exclusive custom autocomplete: empty input lists permitted options, typing filters, keyboard selection and rich pet rows (type icon, private-photo avatar/fallback, name). Customer changes clear pet selection. Both house timezone datalists now use it too; no native suggestion menus remain. Build/API typecheck/formatting,46 unit tests and20 focused browser workflows passed across English/Chinese and320/390/1440 layouts. Actual localhost Chrome flow reviewed in isolated tab28. PR130/date picker and PR131/required-address merged after CI and verified signatures. These scheduling controls still use dev-only fixtures; canonical backend integration remains outstanding. No deployment.

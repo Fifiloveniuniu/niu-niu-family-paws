@@ -116,3 +116,19 @@ export function unavailableRanges(
   }
   return ranges;
 }
+
+/** Complement of blocked spans; selection must still validate the whole requested stay. */
+export function availableRanges(from: number, to: number, unavailable: UnavailableRange[]) {
+  if (!Number.isFinite(from) || !Number.isFinite(to) || to <= from) return [];
+  const result: { start: number; end: number }[] = [];
+  let cursor = from;
+  for (const range of [...unavailable].sort((a, b) => a.start - b.start)) {
+    const start = Math.max(from, range.start);
+    const end = Math.min(to, range.end);
+    if (end <= cursor || start >= to) continue;
+    if (start > cursor) result.push({ start: cursor, end: start });
+    cursor = Math.max(cursor, end);
+  }
+  if (cursor < to) result.push({ start: cursor, end: to });
+  return result;
+}
