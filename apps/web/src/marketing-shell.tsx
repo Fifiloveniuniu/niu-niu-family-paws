@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import MarketingLanguageMenu from './marketing-language-menu';
 import SiteAccountLink from './site-account-link';
@@ -34,7 +34,9 @@ function NavIcon({ kind }: { kind: string }) {
 export function MarketingHeader({
   page,
   onLanguageChange,
+  account,
 }: {
+  account?: ReactNode;
   page: string;
   onLanguageChange: (language: 'en' | 'zh') => void;
 }) {
@@ -44,6 +46,20 @@ export function MarketingHeader({
   const [dropdown, setDropdown] = useState<string | null>(null);
   const menu = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const element = header.current;
+    if (!element) return;
+    const update = () => {
+      const height = element.getBoundingClientRect().height;
+      if (height > 0)
+        document.documentElement.style.setProperty('--marketing-header-height', `${height}px`);
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     setOpen(false);
     setDropdown(null);
@@ -182,7 +198,7 @@ export function MarketingHeader({
         </nav>
         <div className="header-actions">
           <MarketingLanguageMenu onChange={onLanguageChange} />
-          <SiteAccountLink />
+          {account ?? <SiteAccountLink />}
         </div>
       </div>
     </header>
