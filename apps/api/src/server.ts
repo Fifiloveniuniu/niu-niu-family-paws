@@ -1,8 +1,10 @@
+import { firebaseIdentity } from './authentication.ts';
 import { applicationDefault, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { localPhotos } from './local-photos.ts';
+import { bookingStore } from './bookings.ts';
 import { balanceStore } from './balances.ts';
 import { roomStore } from './rooms.ts';
 import { houseStore } from './houses.ts';
@@ -28,24 +30,11 @@ initializeApp(
 );
 const auth = getAuth();
 const app = buildApp({
-  async verify(token) {
-    const decoded = await auth.verifyIdToken(token, true);
-    // Read the current role too: removing a claim must immediately block existing tokens.
-    const user = await auth.getUser(decoded.uid);
-    if (user.disabled) throw new Error('Disabled account');
-    return {
-      uid: user.uid,
-      admin: user.customClaims?.admin,
-      email_verified: user.emailVerified && decoded.email_verified === true,
-      google:
-        decoded.firebase.sign_in_provider === 'google.com' &&
-        user.providerData.some((provider) => provider.providerId === 'google.com'),
-      email: user.email,
-    };
-  },
+  verify: firebaseIdentity(auth),
   houses: houseStore(getFirestore()),
   rooms: roomStore(getFirestore()),
   balances: balanceStore(getFirestore()),
+  bookings: bookingStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(), async (uid) => {
     const user = await auth.getUser(uid);

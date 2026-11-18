@@ -5,6 +5,12 @@ import rateLimit from '@fastify/rate-limit';
 import spec from '../../../packages/contracts/openapi.json' with { type: 'json' };
 import type { components } from '../../../packages/contracts/generated.ts';
 import { petRoutes, PetAccess, PetMissing, PetInvalid, type PetStore } from './pets.ts';
+import {
+  bookingRoutes,
+  BookingConflict,
+  BookingPolicyMissing,
+  type BookingStore,
+} from './bookings.ts';
 import { balanceRoutes, type BalanceStore } from './balances.ts';
 import { roomRoutes, type RoomStore } from './rooms.ts';
 import { houseRoutes, type HouseStore } from './houses.ts';
@@ -29,6 +35,7 @@ export function buildApp(deps: {
   houses?: HouseStore;
   rooms?: RoomStore;
   balances?: BalanceStore;
+  bookings?: BookingStore;
 }) {
   const app = Fastify({
     logger: false,
@@ -55,6 +62,7 @@ export function buildApp(deps: {
         if (identity.email_verified !== true) return reply.code(403).send({ code: 'forbidden' });
         (request as typeof request & { identity: Identity }).identity = identity;
       });
+      if (deps.bookings) bookingRoutes(api, deps.bookings);
       if (deps.balances) balanceRoutes(api, deps.balances);
       if (deps.rooms) roomRoutes(api, deps.rooms);
       if (deps.houses) houseRoutes(api, deps.houses);
@@ -145,8 +153,16 @@ export function buildApp(deps: {
     { prefix: '/api' },
   );
   app.setErrorHandler(
-    (error: Error & { validation?: unknown; statusCode?: number }, _request, reply) => {
-      if (error instanceof Conflict || error instanceof LinkUnavailable)
+    (
+      error: Error & { validation?: unknown; statusCode?: number; code?: number | string },
+      _request,
+      reply,
+    ) => {
+      if (error instanceof BookingConflict)
+        return reply.code(409).send({ code: 'booking_conflict', issue: error.issue });
+      if (error instanceof BookingPolicyMissing)
+        return reply.code(409).send({ code: 'booking_policy_unconfigured' });
+      if (error instanceof Conflict || error instanceof LinkUnavailable || error.code === 10)
         return reply.code(409).send({ code: 'conflict' });
       if (error instanceof PetAccess) return reply.code(403).send({ code: 'forbidden' });
       if (error instanceof PetMissing) return reply.code(404).send({ code: 'not_found' });
