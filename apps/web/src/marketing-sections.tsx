@@ -158,9 +158,6 @@ export function VisitPreparation() {
               <h3>{t('prepare' + number)}</h3>
               <p>{t('prepare' + number + 'Body')}</p>
             </div>
-            <span className="preparation-check" aria-hidden="true">
-              ✓
-            </span>
           </li>
         ))}
       </ol>
