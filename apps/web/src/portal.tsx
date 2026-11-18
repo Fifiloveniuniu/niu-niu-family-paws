@@ -323,7 +323,13 @@ export default function Portal({
       )}
       <header className="portal-header">
         <a className="brand" href="/home/">
-          NIU NIU<span className="brand-sub">FAMILY PAWS</span>
+          <img
+            className="brand-logo"
+            src="/images/marketing/logo.png"
+            alt="Niu Niu Family Paws Sitting LLC"
+            width="1024"
+            height="1024"
+          />
         </a>
         <LanguageSelector onChange={onLanguageChange} />
       </header>
