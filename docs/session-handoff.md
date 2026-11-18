@@ -1,3 +1,7 @@
+## iPhone Safari story artwork — PR preparation, 2026-11-17
+
+Branch `fix/iphone-story-artwork`: reserves opening artwork space on narrow cinematic screens, gives the travelling sun explicit square dimensions and measures its actual rendered width, observes stage resizing, and uses solid SVG ink when no reveal gradient is needed to avoid WebKit dropping near-zero paint servers. English/Chinese WebKit regression passes opening separation, sun bounds through forward/reverse chapters, solid opening paint and short-screen fallback/re-entry. Explicitly clears the shared Chrome channel for the WebKit launch. Node24 production build,41 unit tests and focused formatting passed; actual localhost4180 Chrome phone preview confirmed artwork/text separation and no overflow. Screenshot: docs/screenshots/iphone-story-artwork.png. No deployment. Unrelated asset scripts and HEIC deletions remain local and excluded from this PR.
+
 ## Supplied business logo — 2026-11-17
 
 Owner selected `public/images/marketing/logo.png` as the site logo. Replaced marketing header/footer and portal header wordmarks with the supplied image and accessible brand text. CSS oval clipping hides its baked-in checkerboard without modifying the source. Compact68px header and responsive160–220px footer preserve navigation. Production build passed; actual localhost Chrome desktop and390px phone review confirmed loaded logos/no horizontal overflow. No deployment. Preserve unrelated local asset scripts and HEIC deletions.

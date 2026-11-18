@@ -206,7 +206,7 @@ export function installCinematicStory(story: HTMLElement) {
     const sunProgress = ease(progress);
     if (sun) {
       const inset = innerWidth <= 760 ? 18 : 28;
-      sun.style.left = `${inset + Math.max(0, stage.clientWidth - sun.clientWidth - inset * 2) * (1 - sunProgress)}px`;
+      sun.style.left = `${inset + Math.max(0, stage.clientWidth - sun.getBoundingClientRect().width - inset * 2) * (1 - sunProgress)}px`;
       sun.style.top = `${innerWidth <= 760 ? 6 + (1 - Math.sin(sunProgress * Math.PI)) * 4 : 18 + (1 - Math.sin(sunProgress * Math.PI)) * 18}px`;
     }
     const morph = ease(clamp((progress - 0.15) / 0.7));
@@ -591,6 +591,7 @@ export function installCinematicStory(story: HTMLElement) {
   preference.addEventListener('change', reduce);
   const resize = new ResizeObserver(schedule);
   resize.observe(story);
+  resize.observe(stage);
   window.addEventListener('scroll', schedule, { passive: true });
   stage.addEventListener('scroll', schedule, { capture: true, passive: true });
   window.addEventListener('resize', schedule);
