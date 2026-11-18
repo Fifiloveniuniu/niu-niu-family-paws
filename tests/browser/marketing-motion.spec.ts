@@ -1121,7 +1121,7 @@ test('Experience pets arrive at their settled places and gather on departure, re
   }
 });
 
-test('green reveal waits for half entry and shrinks only after half the final chapter leaves', async ({
+test('green reveal waits for half entry and stays expanded through final chapter departure', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 950 });
@@ -1160,7 +1160,10 @@ test('green reveal waits for half entry and shrinks only after half the final ch
     document.body.append(spacer);
   });
   expect(await at(8, 0.4)).toBeCloseTo(1, 2);
-  expect(await at(8, 0.75)).toBeCloseTo(0.5, 2);
+  expect(await at(8, 0.75)).toBe(1);
+  expect(await at(8, 1.1)).toBe(1);
+  expect(await at(7.6)).toBeGreaterThan(0);
+  expect(await at(7.49)).toBe(0);
 });
 
 test('chapter button object motion stays between its displayed start and final poses', async ({

@@ -1,3 +1,9 @@
+## Full-width story rows, fading rays and held final green — 2026-11-17
+
+Owner requested three related Home refinements. Chapters3 (services) and6 (numbers) now show one full-width item per row on desktop and mobile, with horizontal artwork/value/copy composition and compact bilingual phone spacing. Existing equal phone number sizes and arrow insets remain. The travelling sun rays fade with the moon morph and reach zero opacity by its midpoint, before the final crescent. Scrolling backward restores them. Chapter9's fully expanded green field remains held during native downward departure toward the footer; reverse entry and backward chapter clicks retain their reversible transitions.
+
+Local Chrome desktop/phone walkthrough completed; review screenshots are docs/screenshots/story-rows-*.png. Node24 production build,41 unit tests and formatting passed. Seven focused Chrome regressions passed: bilingual chapter fit (including320×740), full-width row geometry, ray fade/reversal, final-green departure, number artwork and chapter-click shared-object transitions. Existing equal-number/arrow-inset test also passed. No deployment. Delivery PR link follows after creation; preserve PR24/41 and the final combined deployment boundary.
+
 ## Marketing craft pass — 2026-11-17
 
 Local preview: http://localhost:4180/home/. Branch `polish/marketing-craft`, one cohesive public-site polish change. No deployment; preserve the final combined deployment boundary and unrelated PR24/41.

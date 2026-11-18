@@ -377,6 +377,9 @@ export function installCinematicStory(story: HTMLElement) {
           amount = initial * (1 - clamp((gate - startGate) / Math.max(0.001, 1 - startGate)));
         }
       }
+      // The last chapter keeps its green field while the stage scrolls toward the footer.
+      // Backward chapter transitions still use the reversible reveal above.
+      if (!travel && index === panels.length - 1 && phase < 0) amount = 1;
       backgroundAmounts[index] = amount;
       return sceneField(stage.clientWidth, stage.clientHeight, amount, {
         center: { x: stage.clientWidth / 2, y: stage.clientHeight / 2 + shifts[index] },

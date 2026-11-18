@@ -193,24 +193,28 @@ export function HomeNumbers() {
         {metrics.map(([key, label]) => (
           <article key={key}>
             <MetricArtwork kind={key} />
-            <CountUp value={content.stats[key]?.value} />
-            <h3>{label}</h3>
-            <p>
-              {marketingPreview
-                ? zh
-                  ? '陪伴每一个小小成长'
-                  : 'Little moments. Growing stories.'
-                : content.stats[key]
-                  ? (zh ? '已核实 · 截至 ' : 'Verified · as of ') +
-                    new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    }).format(new Date(content.stats[key]!.asOf))
-                  : zh
-                    ? '核实后的数字即将公布'
-                    : 'Verified totals coming soon'}
-            </p>
+            <div className="metric-value">
+              <CountUp value={content.stats[key]?.value} />
+            </div>
+            <div className="metric-copy">
+              <h3>{label}</h3>
+              <p>
+                {marketingPreview
+                  ? zh
+                    ? '陪伴每一个小小成长'
+                    : 'Little moments. Growing stories.'
+                  : content.stats[key]
+                    ? (zh ? '已核实 · 截至 ' : 'Verified · as of ') +
+                      new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      }).format(new Date(content.stats[key]!.asOf))
+                    : zh
+                      ? '核实后的数字即将公布'
+                      : 'Verified totals coming soon'}
+              </p>
+            </div>
           </article>
         ))}
       </div>

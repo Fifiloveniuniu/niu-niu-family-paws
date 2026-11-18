@@ -340,3 +340,10 @@ Each pet now sits next to its own numbered introduction on phones and above it o
 Open http://localhost:4180/home/ to review the updated site. On phones, Menu has compact navigation and small arrows for section links. Language options float above the menu without moving Sign in. Sign in opens a popup over your current page; Continue with Google opens the secure Google window. Your supplied grooming and washing photographs replace the sample images. The photos are larger, each caption sits beside its photo, and standard portrait phones share the desktop scroll story. The footer has balanced spacing and the same warm colors and lettering as the rest of the site. Reduced Motion remains available. This is locally complete, awaiting the final combined hosted release.
 
 打开 http://localhost:4180/home/ 查看本地更新。手机菜单更紧凑，小箭头可展开分区链接；语言选项浮在菜单上方，不会把登录按钮往下推。点击登录会在当前页面打开弹窗，再点击 Google 登录即可进入安全登录窗口。您提供的美容与洗护照片已替换示例图片，手机照片更大，说明文字与各自的照片并排对齐。常见竖屏手机保留与电脑相同的滚动故事动画；减少动态效果选项仍然有效。页脚的留白、暖色和字体与整站保持一致。目前为本地更新，等待最后统一发布。
+
+
+## Home story refinements — local preview, 2026-11-17
+
+Chapters3 and6 now show each service or milestone on its own full-width row. The sun’s rays fade away as the moon appears, and return when you scroll backward. The last chapter keeps its green background expanded as you scroll down toward the footer. Preview at http://localhost:4180/home/; not deployed yet.
+
+首页第3及第6章中，每个服务或数字项目各占一整行。太阳光芒会在月亮出现时淡出，向上滚动时恢复。第9章向下滚动至页脚时，绿色背景保持展开。当前仅为本地预览，尚未发布。

@@ -111,3 +111,64 @@ test('marketing Google sign-in opens its provider popup and cancellation returns
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page).toHaveURL(/\/services\/$/);
 });
+
+test('sun rays fade into the moon and chapters three and six use full-width rows', async ({
+  page,
+}) => {
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/home/?preview=sample#main');
+    await page.evaluate(() => document.fonts.ready);
+    const pose = async (chapter: number) =>
+      page.evaluate(async (chapter) => {
+        const story = document.querySelector<HTMLElement>('[data-cinema-enabled]')!;
+        const stage = story.querySelector<HTMLElement>('.cinematic-stage')!;
+        const header = document.querySelector('.marketing-header')!.getBoundingClientRect().height;
+        scrollTo({
+          top:
+            story.getBoundingClientRect().top +
+            scrollY -
+            header +
+            ((story.clientHeight - stage.clientHeight) * chapter) / 8,
+          behavior: 'instant',
+        });
+        await new Promise<void>((r) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => r())),
+        );
+        return parseFloat(getComputedStyle(story.querySelector('.journey-rays')!).opacity);
+      }, chapter);
+    const sun = await pose(0),
+      middle = await pose(3),
+      moon = await pose(8);
+    expect(sun).toBeGreaterThan(middle);
+    expect(middle).toBeGreaterThan(moon);
+    expect(moon).toBe(0);
+    expect(await pose(0)).toBeCloseTo(sun, 4);
+    for (const [chapter, selector] of [
+      [2, '.service-path'],
+      [5, '.number-grid article'],
+    ] as const) {
+      await pose(chapter);
+      const rows = await page.locator(selector).evaluateAll((es) =>
+        es.map((e) => {
+          const b = e.getBoundingClientRect();
+          return { x: b.x, width: b.width, top: b.top, bottom: b.bottom };
+        }),
+      );
+      for (let i = 1; i < rows.length; i++) {
+        expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom - 1);
+        expect(rows[i].x).toBeCloseTo(rows[0].x, 0);
+        expect(rows[i].width).toBeCloseTo(rows[0].width, 0);
+      }
+      const available = await page
+        .locator(chapter === 2 ? '.home-services' : '.number-grid')
+        .evaluate(
+          (e) =>
+            e.clientWidth -
+            parseFloat(getComputedStyle(e).paddingLeft) -
+            parseFloat(getComputedStyle(e).paddingRight),
+        );
+      expect(rows[0].width).toBeCloseTo(available, 0);
+    }
+  }
+});
