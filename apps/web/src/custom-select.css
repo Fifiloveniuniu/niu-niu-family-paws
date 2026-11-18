@@ -120,3 +120,8 @@
 .hc-clock-controls label > span {
   white-space: nowrap;
 }
+/* Match the pet search input border on every dropdown field. */
+.hc .custom-select > .custom-select-trigger,
+.custom-select > .custom-select-trigger {
+  border: 1px solid #dce5de;
+}
