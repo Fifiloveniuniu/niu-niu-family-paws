@@ -87,21 +87,19 @@
   gap: 12px;
   min-height: 40px;
   padding: 8px 12px;
-  border: 1px solid transparent;
+  border: 0;
   border-radius: 10px;
   cursor: pointer;
   overflow-wrap: anywhere;
 }
 .custom-select-options [role='option'][data-active] {
-  background: #eee3d7;
-  border-color: #b6c2b0;
+  background: #e7eee3;
 }
 .custom-select-options:popover-open {
   display: grid;
   gap: 6px;
 }
 .custom-select-options [role='option'][aria-selected='true'] {
-  border-color: transparent;
   background: #31594c;
   color: white;
 }
@@ -117,4 +115,8 @@
   .custom-select-options [role='option'] {
     min-height: 44px;
   }
+}
+
+.hc-clock-controls label > span {
+  white-space: nowrap;
 }

@@ -20,6 +20,19 @@ for (const width of [390, 1440])
       });
       await house.click();
       await expect(page.getByRole('listbox')).toHaveCount(1);
+      expect(
+        await page
+          .getByRole('option')
+          .first()
+          .evaluate((e) => getComputedStyle(e).borderTopWidth),
+      ).toBe('0px');
+      await page.getByRole('option').nth(1).hover();
+      expect(
+        await page
+          .getByRole('option')
+          .nth(1)
+          .evaluate((e) => getComputedStyle(e).backgroundColor),
+      ).toBe('rgb(231, 238, 227)');
       await status.click();
       await expect(house).toHaveAttribute('aria-expanded', 'false');
       await expect(page.getByRole('listbox')).toHaveCount(1);
@@ -66,6 +79,7 @@ test('custom selector stays visible inside a modal and Escape closes only the dr
   await page.getByRole('button', { name: 'Add booking', exact: true }).click();
   const dialog = page.getByRole('dialog');
   const pet = dialog.getByRole('combobox', { name: 'Pet', exact: true });
+  await expect(pet).toHaveText('N/A');
   await pet.click();
   await expect(page.getByRole('listbox')).toBeVisible();
   await chooseOption(pet, 'Miso');
