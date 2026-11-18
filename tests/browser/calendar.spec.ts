@@ -239,7 +239,7 @@ test('boarding balance history stays separate by pet and rejects invalid adjustm
   if ((await page.locator('.hc-balance-metrics strong').first().textContent()) !== '3')
     throw Error('Opening balance');
   await page.getByRole('button', { name: 'Balance: Biscuit', exact: true }).click();
-  if ((await page.locator('.hc-balance-metrics strong').first().textContent()) !== '—')
+  if ((await page.locator('.hc-balance-metrics strong').first().textContent()) !== 'N/A')
     throw Error('Borrowed another pet balance');
   await page.getByRole('button', { name: 'Balance: Mochi', exact: true }).click();
 

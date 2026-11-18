@@ -1,3 +1,7 @@
+## Consistent unset-value readouts — local, 2026-11-18
+
+Changed remaining unset balance, statement, policy and booking-review readouts from em dash to N/A, preserving real zero values and empty editable fields. Build/typecheck, focused formatting and local Chrome missing-balance/invalid-statement checks passed. WebKit phone smoke also passed custom selection and full-screen booking sizing for the combined UI. No deployment.
+
 ## Full-screen Add booking — local, 2026-11-18
 
 Owner reiterated removal of Required days and capacity/manual-selection controls. All3 wizard steps now fill the viewport with fixed heading/footer and scrolling content. Removed override controls/state; configured room costs remain authoritative. Removed manual-day entry and related save gate: local schedules with no reviewed day allocation save after time/room checks; review shows N/A for uncalculated usage and states no credit deduction/reservation. Legacy allocations still validate when supplied; no automatic billing rule invented. Updated requirements and bilingual owner guide. Build/typecheck, full formatting,41 unit tests and16 focused bilingual390/1440 Chrome tests passed, including complete room setup→booking save, dropdowns and avatar cards. Actual localhost Chrome confirmed viewport bounds/removed controls. Screenshots booking-full-screen-{desktop,phone-zh}.png. PR122 styling passed CI/merged. No deployment.
