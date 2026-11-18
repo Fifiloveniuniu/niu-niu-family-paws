@@ -17,7 +17,7 @@ export interface Photos {
   put(key: string, bytes: Buffer): Promise<void>;
   get(key: string): Promise<Buffer>;
 }
-const projectPet = (data: FirebaseFirestore.DocumentData): Pet => {
+export const projectPet = (data: FirebaseFirestore.DocumentData): Pet => {
   const { id, customerId, name, photo, version, createdAt, updatedAt } = data;
   return {
     id,

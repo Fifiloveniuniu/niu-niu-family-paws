@@ -6,6 +6,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { buildApp } from '../apps/api/src/app.ts';
 import { firebaseIdentity } from '../apps/api/src/authentication.ts';
+import { workspaceStore } from '../apps/api/src/workspace.ts';
 import { firestoreStore } from '../apps/api/src/store.ts';
 import { petStore } from '../apps/api/src/pets.ts';
 import { houseStore } from '../apps/api/src/houses.ts';
@@ -70,6 +71,7 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
     rooms: roomStore(db),
     balances: balanceStore(db),
     bookings: bookingStore(db),
+    workspace: workspaceStore(db),
   });
   t.after(async () => {
     await api.close();
@@ -105,7 +107,7 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   const cid = registered.body.id,
     pid = randomUUID(),
     otherCid = randomUUID(),
-    otherPid = randomUUID();
+    otherPid = pid;
   assert.equal(
     (
       await adm('/customers/' + otherCid, {
@@ -213,6 +215,8 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   const saved = await adm('/bookings/' + bid, booking);
   assert.equal(saved.status, 200);
   assert.equal(saved.body.billingStatus, 'unbilled');
+  assert.equal((await own('/bookings/' + bid)).body.id, bid);
+  assert.equal((await call(stranger.idToken, '/bookings/' + bid)).status, 403);
   assert.equal((await adm('/bookings/' + bid, booking)).body.version, 1);
   const edit = {
     ...booking,
@@ -248,8 +252,88 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   assert.equal(available.status, 200);
   assert.equal(JSON.stringify(available.body).includes('Private pet'), false);
   assert.equal((await own(balancePath)).body.account.days, 30);
+  const batch = db.batch();
+  const instant = '2026-11-18T00:00:00.000Z';
+  const petData = (cid, id, index) => ({
+    id,
+    customerId: cid,
+    name: '[TEST] Directory pet ' + index,
+    species: ['dog', 'cat', 'rabbit'][index % 3],
+    weightKg: null,
+    photo: null,
+    version: 1,
+    createdAt: instant,
+    updatedAt: instant,
+    internalNote: '[TEST] Never expose',
+  });
+  for (let index = 0; index < 98; index++) {
+    const cid = randomUUID();
+    batch.create(db.doc('customers/' + cid), {
+      id: cid,
+      name: '[TEST] Directory owner ' + index,
+      email: '',
+      phone: '',
+      language: 'en',
+      loginEmail: null,
+      version: 1,
+      createdAt: instant,
+      updatedAt: instant,
+      internalNote: '[TEST] Never expose',
+    });
+    for (let pet = 0; pet < 3; pet++) {
+      const id = randomUUID();
+      batch.create(db.doc(`customers/${cid}/pets/${id}`), petData(cid, id, pet));
+    }
+  }
+  for (const customer of [cid, otherCid])
+    for (let pet = 1; pet <= 2; pet++) {
+      const id = randomUUID();
+      batch.create(db.doc(`customers/${customer}/pets/${id}`), petData(customer, id, pet));
+    }
+  await batch.commit();
+  await db
+    .doc(`customers/${cid}/pets/${pid}/balances/boarding`)
+    .update({ internalNote: '[TEST] Never expose' });
+  let cursor = null;
+  const rows = [];
+  let pages = 0;
+  do {
+    const result = await adm(
+      '/workspace/pets' + (cursor ? '?cursor=' + encodeURIComponent(cursor) : ''),
+    );
+    assert.equal(result.status, 200);
+    rows.push(...result.body.items);
+    cursor = result.body.nextCursor;
+    pages++;
+  } while (cursor);
+  assert.equal(rows.length, 300);
+  assert.equal(new Set(rows.map((row) => row.customer.id + '/' + row.pet.id)).size, 300);
+  assert.equal(new Set(rows.map((row) => row.customer.id)).size, 100);
+  assert.equal(pages, 3);
+  assert.equal(JSON.stringify(rows).includes('internalNote'), false);
+  const ownDirectory = await own('/workspace/pets');
+  assert.equal(ownDirectory.body.admin, false);
+  assert.equal(ownDirectory.body.customer.id, cid);
+  assert.equal(ownDirectory.body.items.length, 3);
+  assert.ok(ownDirectory.body.items.every((row) => row.customer.id === cid));
+  assert.equal((await own('/workspace/pets?customerId=' + otherCid)).status, 403);
+  const viewed = await adm('/workspace/pets?customerId=' + cid);
+  assert.equal(viewed.body.admin, true);
+  assert.equal(viewed.body.items.length, 3);
+  assert.equal(viewed.body.customer.id, cid);
+  await db.doc(`houses/${hid}/rooms/${rid}`).update({ internalNote: '[TEST] Never expose' });
+  await db.doc('bookings/' + bid).update({ internalNote: '[TEST] Never expose' });
+  assert.equal(JSON.stringify((await own('/bookings')).body).includes('internalNote'), false);
+  const catalog = await own('/workspace/locations');
+  assert.equal(catalog.status, 200);
+  assert.equal(catalog.body.items[0].house.address, '[TEST] Isolated address');
+  assert.equal(catalog.body.items[0].rooms.length, 2);
+  assert.equal(JSON.stringify(catalog.body).includes('internalNote'), false);
   await auth.setCustomUserClaims(admin.localId, {});
-  assert.equal((await adm('/customers')).status, 403); // Old token still says admin; server reads the current role.
+  assert.equal((await adm('/customers')).status, 403);
+  const reduced = await adm('/workspace/pets');
+  assert.equal(reduced.body.admin, false);
+  assert.equal(reduced.body.items.length, 0); // Old token still says admin; server reads the current role.
   await auth.updateUser(owner.localId, { disabled: true });
   assert.equal((await own('/bookings')).status, 401);
 });

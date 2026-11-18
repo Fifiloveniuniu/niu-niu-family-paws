@@ -567,6 +567,25 @@ test('persisted rooms require a configured house, audit retries and protect occu
   await db.doc('houses/' + missing).set({ name: '[TEST] Legacy', address: '' });
   await assert.rejects(store.save(missing, randomUUID(), input, 'admin'), PetInvalid);
   assert.equal((await db.doc('houseSchedules/' + hid).get()).data().revision, 3);
+  const independentHouse = randomUUID();
+  await houseStore(db).save(
+    independentHouse,
+    {
+      name: '[TEST] Independent',
+      address: '[TEST] Independent address',
+      timezone: 'UTC',
+      version: 0,
+    },
+    'admin',
+  );
+  const independent = await store.save(
+    independentHouse,
+    rid,
+    { name: '[TEST] Reused room identifier', capacity: 1, costs: { dog: 1 }, version: 0 },
+    'admin',
+  );
+  assert.equal(independent.houseId, independentHouse);
+  assert.equal(independent.capacity, 1);
 });
 
 test('boarding credits are atomic, per pet, audited and idempotent without implementing payments', async (t) => {

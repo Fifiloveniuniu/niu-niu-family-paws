@@ -5,6 +5,7 @@ import rateLimit from '@fastify/rate-limit';
 import spec from '../../../packages/contracts/openapi.json' with { type: 'json' };
 import type { components } from '../../../packages/contracts/generated.ts';
 import { petRoutes, PetAccess, PetMissing, PetInvalid, type PetStore } from './pets.ts';
+import { workspaceRoutes, type WorkspaceStore } from './workspace.ts';
 import {
   bookingRoutes,
   BookingConflict,
@@ -36,6 +37,7 @@ export function buildApp(deps: {
   rooms?: RoomStore;
   balances?: BalanceStore;
   bookings?: BookingStore;
+  workspace?: WorkspaceStore;
 }) {
   const app = Fastify({
     logger: false,
@@ -62,6 +64,7 @@ export function buildApp(deps: {
         if (identity.email_verified !== true) return reply.code(403).send({ code: 'forbidden' });
         (request as typeof request & { identity: Identity }).identity = identity;
       });
+      if (deps.workspace) workspaceRoutes(api, deps.workspace);
       if (deps.bookings) bookingRoutes(api, deps.bookings);
       if (deps.balances) balanceRoutes(api, deps.balances);
       if (deps.rooms) roomRoutes(api, deps.rooms);

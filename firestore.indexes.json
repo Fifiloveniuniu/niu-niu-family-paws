@@ -19,6 +19,82 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "occupancyFrom",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyThrough",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyFrom",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyThrough",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyFrom",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyThrough",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyFrom",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "occupancyThrough",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "customerId",
+          "order": "ASCENDING"
+        },
+        {
           "fieldPath": "petId",
           "order": "ASCENDING"
         },
@@ -33,83 +109,15 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "houseId",
+          "order": "ASCENDING"
+        },
+        {
           "fieldPath": "roomId",
           "order": "ASCENDING"
         },
         {
           "fieldPath": "status",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "bookings",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "occupancyFrom",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyThrough",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "bookings",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyFrom",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyThrough",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "bookings",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "customerId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyFrom",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyThrough",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "bookings",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "customerId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyFrom",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "occupancyThrough",
           "order": "ASCENDING"
         }
       ]
