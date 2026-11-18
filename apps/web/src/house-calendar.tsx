@@ -965,12 +965,6 @@ export default function HouseCalendar({
                   </span>
                 </div>
               </section>
-              <p className="hc-foot">
-                {translate(
-                  'Select a stay for details. Dates are planned; check-in status shows actual presence.',
-                  '点击托管条查看详情。日期为计划时间，入住状态表示实际在店情况。',
-                )}
-              </p>
               <CalendarPhotoStatus />
             </div>
             {assignment !== false && (
