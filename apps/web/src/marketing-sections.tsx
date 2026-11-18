@@ -182,7 +182,6 @@ export function StayPlanning() {
           {t('planningLink')} <span aria-hidden="true">↗</span>
         </a>
       </div>
-      <span className="planning-rule" data-scroll-object="line" aria-hidden="true" />
     </section>
   );
 }
