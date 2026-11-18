@@ -35,7 +35,9 @@ export function MarketingHeader({
   page,
   onLanguageChange,
   account,
+  showNavigation = true,
 }: {
+  showNavigation?: boolean;
   account?: ReactNode;
   page: string;
   onLanguageChange: (language: 'en' | 'zh') => void;
@@ -141,6 +143,7 @@ export function MarketingHeader({
     <header
       ref={header}
       className="marketing-header"
+      data-app-header={!showNavigation || undefined}
       data-menu-open={open || undefined}
       onClick={(event) => {
         if ((event.target as Element).closest('a')) {
@@ -169,33 +172,35 @@ export function MarketingHeader({
         <span aria-hidden="true">{open ? '×' : '☰'}</span>
       </button>
       <div id="marketing-menu" className="marketing-menu">
-        <nav aria-label={zh ? '主导航' : 'Main navigation'}>
-          {link('/home/', t('home'), 'home')}
-          {submenu('services', '/services/', t('services'), [
-            ['/services/#daycare', t('day')],
-            ['/services/#boarding', t('night')],
-            ['/services/#drop-in', zh ? '上门照护' : 'Drop-in visits'],
-            ['/services/#dog-walking', zh ? '遛狗服务' : 'Dog walking'],
-            ['/services/#grooming', zh ? '宠物美容' : 'Pet grooming'],
-            ['/academy/', zh ? '美容师成长课堂' : 'Grooming Academy'],
-          ])}
-          {submenu('spaces', '/spaces/', zh ? '我们的小天地' : 'Our Spaces', [
-            ['/spaces/#care-homes', zh ? '照护家庭' : 'Our care homes'],
-            ['/spaces/#grooming-shop', zh ? '美容店与设备' : 'Grooming shop & equipment'],
-            ['/spaces/#space-gallery', zh ? '空间图集' : 'Space gallery'],
-          ])}
-          {submenu('about', '/about/', t('approach'), [
-            ['/about/#care-approach', zh ? '我们的照护理念' : 'Our approach'],
-            ['/about/#family-stories', zh ? '家长们的暖心分享' : 'Family stories'],
-          ])}
-          {submenu('pricing', '/pricing/', zh ? '价格' : 'Pricing', [
-            ['/pricing/#service-prices', zh ? '服务价格' : 'Service prices'],
-            ['/pricing/#boarding-packages', zh ? '寄养套餐' : 'Boarding packages'],
-            ['/pricing/#cancellation-policy', zh ? '取消政策' : 'Cancellation policy'],
-          ])}
-          {link('/faqs/', t('questions'), 'faqs')}
-          {link('/contact/', t('contact'), 'contact')}
-        </nav>
+        {showNavigation && (
+          <nav aria-label={zh ? '主导航' : 'Main navigation'}>
+            {link('/home/', t('home'), 'home')}
+            {submenu('services', '/services/', t('services'), [
+              ['/services/#daycare', t('day')],
+              ['/services/#boarding', t('night')],
+              ['/services/#drop-in', zh ? '上门照护' : 'Drop-in visits'],
+              ['/services/#dog-walking', zh ? '遛狗服务' : 'Dog walking'],
+              ['/services/#grooming', zh ? '宠物美容' : 'Pet grooming'],
+              ['/academy/', zh ? '美容师成长课堂' : 'Grooming Academy'],
+            ])}
+            {submenu('spaces', '/spaces/', zh ? '我们的小天地' : 'Our Spaces', [
+              ['/spaces/#care-homes', zh ? '照护家庭' : 'Our care homes'],
+              ['/spaces/#grooming-shop', zh ? '美容店与设备' : 'Grooming shop & equipment'],
+              ['/spaces/#space-gallery', zh ? '空间图集' : 'Space gallery'],
+            ])}
+            {submenu('about', '/about/', t('approach'), [
+              ['/about/#care-approach', zh ? '我们的照护理念' : 'Our approach'],
+              ['/about/#family-stories', zh ? '家长们的暖心分享' : 'Family stories'],
+            ])}
+            {submenu('pricing', '/pricing/', zh ? '价格' : 'Pricing', [
+              ['/pricing/#service-prices', zh ? '服务价格' : 'Service prices'],
+              ['/pricing/#boarding-packages', zh ? '寄养套餐' : 'Boarding packages'],
+              ['/pricing/#cancellation-policy', zh ? '取消政策' : 'Cancellation policy'],
+            ])}
+            {link('/faqs/', t('questions'), 'faqs')}
+            {link('/contact/', t('contact'), 'contact')}
+          </nav>
+        )}
         <div className="header-actions">
           <MarketingLanguageMenu onChange={onLanguageChange} />
           {account ?? <SiteAccountLink />}
