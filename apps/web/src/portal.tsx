@@ -315,6 +315,7 @@ export default function Portal({
   return (
     <>
       <MarketingHeader
+        showNavigation={false}
         page="app"
         onLanguageChange={onLanguageChange}
         account={user ? accountControls : undefined}

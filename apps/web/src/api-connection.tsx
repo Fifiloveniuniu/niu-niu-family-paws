@@ -64,7 +64,7 @@ export default function ApiConnection({
     <>
       {status !== 'ready' && (
         <>
-          <MarketingHeader page="app" onLanguageChange={onLanguageChange} />
+          <MarketingHeader showNavigation={false} page="app" onLanguageChange={onLanguageChange} />
           <main className="portal">
             <section className="portal-card" role={status === 'offline' ? 'alert' : 'status'}>
               <h1>
