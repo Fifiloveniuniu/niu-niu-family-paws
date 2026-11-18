@@ -279,10 +279,7 @@ export default function AssignmentDialog({
         </ol>
         <UnsavedChanges active={dirty} />
         <p className="hc-wizard-caption">
-          {translate(
-            'Local preview · Times shown in your browser’s time zone.',
-            '本地预览 · 时间按浏览器当地时区显示。',
-          )}
+          {translate('Times shown in your browser’s time zone.', '时间按浏览器当地时区显示。')}
         </p>
         <section
           className="hc-wizard-step"
@@ -656,8 +653,8 @@ export default function AssignmentDialog({
             <h3>{translate('Everything ready for their stay?', '托管安排确认好了吗？')}</h3>
             <p>
               {translate(
-                'Review the details before adding this stay to the preview calendar.',
-                '添加到预览日历前，请核对以下详情。',
+                'Review the details before adding this stay to the calendar.',
+                '添加到日历前，请核对以下详情。',
               )}
             </p>
           </div>
@@ -736,8 +733,8 @@ export default function AssignmentDialog({
           </div>
           <p className="hc-review-note">
             {translate(
-              'Preview only. This does not create a paid booking or record a check-in.',
-              '仅供预览，不创建付费预约或记录入住。',
+              'This does not create a paid booking or record a check-in.',
+              '不创建付费预约或记录入住。',
             )}
           </p>
         </section>
@@ -769,7 +766,7 @@ export default function AssignmentDialog({
               ? translate('Choose a room', '选择房间')
               : step === 2
                 ? translate('Review stay', '确认托管')
-                : translate('Add to preview', '添加到预览')}{' '}
+                : translate('Add to calendar', '添加到日历')}{' '}
             <span aria-hidden="true">{step === 3 ? '✓' : '→'}</span>
           </button>
         </div>

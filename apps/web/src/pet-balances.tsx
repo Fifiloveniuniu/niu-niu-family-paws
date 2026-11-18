@@ -442,8 +442,8 @@ export default function PetBalances({
 
           <p className="hc-balance-preview">
             {translate(
-              'Planning preview · No payments, deductions or reservations are saved.',
-              '规划预览 · 不保存付款、扣减或预留记录。',
+              'No payments, deductions or reservations are saved.',
+              '不保存付款、扣减或预留记录。',
             )}
           </p>
           {(!editing || embedded) && (
@@ -501,7 +501,7 @@ export default function PetBalances({
                         </strong>
                         <small>
                           {new Date(entry.at).toLocaleString(isChinese ? 'zh-CN' : 'en-US')} ·{' '}
-                          {translate('Preview adjustment', '预览调整')}
+                          {translate('Adjustment', '调整')}
                         </small>
                       </div>
                       <small>
