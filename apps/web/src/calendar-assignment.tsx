@@ -8,7 +8,7 @@ import { PetProfileAvatar } from './calendar-pet-photos';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import {
   balanceKey,
-  validatePetCoverage,
+  plannedDays,
   type PetBalance,
   type BalanceService,
   type PlannedCoverage,
@@ -55,9 +55,7 @@ export default function AssignmentDialog({
   const [end, setEnd] = React.useState('');
   const [house, setHouse] = React.useState(initial ? String(initial.house) : '');
   const [room, setRoom] = React.useState(initial ? String(initial.room) : '');
-  const [override, setOverride] = React.useState('');
   const service: BalanceService = 'boarding';
-  const [requiredDays, setRequiredDays] = React.useState('');
   const [step, setStep] = React.useState(1);
   const [week, setWeek] = React.useState(0);
   const [feedback, setFeedback] = React.useState('');
@@ -85,7 +83,7 @@ export default function AssignmentDialog({
           candidateHouse.id,
           candidateRoom.id,
           Number(candidateRoom.capacity),
-          Number(override || candidateRoom.costs?.[selected!.species]),
+          Number(candidateRoom.costs?.[selected!.species]),
         );
   const reasons: Record<Exclude<PlacementIssue, null>, string> = {
     dates: translate('Choose a pet and valid times first', '请先选择宠物和有效时间'),
@@ -104,31 +102,9 @@ export default function AssignmentDialog({
     unconfigured: translate('Setup needed', '需要配置'),
     overdue: translate('Pickup overdue', '接回逾期'),
   };
-  const dayCount = Number(requiredDays);
-  const detailsValid = valid && !!service && Number.isSafeInteger(dayCount) && dayCount > 0;
-  const account = service ? balances[balanceKey(pet, service)] : undefined;
-  const coverage = service
-    ? validatePetCoverage(
-        account,
-        pet,
-        service,
-        dayCount,
-        start.slice(0, 10),
-        end.slice(0, 10),
-        balancePlans,
-      )
-    : { code: 'missing', available: 0, after: 0 };
-  const coverageMessages: Record<string, string> = {
-    ok: translate('Balance covers this stay', '余额可覆盖本次托管'),
-    missing: translate('Add boarding balance for this pet', '请增加此宠物的寄养余额'),
-    required: translate('Enter staff-reviewed required days', '请填写人工核对的所需天数'),
-    dates: translate('Check the stay dates', '请检查托管日期'),
-    coverage: translate(
-      'Stay is outside the reviewed coverage dates',
-      '托管日期不在已核对的覆盖日期内',
-    ),
-    insufficient: translate('Not enough days for this stay', '可用天数不足以覆盖本次托管'),
-  };
+  const detailsValid = valid && !!service;
+  const account = balances[balanceKey(pet, service)];
+  const availableDays = account ? account.days - plannedDays(balancePlans, pet, service) : null;
   const chosenHouse = houses.find((candidateHouse) => String(candidateHouse.id) === house);
   const chosenRoom = chosenHouse?.rooms.find((candidateRoom) => String(candidateRoom.id) === room);
   const problem = chosenHouse && chosenRoom ? roomIssue(chosenHouse, chosenRoom) : 'dates';
@@ -183,7 +159,7 @@ export default function AssignmentDialog({
       candidateHouse.id,
       candidateRoom.id,
       Number(candidateRoom.capacity),
-      Number(override || candidateRoom.costs?.[selected!.species]),
+      Number(candidateRoom.costs?.[selected!.species]),
     );
     if (reason) {
       setFeedback(reasons[reason]);
@@ -239,15 +215,7 @@ export default function AssignmentDialog({
             if (chosenRoom && !problem) setStep(3);
             return;
           }
-          if (
-            !selected ||
-            !chosenHouse ||
-            !chosenRoom ||
-            problem ||
-            !service ||
-            coverage.code !== 'ok'
-          )
-            return;
+          if (!selected || !chosenHouse || !chosenRoom || problem || !service) return;
           onApply({
             id: crypto.randomUUID(),
             name: pet,
@@ -257,8 +225,7 @@ export default function AssignmentDialog({
             start: begin,
             end: finish,
             status: 'upcoming',
-            units: Number(override || chosenRoom.costs?.[selected.species]),
-            coverage: { service, days: dayCount },
+            units: Number(chosenRoom.costs?.[selected.species]),
           });
         }}
       >
@@ -346,29 +313,6 @@ export default function AssignmentDialog({
               />
             </label>
           </div>
-          <div className="hc-time-fields">
-            <label>
-              {translate('Required days', '所需天数')}
-              <input
-                type="number"
-                required
-                min="1"
-                step="1"
-                value={requiredDays}
-                placeholder={translate('Enter reviewed days', '填写已核对天数')}
-                onChange={(event) => {
-                  setRequiredDays(event.target.value);
-                  setDirty(true);
-                }}
-              />
-            </label>
-          </div>
-          <p className="hc-manual-days-note">
-            {translate(
-              'Enter the days reviewed by staff. Automatic day counting is awaiting your business rule.',
-              '请填写员工核对的天数，自动天数计算需先确定业务规则。',
-            )}
-          </p>
           {end && finish <= begin && (
             <p className="hc-range-feedback" role="alert">
               {translate('Pickup must be after arrival.', '接回时间必须晚于到店时间。')}
@@ -462,7 +406,7 @@ export default function AssignmentDialog({
                             candidateHouse.id,
                             candidateRoom.id,
                             Number(candidateRoom.capacity),
-                            Number(override || candidateRoom.costs?.[selected.species]),
+                            Number(candidateRoom.costs?.[selected.species]),
                           )
                         : [];
                       const problem = roomIssue(candidateHouse, candidateRoom);
@@ -571,74 +515,6 @@ export default function AssignmentDialog({
               </p>
             )}
           </section>
-          <details className="hc-placement-options">
-            <summary>
-              {translate('Capacity override & manual selection', '容量覆盖值与手动选择')}
-            </summary>
-            <label>
-              {translate('Pet capacity override (optional)', '宠物容量覆盖值（选填）')}
-              <input
-                type="number"
-                min="0.01"
-                step="0.01"
-                value={override}
-                placeholder={translate('Use room pet-type rule', '使用房间宠物种类规则')}
-                onChange={(event) => {
-                  setOverride(event.target.value);
-                  invalidate();
-                }}
-              />
-            </label>
-            <label>
-              {translate('House', '房屋')}
-              <CustomSelect
-                aria-label={translate('House', '房屋')}
-                value={house}
-                onChange={(event) => {
-                  setHouse(event.target.value);
-                  setRoom('');
-                  setDirty(true);
-                }}
-              >
-                <option value="">{translate('Select an available house', '选择可用房屋')}</option>
-                {houses.map((candidateHouse) => {
-                  const available =
-                    valid &&
-                    candidateHouse.rooms.some(
-                      (candidateRoom) => !roomIssue(candidateHouse, candidateRoom),
-                    );
-                  return (
-                    <option key={candidateHouse.id} value={candidateHouse.id} disabled={!available}>
-                      {candidateHouse.name}
-                      {!available ? ' · ' + translate('No suitable rooms', '无合适房间') : ''}
-                    </option>
-                  );
-                })}
-              </CustomSelect>
-            </label>
-            <label>
-              {translate('Room', '房间')}
-              <CustomSelect
-                aria-label={translate('Room', '房间')}
-                value={room}
-                onChange={(event) => {
-                  setRoom(event.target.value);
-                  setDirty(true);
-                }}
-              >
-                <option value="">{translate('Select an available room', '选择可用房间')}</option>
-                {chosenHouse?.rooms.map((candidateRoom) => {
-                  const reason = roomIssue(chosenHouse, candidateRoom);
-                  return (
-                    <option key={candidateRoom.id} value={candidateRoom.id} disabled={!!reason}>
-                      {candidateRoom.name}
-                      {reason ? ' · ' + reasons[reason] : ''}
-                    </option>
-                  );
-                })}
-              </CustomSelect>
-            </label>
-          </details>
           {valid && chosenRoom && problem && (
             <p className="hc-setup-note" role="alert">
               {reasons[problem]}
@@ -692,34 +568,28 @@ export default function AssignmentDialog({
               </div>
             </dl>
           </div>
-          <div
-            className={'hc-coverage-card ' + (coverage.code === 'ok' ? 'covered' : 'needs-review')}
-            aria-live="polite"
-          >
+          <div className="hc-coverage-card needs-review" aria-live="polite">
             <div>
-              <span>{coverage.code === 'ok' ? '✓' : '!'}</span>
-              <h4>{coverageMessages[coverage.code]}</h4>
+              <h4>{translate('Boarding balance', '寄养余额')}</h4>
             </div>
             <dl>
               <div>
                 <dt>{translate('Available to plan', '可计划天数')}</dt>
-                <dd>{account ? coverage.available : '—'}</dd>
+                <dd>{availableDays ?? 'N/A'}</dd>
               </div>
               <div>
                 <dt>{translate('This stay', '本次托管')}</dt>
-                <dd>
-                  {dayCount} {translate('days', '天')}
-                </dd>
+                <dd>N/A</dd>
               </div>
               <div>
                 <dt>{translate('After planning', '计划后剩余')}</dt>
-                <dd>{account ? coverage.after : '—'}</dd>
+                <dd>N/A</dd>
               </div>
             </dl>
             <button
               className="hc-text-button"
               type="button"
-              onClick={() => onManageBalance(pet, service as BalanceService)}
+              onClick={() => onManageBalance(pet, service)}
             >
               {account
                 ? translate('Manage pet balance', '管理宠物余额')
@@ -727,8 +597,8 @@ export default function AssignmentDialog({
             </button>
             <p>
               {translate(
-                'Planning validation only. No days are deducted or reserved.',
-                '仅进行规划验证，不扣减或预留天数。',
+                'Day usage awaits the billing rule. Saving this schedule does not deduct or reserve balance days.',
+                '使用天数待计费规则确定后计算。保存此安排不会扣减或预留余额天数。',
               )}
             </p>
           </div>
@@ -760,7 +630,7 @@ export default function AssignmentDialog({
                 ? !detailsValid
                 : step === 2
                   ? !chosenRoom || !!problem
-                  : !chosenRoom || !!problem || coverage.code !== 'ok'
+                  : !chosenRoom || !!problem
             }
           >
             {step === 1
