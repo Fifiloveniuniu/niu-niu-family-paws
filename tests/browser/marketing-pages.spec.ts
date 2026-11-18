@@ -50,7 +50,7 @@ test('mobile menu, service submenu, policy alias and service links navigate corr
   await page.goto('/home/');
   const toggle = page.getByRole('button', { name: 'Menu' });
   await toggle.click();
-  await expect(page.getByRole('button', { name: 'Show services' })).toHaveCount(0);
+  await page.locator('.nav-submenu-toggle[aria-controls=service-menu]').click();
   await page.locator('#service-menu a[href="/academy/"]').click();
   await expect(page).toHaveURL(/\/academy\/$/);
   await expect(page.locator('#marketing-menu')).toBeHidden();
@@ -107,7 +107,7 @@ test('desktop navigation opens dropdowns on hover and keyboard focus without ext
       .first();
     const trigger = group.locator(':scope > a');
     const submenu = group.locator('.nav-submenu');
-    await expect(group.locator('button')).toHaveCount(0);
+    await expect(group.locator('button')).toBeHidden();
     await trigger.hover();
     await expect(submenu).toBeVisible();
     await submenu.locator('a').first().hover();
@@ -135,6 +135,7 @@ test('phone navigation exposes submenu links without hover and footer keeps bott
   await page.goto('/home/?preview=sample');
   await expect(page.locator('.marketing-preview-notice')).toHaveCount(0);
   await page.locator('.marketing-menu-toggle').click();
+  await page.locator('.nav-submenu-toggle[aria-controls=spaces-menu]').click();
   await expect(page.locator('#spaces-menu')).toBeVisible();
   await page.locator('#spaces-menu a[href="/spaces/#grooming-shop"]').click();
   await expect(page.locator('#grooming-shop')).toBeInViewport();

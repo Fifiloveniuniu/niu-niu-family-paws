@@ -1003,13 +1003,14 @@ test('progress controls stay visible for every chapter or hidden for the whole s
   await page.goto('/home/');
   for (const [width, height] of [
     [390, 844],
+    [390, 740],
     [1440, 809],
     [760, 810],
     [1440, 950],
     [844, 390],
   ]) {
     await page.setViewportSize({ width, height });
-    const enabled = height >= 810;
+    const enabled = height >= (width <= 760 ? 680 : 810);
     await expect(page.locator('[data-cinema-enabled]')).toHaveCount(enabled ? 1 : 0);
     for (let chapter = 0; chapter < 9; chapter++) {
       await page.evaluate(
@@ -1110,6 +1111,7 @@ test('Experience pets arrive at their settled places and gather on departure, re
     await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
     expect(await sample()).toEqual(settled);
     await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect.poll(async () => (await sample()).transforms).toEqual(['none', 'none', 'none']);
     const staticPose = await sample();
     await page.mouse.wheel(0, 250);
     await page.waitForTimeout(80);

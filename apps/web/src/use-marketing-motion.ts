@@ -18,10 +18,13 @@ export default function useMarketingMotion(
     // Use the same stable viewport as the stage so all chapters keep one layout mode.
     const viewportProbe = document.createElement('div');
     viewportProbe.style.cssText =
-      'position:fixed;height:100svh;width:0;visibility:hidden;pointer-events:none';
+      'position:fixed;height:100svh;width:100vw;visibility:hidden;pointer-events:none';
     viewportProbe.setAttribute('aria-hidden', 'true');
     element.append(viewportProbe);
-    let cinematicViewport = viewportProbe.getBoundingClientRect().height >= 810;
+    const canUseStory = () =>
+      viewportProbe.getBoundingClientRect().height >=
+      (matchMedia('(max-width: 760px)').matches ? 680 : 810);
+    let cinematicViewport = canUseStory();
     let dispose = () => {};
     const welcome: Animation[] = [];
     if (!preference.matches && !cinematicViewport && !location.hash && scrollY < 8) {
@@ -152,7 +155,7 @@ export default function useMarketingMotion(
     configure();
     preference.addEventListener('change', configure);
     const viewportResize = new ResizeObserver(() => {
-      const enabled = viewportProbe.getBoundingClientRect().height >= 810;
+      const enabled = canUseStory();
       if (enabled === cinematicViewport) return;
       cinematicViewport = enabled;
       configure();

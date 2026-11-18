@@ -333,3 +333,10 @@ On desktop, hover over Services, Our Spaces, About us or Pricing to see their se
 Each pet now sits next to its own numbered introduction on phones and above it on desktop. The footer keeps the brand and copyright; use the navbar and its menus for navigation. Phone numbers have matching sizes, and background reveals wait for the chapter's halfway entry point.
 
 手机上，每只宠物都与对应的编号介绍放在一起；电脑上则在对应介绍上方。页脚保留品牌和版权信息，页面导航统一使用顶部菜单。手机数字字号已统一，背景在章节进入一半后开始展开。
+
+
+## Marketing polish — local preview, 2026-11-17
+
+Open http://localhost:4180/home/ to review the updated site. On phones, Menu has compact navigation and small arrows for section links. Language options float above the menu without moving Sign in. Sign in opens a popup over your current page; Continue with Google opens the secure Google window. Your supplied grooming and washing photographs replace the sample images. The photos are larger, each caption sits beside its photo, and standard portrait phones share the desktop scroll story. The footer has balanced spacing and the same warm colors and lettering as the rest of the site. Reduced Motion remains available. This is locally complete, awaiting the final combined hosted release.
+
+打开 http://localhost:4180/home/ 查看本地更新。手机菜单更紧凑，小箭头可展开分区链接；语言选项浮在菜单上方，不会把登录按钮往下推。点击登录会在当前页面打开弹窗，再点击 Google 登录即可进入安全登录窗口。您提供的美容与洗护照片已替换示例图片，手机照片更大，说明文字与各自的照片并排对齐。常见竖屏手机保留与电脑相同的滚动故事动画；减少动态效果选项仍然有效。页脚的留白、暖色和字体与整站保持一致。目前为本地更新，等待最后统一发布。

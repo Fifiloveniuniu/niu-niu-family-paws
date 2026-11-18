@@ -20,7 +20,10 @@ export default function MarketingLanguageMenu({
     return () => document.removeEventListener('pointerdown', close);
   }, []);
   useEffect(() => {
-    if (open) root.current?.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus();
+    if (open)
+      root.current
+        ?.querySelector<HTMLButtonElement>('[aria-checked="true"]')
+        ?.focus({ preventScroll: true });
   }, [open]);
   return (
     <div
@@ -33,7 +36,7 @@ export default function MarketingLanguageMenu({
         if (event.key === 'Escape' && open) {
           event.stopPropagation();
           setOpen(false);
-          trigger.current?.focus();
+          trigger.current?.focus({ preventScroll: true });
         }
         if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
           event.preventDefault();
@@ -48,7 +51,7 @@ export default function MarketingLanguageMenu({
               : event.key === 'End'
                 ? items.length - 1
                 : (index + (event.key === 'ArrowUp' ? -1 : 1) + items.length) % items.length;
-          items[next]?.focus();
+          items[next]?.focus({ preventScroll: true });
         }
       }}
     >
@@ -59,7 +62,11 @@ export default function MarketingLanguageMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={id}
-        onClick={() => setOpen(!open)}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => {
+          trigger.current?.focus({ preventScroll: true });
+          setOpen(!open);
+        }}
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="9" />
@@ -87,7 +94,7 @@ export default function MarketingLanguageMenu({
               onClick={() => {
                 onChange(value);
                 setOpen(false);
-                trigger.current?.focus();
+                trigger.current?.focus({ preventScroll: true });
               }}
             >
               {label}
