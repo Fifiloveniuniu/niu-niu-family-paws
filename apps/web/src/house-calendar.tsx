@@ -430,7 +430,7 @@ export default function HouseCalendar({
               )}
             </div>
 
-            <div hidden={view !== 'calendar'}>
+            <div className="hc-calendar-workspace" hidden={view !== 'calendar'}>
               {parsed.bookingId && !stays.some((stay) => stay.id === parsed.bookingId) && (
                 <p role="alert">{translate('Booking not found.', '未找到该预约。')}</p>
               )}

@@ -1,3 +1,7 @@
+## Calendar readability — local, 2026-11-18
+
+Increased name/date weight and size, set supporting schedule text to12px or more, darkened status/booking/filter/legend text and enlarged phone filter inputs to16px. Wider sticky labels and centered booking bars preserve50px rows and single dividers. Scoped to calendar workspace. Production build/typecheck, formatting and16 bilingual390/1440 checks across day/week/month/year passed; actual localhost Chrome reviewed and desktop/Chinese phone images inspected. Screenshots calendar-readable-{desktop,phone-zh}.png. PR117 merged. No deployment.
+
 ## Single vertical calendar lines — local, 2026-11-18
 
 Removed sticky-label right borders where timeline grid lines already supply the separator, and removed the redundant date-axis background gradient while preserving its tick borders. Local Chrome390/1440 checks confirm one border owner, visible1px date separators and no overflow. Formatting passed. PR116 merged; no deployment.
