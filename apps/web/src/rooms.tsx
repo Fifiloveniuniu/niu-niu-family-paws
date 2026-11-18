@@ -12,9 +12,11 @@ type RoomWrite = components['schemas']['RoomWrite'];
 export default function Rooms({
   houseId,
   addressReady,
+  onChanged,
 }: {
   houseId: string;
   addressReady: boolean;
+  onChanged?: () => void;
 }) {
   const { i18n } = useTranslation();
   const [rooms, setRooms] = React.useState<Room[]>([]);
@@ -96,6 +98,7 @@ export default function Rooms({
       );
       setEditor(null);
       setUncertain(false);
+      onChanged?.();
     } catch (error) {
       if (current === generation.current) {
         report(error);

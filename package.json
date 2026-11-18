@@ -19,7 +19,8 @@
     "dev:local:emulators": "firebase emulators:start --only auth,firestore --project demo-niu-niu --config firebase.test.json",
     "seed:local:photos": "GCLOUD_PROJECT=demo-niu-niu FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8085 node scripts/seed-local-photo-pets.mjs",
     "format": "prettier --write \"apps/**/*.{ts,tsx,css}\" \"scripts/*.mjs\" \"tests/**/*.{ts,mjs}\" \"*.{json,ts}\"",
-    "format:check": "prettier --check \"apps/**/*.{ts,tsx,css}\" \"scripts/*.mjs\" \"tests/**/*.{ts,mjs}\" \"*.{json,ts}\""
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,css}\" \"scripts/*.mjs\" \"tests/**/*.{ts,mjs}\" \"*.{json,ts}\"",
+    "test:backend-browser": "firebase emulators:exec --only auth,firestore --project demo-niu-niu --config firebase.test.json \"playwright test --config playwright.backend.config.ts\""
   },
   "dependencies": {
     "@fastify/rate-limit": "^11.2.1",

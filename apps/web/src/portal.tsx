@@ -17,6 +17,7 @@ import { auth } from './auth-client';
 import Customers from './customers';
 import Houses from './houses';
 const HouseCalendar = React.lazy(() => import('./house-calendar'));
+const SavedWorkspace = React.lazy(() => import('./saved-workspace'));
 import './workspace.css';
 import Profile from './profile';
 import { MarketingHeader } from './marketing-shell';
@@ -115,7 +116,11 @@ export default function Portal({
   React.useEffect(() => {
     if (currentRoute().kind === 'login' && ['admin', 'customer', 'employee'].includes(access)) {
       const target = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
-      navigate(target || (access === 'admin' ? '/app/calendar/' : '/app/account/profile/'), true);
+      navigate(
+        target ||
+          (['admin', 'customer'].includes(access) ? '/app/calendar/' : '/app/account/profile/'),
+        true,
+      );
     }
   }, [access]);
   const [formEpoch, setFormEpoch] = React.useState(0);
@@ -124,11 +129,7 @@ export default function Portal({
   }, [active]);
   const route = currentRoute();
   React.useEffect(() => {
-    if (
-      active &&
-      ['customer', 'employee'].includes(access) &&
-      !['login', 'personal'].includes(route.kind)
-    )
+    if (active && access === 'employee' && !['login', 'personal'].includes(route.kind))
       navigate('/app/account/profile/', true);
   }, [access, route.path, active]);
   React.useEffect(() => {
@@ -158,7 +159,8 @@ export default function Portal({
     previewIdentity.current.adminUid = null;
   }
   if (access === 'admin') previewIdentity.current.adminUid = user?.uid || null;
-  const previewRoute = import.meta.env.DEV && currentRoute().kind !== 'login';
+  const previewRoute =
+    import.meta.env.DEV && access === 'signed-out' && currentRoute().kind !== 'login';
   const [accountOpen, setAccountOpen] = useDropdownState(false);
   React.useEffect(() => {
     const outside = (event: PointerEvent) => {
@@ -202,24 +204,15 @@ export default function Portal({
     </details>
   );
 
-  if (import.meta.env.DEV && access === 'admin')
+  if (user && (access === 'admin' || access === 'customer'))
     return (
-      <HouseCalendar
-        identityEpoch={previewIdentity.current.epoch}
+      <SavedWorkspace
+        key={user.uid + '-' + previewIdentity.current.epoch}
+        identityKey={user.uid + '-' + previewIdentity.current.epoch}
+        initialAdmin={access === 'admin'}
+        active={active}
         onLanguageChange={onLanguageChange}
         account={accountControls}
-        customers={
-          <div className="portal-admin">
-            <Customers key={formEpoch} refreshKey={directoryRefresh} />
-          </div>
-        }
-        personal={
-          <Profile
-            key={formEpoch}
-            showPets={false}
-            onSaved={() => setDirectoryRefresh((value) => value + 1)}
-          />
-        }
       />
     );
   if (previewRoute)

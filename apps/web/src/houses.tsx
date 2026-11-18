@@ -20,9 +20,11 @@ function houseRequest<T>(path = '', body?: HouseWrite) {
 export default function Houses({
   initialSelected = '',
   routable = false,
+  onChanged,
 }: {
   initialSelected?: string;
   routable?: boolean;
+  onChanged?: () => void;
 }) {
   const { i18n } = useTranslation();
   const labels = uiValue('ui.houses.labels', i18n.language);
@@ -117,6 +119,7 @@ export default function Houses({
       setEditor(null);
       setUncertain(false);
       setSaved(true);
+      onChanged?.();
     } catch (error) {
       if (alive.current) {
         report(error);
@@ -190,7 +193,11 @@ export default function Houses({
                 <p>
                   {labels.timezone}: {house.timezone}
                 </p>
-                <Rooms houseId={house.id} addressReady={!!house.address?.trim()} />
+                <Rooms
+                  houseId={house.id}
+                  addressReady={!!house.address?.trim()}
+                  onChanged={onChanged}
+                />
               </div>
               <button
                 className="icon-button"

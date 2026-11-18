@@ -20,8 +20,9 @@ export default function useRoute(language: string, initialPath = '/') {
       const target = parseRoute(nextUrl);
       if (
         retainWorkspaceDrafts &&
-        target.customerId &&
-        target.customerId !== parseRoute(previousUrl).customerId &&
+        ((target.customerId && target.customerId !== parseRoute(previousUrl).customerId) ||
+          new URL(nextUrl, location.origin).searchParams.get('asCustomer') !==
+            new URL(previousUrl, location.origin).searchParams.get('asCustomer')) &&
         !confirmDiscardChanges(language, document.querySelector('[data-customer-workspace]'))
       )
         return false;

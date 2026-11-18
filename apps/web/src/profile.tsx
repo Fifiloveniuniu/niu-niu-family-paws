@@ -27,9 +27,11 @@ function profileRequest(input?: ProfileWrite): Promise<Customer | null> {
 export default function Profile({
   onSaved,
   showPets = true,
+  showHeading = true,
 }: {
   onSaved: () => void;
   showPets?: boolean;
+  showHeading?: boolean;
 }) {
   const { i18n } = useTranslation();
   const labels = uiValue('ui.profile.labels', i18n.language);
@@ -125,7 +127,13 @@ export default function Profile({
       aria-labelledby="profile-title"
       aria-busy={loading || saving}
     >
-      <h1 id="profile-title">{labels.title}</h1>
+      {showHeading ? (
+        <h1 id="profile-title">{labels.title}</h1>
+      ) : (
+        <span id="profile-title" className="sr-only">
+          {labels.title}
+        </span>
+      )}
       <p>{labels.intro}</p>
       {loading && <p role="status">{labels.loading}</p>}
       {error && <p role="alert">{labels[error]}</p>}

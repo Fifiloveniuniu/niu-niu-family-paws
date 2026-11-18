@@ -1,8 +1,14 @@
 import { auth } from './auth-client';
 
 export class ApiError extends Error {
-  constructor(public status: number) {
+  status: number;
+  code: string;
+  issue: string;
+  constructor(status: number, code = '', issue = '') {
     super('API request failed');
+    this.status = status;
+    this.code = code;
+    this.issue = issue;
   }
 }
 
@@ -30,7 +36,20 @@ export async function apiResponse(
     },
     ...(hasBody ? { body: JSON.stringify(options.body) } : {}),
   });
-  if (!response.ok) throw new ApiError(response.status);
+  if (!response.ok) {
+    let payload: { code?: unknown; issue?: unknown } = {};
+    try {
+      const value = await response.json();
+      if (value && typeof value === 'object') payload = value;
+    } catch {
+      /* Error pages may not be JSON. */
+    }
+    throw new ApiError(
+      response.status,
+      typeof payload.code === 'string' ? payload.code : '',
+      typeof payload.issue === 'string' ? payload.issue : '',
+    );
+  }
   return response;
 }
 
