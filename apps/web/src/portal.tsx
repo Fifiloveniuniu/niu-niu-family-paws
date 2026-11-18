@@ -220,24 +220,15 @@ export default function Portal({
       <HouseCalendar
         identityEpoch={previewIdentity.current.epoch}
         onLanguageChange={onLanguageChange}
-        personal={
-          user && (access === 'customer' || access === 'employee') ? (
-            <Profile key={formEpoch} onSaved={() => setDirectoryRefresh((value) => value + 1)} />
-          ) : undefined
-        }
         account={
-          ['customer', 'employee'].includes(access) ? (
-            accountControls
-          ) : (
-            <a
-              className="hc-back"
-              href={
-                '/app/sign-in/?returnTo=' + encodeURIComponent(location.pathname + location.search)
-              }
-            >
-              {uiText('ui.portal.signIn')}
-            </a>
-          )
+          <a
+            className="hc-back"
+            href={
+              '/app/sign-in/?returnTo=' + encodeURIComponent(location.pathname + location.search)
+            }
+          >
+            {uiText('ui.portal.signIn')}
+          </a>
         }
         customers={
           <section>
