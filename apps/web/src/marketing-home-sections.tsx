@@ -1,64 +1,80 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { easeOutExpo } from './marketing-easing';
+import { marketingPreview } from './marketing-preview';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePublicMarketingContent, type StatKey } from './public-marketing-content';
 import { StoryQuotes } from './marketing-galleries';
 import { ServiceSymbol } from './marketing-pages';
 function CountUp({ value }: { value?: number }) {
   const element = useRef<HTMLSpanElement>(null);
-  const current = useRef(0);
   const [display, setDisplay] = useState(0);
+  const formatter = useMemo(() => new Intl.NumberFormat(), []);
+  const totalLabel = useMemo(
+    () => (value === undefined ? undefined : formatter.format(value)),
+    [formatter, value],
+  );
   useEffect(() => {
     if (value === undefined) return;
     let frame = 0;
-    let observer: IntersectionObserver | undefined;
+    let started = false;
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
     const stop = () => {
       cancelAnimationFrame(frame);
-      current.current = value;
       setDisplay(value);
     };
+    const reset = () => {
+      cancelAnimationFrame(frame);
+      setDisplay(preference.matches ? value : 0);
+    };
     const start = () => {
-      observer?.disconnect();
+      cancelAnimationFrame(frame);
       if (preference.matches) {
         stop();
         return;
       }
-      const initial = current.current;
+      setDisplay(0);
       const at = performance.now();
       const update = (now: number) => {
-        const t = Math.min(1, (now - at) / 800);
-        current.current = Math.round(initial + (value - initial) * (1 - (1 - t) ** 3));
-        setDisplay(current.current);
+        const t = Math.min(1, (now - at) / 1100);
+        setDisplay(Math.round(value * easeOutExpo(t)));
         if (t < 1) frame = requestAnimationFrame(update);
       };
       frame = requestAnimationFrame(update);
     };
-    observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) start();
+        for (const entry of entries) {
+          const entered = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+          if (!entered || started) continue;
+          started = true;
+          start();
+          observer.disconnect();
+        }
       },
-      { threshold: 0.2 },
+      { threshold: [0, 0.2] },
     );
+    const onPreference = () => {
+      if (preference.matches) stop();
+      else if (!started) reset();
+    };
+    reset();
     if (element.current) observer.observe(element.current);
-    preference.addEventListener('change', stop);
+    preference.addEventListener('change', onPreference);
     return () => {
-      observer?.disconnect();
+      observer.disconnect();
       cancelAnimationFrame(frame);
-      preference.removeEventListener('change', stop);
+      preference.removeEventListener('change', onPreference);
     };
   }, [value]);
+  if (value === undefined) return null;
   return (
     <span
       ref={element}
       className="live-number"
-      style={
-        { '--number-digits': new Intl.NumberFormat().format(value ?? 0).length } as CSSProperties
-      }
-      aria-label={value === undefined ? undefined : new Intl.NumberFormat().format(value)}
+      style={{ '--number-digits': totalLabel?.length ?? 1 } as CSSProperties}
+      aria-label={totalLabel}
     >
-      <span aria-hidden={value !== undefined}>
-        {value === undefined ? '—' : new Intl.NumberFormat().format(display)}
-      </span>
+      <span aria-hidden={value !== undefined}>{formatter.format(display)}</span>
     </span>
   );
 }
@@ -91,7 +107,7 @@ export function HomeSpaces() {
         </a>
       </div>
       <div className="home-photo-pair">
-        <figure data-scroll-object="pet-left">
+        <figure data-space-photo="left">
           <img
             src="/images/marketing/grooming-tools.webp"
             alt={zh ? '美容主题示例照片，非本店实拍' : 'Grooming inspiration sample, not our shop'}
@@ -100,10 +116,16 @@ export function HomeSpaces() {
             loading="lazy"
           />
           <figcaption>
-            {zh ? '美容主题示例 · 非本店实拍' : 'Sample photo · not our space'}
+            {marketingPreview
+              ? zh
+                ? '美容台上的小日常'
+                : 'At the grooming table'
+              : zh
+                ? '美容主题示例 · 非本店实拍'
+                : 'Sample photo · not our space'}
           </figcaption>
         </figure>
-        <figure data-scroll-object="pet-right">
+        <figure data-space-photo="right">
           <img
             src="/images/marketing/gentle-wash.webp"
             alt={
@@ -113,7 +135,15 @@ export function HomeSpaces() {
             height="560"
             loading="lazy"
           />
-          <figcaption>{zh ? '我们的真实图集即将更新' : 'Our own gallery is on its way'}</figcaption>
+          <figcaption>
+            {marketingPreview
+              ? zh
+                ? '毛发护理的小细节'
+                : 'The little details of coat care'
+              : zh
+                ? '我们的真实图集即将更新'
+                : 'Our own gallery is on its way'}
+          </figcaption>
         </figure>
       </div>
     </section>
@@ -184,16 +214,20 @@ export function HomeNumbers() {
             <CountUp value={content.stats[key]?.value} />
             <h3>{label}</h3>
             <p>
-              {content.stats[key]
-                ? (zh ? '已核实 · 截至 ' : 'Verified · as of ') +
-                  new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  }).format(new Date(content.stats[key]!.asOf))
-                : zh
-                  ? '核实后的数字即将公布'
-                  : 'Verified totals coming soon'}
+              {marketingPreview
+                ? zh
+                  ? '陪伴每一个小小成长'
+                  : 'Little moments. Growing stories.'
+                : content.stats[key]
+                  ? (zh ? '已核实 · 截至 ' : 'Verified · as of ') +
+                    new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    }).format(new Date(content.stats[key]!.asOf))
+                  : zh
+                    ? '核实后的数字即将公布'
+                    : 'Verified totals coming soon'}
             </p>
           </article>
         ))}
@@ -226,11 +260,13 @@ export function HomeStories() {
         </p>
       </div>
       <StoryQuotes stories={content.testimonials.slice(0, 1)} preview />
-      <a className="text-link" href="/about/#family-stories">
-        {zh ? '更多家长的故事' : 'More family stories'} ↗
-      </a>
+      {content.testimonials.length > 0 && (
+        <a className="text-link" href="/about/#family-stories">
+          {zh ? '更多家长的故事' : 'More family stories'} ↗
+        </a>
+      )}
       <a className="text-link" href="/academy/">
-        {zh ? '也来看看学员的成长故事' : 'Our students’ next chapter'} ↗
+        {zh ? '了解美容师成长课堂' : 'Explore Grooming Academy'} ↗
       </a>
     </section>
   );

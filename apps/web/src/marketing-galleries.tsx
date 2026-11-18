@@ -1,3 +1,4 @@
+import { marketingPreview } from './marketing-preview';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -52,7 +53,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
           alt: photo.alt,
           credit: photo.credit,
           url: photo.url,
-          sample: true,
+          sample: !marketingPreview,
         }));
   const [selected, setSelected] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -78,7 +79,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
             ? '小小空间，用心照顾。'
             : 'The little details of care.'}
       </h2>
-      {!actual.length && (
+      {!actual.length && !marketingPreview && (
         <p className="sample-explanation">
           {zh
             ? student
@@ -158,13 +159,12 @@ export function StoryQuotes({
     <div className="story-quotes">
       {stories.map((story, index) => (
         <figure key={index}>
-          <span className="quote-mark" aria-hidden="true">
-            “
-          </span>
           <blockquote>
+            “
             {preview && story.quote[lang].length > 200
               ? story.quote[lang].slice(0, 200).trimEnd() + '…'
               : story.quote[lang]}
+            ”
           </blockquote>
           <figcaption>— {story.attribution[lang]}</figcaption>
         </figure>
@@ -172,17 +172,23 @@ export function StoryQuotes({
     </div>
   ) : (
     <div className="story-awaiting">
-      <span className="quote-mark" aria-hidden="true">
-        “
-      </span>
-      <p>
+      <p className="story-empty-title">
         {lang === 'zh'
           ? student
-            ? '真实学员的成长故事，即将分享。'
-            : '家长们的真实暖心分享，即将与您见面。'
+            ? '学员故事即将分享。'
+            : '家长故事即将分享。'
           : student
-            ? 'First-hand student stories are on their way.'
-            : 'Their kind words deserve a little space here.'}
+            ? 'Student stories coming soon.'
+            : 'Family stories coming soon.'}
+      </p>
+      <p className="story-empty-detail">
+        {lang === 'zh'
+          ? student
+            ? '获得学员许可后，我们会在这里分享他们的真实学习体验。'
+            : '获得家长许可后，我们会在这里分享他们的真实感受。'
+          : student
+            ? 'We’ll share their first-hand learning experiences here, with their permission.'
+            : 'We’ll share their words here, with permission from the families behind them.'}
       </p>
       <span className="cute-note">
         {lang === 'zh' ? '每一段故事，都值得好好珍藏。' : 'Every little story matters.'}

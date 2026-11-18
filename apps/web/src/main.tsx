@@ -1,3 +1,4 @@
+import { marketingPreview, previewMessages } from './marketing-preview';
 import { FamilyStories } from './marketing-galleries';
 import { englishMessages, chineseMessages } from './marketing-messages';
 import MarketingHome from './marketing-home';
@@ -21,7 +22,10 @@ import './marketing-system.css';
 const Portal = React.lazy(() => import('./portal'));
 
 void i18n.use(initReactI18next).init({
-  resources: { en: { translation: englishMessages }, zh: { translation: chineseMessages } },
+  resources: {
+    en: { translation: { ...englishMessages, ...(marketingPreview ? previewMessages.en : {}) } },
+    zh: { translation: { ...chineseMessages, ...(marketingPreview ? previewMessages.zh : {}) } },
+  },
   lng: 'en',
   fallbackLng: 'en',
   interpolation: { escapeValue: false },

@@ -8,11 +8,14 @@ test('new Home chapters, honest empty states and sample photo dialogs work', asy
   await page.locator('.cinema-rail a[href="#numbers"]').click();
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
   await expect(page.locator('.home-numbers')).toHaveAttribute('aria-hidden', 'false');
-  await expect(page.locator('.live-number')).toHaveText(['—', '—', '—']);
+  await expect(page.locator('.live-number')).toHaveCount(0);
+  await expect(page.locator('.number-grid')).not.toContainText('—');
   await expect(page.locator('.home-numbers')).toContainText('Verified totals coming soon');
   await page.locator('.cinema-rail a[href="#stories"]').click();
   await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
-  await expect(page.locator('.home-stories blockquote')).toHaveCount(0);
+  await expect(page.locator('.home-stories blockquote,.home-stories .quote-mark')).toHaveCount(0);
+  await expect(page.locator('.home-stories')).toContainText('Family stories coming soon.');
+  await expect(page.locator('.home-stories a[href="/about/#family-stories"]')).toHaveCount(0);
   for (const path of ['/spaces/', '/academy/']) {
     await page.goto(path);
     await expect(page.locator('.photo-grid figure')).toHaveCount(3);
@@ -33,12 +36,14 @@ test('new Home chapters, honest empty states and sample photo dialogs work', asy
   }
 });
 
-test('only approved public totals and stories appear, and refresh without exposing customer records', async ({
+test('only approved public totals and stories appear from one reusable page snapshot', async ({
   page,
 }) => {
   let total = 42;
-  await page.route('**/marketing-content.json', (route) =>
-    route.fulfill({
+  let requests = 0;
+  await page.route('**/marketing-content.json', (route) => {
+    requests++;
+    return route.fulfill({
       json: {
         version: 1,
         stats: {
@@ -61,18 +66,27 @@ test('only approved public totals and stories appear, and refresh without exposi
           },
         ],
       },
-    }),
-  );
+    });
+  });
   await page.setViewportSize({ width: 1440, height: 950 });
   await page.goto('/home/#numbers');
   await expect(page.locator('.live-number').first()).toContainText('42');
-  await expect(page.locator('.live-number').nth(1)).toHaveText('—');
+  await expect(page.locator('.live-number')).toHaveCount(1);
+  await expect(page.locator('.number-grid article').nth(1)).toContainText(
+    'Verified totals coming soon',
+  );
   total = 43;
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await page.waitForTimeout(100);
+  await expect(page.locator('.live-number').first()).toContainText('42');
+  expect(requests).toBe(1);
+  await page.reload();
   await expect(page.locator('.live-number').first()).toContainText('43');
+  expect(requests).toBe(2);
+  await expect(page.locator('.home-stories a[href="/about/#family-stories"]')).toHaveCount(1);
   await page.goto('/about/#family-stories');
   await expect(page.locator('#family-stories blockquote')).toHaveText(
-    'Browser fixture: approved family story.',
+    '“Browser fixture: approved family story.”',
   );
   await expect(page.locator('body')).not.toContainText('Unapproved fixture');
 });
