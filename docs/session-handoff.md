@@ -1,3 +1,7 @@
+## Single vertical calendar lines — local, 2026-11-18
+
+Removed sticky-label right borders where timeline grid lines already supply the separator, and removed the redundant date-axis background gradient while preserving its tick borders. Local Chrome390/1440 checks confirm one border owner, visible1px date separators and no overflow. Formatting passed. PR116 merged; no deployment.
+
 ## Single calendar dividers — local, 2026-11-18
 
 Removed duplicate room top/legend top borders and moved pet dividers inside the existing row footprint. Sticky labels and tracks now paint the same single-pixel boundary without adjacent doubled lines. Four bilingual390/1440 Chrome checks passed for label alignment, border ownership and no overflow; actual localhost Chrome previewed and rendered image reviewed. No deployment.
