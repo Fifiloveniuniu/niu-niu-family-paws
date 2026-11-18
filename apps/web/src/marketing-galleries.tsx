@@ -6,36 +6,16 @@ import {
   type PublicPhoto,
   type PublicStory,
 } from './public-marketing-content';
-const samples = [
+const suppliedPhotos = [
   {
-    src: '/images/marketing/grooming-tools.webp',
-    name: { en: 'Tools of the craft', zh: '手艺与工具' },
-    alt: {
-      en: 'Sample photograph of a small dog being groomed on a grooming table',
-      zh: '示例照片：小狗在美容台上接受护理',
-    },
-    credit: 'Gustavo Fring',
-    url: 'https://www.pexels.com/photo/vet-with-dog-6816846/',
+    src: '/images/marketing/grooming.png',
+    caption: { en: 'At the grooming table', zh: '美容台上的小日常' },
+    alt: { en: 'Pet grooming and coat care', zh: '宠物美容护理' },
   },
   {
-    src: '/images/marketing/gentle-wash.webp',
-    name: { en: 'A closer look at coat care', zh: '近距离了解毛发护理' },
-    alt: {
-      en: 'Sample photograph of a Yorkshire terrier being bathed',
-      zh: '示例照片：约克夏犬正在洗澡',
-    },
-    credit: 'Tima Miroshnichenko',
-    url: 'https://www.pexels.com/photo/close-up-photo-of-bathing-of-dog-6131161/',
-  },
-  {
-    src: '/images/marketing/coat-care.webp',
-    name: { en: 'The little details', zh: '护理中的小细节' },
-    alt: {
-      en: 'Sample close-up photograph of a dog being washed',
-      zh: '示例照片：为狗狗清洗毛发的近景',
-    },
-    credit: 'Tima Miroshnichenko',
-    url: 'https://www.pexels.com/photo/close-up-photo-of-bathing-of-dog-6131165/',
+    src: '/images/marketing/washing.png',
+    caption: { en: 'A little time for gentle care', zh: '温柔的洗护时光' },
+    alt: { en: 'A gentle wash and coat care', zh: '温柔的洗护时光' },
   },
 ];
 export function PhotoGallery({ student = false }: { student?: boolean }) {
@@ -47,14 +27,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
   const entries: (PublicPhoto & { credit?: string; url?: string; sample: boolean })[] =
     actual.length
       ? actual.map((photo) => ({ ...photo, sample: false }))
-      : samples.map((photo) => ({
-          src: photo.src,
-          caption: photo.name,
-          alt: photo.alt,
-          credit: photo.credit,
-          url: photo.url,
-          sample: !marketingPreview,
-        }));
+      : suppliedPhotos.map((photo) => ({ ...photo, sample: false }));
   const [selected, setSelected] = useState<number | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);
@@ -79,14 +52,14 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
             ? '小小空间，用心照顾。'
             : 'The little details of care.'}
       </h2>
-      {!actual.length && !marketingPreview && (
+      {student && !actual.length && !marketingPreview && (
         <p className="sample-explanation">
           {zh
             ? student
-              ? '以下为美容主题示例照片，并非本校学员、课程或作品。真实课堂照片与学员作品即将更新。'
+              ? '以下展示美容与毛发护理。课堂照片与学员作品将另行分享。'
               : '以下为美容主题示例照片，并非我们的店铺、设备或服务记录。我们的真实图集即将更新。'
             : student
-              ? 'Grooming inspiration, shown with sample photos. These are not our students, classes, or student work. Our own class gallery is on its way.'
+              ? 'A look at grooming and coat care. Student work and class photographs will be shared separately.'
               : 'Grooming inspiration, shown with sample photos. These are not our shop, equipment, or service records. Our own gallery is on its way.'}
         </p>
       )}

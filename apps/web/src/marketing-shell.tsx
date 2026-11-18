@@ -79,11 +79,15 @@ export function MarketingHeader({
     <div
       className="nav-dropdown"
       data-dropdown-open={dropdown === kind || undefined}
-      onMouseEnter={() => setDropdown(kind)}
+      onMouseEnter={() => {
+        if (matchMedia('(min-width: 1181px)').matches) setDropdown(kind);
+      }}
       onMouseLeave={(event) => {
         if (!event.currentTarget.contains(document.activeElement)) setDropdown(null);
       }}
-      onFocusCapture={() => setDropdown(kind)}
+      onFocusCapture={() => {
+        if (matchMedia('(min-width: 1181px)').matches) setDropdown(kind);
+      }}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node)) setDropdown(null);
       }}
@@ -96,6 +100,18 @@ export function MarketingHeader({
       }}
     >
       {link(href, label, kind)}
+      <button
+        className="nav-submenu-toggle"
+        aria-label={(zh ? '展开：' : 'Show ') + label}
+        title={label}
+        aria-expanded={dropdown === kind}
+        aria-controls={kind === 'services' ? 'service-menu' : `${kind}-menu`}
+        onClick={() => setDropdown(dropdown === kind ? null : kind)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m7 10 5 5 5-5" />
+        </svg>
+      </button>
       <div id={kind === 'services' ? 'service-menu' : `${kind}-menu`} className="nav-submenu">
         {items.map(([url, text]) => (
           <a key={url} href={url}>

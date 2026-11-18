@@ -109,41 +109,23 @@ export function HomeSpaces() {
       <div className="home-photo-pair">
         <figure data-space-photo="left">
           <img
-            src="/images/marketing/grooming-tools.webp"
-            alt={zh ? '美容主题示例照片，非本店实拍' : 'Grooming inspiration sample, not our shop'}
-            width="450"
-            height="560"
+            src="/images/marketing/grooming.png"
+            alt={zh ? '宠物美容护理' : 'Pet grooming and coat care'}
+            width="1049"
+            height="1400"
             loading="lazy"
           />
-          <figcaption>
-            {marketingPreview
-              ? zh
-                ? '美容台上的小日常'
-                : 'At the grooming table'
-              : zh
-                ? '美容主题示例 · 非本店实拍'
-                : 'Sample photo · not our space'}
-          </figcaption>
+          <figcaption>{zh ? '美容台上的小日常' : 'At the grooming table'}</figcaption>
         </figure>
         <figure data-space-photo="right">
           <img
-            src="/images/marketing/gentle-wash.webp"
-            alt={
-              zh ? '毛发护理示例照片，非本店服务记录' : 'Coat care sample, not our service record'
-            }
-            width="450"
-            height="560"
+            src="/images/marketing/washing.png"
+            alt={zh ? '温柔的洗护时光' : 'A gentle wash and coat care'}
+            width="1049"
+            height="1400"
             loading="lazy"
           />
-          <figcaption>
-            {marketingPreview
-              ? zh
-                ? '毛发护理的小细节'
-                : 'The little details of coat care'
-              : zh
-                ? '我们的真实图集即将更新'
-                : 'Our own gallery is on its way'}
-          </figcaption>
+          <figcaption>{zh ? '温柔的洗护时光' : 'A little time for gentle care'}</figcaption>
         </figure>
       </div>
     </section>

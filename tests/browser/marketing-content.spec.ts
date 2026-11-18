@@ -18,8 +18,10 @@ test('new Home chapters, honest empty states and sample photo dialogs work', asy
   await expect(page.locator('.home-stories a[href="/about/#family-stories"]')).toHaveCount(0);
   for (const path of ['/spaces/', '/academy/']) {
     await page.goto(path);
-    await expect(page.locator('.photo-grid figure')).toHaveCount(3);
-    await expect(page.locator('.sample-explanation')).toContainText('sample photos');
+    await expect(page.locator('.photo-grid figure')).toHaveCount(2);
+    if (path === '/academy/')
+      await expect(page.locator('.sample-explanation')).toContainText('Student work');
+    else await expect(page.locator('.sample-explanation')).toHaveCount(0);
     const open = page.locator('.photo-open').first();
     await open.click();
     await expect(page.locator('.photo-dialog')).toBeVisible();
