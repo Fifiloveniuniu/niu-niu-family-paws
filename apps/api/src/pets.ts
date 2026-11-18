@@ -24,6 +24,8 @@ const projectPet = (data: FirebaseFirestore.DocumentData): Pet => {
     customerId,
     name,
     photo,
+    species: data.species ?? null,
+    weightKg: data.weightKg ?? null,
     version,
     createdAt,
     updatedAt,
@@ -116,10 +118,15 @@ export function petStore(database: Firestore, photos: Photos) {
         const snapshot = await transaction.get(ref);
         const previous = snapshot.exists ? projectPet(snapshot.data()!) : null;
         const desiredPhoto = photo ?? previous?.photo ?? null;
+        const species = input.species === undefined ? (previous?.species ?? null) : input.species;
+        const weightKg =
+          input.weightKg === undefined ? (previous?.weightKg ?? null) : input.weightKg;
         if (
           previous &&
           previous.name === input.name &&
           previous.photo === desiredPhoto &&
+          previous.species === species &&
+          previous.weightKg === weightKg &&
           [input.version, input.version + 1].includes(previous.version)
         )
           return previous;
@@ -133,6 +140,8 @@ export function petStore(database: Firestore, photos: Photos) {
           customerId,
           name: input.name,
           photo: desiredPhoto,
+          species,
+          weightKg,
           version: input.version + 1,
           createdAt: previous?.createdAt ?? now,
           updatedAt: now,

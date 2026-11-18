@@ -464,3 +464,50 @@ test('house edits preserve stable IDs, retry once, audit actors and reject confl
   assert.equal(audit.before.name, body.name);
   assert.ok((await store.list()).items.some((h) => h.id === id && h.version === 2));
 });
+
+test('pet type and weight persist with ownership, versions, retries, legacy clients and audit history', async (t) => {
+  const app = initializeApp({ projectId: 'demo-niu-niu' }, 'pet-details-' + randomUUID());
+  t.after(() => deleteApp(app));
+  const db = getFirestore(app, integrationDatabaseId);
+  const customers = firestoreStore(db);
+  const customer = await customers.save(
+    randomUUID(),
+    { name: '[TEST] Details', email: '', phone: '', language: 'en', version: 0 },
+    'admin',
+  );
+  await db.doc('customers/' + customer.id).update({ ownerUid: 'pet-owner' });
+  const store = petStore(db, { put: async () => {}, get: async () => Buffer.from('') });
+  const id = randomUUID();
+  const admin = { uid: 'admin', admin: true };
+  const owner = { uid: 'pet-owner', google: true };
+  const body = { name: '[TEST] Pet', species: 'dog', weightKg: 12.75, version: 0 };
+  const first = await store.save(admin, customer.id, id, body);
+  assert.equal(first.species, 'dog');
+  assert.equal(first.weightKg, 12.75);
+  assert.deepEqual(await store.save(admin, customer.id, id, body), first);
+  assert.equal((await store.list(owner, customer.id)).items[0].weightKg, 12.75);
+  await assert.rejects(
+    store.save({ uid: 'other', google: true }, customer.id, id, { ...body, version: 1 }),
+    PetAccess,
+  );
+  const renamed = await store.save(owner, customer.id, id, { name: '[TEST] Renamed', version: 1 });
+  assert.equal(renamed.species, 'dog');
+  assert.equal(renamed.weightKg, 12.75);
+  const edits = await Promise.allSettled([
+    store.save(admin, customer.id, id, { name: renamed.name, weightKg: 13, version: 2 }),
+    store.save(owner, customer.id, id, { name: renamed.name, weightKg: 14, version: 2 }),
+  ]);
+  assert.equal(edits.filter((r) => r.status === 'fulfilled').length, 1);
+  assert.ok(edits.some((r) => r.status === 'rejected' && r.reason instanceof Conflict));
+  const cleared = await store.save(admin, customer.id, id, {
+    name: renamed.name,
+    species: null,
+    weightKg: null,
+    version: 3,
+  });
+  assert.equal(cleared.species, null);
+  assert.equal(cleared.weightKg, null);
+  const history = await db.doc(`customers/${customer.id}/pets/${id}/history/4`).get();
+  assert.equal(history.data().actor, 'admin');
+  assert.ok([13, 14].includes(history.data().before.weightKg));
+});

@@ -54,6 +54,10 @@ test('pet routes authenticate, validate ownership injection and keep photo respo
     { name: 'Pet', version: 0, photo: 'injected' },
     { name: '  ', version: 0 },
     { name: 'Pet', version: -1 },
+    { name: 'Pet', version: 0, species: 'dragon' },
+    { name: 'Pet', version: 0, weightKg: 0 },
+    { name: 'Pet', version: 0, weightKg: -1 },
+    { name: 'Pet', version: 0, weightKg: 1001 },
   ])
     assert.equal(
       (

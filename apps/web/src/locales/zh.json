@@ -918,5 +918,8 @@
   "ui.autocomplete.noMatches": "没有匹配项",
   "ui.calendarAssignment.customer": "客户",
   "ui.calendarAssignment.freeSpace": "可用空间",
-  "ui.houseCalendar.practiceRoom": "练习房间"
+  "ui.houseCalendar.practiceRoom": "练习房间",
+  "ui.pets.species": "宠物类型",
+  "ui.pets.weightKg": "体重（公斤）",
+  "ui.pets.weightValue": "{{weight}} 公斤"
 }

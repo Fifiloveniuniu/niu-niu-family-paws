@@ -1,7 +1,7 @@
-import { uiText } from './i18n.ts';
+import { uiText, localeFor } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PetProfileAvatar, CalendarProfileLink } from './calendar-pet-photos';
+import { PetProfileAvatar, CalendarProfileLink, useCalendarPet } from './calendar-pet-photos';
 import { useDropdownState } from './dropdown-state';
 import type { PetBalance } from './pet-balance';
 import Icon from './icons';
@@ -23,6 +23,7 @@ export default function CalendarPetPreview({
   balance?: PetBalance;
 }) {
   const { i18n } = useTranslation();
+  const profile = useCalendarPet(name);
 
   const [open, setOpen] = useDropdownState(false);
   const root = React.useRef<HTMLSpanElement>(null);
@@ -171,7 +172,15 @@ export default function CalendarPetPreview({
             </div>
             <div>
               <dt>{uiText('ui.calendarPetPreview.weight')}</dt>
-              <dd>N/A</dd>
+              <dd>
+                {profile?.weightKg == null
+                  ? uiText('common.notAvailable')
+                  : uiText('ui.pets.weightValue', {
+                      weight: new Intl.NumberFormat(localeFor(i18n.language)).format(
+                        profile.weightKg,
+                      ),
+                    })}
+              </dd>
             </div>
             <div>
               <dt>{uiText('ui.calendarPetPreview.boardingBalance')}</dt>

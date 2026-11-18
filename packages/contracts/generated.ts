@@ -438,6 +438,9 @@ export interface components {
             /** Format: uuid */
             readonly customerId: string;
             name: string;
+            /** @enum {string|null} */
+            species?: "dog" | "cat" | "rabbit" | null;
+            weightKg?: number | null;
             /** @description Opaque image revision; photos require authenticated API access. */
             readonly photo: string | null;
             readonly photoCredit?: {
@@ -452,6 +455,9 @@ export interface components {
         };
         PetWrite: {
             name: string;
+            /** @enum {string|null} */
+            species?: "dog" | "cat" | "rabbit" | null;
+            weightKg?: number | null;
             version: number;
             /** @description Optional base64 JPEG, PNG or WebP, at most 3 MiB and 16 megapixels. Omit to preserve the saved photo. */
             photoData?: string;

@@ -1,4 +1,4 @@
-import { englishCatalog, uiText, uiValue } from './i18n.ts';
+import { englishCatalog, uiText, uiValue, speciesText, localeFor } from './i18n.ts';
 import { ApiError, apiJson, apiBlob } from './api-client';
 import React from 'react';
 import { updateQuery } from './routing';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Modal from './modal';
 import { DemoBalanceLink } from './calendar-pet-photos';
 import Icon from './icons';
+import CustomSelect from './custom-select';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type Pet = components['schemas']['Pet'];
@@ -153,7 +154,12 @@ export default function Pets({
     setError(null);
     setSaved(false);
     setUncertain(false);
-    const input = { name: pet?.name ?? '', version: pet?.version ?? 0 };
+    const input: PetWrite = {
+      name: pet?.name ?? '',
+      species: pet?.species ?? null,
+      weightKg: pet?.weightKg ?? null,
+      version: pet?.version ?? 0,
+    };
     baseline.current = JSON.stringify(input);
     setEditor({ id: pet?.id ?? crypto.randomUUID(), input, preview: '' });
   }
@@ -249,6 +255,47 @@ export default function Pets({
                 />
               </label>
               <label>
+                {uiText('ui.pets.species')}
+                <CustomSelect
+                  value={editor.input.species ?? ''}
+                  onChange={(event) =>
+                    setEditor({
+                      ...editor,
+                      input: {
+                        ...editor.input,
+                        species: (event.target.value || null) as PetWrite['species'],
+                      },
+                    })
+                  }
+                >
+                  <option value="">{uiText('common.notAvailable')}</option>
+                  {(['dog', 'cat', 'rabbit'] as const).map((species) => (
+                    <option key={species} value={species}>
+                      {speciesText(species)}
+                    </option>
+                  ))}
+                </CustomSelect>
+              </label>
+              <label>
+                {uiText('ui.pets.weightKg')}
+                <input
+                  type="number"
+                  min="0.001"
+                  max="1000"
+                  step="any"
+                  value={editor.input.weightKg ?? ''}
+                  onChange={(event) =>
+                    setEditor({
+                      ...editor,
+                      input: {
+                        ...editor.input,
+                        weightKg: event.target.value === '' ? null : event.target.valueAsNumber,
+                      },
+                    })
+                  }
+                />
+              </label>
+              <label>
                 {labels.photo}
                 <input
                   type="file"
@@ -313,6 +360,14 @@ export default function Pets({
                   pet.name
                 )}
               </h4>
+              <p>
+                {pet.species ? speciesText(pet.species) : uiText('common.notAvailable')} ·{' '}
+                {pet.weightKg == null
+                  ? uiText('common.notAvailable')
+                  : uiText('ui.pets.weightValue', {
+                      weight: new Intl.NumberFormat(localeFor(i18n.language)).format(pet.weightKg),
+                    })}
+              </p>
               {pet.photoCredit && (
                 <p className="pet-photo-credit">
                   {uiText('ui.pets.testPhoto', {}, i18n.language)} · {pet.photoCredit.creator} ·{' '}
