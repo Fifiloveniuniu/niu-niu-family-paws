@@ -1,6 +1,6 @@
 ## Planning section/footer breathing room — 2026-11-17
 
-Added responsive bottom spacing between the Services “MAKE ROOM FOR THE DETAILS” panel and the footer:48px on phones, growing to80px desktop. Actual localhost Chrome390/1440 walkthrough measured48/80px and confirmed the visual gap. Node24 build and Prettier passed. Review screenshots: docs/screenshots/planning-footer-gap-*.png. No deployment; delivery PR follows. Preserve other WIP and the final combined deployment boundary.
+Added responsive bottom spacing between the Services “MAKE ROOM FOR THE DETAILS” panel and the footer:48px on phones, growing to80px desktop. Actual localhost Chrome390/1440 walkthrough measured48/80px and confirmed the visual gap. Node24 build and Prettier passed. Review screenshots: docs/screenshots/planning-footer-gap-*.png. No deployment. Delivery: [PR92](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/92); GitHub verified the implementation commit signature and required CI is checked before merge. Preserve other WIP and the final combined deployment boundary.
 
 ## Desktop chapter layouts and editorial quote — 2026-11-17
 
