@@ -136,7 +136,10 @@ for (const [width, height] of [
         .getByRole('button', { name: language === 'en' ? 'Add booking' : '添加预约', exact: true })
         .click();
       const dialog = page.getByRole('dialog');
-      const pet = dialog.getByRole('combobox');
+      const pet = dialog.getByRole('combobox', {
+        name: language === 'en' ? 'Pet' : '宠物',
+        exact: true,
+      });
       await pet.click();
       await pet.press('Escape');
       const fields = dialog.locator('.hc-wizard-step:not([hidden]) input');

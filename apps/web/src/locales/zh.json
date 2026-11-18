@@ -898,5 +898,17 @@
       "note": "课程内容、时间、费用及报名信息待公布。",
       "kind": "academy"
     }
-  ]
+  ],
+  "ui.datePicker.open": "打开{{field}}日历",
+  "ui.datePicker.previous": "上一时段",
+  "ui.datePicker.next": "下一时段",
+  "ui.datePicker.hour": "小时（24 小时制）",
+  "ui.datePicker.minute": "分钟",
+  "ui.datePicker.apply": "应用",
+  "ui.datePicker.today": "今天",
+  "ui.datePicker.clear": "清除",
+  "ui.datePicker.close": "关闭",
+  "ui.datePicker.invalidDate": "请输入有效日期，格式为 YYYY-MM-DD。",
+  "ui.datePicker.invalidDateTime": "请输入有效日期与时间，格式为 YYYY-MM-DD HH:mm。",
+  "ui.datePicker.applyDateTime": "应用日期与时间"
 }

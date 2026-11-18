@@ -898,5 +898,17 @@
       "note": "Course content, dates, fees, and enrolment details are coming soon.",
       "kind": "academy"
     }
-  ]
+  ],
+  "ui.datePicker.open": "Open calendar for {{field}}",
+  "ui.datePicker.previous": "Previous period",
+  "ui.datePicker.next": "Next period",
+  "ui.datePicker.hour": "Hour (24h)",
+  "ui.datePicker.minute": "Minute",
+  "ui.datePicker.apply": "Apply",
+  "ui.datePicker.today": "Today",
+  "ui.datePicker.clear": "Clear",
+  "ui.datePicker.close": "Close",
+  "ui.datePicker.invalidDate": "Enter a valid date as YYYY-MM-DD.",
+  "ui.datePicker.invalidDateTime": "Enter a valid date and time as YYYY-MM-DD HH:mm.",
+  "ui.datePicker.applyDateTime": "Apply date and time"
 }

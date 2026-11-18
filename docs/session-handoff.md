@@ -1,3 +1,7 @@
+## Custom date/time pickers — local, 2026-11-18
+
+Replaced native booking, balance-validity and statement date fields with one custom calendar, shared dropdown exclusivity and matching cream/sage styling. Supports typed ISO dates, localized labels, month/year navigation, clamped month keyboard navigation, explicit time entry, validation, viewport-aware modal portals and empty values. Build/API typecheck/formatting and46 unit tests passed;15 booking/date browser tests plus6 final date cases passed across English/Chinese and phone/desktop. Actual localhost Chrome booking/calendar reviewed in isolated tab26. Translation PR127 and language-query PR128 passed CI, signatures verified and merged with gh stack; no deployment. Production workflow work remains in docs/current-implementation-request.md.
+
 ## Language query parameters — local, 2026-11-18
 
 Latest owner direction is URL query parameters, not path prefixes. Added authoritative ?lang=en/zh selection, internal copyable-link localization, legacy/sign-in return preservation and Back/refresh support. Language is separate from business query state; language-only navigation bypasses draft-discard checks and preserves editor keys. Build, API typecheck, formatting,46 unit tests and3 focused browser cases passed (shared-link precedence/history, filter preservation, profile-draft preservation). Actual localhost Chrome ?lang=zh Home reviewed. Resource PR127 passed CI; this is its dependent stack layer. No deployment.
