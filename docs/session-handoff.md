@@ -1,3 +1,7 @@
+## Calendar avatar info — local, 2026-11-18
+
+Hover, keyboard focus or tap a pet avatar for a top-layer info card with112px photo, type, status, owner, boarding balance/validity and room. Weight is not stored in current profiles, so it displays N/A; absent balances also display N/A. Uses existing authorized photos and local balance data, no invented metadata. Card supports Escape/close, pointer travel, viewport bounds and balance/profile links. Build/typecheck and four bilingual390/1440 hover/focus/tap/layout checks passed; actual localhost Chrome reviewed. Screenshots calendar-pet-info-{390,1440}.png. PR120 dropdowns passed CI/merged. No deployment.
+
 ## Shared custom dropdowns — local, 2026-11-18
 
 Replaced all20 visible native selectors with one accessible custom component, retaining hidden native fields for form semantics. Cream/green marketing panels,6px item gaps, light-green focus borders and transparent selected-item borders. Shared open-state coordination covers selectors, language, navigation and account menus; only one opens at a time. Keyboard navigation/typeahead, disabled choices, viewport-aware top-layer menus and modal focus preserved. Updated browser helpers for custom interactions. Build/typecheck, full formatting,41 unit tests and8 focused Chrome tests passed (bilingual390/1440, modal, account/profile and language persistence). Actual localhost Chrome reviewed. Screenshots custom-dropdown-{390,1440}.png. PR119 cleanup passed CI/merged. No deployment.
