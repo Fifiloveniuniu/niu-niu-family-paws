@@ -676,3 +676,265 @@ test('boarding credits are atomic, per pet, audited and idempotent without imple
   assert.equal(page2.nextCursor, null);
   assert.equal(new Set([...page1.events, ...page2.events].map((e) => e.version)).size, 55);
 });
+
+test('bookings atomically protect whole-stay capacity, cross-house pet isolation, editing and actual handoffs', async (t) => {
+  const { bookingStore, BookingConflict, BookingPolicyMissing } =
+    await import('../apps/api/src/bookings.ts');
+  const { houseStore } = await import('../apps/api/src/houses.ts');
+  const { roomStore } = await import('../apps/api/src/rooms.ts');
+  const app = initializeApp({ projectId: 'demo-niu-niu' }, 'bookings-' + randomUUID());
+  t.after(() => deleteApp(app));
+  const db = getFirestore(app, integrationDatabaseId);
+  const customers = firestoreStore(db);
+  const admin = { uid: 'booking-admin', admin: true };
+  const owner = { uid: 'booking-owner', google: true };
+  const cid = randomUUID();
+  await customers.save(
+    cid,
+    { name: '[TEST] Private customer', email: '', phone: '', language: 'en', version: 0 },
+    admin.uid,
+  );
+  await db.doc('customers/' + cid).update({ ownerUid: owner.uid });
+  await db.doc('people/' + owner.uid).set({ customerId: cid });
+  const pets = petStore(db, { put: async () => {}, get: async () => Buffer.from('') });
+  const pids = Array.from({ length: 6 }, () => randomUUID());
+  for (const [index, id] of pids.entries())
+    await pets.save(admin, cid, id, {
+      name: '[TEST] Secret pet ' + index,
+      species: index === 5 ? 'cat' : 'dog',
+      weightKg: 10,
+      version: 0,
+    });
+  const houses = houseStore(db),
+    rooms = roomStore(db);
+  const hid = randomUUID(),
+    otherHouse = randomUUID();
+  for (const id of [hid, otherHouse])
+    await houses.save(
+      id,
+      {
+        name: '[TEST] Booking house',
+        address: '[TEST] Isolated address',
+        timezone: 'America/Los_Angeles',
+        version: 0,
+      },
+      admin.uid,
+    );
+  const rid = randomUUID(),
+    otherRoom = randomUUID(),
+    careRoom = randomUUID();
+  await rooms.save(
+    hid,
+    rid,
+    { name: '[TEST] One place', capacity: 1, costs: { dog: 1, cat: 1 }, version: 0 },
+    admin.uid,
+  );
+  await rooms.save(
+    otherHouse,
+    otherRoom,
+    { name: '[TEST] Other room', capacity: 2, costs: { dog: 1 }, version: 0 },
+    admin.uid,
+  );
+  await rooms.save(
+    hid,
+    careRoom,
+    { name: '[TEST] Care room', capacity: 1, costs: { dog: 1 }, version: 0 },
+    admin.uid,
+  );
+  let now = Date.parse('2026-11-18T10:00:00.000Z');
+  const store = bookingStore(db, () => now);
+  const body = {
+    operationId: randomUUID(),
+    version: 0,
+    customerId: cid,
+    petId: pids[0],
+    houseId: hid,
+    roomId: rid,
+    arrival: '2030-01-01T10:00:00.000Z',
+    pickup: '2030-01-03T10:00:00.000Z',
+  };
+  const ids = [randomUUID(), randomUUID()];
+  const race = await Promise.allSettled(
+    ids.map((id, index) =>
+      store.save(admin, id, { ...body, petId: pids[index], operationId: randomUUID() }),
+    ),
+  );
+  assert.equal(race.filter((r) => r.status === 'fulfilled').length, 1);
+  assert.ok(
+    race.some(
+      (r) =>
+        r.status === 'rejected' &&
+        r.reason instanceof BookingConflict &&
+        r.reason.issue === 'capacity',
+    ),
+  );
+  const first = race.find((r) => r.status === 'fulfilled').value;
+  assert.equal(first.billingStatus, 'unbilled');
+  assert.equal(first.status, 'planned');
+  const edits = await Promise.allSettled([
+    store.save(admin, first.id, {
+      ...body,
+      petId: first.petId,
+      version: 1,
+      operationId: randomUUID(),
+      pickup: '2030-01-04T10:00:00.000Z',
+    }),
+    store.save(admin, first.id, {
+      ...body,
+      petId: first.petId,
+      version: 1,
+      operationId: randomUUID(),
+      pickup: '2030-01-05T10:00:00.000Z',
+    }),
+  ]);
+  assert.equal(edits.filter((r) => r.status === 'fulfilled').length, 1);
+  const edited = edits.find((r) => r.status === 'fulfilled').value;
+  const own = await store.list(owner);
+  assert.ok(own.items.some((b) => b.id === first.id));
+  await assert.rejects(store.list({ ...owner, uid: 'other' }, cid), PetAccess);
+  const proposal = {
+    ...body,
+    petId: pids[2],
+    operationId: randomUUID(),
+    houseId: otherHouse,
+    roomId: otherRoom,
+  };
+  await assert.rejects(store.save(owner, randomUUID(), proposal), BookingPolicyMissing);
+  const beforeOps = (await db.collection('bookingOperations').get()).size;
+  const globalAttempts = [
+    { id: randomUUID(), input: proposal },
+    {
+      id: randomUUID(),
+      input: { ...proposal, houseId: hid, roomId: careRoom, operationId: randomUUID() },
+    },
+  ];
+  const globalRace = await Promise.allSettled(
+    globalAttempts.map((attempt) => store.save(admin, attempt.id, attempt.input)),
+  );
+  assert.equal(globalRace.filter((r) => r.status === 'fulfilled').length, 1);
+  const rejectedIndex = globalRace.findIndex((r) => r.status === 'rejected');
+  const rejected = globalRace[rejectedIndex];
+  assert.ok(rejected.reason instanceof BookingConflict || rejected.reason.code === 10);
+  await assert.rejects(
+    store.save(admin, globalAttempts[rejectedIndex].id, globalAttempts[rejectedIndex].input),
+    (e) => e instanceof BookingConflict && e.issue === 'pet_overlap',
+  );
+  const av = await store.availability(owner, {
+    customerId: cid,
+    petId: pids[5],
+    arrival: body.arrival,
+    pickup: body.pickup,
+  });
+  const occupied = av.rooms.find((r) => r.roomId === rid);
+  assert.equal(occupied.available, false);
+  assert.equal(occupied.issue, 'species');
+  assert.equal(JSON.stringify(av).includes('Secret pet'), false);
+  assert.equal(JSON.stringify(av).includes('Private customer'), false);
+  await assert.rejects(
+    store.availability(
+      { ...owner, uid: 'other' },
+      { customerId: cid, petId: pids[5], arrival: body.arrival, pickup: body.pickup },
+    ),
+    PetAccess,
+  );
+  const planInput = {
+    ...body,
+    petId: pids[3],
+    roomId: careRoom,
+    arrival: '2026-11-18T09:00:00.000Z',
+    pickup: '2026-11-18T11:00:00.000Z',
+    operationId: randomUUID(),
+  };
+  const care = await store.save(admin, randomUUID(), planInput);
+  assert.deepEqual(await store.save(admin, care.id, planInput), care);
+  await assert.rejects(
+    store.save(admin, care.id, { ...planInput, pickup: '2026-11-18T12:00:00.000Z' }),
+    Conflict,
+  );
+  const checkIn = {
+    operationId: randomUUID(),
+    version: 1,
+    action: 'check_in',
+    at: '2026-11-18T09:30:00.000Z',
+  };
+  const checked = await store.action(admin, care.id, checkIn);
+  assert.equal(checked.actualArrival, checkIn.at);
+  assert.deepEqual(await store.action(admin, care.id, checkIn), checked);
+  now = Date.parse('2026-11-18T12:00:00.000Z');
+  await assert.rejects(
+    store.save(admin, randomUUID(), {
+      ...body,
+      petId: pids[4],
+      roomId: careRoom,
+      operationId: randomUUID(),
+    }),
+    (e) => e instanceof BookingConflict && e.issue === 'overdue',
+  );
+  // Pickup remains possible if a profile's optional care details were cleared afterwards.
+  await pets.save(admin, cid, pids[3], { name: '[TEST] Updated', species: null, version: 1 });
+  const completed = await store.action(admin, care.id, {
+    operationId: randomUUID(),
+    version: 2,
+    action: 'check_out',
+    at: '2026-11-18T11:30:00.000Z',
+  });
+  assert.equal(completed.status, 'completed');
+  assert.equal(completed.actualPickup, '2026-11-18T11:30:00.000Z');
+  const historic = await store.list(owner, undefined, undefined, {
+    from: '2026-11-18T00:00:00.000Z',
+    through: '2026-11-19T00:00:00.000Z',
+  });
+  assert.ok(historic.items.some((b) => b.id === care.id));
+  assert.equal(
+    historic.items.some((b) => b.id === edited.id),
+    false,
+  );
+  const later = await store.list(owner, undefined, undefined, {
+    from: '2030-01-01T00:00:00.000Z',
+    through: '2030-01-06T00:00:00.000Z',
+  });
+  assert.ok(later.items.some((b) => b.id === edited.id));
+  assert.equal(
+    later.items.some((b) => b.id === care.id),
+    false,
+  );
+  const cancellation = {
+    operationId: randomUUID(),
+    version: edited.version,
+    action: 'cancel',
+    at: '2026-11-18T11:00:00.000Z',
+  };
+  const cancelled = await store.action(admin, edited.id, cancellation);
+  assert.equal(cancelled.status, 'cancelled');
+  assert.deepEqual(await store.action(admin, edited.id, cancellation), cancelled);
+  const raceRoom = randomUUID();
+  await rooms.save(
+    hid,
+    raceRoom,
+    { name: '[TEST] Configuration race', capacity: 2, costs: { dog: 2 }, version: 0 },
+    admin.uid,
+  );
+  const reconfigure = await Promise.allSettled([
+    rooms.save(
+      hid,
+      raceRoom,
+      { name: '[TEST] Configuration race', capacity: 1, costs: { dog: 2 }, version: 1 },
+      admin.uid,
+    ),
+    store.save(admin, randomUUID(), {
+      ...body,
+      petId: pids[4],
+      roomId: raceRoom,
+      arrival: '2031-01-01T10:00:00.000Z',
+      pickup: '2031-01-03T10:00:00.000Z',
+      operationId: randomUUID(),
+    }),
+  ]);
+  assert.equal(reconfigure.filter((r) => r.status === 'fulfilled').length, 1);
+  const history = (await db.doc(`bookings/${care.id}/history/3`).get()).data();
+  assert.equal(history.actor, admin.uid);
+  assert.equal(history.effectiveCustomerId, cid);
+  assert.equal(history.kind, 'check_out');
+  assert.equal(history.before.status, 'in_care');
+  assert.equal((await db.collection('bookingOperations').get()).size > beforeOps, true);
+});

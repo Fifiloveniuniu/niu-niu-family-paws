@@ -2,6 +2,7 @@ import type { Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
 import type { components } from '../../../packages/contracts/generated.ts';
 import spec from '../../../packages/contracts/openapi.json' with { type: 'json' };
+import { fitsCapacity, occupancyStart, occupancyEnd, type Occupancy } from './booking-capacity.ts';
 import { Conflict } from './app.ts';
 import { PetMissing, PetInvalid } from './pets.ts';
 import { requestIdentity } from './request-context.ts';
@@ -53,18 +54,20 @@ export function roomStore(database: Firestore): RoomStore {
           (['dog', 'cat', 'rabbit'] as const).some((s) => previous.costs[s] !== input.costs[s])
         )
           throw new Conflict();
-        const points = active.flatMap((b) => [Date.parse(b.arrival), Date.parse(b.pickup)]);
+        const nowMs = Date.now();
+        const stays = active as Occupancy[];
+        const points = stays.map(occupancyStart);
         if (
           points.some(
             (point) =>
-              active
-                .filter(
-                  (b) =>
-                    Date.parse(b.arrival) <= point &&
-                    ((b.status === 'in_care' && Date.parse(b.pickup) < Date.now()) ||
-                      Date.parse(b.pickup) > point),
-                )
-                .reduce((sum, b) => sum + b.units, 0) > input.capacity,
+              !fitsCapacity(
+                stays
+                  .filter(
+                    (stay) => occupancyStart(stay) <= point && occupancyEnd(stay, nowMs) > point,
+                  )
+                  .map((stay) => stay.units),
+                input.capacity,
+              ),
           )
         )
           throw new Conflict();

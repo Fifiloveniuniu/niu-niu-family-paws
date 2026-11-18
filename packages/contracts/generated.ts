@@ -4,6 +4,174 @@
  */
 
 export interface paths {
+    "/api/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Whole-stay availability with aggregated blocked spans; no other customer identities */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["AvailabilityInput"];
+                };
+            };
+            responses: {
+                /** @description Result */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AvailabilityResult"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save an unbilled planned placement or edit an active booking (administrator only until billing rules are configured) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BookingWrite"];
+                };
+            };
+            responses: {
+                /** @description Result */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Booking"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record actual check-in, pickup, or cancel an unbilled plan (administrator only) */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BookingAction"];
+                };
+            };
+            responses: {
+                /** @description Result */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Booking"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Paginated administrator or own-customer bookings */
+        get: {
+            parameters: {
+                query?: {
+                    from?: string;
+                    through?: string;
+                    customerId?: string;
+                    cursor?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Scoped bookings */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["Booking"][];
+                            nextCursor: string | null;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/customers/{customerId}/pets/{petId}/balance": {
         parameters: {
             query?: never;
@@ -553,6 +721,112 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        BookingWrite: {
+            /** Format: uuid */
+            operationId: string;
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            /** Format: uuid */
+            houseId: string;
+            /** Format: uuid */
+            roomId: string;
+            version: number;
+            /** Format: date-time */
+            arrival: string;
+            /** Format: date-time */
+            pickup: string;
+        };
+        Booking: {
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            /** Format: uuid */
+            houseId: string;
+            /** Format: uuid */
+            roomId: string;
+            version: number;
+            /** Format: date-time */
+            arrival: string;
+            /** Format: date-time */
+            pickup: string;
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            species: "dog" | "cat" | "rabbit";
+            units: number;
+            timezone: string;
+            /** @enum {string} */
+            status: "planned" | "in_care" | "completed" | "cancelled";
+            /** @enum {string} */
+            billingStatus: "unbilled";
+            /** Format: date-time */
+            readonly occupancyFrom: string;
+            /** Format: date-time */
+            readonly occupancyThrough: string;
+            /** Format: date-time */
+            actualArrival: string | null;
+            /** Format: date-time */
+            actualPickup: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        BookingAction: {
+            /** Format: uuid */
+            operationId: string;
+            version: number;
+            /** @enum {string} */
+            action: "check_in" | "check_out" | "cancel";
+            /** Format: date-time */
+            at: string;
+        };
+        AvailabilityInput: {
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            /** Format: date-time */
+            arrival: string;
+            /** Format: date-time */
+            pickup: string;
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: date-time */
+            windowFrom?: string;
+            /** Format: date-time */
+            windowThrough?: string;
+        };
+        AvailabilityResult: {
+            rooms: {
+                /** Format: uuid */
+                houseId: string;
+                /** Format: uuid */
+                roomId: string;
+                houseName: string;
+                roomName: string;
+                address: string;
+                timezone: string;
+                available: boolean;
+                /** @enum {string|null} */
+                issue: "pet_overlap" | "species" | "overdue" | "turnover_unconfigured" | "capacity" | "room_setup" | "pet_setup" | "house_setup" | null;
+                blocked: {
+                    /** Format: date-time */
+                    from: string;
+                    /** Format: date-time */
+                    through: string;
+                    /** @enum {string} */
+                    issue: "pet_overlap" | "species" | "overdue" | "turnover_unconfigured" | "capacity" | "room_setup" | "pet_setup" | "house_setup";
+                }[];
+            }[];
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            through: string;
+        };
         BoardingAccount: {
             /** Format: uuid */
             customerId: string;
