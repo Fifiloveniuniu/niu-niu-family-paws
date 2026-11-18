@@ -1873,3 +1873,7 @@ header.marketing-header nav {
 .home-stories .story-empty-detail {
   margin-inline: auto;
 }
+
+.marketing-header[data-app-header] > .marketing-menu {
+  margin-left: auto;
+}
