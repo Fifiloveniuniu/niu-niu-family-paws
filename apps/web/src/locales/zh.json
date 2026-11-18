@@ -921,5 +921,21 @@
   "ui.houseCalendar.practiceRoom": "练习房间",
   "ui.pets.species": "宠物类型",
   "ui.pets.weightKg": "体重（公斤）",
-  "ui.pets.weightValue": "{{weight}} 公斤"
+  "ui.pets.weightValue": "{{weight}} 公斤",
+  "ui.rooms.title": "房间",
+  "ui.rooms.add": "添加房间",
+  "ui.rooms.edit": "编辑房间",
+  "ui.rooms.name": "房间名称",
+  "ui.rooms.capacity": "最大容量",
+  "ui.rooms.loading": "正在加载房间…",
+  "ui.rooms.empty": "暂无房间。",
+  "ui.rooms.costHint": "设置每种宠物类型占用的容量。不接收的类型请留空。现有住宿保留已保存的容量占用；冲突修改需要先处理。",
+  "ui.rooms.conflict": "此房间已被修改，或修改与现有住宿冲突。请关闭弹窗并核对最新配置后重试。",
+  "ui.rooms.invalid": "请填写名称、正数容量及有效的宠物容量用量，并先补全房屋地址。",
+  "ui.rooms.denied": "需要管理员权限。",
+  "ui.rooms.error": "无法加载或保存房间，请重试。",
+  "ui.rooms.retry": "重试",
+  "ui.rooms.save": "保存房间",
+  "ui.rooms.saving": "正在保存…",
+  "ui.rooms.cancel": "取消"
 }

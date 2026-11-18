@@ -4,6 +4,89 @@
  */
 
 export interface paths {
+    "/api/houses/{houseId}/rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List saved rooms (administrator only) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    houseId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved rooms */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            items: components["schemas"]["Room"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/houses/{houseId}/rooms/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Save room configuration with version and occupancy checks (administrator only) */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    houseId: string;
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["RoomWrite"];
+                };
+            };
+            responses: {
+                /** @description Saved room */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Room"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/houses": {
         parameters: {
             query?: never;
@@ -402,6 +485,24 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        RoomWrite: {
+            name: string;
+            capacity: number;
+            costs: {
+                dog?: number;
+                cat?: number;
+                rabbit?: number;
+            };
+            version: number;
+        };
+        Room: components["schemas"]["RoomWrite"] & {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            houseId: string;
+            createdAt: string;
+            updatedAt: string;
+        };
         HouseWrite: {
             name: string;
             address: string;
