@@ -276,7 +276,7 @@
   "ui.calendarAssignment.availableSpace": "Available space",
   "ui.calendarAssignment.previousWeek": "Previous week",
   "ui.calendarAssignment.nextWeek": "Next week",
-  "ui.calendarAssignment.grayBandsShowUnavailableTimeRangesEnterArrivalAnd": "Gray bands show unavailable time ranges. Enter arrival and pickup, then choose a room or tap a free starting time. The full stay must fit.",
+  "ui.calendarAssignment.grayBandsShowUnavailableTimeRangesEnterArrivalAnd": "Green spans show available space; gray spans are unavailable. Select a green span to place the whole stay, then review the dates.",
   "ui.calendarAssignment.scrollRoomAvailabilityCalendar": "Scroll room availability calendar",
   "ui.calendarAssignment.houseRoom": "House / room",
   "ui.calendarAssignment.noRoomsYet": "No rooms yet",
@@ -916,5 +916,7 @@
   "ui.houseCalendar.houseAddress": "House address",
   "ui.autocomplete.chooseOption": "Choose an item from the list.",
   "ui.autocomplete.noMatches": "No matches",
-  "ui.calendarAssignment.customer": "Customer"
+  "ui.calendarAssignment.customer": "Customer",
+  "ui.calendarAssignment.freeSpace": "Available space",
+  "ui.houseCalendar.practiceRoom": "Practice room"
 }

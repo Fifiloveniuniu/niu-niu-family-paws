@@ -19,6 +19,7 @@ import {
 import {
   placementIssue,
   unavailableRanges,
+  availableRanges,
   type Placement,
   type PlacementIssue,
 } from './calendar-placement';
@@ -464,6 +465,52 @@ export default function AssignmentDialog({
                             aria-label={`${candidateHouse.name} · ${candidateRoom.name}`}
                             onClick={(event) => chooseTime(event, candidateHouse, candidateRoom)}
                           >
+                            {selected &&
+                              availableRanges(viewFrom, viewTo, unavailable).map((range, index) => {
+                                const duration = finish - begin;
+                                const arrival =
+                                  begin >= range.start && finish <= range.end
+                                    ? begin
+                                    : Math.round(
+                                        (range.start + (range.end - range.start - duration) / 2) *
+                                          1440,
+                                      ) / 1440;
+                                const pickup = arrival + duration;
+                                const issue =
+                                  !valid || arrival < range.start || pickup > range.end
+                                    ? 'dates'
+                                    : placementIssue(
+                                        stays,
+                                        pet,
+                                        selected.species,
+                                        arrival,
+                                        pickup,
+                                        candidateHouse.id,
+                                        candidateRoom.id,
+                                        Number(candidateRoom.capacity),
+                                        Number(candidateRoom.costs?.[selected.species]),
+                                      );
+                                return (
+                                  <button
+                                    type="button"
+                                    key={'free-' + index}
+                                    className="hc-time-available"
+                                    style={{
+                                      left: `${position(range.start)}%`,
+                                      width: `${position(range.end) - position(range.start)}%`,
+                                    }}
+                                    disabled={!!issue}
+                                    aria-label={`${uiText('ui.calendarAssignment.freeSpace')}: ${candidateHouse.name} · ${candidateRoom.name} · ${rangeLabel(arrival, pickup)}`}
+                                    title={issue ? reasons[issue] : rangeLabel(arrival, pickup)}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      chooseRange(candidateHouse, candidateRoom, arrival, pickup);
+                                    }}
+                                  >
+                                    <span>{uiText('ui.calendarAssignment.freeSpace')}</span>
+                                  </button>
+                                );
+                              })}
                             {selected &&
                               unavailable.map((range, i) => (
                                 <button

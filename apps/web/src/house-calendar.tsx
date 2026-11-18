@@ -40,6 +40,20 @@ import './house-calendar.css';
 type Scale = 'day' | 'week' | 'month' | 'year';
 type Stay = Placement;
 
+// Isolated preview fixture only; never production house/capacity configuration.
+function practiceRoomSettings(): Record<string, CalendarSettings> {
+  return import.meta.env.MODE === 'test'
+    ? {
+        '1-4': {
+          name: '',
+          address: '',
+          timezone: '',
+          capacity: '2',
+          costs: { dog: '1', cat: '1', rabbit: '1' },
+        },
+      }
+    : {};
+}
 export default function HouseCalendar({
   onLanguageChange,
   customers,
@@ -74,7 +88,7 @@ export default function HouseCalendar({
     initialStays.map((stay, i) => ({ ...stay, id: 'sample-' + i, units: 1 })),
   );
   const [locations, setLocations] = React.useState([
-    { id: 1, rooms: [1, 2, 3] },
+    { id: 1, rooms: [1, 2, 3, ...(import.meta.env.MODE === 'test' ? [4] : [])] },
     { id: 2, rooms: [1, 2] },
   ]);
   const [assignment, setAssignment] = React.useState<
@@ -96,7 +110,9 @@ export default function HouseCalendar({
     return index < 0 ? '4' : String(Math.floor(index / 3) + 1);
   };
   const customerName = (id: string) => uiText('ui.houseCalendar.family') + ' ' + id;
-  const [config, setConfig] = React.useState<Record<string, CalendarSettings>>({});
+  const [config, setConfig] = React.useState<Record<string, CalendarSettings>>(() =>
+    practiceRoomSettings(),
+  );
   const [roomFilter, setRoomFilter] = React.useState('all');
   const [speciesFilter, setSpeciesFilter] = React.useState('all');
   const [statusFilter, setStatusFilter] = React.useState('all');
@@ -195,7 +211,10 @@ export default function HouseCalendar({
   const houseName = (h: number) =>
     config['h' + h]?.name || uiText('ui.houseCalendar.house') + ' ' + (h === 1 ? 'A' : 'B');
   const roomName = (h: number, r: number) =>
-    config[h + '-' + r]?.name || uiText('ui.houseCalendar.room') + ' ' + r;
+    config[h + '-' + r]?.name ||
+    (import.meta.env.MODE === 'test' && h === 1 && r === 4
+      ? uiText('ui.houseCalendar.practiceRoom')
+      : uiText('ui.houseCalendar.room') + ' ' + r);
   const roster = [
     ...initialStays.map((stay) => ({ name: stay.name, species: stay.species })),
     { name: 'Willow', species: 'dog' },
@@ -227,10 +246,10 @@ export default function HouseCalendar({
     if (identityEpoch) {
       setBalances({});
       setBalanceTemplates([]);
-      setConfig({});
+      setConfig(practiceRoomSettings());
       setStays(initialStays.map((stay, i) => ({ ...stay, id: 'sample-' + i, units: 1 })));
       setLocations([
-        { id: 1, rooms: [1, 2, 3] },
+        { id: 1, rooms: [1, 2, 3, ...(import.meta.env.MODE === 'test' ? [4] : [])] },
         { id: 2, rooms: [1, 2] },
       ]);
       setBalanceView(null);

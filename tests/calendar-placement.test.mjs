@@ -108,3 +108,21 @@ test('gray ranges cover overdue occupancy, missing setup and duplicate pet stays
     [{ start: 0.5, end: 1.5, reason: 'duplicate' }],
   );
 });
+
+test('available spans complement overlapping blocked ranges without exposing invalid intervals', async () => {
+  const { availableRanges } = await import('../apps/web/src/calendar-placement.ts');
+  assert.deepEqual(
+    availableRanges(0, 10, [
+      { start: 2, end: 4, reason: 'capacity' },
+      { start: 3, end: 6, reason: 'species' },
+      { start: 8, end: 12, reason: 'capacity' },
+    ]),
+    [
+      { start: 0, end: 2 },
+      { start: 6, end: 8 },
+    ],
+  );
+  assert.deepEqual(availableRanges(0, 10, []), [{ start: 0, end: 10 }]);
+  assert.deepEqual(availableRanges(0, 10, [{ start: -1, end: 11, reason: 'overdue' }]), []);
+  assert.deepEqual(availableRanges(10, 0, []), []);
+});
