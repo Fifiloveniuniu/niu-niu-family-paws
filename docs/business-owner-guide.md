@@ -354,3 +354,10 @@ Chapters3 and6 now show each service or milestone on its own full-width row. The
 Home photos now fill the phone’s content width, with their captions underneath and matching24px corners. Scroll inside the photo chapter to see both complete portraits; the existing Next control still advances the story. The opening flower stays clear of the sun and wording, and the final flower sits above its text. “MAKE ROOM FOR THE DETAILS” now has more space underneath. Preview at http://localhost:4180/home/; not deployed.
 
 手机首页照片现占满内容宽度，说明文字位于各自照片下方，四角统一为24px圆角。在照片章节内向下滚动可查看两张完整照片，也可继续使用“下一章”按钮。开场花朵与太阳、文字保持间距；最后一章的花朵位于文字上方。安排计划区域的小标题下方也增加了留白。目前仅在本地预览，尚未发布。
+
+
+## Desktop chapters and quote styling — local preview, 2026-11-17
+
+Desktop Home chapter3 shows services in two columns; chapter6 shows three large milestone columns. Phones retain full-width rows. Chapter7’s quote uses larger italic serif text with a slim clay-colored line and a smaller family attribution. Review at http://localhost:4180/home/; not deployed.
+
+电脑首页第3章采用两列服务卡片，第6章采用三列大数字展示；手机继续保持每项一整行。第7章的引文使用更大的衬线斜体字，配以细陶土色竖线和较小的署名。当前仅为本地预览，尚未发布。

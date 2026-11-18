@@ -113,7 +113,7 @@ test('marketing Google sign-in opens its provider popup and cancellation returns
   await expect(page).toHaveURL(/\/services\/$/);
 });
 
-test('sun rays fade into the moon and chapters three and six use full-width rows', async ({
+test('sun rays fade into the moon and chapters use responsive rows and columns', async ({
   page,
 }) => {
   for (const width of [320, 390, 1440]) {
@@ -156,20 +156,29 @@ test('sun rays fade into the moon and chapters three and six use full-width rows
           return { x: b.x, width: b.width, top: b.top, bottom: b.bottom };
         }),
       );
-      for (let i = 1; i < rows.length; i++) {
-        expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom - 1);
-        expect(rows[i].x).toBeCloseTo(rows[0].x, 0);
-        expect(rows[i].width).toBeCloseTo(rows[0].width, 0);
+      if (width <= 760) {
+        for (let i = 1; i < rows.length; i++) {
+          expect(rows[i].top).toBeGreaterThanOrEqual(rows[i - 1].bottom - 1);
+          expect(rows[i].x).toBeCloseTo(rows[0].x, 0);
+          expect(rows[i].width).toBeCloseTo(rows[0].width, 0);
+        }
+        const available = await page
+          .locator(chapter === 2 ? '.home-services' : '.number-grid')
+          .evaluate(
+            (e) =>
+              e.clientWidth -
+              parseFloat(getComputedStyle(e).paddingLeft) -
+              parseFloat(getComputedStyle(e).paddingRight),
+          );
+        expect(rows[0].width).toBeCloseTo(available, 0);
+      } else {
+        const columns = chapter === 2 ? 2 : 3;
+        for (let i = 1; i < columns; i++) {
+          expect(rows[i].top).toBeCloseTo(rows[0].top, 0);
+          expect(rows[i].x).toBeGreaterThan(rows[i - 1].x + rows[i - 1].width - 1);
+        }
+        if (chapter === 2) expect(rows[2].top).toBeGreaterThanOrEqual(rows[0].bottom);
       }
-      const available = await page
-        .locator(chapter === 2 ? '.home-services' : '.number-grid')
-        .evaluate(
-          (e) =>
-            e.clientWidth -
-            parseFloat(getComputedStyle(e).paddingLeft) -
-            parseFloat(getComputedStyle(e).paddingRight),
-        );
-      expect(rows[0].width).toBeCloseTo(available, 0);
     }
   }
 });
@@ -253,5 +262,28 @@ test('planning eyebrow has breathing room below it', async ({ page }) => {
           e.querySelector('.eyebrow')!.getBoundingClientRect().bottom,
       );
     expect(gap).toBeGreaterThanOrEqual(24);
+  }
+});
+
+test('chapter seven quote has distinct editorial type and attribution', async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/home/?preview=sample#stories');
+    const quote = page.locator('.home-stories blockquote');
+    await expect(quote).toHaveCSS('font-style', 'italic');
+    await expect(quote).toHaveCSS('font-synthesis', 'style');
+    const sizes = await quote.evaluate((e) => ({
+      quote: parseFloat(getComputedStyle(e).fontSize),
+      body: parseFloat(
+        getComputedStyle(
+          document.querySelector('.home-stories .home-section-intro > p:last-child')!,
+        ).fontSize,
+      ),
+      attribution: parseFloat(
+        getComputedStyle(document.querySelector('.home-stories figcaption')!).fontSize,
+      ),
+    }));
+    expect(sizes.quote).toBeGreaterThan(sizes.body);
+    expect(sizes.quote).toBeGreaterThan(sizes.attribution);
   }
 });
