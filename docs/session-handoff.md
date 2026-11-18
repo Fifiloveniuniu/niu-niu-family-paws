@@ -2,7 +2,7 @@
 
 Latest owner clarification supersedes PR89's desktop full-width rows: chapter3 now uses a two-column service grid on widths above760px; chapter6 uses three centered milestone columns with larger artwork/numerals and restrained vertical dividers. Phone layouts remain one item per full-width row. Chapter7's quote now uses larger italic serif lettering (responsive26–36px desktop,22px mobile), a clay-colored rule and smaller spaced attribution; other quote sections and approved-content rules are unchanged.
 
-Actual localhost Chrome desktop/mobile reviewed, including service grid, milestone columns and quote. Node24 build/formatting and seven targeted Chrome tests passed: responsive row/column geometry, quote hierarchy, bilingual chapter-fit/flower separation across320/390/760/1440, number artwork and equal mobile totals/arrow insets. Screenshots: docs/screenshots/desktop-editorial-*.png. No deployment; delivery PR follows after creation. Preserve PR24/41 and the final combined deployment boundary.
+Actual localhost Chrome desktop/mobile reviewed, including service grid, milestone columns and quote. Node24 build/formatting and seven targeted Chrome tests passed: responsive row/column geometry, quote hierarchy, bilingual chapter-fit/flower separation across320/390/760/1440, number artwork and equal mobile totals/arrow insets. Screenshots: docs/screenshots/desktop-editorial-*.png. No deployment. Delivery: [PR91](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/91); GitHub verified the implementation commit signature and required CI is checked before merge. Preserve PR24/41 and the final combined deployment boundary.
 
 ## Mobile flower placement, full-width photos and consistent corners — 2026-11-17
 
