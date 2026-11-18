@@ -372,6 +372,6 @@ The hair gathers when the scissors close and spreads when they reopen. Scroll ba
 
 ## Centered finishing details — local preview, 2026-11-17
 
-The family-story eyebrow, growing-story line, photo captions and footer are centered. The last milestone has no border, and preparation steps no longer have decorative checkmarks. Text-and-arrow links have compact spacing and continuous underlines throughout the marketing site. Hover or keyboard-focus Contact us on Home for a white button with green text. This is locally validated and not deployed.
+The full family-story section (heading, introduction, quote, attribution and links), growing-story line, photo captions and footer are centered. The last milestone has no border, and preparation steps no longer have decorative checkmarks. Text-and-arrow links have compact spacing and continuous underlines throughout the marketing site. Hover or keyboard-focus Contact us on Home for a white button with green text. This is locally validated and not deployed.
 
-家长故事的小标题、成长故事短句、照片说明和页脚已居中。最后一个数字项目移除了边框，来访准备步骤移除了装饰性勾号。营销网站中的文字与箭头间距更紧凑，下划线连续。首页“联系我们”按钮在悬停或键盘聚焦时显示为白底绿字。目前仅为本地更新，尚未发布。
+家长故事的整段内容（标题、介绍、引文、署名与链接）、成长故事短句、照片说明和页脚已居中。最后一个数字项目移除了边框，来访准备步骤移除了装饰性勾号。营销网站中的文字与箭头间距更紧凑，下划线连续。首页“联系我们”按钮在悬停或键盘聚焦时显示为白底绿字。目前仅为本地更新，尚未发布。

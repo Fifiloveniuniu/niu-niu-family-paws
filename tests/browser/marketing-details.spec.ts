@@ -36,6 +36,30 @@ test('editorial accents, photo captions and footer are centered and unwanted mar
       });
       expect(error).toBeLessThan(0.5);
     }
+    await pose(page, 6);
+    const storyCenters = await page.locator('.home-stories').evaluate((e) => {
+      const errors = [
+        ...e.querySelectorAll(
+          '.home-section-intro > h2,.home-section-intro > p,blockquote,figcaption',
+        ),
+      ].map((copy) => {
+        const r = document.createRange();
+        r.selectNodeContents(copy);
+        const b = r.getBoundingClientRect();
+        return Math.abs(b.x + b.width / 2 - innerWidth / 2);
+      });
+      const links = [...e.querySelectorAll<HTMLElement>(':scope > .text-link')].map((x) =>
+        x.getBoundingClientRect(),
+      );
+      errors.push(
+        Math.abs(
+          (Math.min(...links.map((x) => x.left)) + Math.max(...links.map((x) => x.right))) / 2 -
+            innerWidth / 2,
+        ),
+      );
+      return errors;
+    });
+    for (const error of storyCenters) expect(error).toBeLessThan(0.5);
     const last = page.locator('.number-grid article').last();
     for (const edge of ['top', 'bottom', 'left', 'right'])
       await expect(last).toHaveCSS(`border-${edge}-width`, '0px');
@@ -69,6 +93,17 @@ test('editorial accents, photo captions and footer are centered and unwanted mar
       return errors;
     });
     for (const error of footerErrors) expect(error).toBeLessThan(0.5);
+    await page.goto('/home/#stories');
+    await expect(page.locator('.home-stories')).toHaveAttribute('aria-hidden', 'false');
+    const emptyErrors = await page.locator('.home-stories .story-awaiting p').evaluateAll((es) =>
+      es.map((e) => {
+        const r = document.createRange();
+        r.selectNodeContents(e);
+        const b = r.getBoundingClientRect();
+        return Math.abs(b.x + b.width / 2 - innerWidth / 2);
+      }),
+    );
+    for (const error of emptyErrors) expect(error).toBeLessThan(0.5);
   }
 });
 
