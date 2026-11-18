@@ -1,3 +1,11 @@
+## Scissor-linked hair and centered framed icons — 2026-11-17
+
+Hair spread now uses the same deterministic snip phase as the blades: outer hairs gather toward the center as scissors close and spread as they reopen. Both blade-group rotations pivot at50/48 and follow that same phase; removed the previous unrelated CSS rotation timeline. Geometry and group transforms restore in Reduced Motion and retrace on reverse scrolling.
+
+Removed whole-icon positional drift from service, trust and milestone illustrations while retaining centered scaling/internal articulation. Framed SVGs use explicit grid centering and centered view-box transform origins; corrected the Spaces grooming frame’s intrinsic grid-row growth, which previously shifted its square SVG downward41px and clipped its bottom. Home frame centers and public Spaces/Academy frame centers stay aligned throughout sampled native scroll poses.
+
+Node24 build,41 unit tests and formatting passed. Ten focused Chrome cases passed across initial/focused runs, covering correlated hair/blade opening, exact framed-icon centers on390/1440, hinge/spine stability, geometry restoration, internal/reversible motion, chapter clicks and bilingual phone/desktop fit. Actual localhost Chrome phone/desktop reviewed; screenshots docs/screenshots/scissor-hair-{open,closed}.png and centered-grooming-frame-mobile.png. No deployment. Review branch: [fix/centered-icons-and-scissor-hair](https://github.com/Fifiloveniuniu/niu-niu-family-paws/compare/main...fix/centered-icons-and-scissor-hair). Preserve previous marketing refinements, other WIP and final combined deployment boundary.
+
 ## Tighter cancellation-link arrow spacing — 2026-11-17
 
 Reduced the gap between “Read cancellation terms” and its arrow from20px to6px, scoped to the planning panel. Actual localhost Chrome390/1440 reviewed; gap6px, no overflow. Node24 build and Prettier passed. No deployment. Review branch: [polish/planning-link-arrow](https://github.com/Fifiloveniuniu/niu-niu-family-paws/compare/main...polish/planning-link-arrow). Preserve previous panel insets/footer spacing/bar removal and the final combined deployment boundary.

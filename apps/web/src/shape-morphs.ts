@@ -141,13 +141,13 @@ export function createShapeMorpher(root: Element) {
         );
       }
       for (const { element, index } of tufts) {
-        const x = 44 + index * 6;
-        const drift = (index - 1) * 2 * release;
+        // The same snip phase closes the blades and gathers the hair between them.
+        const x = 50 + (index - 1) * (3 + 5 * (1 - snip));
         const fall = 3 * release;
         write(
           element,
           'd',
-          `M${x + drift} ${13 + (index % 2) * 2 + fall}Q${x - 2 + drift} ${21 + fall} ${x + drift} ${29 + fall}`,
+          `M${x} ${13 + (index % 2) * 2 + fall}Q${x - 2} ${21 + fall} ${x} ${29 + fall}`,
         );
       }
       const beat = Math.sin(t * Math.PI * 2) * Math.sin(t * Math.PI);
@@ -206,7 +206,12 @@ export function createShapeMorpher(root: Element) {
           'd',
           `M50 30C${58 + 8 * t} ${15 + 4 * t} ${73 + 10 * t} ${20 - 4 * t} 84 ${27 - 5 * t}V74C${70 + 10 * t} ${66 + 4 * t} ${58 + 6 * t} ${78 - 5 * t} 50 82Z`,
         );
-      for (const { element, right } of blades)
+      for (const { element, right } of blades) {
+        write(
+          element.parentElement!,
+          'transform',
+          `rotate(${(right ? -1 : 1) * 8 * (1 - snip)} 50 48)`,
+        );
         write(
           element,
           'd',
@@ -214,6 +219,7 @@ export function createShapeMorpher(root: Element) {
             ? `M64 64L50 48Q45 34 ${20 + 27 * snip} ${14 + 5 * snip}`
             : `M36 64L50 48Q55 34 ${80 - 27 * snip} ${14 + 5 * snip}`,
         );
+      }
       for (const element of pads)
         write(
           element,

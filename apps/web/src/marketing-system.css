@@ -957,12 +957,10 @@ header.marketing-header nav {
 }
 .marketing-site[data-scroll-enabled] .metric-art .care-symbol {
   transform-origin: center;
-  transform: translateY(calc((0.5 - var(--care-progress, 0.5)) * 10px))
-    scale(calc(0.92 + var(--care-progress) * 0.16));
+  transform: scale(calc(0.92 + var(--care-progress) * 0.16));
 }
 .marketing-site[data-scroll-enabled] .metric-art-groomingAppointments .care-symbol {
-  transform: translateY(calc((var(--care-progress, 0.5) - 0.5) * 10px))
-    scaleX(calc(1.06 - var(--care-progress) * 0.12));
+  transform: scaleX(calc(1.06 - var(--care-progress) * 0.12));
 }
 .marketing-site[data-scroll-enabled] .metric-paw-pad {
   transform-origin: 50px 65px;
@@ -1768,4 +1766,28 @@ header.marketing-header nav {
   .home-stories .story-quotes figcaption {
     padding-left: 19px;
   }
+}
+
+/* Animate within the icon viewport without drifting away from the frame center. */
+.marketing-site
+  :is(.service-path-icon, .trust-symbol, .metric-art, .academy-symbol, .space-illustration) {
+  display: grid;
+  place-items: center;
+}
+.marketing-site
+  :is(.service-path-icon, .trust-symbol, .metric-art, .academy-symbol, .space-illustration)
+  > svg {
+  display: block;
+  margin: 0;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+
+.marketing-site .space-illustration {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+.marketing-site .space-illustration > svg {
+  min-width: 0;
+  min-height: 0;
 }
