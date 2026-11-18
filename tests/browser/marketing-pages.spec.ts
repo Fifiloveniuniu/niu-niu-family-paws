@@ -2,9 +2,12 @@ import { test, expect } from '@playwright/test';
 
 async function language(page: import('@playwright/test').Page, value: string) {
   const menu = page.locator('.marketing-menu-toggle');
-  if ((await menu.isVisible()) && !(await page.locator('select').isVisible())) await menu.click();
-  await page.locator('select').selectOption(value);
-  if ((await menu.isVisible()) && (await page.locator('select').isVisible())) await menu.click();
+  if ((await menu.isVisible()) && !(await page.locator('.language-menu-trigger').isVisible()))
+    await menu.click();
+  await page.locator('.language-menu-trigger').click();
+  await page.getByRole('menuitemradio', { name: value === 'zh' ? '简体中文' : 'English' }).click();
+  if ((await menu.isVisible()) && (await page.locator('.language-menu-trigger').isVisible()))
+    await menu.click();
 }
 
 test('marketing pages share navigation, bilingual mobile layouts and a complete footer', async ({
@@ -33,7 +36,7 @@ test('marketing pages share navigation, bilingual mobile layouts and a complete 
         await expect(page.locator('.marketing-footer')).toBeVisible();
         await expect(
           page.locator('.marketing-footer a[href="/pricing/#cancellation-policy"]'),
-        ).toHaveCount(1);
+        ).toHaveCount(0);
         expect(await page.locator('main').innerText()).not.toContain('undefined');
       }
     }
@@ -47,7 +50,7 @@ test('mobile menu, service submenu, policy alias and service links navigate corr
   await page.goto('/home/');
   const toggle = page.getByRole('button', { name: 'Menu' });
   await toggle.click();
-  await page.getByRole('button', { name: 'Show services' }).click();
+  await expect(page.getByRole('button', { name: 'Show services' })).toHaveCount(0);
   await page.locator('#service-menu a[href="/academy/"]').click();
   await expect(page).toHaveURL(/\/academy\/$/);
   await expect(page.locator('#marketing-menu')).toBeHidden();
@@ -62,7 +65,7 @@ test('mobile menu, service submenu, policy alias and service links navigate corr
   await expect(page).toHaveURL(/\/services\/$/);
   await page.setViewportSize({ width: 1440, height: 950 });
   const labels = await page
-    .locator('.marketing-header nav > a,.marketing-header nav > .nav-services > a')
+    .locator('.marketing-header nav > a,.marketing-header nav > .nav-dropdown > a')
     .allTextContents();
   expect(labels.map((s) => s.trim())).toEqual([
     'Home',
@@ -71,6 +74,149 @@ test('mobile menu, service submenu, policy alias and service links navigate corr
     'About us',
     'Pricing',
     'FAQs',
-    'Contact us ↗',
+    'Contact us',
   ]);
+});
+
+test('footer uses warm paper and its logo stays unlined on hover', async ({ page }) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/services/');
+    const footer = page.locator('.marketing-footer');
+    await footer.scrollIntoViewIfNeeded();
+    await expect(footer).toHaveCSS('background-color', 'rgb(245, 241, 232)');
+    const logo = footer.locator('.footer-brand .brand');
+    await logo.hover();
+    await expect(logo).toHaveCSS('text-decoration-line', 'none');
+    await expect(logo).toHaveCSS('color', 'rgb(43, 79, 61)');
+    const main = (await footer.locator('.footer-main').boundingBox())!;
+    const bottom = (await footer.locator('.footer-bottom').boundingBox())!;
+    expect(Math.abs(main.width - bottom.width)).toBeLessThan(1);
+  }
+});
+
+test('desktop navigation opens dropdowns on hover and keyboard focus without extra buttons', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 950 });
+  await page.goto('/home/');
+  for (const name of ['services', 'spaces', 'about', 'pricing']) {
+    const group = page
+      .locator('.nav-dropdown')
+      .filter({ has: page.locator(`a[href="/${name}/"]`) })
+      .first();
+    const trigger = group.locator(':scope > a');
+    const submenu = group.locator('.nav-submenu');
+    await expect(group.locator('button')).toHaveCount(0);
+    await trigger.hover();
+    await expect(submenu).toBeVisible();
+    await submenu.locator('a').first().hover();
+    await expect(submenu).toBeVisible();
+    await page.locator('.marketing-header .brand').hover();
+    await expect(submenu).toBeHidden();
+    await trigger.focus();
+    await expect(submenu).toBeVisible();
+    await page.keyboard.press('Tab');
+    await expect(submenu.locator('a').first()).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(trigger).toBeFocused();
+    await expect(submenu).toBeHidden();
+    await page.locator('.marketing-header .brand').focus();
+  }
+  await page.locator('.nav-dropdown > a[href="/pricing/"]').hover();
+  await page.locator('#pricing-menu a[href="/pricing/#boarding-packages"]').click();
+  await expect(page.locator('#boarding-packages')).toBeInViewport();
+});
+
+test('phone navigation exposes submenu links without hover and footer keeps bottom breathing room', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/home/?preview=sample');
+  await expect(page.locator('.marketing-preview-notice')).toHaveCount(0);
+  await page.locator('.marketing-menu-toggle').click();
+  await expect(page.locator('#spaces-menu')).toBeVisible();
+  await page.locator('#spaces-menu a[href="/spaces/#grooming-shop"]').click();
+  await expect(page.locator('#grooming-shop')).toBeInViewport();
+  await expect(page.locator('#marketing-menu')).toBeHidden();
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+  const gap = await page
+    .locator('.footer-bottom')
+    .evaluate(
+      (e) =>
+        document.querySelector('.marketing-footer')!.getBoundingClientRect().bottom -
+        e.getBoundingClientRect().bottom,
+    );
+  expect(gap).toBeGreaterThanOrEqual(48);
+});
+
+test('chapter details align pets with steps, keep equal arrow insets and equal phone totals', async ({
+  page,
+}) => {
+  for (const width of [320, 390, 1440]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.goto('/home/?preview=sample#experience');
+    const distances = await page.locator('.experience-steps > li').evaluateAll((items) =>
+      items.map((li) => {
+        const pet = li.querySelector('.experience-pet')!.getBoundingClientRect();
+        const copy = li.querySelector('.experience-step-copy')!.getBoundingClientRect();
+        return Math.min(Math.abs(copy.left - pet.right), Math.abs(copy.top - pet.bottom));
+      }),
+    );
+    expect(Math.max(...distances)).toBeLessThanOrEqual(15);
+    await page.locator('[data-cinema-next]').click();
+    await expect(page.locator('.marketing-site')).not.toHaveAttribute('data-marketing-transition');
+    const margins = await page.locator('.home-services .service-path').evaluateAll((items) =>
+      items.map((e) => {
+        const a = e.querySelector('.path-arrow')!.getBoundingClientRect(),
+          b = e.getBoundingClientRect();
+        return Math.abs(b.right - a.right - (b.bottom - a.bottom));
+      }),
+    );
+    expect(Math.max(...margins)).toBeLessThan(0.1);
+    await page.goto('/home/?preview=sample#numbers');
+    if (width < 761) {
+      expect(
+        new Set(
+          await page
+            .locator('.live-number')
+            .evaluateAll((es) => es.map((e) => getComputedStyle(e).fontSize)),
+        ).size,
+      ).toBe(1);
+    }
+    expect(await page.locator('.marketing-footer a').count()).toBe(0);
+  }
+});
+
+test('custom language menu spaces options and separates hover, selection and keyboard focus', async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/home/');
+    if (width === 390) await page.locator('.marketing-menu-toggle').click();
+    const trigger = page.locator('.language-menu-trigger');
+    await trigger.click();
+    const selected = page.getByRole('menuitemradio', { checked: true });
+    const other = page.getByRole('menuitemradio', { checked: false });
+    const first = await page.getByRole('menuitemradio').nth(0).boundingBox(),
+      second = await page.getByRole('menuitemradio').nth(1).boundingBox();
+    expect(second!.y - first!.y - first!.height).toBeGreaterThanOrEqual(6);
+    await other.hover();
+    expect(await other.evaluate((e) => getComputedStyle(e).backgroundColor)).not.toBe(
+      await selected.evaluate((e) => getComputedStyle(e).backgroundColor),
+    );
+    await page.keyboard.press('End');
+    await page.keyboard.press('Enter');
+    await expect(trigger).toContainText('简体中文');
+    await trigger.press('ArrowDown');
+    await page.keyboard.press('Escape');
+    await expect(trigger).toBeFocused();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    if (width === 390) {
+      const language = await trigger.boundingBox(),
+        signIn = await page.locator('.sign-in-link').boundingBox();
+      expect(signIn!.y).toBeGreaterThan(language!.y + language!.height);
+    }
+  }
 });

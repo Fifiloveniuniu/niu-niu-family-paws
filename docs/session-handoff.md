@@ -1,3 +1,7 @@
+## Navigation refinements ready for review — 2026-11-17
+
+PR84 story transitions merged after verified signature and green CI. Navigation now has seven matching icon tabs, wider desktop spacing, hover/focus submenus, custom bilingual language menu, Language then Sign in on separate phone rows, full-width divider and simplified footer. Updated Contact label regression for owner-requested arrow removal; added custom-language spacing/hover/selection/keyboard/mobile-row coverage. Node24 build/formatting passed. Combined38-case browser run passed37 with only obsolete Contact label failing; all6 page cases passed after correction and the added language test passed. Actual localhost4190 Chrome desktop/phone reviewed. No deployment.
+
 ## Cinematic story refinements ready for review — 2026-11-17
 
 PR82 typography and PR83 public-content preview are merged. This change adds direct endpoint object transitions on click, reversible scroll-driven internal geometry, chapter-centered fading backgrounds/contrast, paired pet introductions, consistent controls and the attached FAQ flower with clipped moving stem/straight final route/white center. Node24 build, formatting and41 unit tests passed. All29 motion/scroll/preview browser cases passed across broad/focused reruns; updated the superseded chapter7 flower assertion and included Home-return route handling. Local Chrome reviewed at localhost4190. Navigation enhancements remain a separate PR. No deployment.

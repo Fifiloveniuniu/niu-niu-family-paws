@@ -2,9 +2,12 @@ import { test, expect, type Page } from '@playwright/test';
 
 async function language(page: Page, value: string) {
   const menu = page.locator('.marketing-menu-toggle');
-  if ((await menu.isVisible()) && !(await page.locator('select').isVisible())) await menu.click();
-  await page.locator('select').selectOption(value);
-  if ((await menu.isVisible()) && (await page.locator('select').isVisible())) await menu.click();
+  if ((await menu.isVisible()) && !(await page.locator('.language-menu-trigger').isVisible()))
+    await menu.click();
+  await page.locator('.language-menu-trigger').click();
+  await page.getByRole('menuitemradio', { name: value === 'zh' ? '简体中文' : 'English' }).click();
+  if ((await menu.isVisible()) && (await page.locator('.language-menu-trigger').isVisible()))
+    await menu.click();
 }
 async function pose(page: Page, value: number) {
   await page.evaluate(async (value) => {

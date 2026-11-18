@@ -1219,6 +1219,20 @@ html:has(.marketing-header) {
     --marketing-header-height: 107px;
   }
 }
+.nav-policy-short {
+  display: none;
+}
+@media (max-width: 760px) {
+  .nav-policy-full {
+    display: none;
+  }
+  .nav-policy-short {
+    display: inline;
+  }
+  header.marketing-header nav {
+    gap: 6px;
+  }
+}
 
 /* Expressions live inside the portraits; the same progress also works on Services. */
 .marketing-site[data-scroll-enabled]
