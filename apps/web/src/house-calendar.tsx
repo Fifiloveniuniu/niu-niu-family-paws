@@ -15,7 +15,7 @@ import type { BalancePolicyTemplate } from './pet-balance';
 import {
   CalendarPhotoProvider,
   PetProfileAvatar,
-  CalendarPhotoCredits,
+  CalendarPhotoStatus,
   CalendarProfileLink,
 } from './calendar-pet-photos';
 import {
@@ -971,7 +971,7 @@ export default function HouseCalendar({
                   '点击托管条查看详情。日期为计划时间，入住状态表示实际在店情况。',
                 )}
               </p>
-              <CalendarPhotoCredits />
+              <CalendarPhotoStatus />
             </div>
             {assignment !== false && (
               <AssignmentDialog
