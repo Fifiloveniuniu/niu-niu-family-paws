@@ -131,7 +131,7 @@ export function createSceneContrast(stage: HTMLElement) {
             `linear-gradient(180deg,transparent ${safeTop - bounds.top}px,#000 ${safeTop + 8 - bounds.top}px,#000 ${safeBottom - 8 - bounds.top}px,transparent ${safeBottom - bounds.top}px)`,
           );
       }
-      for (const { gradient, first, middle, last, matrix, ink } of vectors) {
+      for (const { shape, properties, gradient, first, middle, last, matrix, ink } of vectors) {
         if (!matrix || Math.abs(matrix.a * matrix.d - matrix.b * matrix.c) < 1e-8) continue;
         const local = matrix.inverse().translate(rect.left + field.cx, rect.top + field.cy);
         gradient.setAttribute(
@@ -142,6 +142,13 @@ export function createSceneContrast(stage: HTMLElement) {
         const a = baseDark ? '#fffaf0' : ink,
           b = nextDark ? '#fffaf0' : ink;
         const center = mixInk(a, b, inkField.strength);
+        // WebKit can discard a near-zero radial paint server. Uniform scenes
+        // need only a solid color; restore the gradient during an actual reveal.
+        for (const { name } of properties)
+          shape.style.setProperty(
+            name,
+            a === b || inkField.strength === 0 || field.outer <= 0.001 ? a : `url(#${gradient.id})`,
+          );
         first.setAttribute('stop-color', center);
         middle.setAttribute('stop-color', center);
         middle.setAttribute('offset', String(field.outer ? field.inner / field.outer : 0));

@@ -508,7 +508,7 @@
   display: block;
   position: absolute;
   width: clamp(84px, 9vw, 128px);
-  height: auto;
+  height: clamp(84px, 9vw, 128px);
   aspect-ratio: 1;
   pointer-events: none;
   z-index: 0;
@@ -1128,4 +1128,41 @@
 .garden-center {
   fill: color-mix(in srgb, #b28353 calc((1 - var(--flower-green, 0)) * 100%), white);
   opacity: calc(0.65 + var(--flower-green, 0) * 0.35);
+}
+
+/* Reserve an actual artwork row above the opening copy on Safari's short viewport. */
+@media (max-width: 760px) {
+  .home-story.cinematic-story[data-cinema-enabled] .hero-stage {
+    padding-top: 104px;
+    align-content: start;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .hero-message h1 {
+    font-size: clamp(32px, 9vw, 40px);
+    margin-block: 16px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .home-lead {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .hero-world {
+    width: clamp(100px, calc(var(--stage-height) - 510px), 210px);
+    margin-top: 8px;
+  }
+  .home-story.cinematic-story[data-cinema-enabled] .shared-flower {
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-story.cinematic-story[data-cinema-enabled] .hero-world .world-note {
+    width: 220px;
+    max-width: calc(100vw - 48px);
+    right: 50%;
+    translate: 50% 0;
+    bottom: -12px;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 8px 12px;
+  }
 }
