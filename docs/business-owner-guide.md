@@ -382,3 +382,10 @@ The full family-story section (heading, introduction, quote, attribution and lin
 The reviewed marketing version is now published at https://niu-niu-family-paws.web.app/home/. Desktop/mobile and English/Chinese live checks passed, including the centered sections/footer, photo layouts, menus and sign-in dialog. Google’s secure provider window opens normally. Production continues to show only approved business content; sample prices, totals and testimonials remain part of the local preview. Unfinished booking/balance workflows are not activated by this marketing release.
 
 本次确认的营销网站版本已发布：https://niu-niu-family-paws.web.app/home/。电脑、手机及中英文的线上检查均已通过，包括居中排版、页脚、照片、菜单和登录弹窗。Google 安全登录窗口可正常打开。正式网站继续只展示已批准的业务内容；示例价格、数字及评价仍仅用于本地预览。本次营销网站更新不会启用尚未完成的预约或余额流程。
+
+
+## Drop-in visits and dog walking — local preview, 2026-11-17
+
+Services now includes Drop-in visits (care for pets at home) and Dog walking. Find them in the Services menu and Pricing, in English and Chinese. Prices, visit/walk length and service area remain to be confirmed. Preview: http://localhost:4180/services/#drop-in. Not published yet.
+
+服务项目现已加入“上门照护”和“遛狗服务”，服务菜单及价格页均可查看，支持中英文。价格、时长及服务范围仍待确认。目前为本地预览，尚未上线。

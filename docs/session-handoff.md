@@ -1,3 +1,7 @@
+## Drop-in visits and dog walking — 2026-11-17
+
+Added owner-requested drop-in pet care and dog walking to Services, its desktop/phone submenu, Pricing, and the Home introduction in English/Simplified Chinese. Distinct house/heart and dog/leash illustrations match existing service artwork. No new rates, durations, service-area facts or booking rules invented; both services retain confirmation copy even in sample preview. Existing four services preserved. Local Chrome walkthrough at localhost4180, desktop English and phone Chinese; twelve route/language/viewport checks passed across Services/Pricing/Home,390/1440, no overflow or page errors. Node24 production build,41 unit tests and formatting passed. Review images: docs/screenshots/new-services-*.png. No deployment; await final hosted publication. Delivery PR recorded below after creation.
+
 ## Marketing version deployed and live-verified — 2026-11-17
 
 Owner explicitly requested “deploy this version”, lifting the previous marketing-batch deployment hold. Firebase Hosting deployment succeeded for merged main source `7b0cc5c6e3780de91412337a2841432f26f9f331` (through PR96). Live: https://niu-niu-family-paws.web.app/home/. Built with Node24, then ran `firebase deploy --only hosting --project niu-niu-family-paws --non-interactive`. No Cloud Run API code deployment, database changes or business-record writes were performed; Hosting pinned its API rewrite to the existing latest service revision using the established configuration. Unrelated PR24/41 remain untouched.
