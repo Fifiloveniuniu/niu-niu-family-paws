@@ -251,6 +251,7 @@ export default function AssignmentDialog({
         </p>
         <section
           className="hc-wizard-step"
+          data-booking-step="1"
           hidden={step !== 1}
           aria-label={translate('Stay details', '托管详情')}
         >
@@ -321,6 +322,7 @@ export default function AssignmentDialog({
         </section>
         <section
           className="hc-wizard-step"
+          data-booking-step="2"
           hidden={step !== 2}
           aria-label={translate('Choose room', '选择房间')}
         >
@@ -523,6 +525,7 @@ export default function AssignmentDialog({
         </section>
         <section
           className="hc-wizard-step"
+          data-booking-step="3"
           hidden={step !== 3}
           aria-label={translate('Review stay', '确认托管')}
         >

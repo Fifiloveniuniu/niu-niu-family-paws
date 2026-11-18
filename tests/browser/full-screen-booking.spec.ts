@@ -116,3 +116,56 @@ for (const width of [390, 1440])
       );
     });
   }
+
+for (const [width, height] of [
+  [320, 568],
+  [390, 739],
+  [1440, 900],
+]) {
+  for (const language of ['en', 'zh']) {
+    test(`focused booking controls stay inside the scroll viewport ${language} ${width}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height });
+      await page.addInitScript((lang) => localStorage.setItem('language', lang), language);
+      await page.route('**/api/profile', (route) =>
+        route.fulfill({ status: 401, json: { code: 'unauthenticated' } }),
+      );
+      await page.goto('/app/calendar/');
+      await page
+        .getByRole('button', { name: language === 'en' ? 'Add booking' : '添加预约', exact: true })
+        .click();
+      const dialog = page.getByRole('dialog');
+      const pet = dialog.getByRole('combobox');
+      await pet.click();
+      await pet.press('Escape');
+      const fields = dialog.locator('.hc-wizard-step:not([hidden]) input');
+      await expect(fields).toHaveCount(2);
+      for (let i = 0; i < (await fields.count()); i++) {
+        await fields.nth(i).focus();
+        const bounds = await fields.nth(i).evaluate((element) => {
+          const field = element.getBoundingClientRect();
+          const step = element.closest('.hc-wizard-step')!.getBoundingClientRect();
+          return {
+            left: field.left - step.left,
+            right: step.right - field.right,
+            top: field.top - step.top,
+            bottom: step.bottom - field.bottom,
+            font: parseFloat(getComputedStyle(element).fontSize),
+          };
+        });
+        expect(bounds.left).toBeGreaterThanOrEqual(4);
+        expect(bounds.right).toBeGreaterThanOrEqual(4);
+        expect(bounds.top).toBeGreaterThanOrEqual(4);
+        expect(bounds.bottom).toBeGreaterThanOrEqual(4);
+        expect(bounds.font).toBeGreaterThanOrEqual(16);
+      }
+      await expect(dialog.locator('.hc-wizard-footer .hc-apply')).toBeInViewport();
+      expect(
+        await dialog
+          .locator('.hc-wizard-step:not([hidden])')
+          .evaluate((element) => element.scrollWidth <= element.clientWidth),
+      ).toBe(true);
+    });
+  }
+}
