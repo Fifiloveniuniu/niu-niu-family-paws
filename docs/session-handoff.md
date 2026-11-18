@@ -1,3 +1,7 @@
+## Welcome typography ready for review — 2026-11-17
+
+Isolated the owner-requested handwritten Home title into its own PR. Uses the existing licensed Caveat font and bilingual fallbacks. Production build and formatting checked before publication. No deployment. Other marketing refinements follow in separate PRs.
+
 ## Artwork for all Home number items — 2026-11-17
 
 Completed the owner's remaining visual issue: every Every little one counts item now has a distinct original SVG icon—paw for pets cared for, scissors for grooming appointments and learning book for groomers trained. Pastel sage/clay/yellow medallions match the rest of the site. Icons rotate with the shared timeline; paw pads/toes, scissor blades and book details transform independently. Layouts remain bilingual and fit phones/desktop. Verified totals are still pending: this adds no invented counts or business claims.

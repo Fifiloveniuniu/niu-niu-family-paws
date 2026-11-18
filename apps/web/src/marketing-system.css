@@ -994,3 +994,15 @@ header.marketing-header nav {
     margin-bottom: 10px;
   }
 }
+
+/* The welcome line gets the same warm handwritten voice as the site's cute accents. */
+.marketing-site #home-title {
+  font-family: var(--paws-cute);
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+.marketing-site #home-title .title-love {
+  font-style: normal;
+}
