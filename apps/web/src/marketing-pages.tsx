@@ -59,7 +59,7 @@ export function serviceContent(zh: boolean) {
         },
         {
           id: 'boarding',
-          name: 'Boarding',
+          name: 'Pet boarding',
           tag: 'A home-away kind of stay',
           body: 'An overnight stay starts with the little things: mealtimes, resting spots, and what helps them settle.',
           note: 'Confirm availability, care arrangements, and cancellation terms before booking.',

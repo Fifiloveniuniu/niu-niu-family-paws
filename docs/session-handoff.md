@@ -1,3 +1,7 @@
+## Pet boarding service name — 2026-11-17
+
+Owner requested “Pet boarding” instead of “Boarding”. Updated the English public service name across Home, Services, its submenu and Pricing; Chinese remains unchanged. Node24 build and six Chrome route/viewport checks passed, with actual localhost Services inspection. No deployment. PR97 service additions are merged; this label correction is a separate change.
+
 ## Drop-in visits and dog walking — 2026-11-17
 
 Added owner-requested drop-in pet care and dog walking to Services, its desktop/phone submenu, Pricing, and the Home introduction in English/Simplified Chinese. Distinct house/heart and dog/leash illustrations match existing service artwork. No new rates, durations, service-area facts or booking rules invented; both services retain confirmation copy even in sample preview. Existing four services preserved. Local Chrome walkthrough at localhost4180, desktop English and phone Chinese; twelve route/language/viewport checks passed across Services/Pricing/Home,390/1440, no overflow or page errors. Node24 production build,41 unit tests and formatting passed. Review images: docs/screenshots/new-services-*.png. No deployment; await final hosted publication. Delivery: [PR97](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/97). GitHub verified the signed implementation commit; merge only after required CI passes.

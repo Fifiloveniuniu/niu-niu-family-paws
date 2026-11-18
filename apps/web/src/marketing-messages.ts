@@ -20,7 +20,7 @@ export const englishMessages = {
   dayTag: 'FOR THEIR DAY',
   dayDescription:
     'Need care during the day? Check available dates and discuss your pet’s routine and care needs before booking.',
-  night: 'Boarding',
+  night: 'Pet boarding',
   nightTag: 'FOR THEIR STAY',
   nightDescription:
     'Heading away overnight? Check availability and talk through your pet’s routine before their stay.',
