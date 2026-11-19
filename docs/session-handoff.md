@@ -1,3 +1,7 @@
+## Scoped record pagination API — 2026-11-18
+
+Bounded customer, pet, balance and statement pages support 25/50/100 rows. Statement continuation binds identity and filters, includes its timestamp anchor and survives deletion of the last row. Authorization and filters precede paging. Photo-rich navigation uses a separate verified-identity request budget; unauthenticated traffic retains its IP limit. No production deployment.
+
 ## Scoped employee operations API — prepared for delivery, 2026-11-18
 
 The owner resumed signed PR delivery and merging after the local-only work period. This feature adds trusted employee house assignments, scoped operational booking/photo reads, actual handoffs, verified pet weights and audited corrections. Employee assignment never grants a role, financial access or cancellation permission. Writes recheck current house access transactionally, including retries; revocation takes effect without exposing another house. Planned times remain unchanged by actual-time corrections. Pet edits preserve matching verified weights and clear verification when the weight changes. Private photos remain authorized on every request.

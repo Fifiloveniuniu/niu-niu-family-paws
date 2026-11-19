@@ -101,16 +101,17 @@ export function petStore(database: Firestore, photos: Photos) {
     return customer;
   }
   return {
-    async list(identity: Identity, customerId: string, cursor?: string) {
+    async list(identity: Identity, customerId: string, cursor?: string, pageSize?: string) {
       await authorize(identity, customerId);
+      const size = Number(pageSize ?? 50);
       let query = customerRef(customerId)
         .collection('pets')
         .orderBy(FieldPath.documentId())
-        .limit(51);
+        .limit(size + 1);
       if (cursor) query = query.startAfter(cursor);
       const result = await query.get();
-      const items = result.docs.slice(0, 50).map((doc) => projectPet(doc.data()));
-      return { items, nextCursor: result.size > 50 ? items.at(-1)!.id : null };
+      const items = result.docs.slice(0, size).map((doc) => projectPet(doc.data()));
+      return { items, nextCursor: result.size > size ? items.at(-1)!.id : null };
     },
     async save(identity: Identity, customerId: string, id: string, input: PetWrite) {
       // Authorize before decoding or storing a file; repeat inside the transaction.
@@ -243,16 +244,27 @@ export function petRoutes(api: FastifyInstance, store: PetStore) {
     required: ['customerId', 'id'],
     properties: { customerId: uuidSchema, id: uuidSchema },
   };
-  api.get<{ Params: { customerId: string }; Querystring: { cursor?: string } }>(
+  api.get<{ Params: { customerId: string }; Querystring: { cursor?: string; pageSize?: string } }>(
     '/customers/:customerId/pets',
     {
       schema: {
         params: { ...params, required: ['customerId'], properties: { customerId: uuidSchema } },
-        querystring: { ...emptyObjectSchema, properties: { cursor: uuidSchema } },
+        querystring: {
+          ...emptyObjectSchema,
+          properties: {
+            cursor: uuidSchema,
+            pageSize: { type: 'string', enum: ['25', '50', '100'] },
+          },
+        },
       },
     },
     (request) =>
-      store.list(requestIdentity(request), request.params.customerId, request.query.cursor),
+      store.list(
+        requestIdentity(request),
+        request.params.customerId,
+        request.query.cursor,
+        request.query.pageSize,
+      ),
   );
   api.put<{ Params: { customerId: string; id: string }; Body: PetWrite }>(
     '/customers/:customerId/pets/:id',

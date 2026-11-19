@@ -24,7 +24,11 @@ type CustomerWrite = components['schemas']['CustomerWrite'];
 type ProfileWrite = components['schemas']['ProfileWrite'];
 export type { Identity, ProfileIdentity } from './request-context.ts';
 export interface CustomerStore {
-  list(cursor?: string, search?: string): Promise<{ items: Customer[]; nextCursor: string | null }>;
+  list(
+    cursor?: string,
+    search?: string,
+    pageSize?: string,
+  ): Promise<{ items: Customer[]; nextCursor: string | null }>;
   save(id: string, input: CustomerWrite, actor: string): Promise<Customer>;
   profile(identity: ProfileIdentity): Promise<Customer | null>;
   saveProfile(identity: ProfileIdentity, input: ProfileWrite): Promise<Customer>;
@@ -48,7 +52,12 @@ export function buildApp(deps: {
     bodyLimit: 16_384,
     ajv: { customOptions: { removeAdditional: false, coerceTypes: false } },
   });
-  app.register(rateLimit, { max: 120, timeWindow: '1 minute' });
+  app.register(rateLimit, {
+    timeWindow: '1 minute',
+    max: (request) => (requestIdentity(request)?.uid ? 600 : 120),
+    keyGenerator: (request) =>
+      requestIdentity(request)?.uid ? 'user:' + requestIdentity(request).uid : 'ip:' + request.ip,
+  });
   app.addHook('onRequest', async (_request, reply) => {
     reply.header('Cache-Control', 'private, no-store').header('X-Content-Type-Options', 'nosniff');
   });
@@ -113,19 +122,27 @@ export function buildApp(deps: {
           if (requestIdentity(request).admin !== true)
             return reply.code(403).send({ code: 'forbidden' });
         });
-        admin.get<{ Querystring: { cursor?: string; search?: string } }>(
+        admin.get<{ Querystring: { cursor?: string; search?: string; pageSize?: string } }>(
           '/customers',
           {
             schema: {
               querystring: {
                 type: 'object',
                 additionalProperties: false,
-                properties: { cursor: uuidSchema, search: { type: 'string', maxLength: 254 } },
+                properties: {
+                  cursor: uuidSchema,
+                  search: { type: 'string', maxLength: 254 },
+                  pageSize: { type: 'string', enum: ['25', '50', '100'] },
+                },
               },
             },
           },
           (request) =>
-            deps.store.list(request.query.cursor, request.query.search?.trim().toLowerCase()),
+            deps.store.list(
+              request.query.cursor,
+              request.query.search?.trim().toLowerCase(),
+              request.query.pageSize,
+            ),
         );
         admin.put<{ Params: { id: string }; Body: CustomerWrite }>(
           '/customers/:id',

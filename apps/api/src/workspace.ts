@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { FieldPath, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
 import type { components } from '../../../packages/contracts/generated.ts';
@@ -17,7 +18,12 @@ export interface WorkspaceStore {
     identity: Identity,
     input: components['schemas']['WorkspaceEventQuery'],
   ): Promise<components['schemas']['WorkspaceEvents']>;
-  pets(identity: Identity, customerId?: string, cursor?: string): Promise<WorkspacePets>;
+  pets(
+    identity: Identity,
+    customerId?: string,
+    cursor?: string,
+    options?: { pageSize?: string; petId?: string },
+  ): Promise<WorkspacePets>;
   locations(identity: Identity): Promise<WorkspaceLocations>;
 }
 export function workspaceStore(database: Firestore): WorkspaceStore {
@@ -48,22 +54,30 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
     return customerFromDocument({ ...customer.data(), id: cid });
   }
   return {
-    async pets(identity, customerId, cursor) {
+    async pets(identity, customerId, cursor, options = {}) {
+      const size = Number(options.pageSize ?? 100);
       return database.runTransaction(async (tx) => {
         const customer = await scope(tx, identity, customerId);
         if (!customer && identity.admin !== true)
           return { admin: false, customer: null, items: [], nextCursor: null };
+        if (options.petId && !customer) throw new PetInvalid();
         const source = customer
           ? database.doc('customers/' + customer.id).collection('pets')
           : database.collectionGroup('pets');
-        let query = source.orderBy(FieldPath.documentId()).limit(101);
+        let query = source.orderBy(FieldPath.documentId()).limit(size + 1);
+        if (options.petId)
+          query = query.where(
+            FieldPath.documentId(),
+            '==',
+            database.doc(`customers/${customer!.id}/pets/${options.petId}`),
+          );
         if (cursor) {
           const [cid, pid] = cursor.split('/');
           if (!cid || !pid || (customer && customer.id !== cid)) throw new PetInvalid();
           query = query.startAfter(database.doc(`customers/${cid}/pets/${pid}`));
         }
         const result = await tx.get(query);
-        const docs = result.docs.slice(0, 100);
+        const docs = result.docs.slice(0, size);
         const ids = [...new Set(docs.map((doc) => doc.ref.parent.parent!.id))];
         const customerDocs = ids.length
           ? await tx.getAll(...ids.map((cid) => database.doc('customers/' + cid)))
@@ -87,11 +101,13 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
           admin: identity.admin === true,
           customer,
           items,
-          nextCursor: result.size > 100 && last ? last.ref.parent.parent!.id + '/' + last.id : null,
+          nextCursor:
+            result.size > size && last ? last.ref.parent.parent!.id + '/' + last.id : null,
         };
       });
     },
     async events(identity, input) {
+      const size = Number(input.pageSize ?? 50);
       const from = input.from ? timestamp(input.from) : null,
         through = input.through ? timestamp(input.through) : null;
       if (from && through && through <= from) throw new PetInvalid();
@@ -109,19 +125,40 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
         if (input.kind) query = query.where('kind', '==', input.kind);
         if (from) query = query.where('at', '>=', from);
         if (through) query = query.where('at', '<', through);
-        query = query.orderBy('at', 'desc').orderBy(FieldPath.documentId(), 'desc').limit(51);
-        if (input.cursor) {
-          const last = await tx.get(database.doc('balanceOperations/' + input.cursor));
-          if (
-            !last.exists ||
-            (customer && last.data()!.customerId !== customer.id) ||
-            (input.petId && last.data()!.petId !== input.petId)
+        query = query
+          .orderBy('at', 'desc')
+          .orderBy(FieldPath.documentId(), 'desc')
+          .limit(size + 1);
+        const binding = createHash('sha256')
+          .update(
+            JSON.stringify([
+              identity.uid,
+              customer?.id ?? '',
+              input.petId ?? '',
+              input.kind ?? '',
+              from,
+              through,
+            ]),
           )
+          .digest('hex');
+        if (input.cursor) {
+          try {
+            const anchor = JSON.parse(Buffer.from(input.cursor, 'base64url').toString());
+            if (
+              anchor.binding !== binding ||
+              typeof anchor.id !== 'string' ||
+              !/^[a-f0-9-]{36}$/i.test(anchor.id) ||
+              typeof anchor.at !== 'string' ||
+              timestamp(anchor.at) !== anchor.at
+            )
+              throw new Error();
+            query = query.startAfter(anchor.at, database.doc('balanceOperations/' + anchor.id));
+          } catch {
             throw new PetInvalid();
-          query = query.startAfter(last.data()!.at, last.ref);
+          }
         }
         const operations = await tx.get(query);
-        const docs = operations.docs.slice(0, 50);
+        const docs = operations.docs.slice(0, size);
         if (!docs.length) return { items: [], nextCursor: null };
         const eventDocs = await tx.getAll(
           ...docs.map((doc) =>
@@ -166,7 +203,16 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
             event: projectBoardingEvent(eventDocs[index].data()!, identity.admin === true),
           };
         });
-        return { items, nextCursor: operations.size > 50 ? docs.at(-1)!.id : null };
+        const last = docs.at(-1)!;
+        return {
+          items,
+          nextCursor:
+            operations.size > size
+              ? Buffer.from(JSON.stringify({ at: last.data().at, id: last.id, binding })).toString(
+                  'base64url',
+                )
+              : null,
+        };
       });
     },
     async locations(identity) {
@@ -202,7 +248,9 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
 }
 export function workspaceRoutes(api: FastifyInstance, store: WorkspaceStore) {
   const uuid = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}';
-  api.get<{ Querystring: { customerId?: string; cursor?: string } }>(
+  api.get<{
+    Querystring: { customerId?: string; cursor?: string; pageSize?: string; petId?: string };
+  }>(
     '/workspace/pets',
     {
       schema: {
@@ -211,13 +259,18 @@ export function workspaceRoutes(api: FastifyInstance, store: WorkspaceStore) {
           additionalProperties: false,
           properties: {
             customerId: uuidSchema,
+            petId: uuidSchema,
+            pageSize: { type: 'string', enum: ['25', '50', '100'] },
             cursor: { type: 'string', pattern: `^${uuid}/${uuid}$` },
           },
         },
       },
     },
     (request) =>
-      store.pets(requestIdentity(request), request.query.customerId, request.query.cursor),
+      store.pets(requestIdentity(request), request.query.customerId, request.query.cursor, {
+        pageSize: request.query.pageSize,
+        petId: request.query.petId,
+      }),
   );
   api.get<{ Querystring: components['schemas']['WorkspaceEventQuery'] }>(
     '/workspace/events',
