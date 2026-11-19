@@ -97,7 +97,7 @@ export default function WorkspaceCalendar({
   onBooking: (id: string) => void;
   onAdd: (room?: { houseId: string; roomId: string }) => void;
   onAddress: (house: LocationRow['house']) => void;
-  onManage: (target: { houseId: string; roomId?: string }) => void;
+  onManage: (target: { houseId: string; roomId?: string; addRoom?: boolean }) => void;
   loading: boolean;
 }) {
   const t = useWorkspaceText();
@@ -336,7 +336,15 @@ export default function WorkspaceCalendar({
           {locations.map((item) => (
             <React.Fragment key={item.house.id}>
               <div className="hc-house">
-                <LocationLabel kind="house" name={item.house.name} />
+                <button
+                  type="button"
+                  className="workspace-house-address"
+                  title={t('viewAddress')}
+                  aria-label={`${t('viewAddress')}: ${item.house.name}`}
+                  onClick={() => onAddress(item.house)}
+                >
+                  <LocationLabel kind="house" name={item.house.name} />
+                </button>
                 {item.house.timezone !== range.zone && (
                   <small>{item.house.timezone || uiText('common.notAvailable')}</small>
                 )}
@@ -354,15 +362,22 @@ export default function WorkspaceCalendar({
                       <Icon name="settings" />
                     </button>
                   )}
-                  <button
-                    className="hc-settings"
-                    type="button"
-                    title={t('viewAddress')}
-                    aria-label={`${t('viewAddress')}: ${item.house.name}`}
-                    onClick={() => onAddress(item.house)}
-                  >
-                    <Icon name="address" />
-                  </button>
+                  {data.admin && (
+                    <button
+                      className="hc-settings"
+                      type="button"
+                      title={
+                        item.house.address?.trim()
+                          ? uiText('ui.rooms.add')
+                          : uiText('ui.houses.addressMissing')
+                      }
+                      aria-label={`${uiText('ui.rooms.add')}: ${item.house.name}`}
+                      disabled={!item.house.address?.trim()}
+                      onClick={() => onManage({ houseId: item.house.id, addRoom: true })}
+                    >
+                      <Icon name="plus" />
+                    </button>
+                  )}
                 </div>
               </div>
               {item.rooms

@@ -115,6 +115,7 @@ export default function SavedWorkspace({
   const [manageLocation, setManageLocation] = React.useState<{
     houseId: string;
     roomId?: string;
+    addRoom?: boolean;
   } | null>(null);
   const managementRoot = React.useRef<HTMLDivElement>(null);
   const [locationBusy, setLocationBusy] = React.useState(false);
@@ -532,9 +533,11 @@ export default function SavedWorkspace({
             {manageLocation && data?.admin && (
               <Modal
                 title={
-                  manageLocation.roomId
-                    ? uiText('ui.rooms.edit')
-                    : uiValue('ui.houses.labels', i18n.language).edit
+                  manageLocation.addRoom
+                    ? uiText('ui.rooms.add')
+                    : manageLocation.roomId
+                      ? uiText('ui.rooms.edit')
+                      : uiValue('ui.houses.labels', i18n.language).edit
                 }
                 disabled={locationBusy}
                 onClose={() => {
@@ -543,7 +546,7 @@ export default function SavedWorkspace({
                 }}
               >
                 <div ref={managementRoot}>
-                  {manageLocation.roomId ? (
+                  {manageLocation.roomId || manageLocation.addRoom ? (
                     <Rooms
                       houseId={manageLocation.houseId}
                       addressReady={
@@ -554,6 +557,7 @@ export default function SavedWorkspace({
                       embedded
                       onBusyChange={setLocationBusy}
                       initialEditId={manageLocation.roomId}
+                      initialCreate={manageLocation.addRoom}
                       onChanged={changed}
                       onEditorClosed={() => {
                         setLocationBusy(false);
