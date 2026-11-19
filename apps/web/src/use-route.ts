@@ -8,6 +8,8 @@ export default function useRoute(language: string, initialPath = '/') {
     parseRoute(typeof window === 'undefined' ? initialPath : routeUrl()),
   );
   React.useEffect(() => {
+    const previousScrollRestoration = history.scrollRestoration;
+    history.scrollRestoration = 'manual';
     let previousUrl = canonicalUrl(routeUrl());
     let historyIndex = Number(history.state?.familyPawsIndex) || 0;
     let isRevertingHistory = false;
@@ -127,6 +129,7 @@ export default function useRoute(language: string, initialPath = '/') {
     window.addEventListener('hashchange', handleHashNavigation);
     document.addEventListener('click', handleLinkClick);
     return () => {
+      history.scrollRestoration = previousScrollRestoration;
       window.removeEventListener('family-paws:before-navigation', guardNavigation);
       window.removeEventListener('family-paws:navigation', acceptNavigation);
       window.removeEventListener('popstate', handleHistoryNavigation);

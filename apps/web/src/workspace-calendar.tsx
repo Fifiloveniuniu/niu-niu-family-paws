@@ -1,6 +1,15 @@
+import LocationLabel from './location-label';
+import { CalendarAxis, CalendarTrack, CalendarFrame, CalendarViewport } from './calendar-timeline';
+import {
+  timelinePosition,
+  timelineSpan,
+  dailyTimelineTicks,
+  timelineRangeLabel,
+} from './timeline-layout';
+import { petTypeChoice } from './pet-type';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { localeFor, speciesText, uiText } from './i18n.ts';
+import { localeFor, speciesText, uiText, uiValue } from './i18n.ts';
 import CustomSelect from './custom-select';
 import CustomDateInput from './custom-date-input';
 import Icon from './icons';
@@ -59,10 +68,7 @@ export function calendarRange(key: string, view: CalendarView, zone: string): Ca
       ticks.push({ at: startOfZonedDay(day, zone)!, key: day });
     }
   } else {
-    for (let day = first; day < last; day = shiftDay(day, 1)) {
-      const at = startOfZonedDay(day, zone);
-      if (at) ticks.push({ at, key: day });
-    }
+    ticks.push(...dailyTimelineTicks(from, through, zone));
   }
   return { from, through, ticks, date: wallDateKey(selected), view, zone, valid };
 }
@@ -80,6 +86,7 @@ export default function WorkspaceCalendar({
   onBooking,
   onAdd,
   onAddress,
+  onManage,
   loading,
 }: {
   data: WorkspaceData;
@@ -90,6 +97,7 @@ export default function WorkspaceCalendar({
   onBooking: (id: string) => void;
   onAdd: (room?: { houseId: string; roomId: string }) => void;
   onAddress: (house: LocationRow['house']) => void;
+  onManage: (target: { houseId: string; roomId?: string }) => void;
   loading: boolean;
 }) {
   const t = useWorkspaceText();
@@ -109,16 +117,6 @@ export default function WorkspaceCalendar({
         year: range.view === 'year' ? 'numeric' : undefined,
       }),
     [locale, range.zone, range.view],
-  );
-  const time = React.useMemo(
-    () =>
-      new Intl.DateTimeFormat(locale, {
-        timeZone: range.zone,
-        hour: '2-digit',
-        minute: '2-digit',
-        hourCycle: 'h23',
-      }),
-    [locale, range.zone],
   );
   const rows = React.useMemo(
     () => new Map(data.rows.map((row) => [petKey(row.customer.id, row.pet.id), row])),
@@ -140,30 +138,13 @@ export default function WorkspaceCalendar({
       row.pet.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())
     );
   });
-  const position = (at: number) =>
-    ((at - Date.parse(range.from)) / (Date.parse(range.through) - Date.parse(range.from))) * 100;
-  const gridImage =
-    'linear-gradient(to right, ' +
-    range.ticks
-      .map((tick) => {
-        const pos = position(Date.parse(tick.at));
-        return `transparent ${pos}%, #edf1e9 ${pos}%, #edf1e9 calc(${pos}% + 1px), transparent calc(${pos}% + 1px)`;
-      })
-      .join(', ') +
-    ')';
+  const position = (at: number) => timelinePosition(at, range.from, range.through);
   const locations = data.locations.filter(
     (item) =>
       (!house || item.house.id === house) &&
       (!room || item.rooms.some((candidate) => roomKey(item.house.id, candidate.id) === room)),
   );
-  const title =
-    dtf.format(new Date(range.from)) +
-    ' – ' +
-    dtf.format(new Date(Date.parse(range.through) - 1)) +
-    ', ' +
-    new Intl.DateTimeFormat(locale, { timeZone: range.zone, year: 'numeric' }).format(
-      new Date(range.from),
-    );
+  const title = timelineRangeLabel(range.from, range.through, range.zone, locale);
   const filtered = !!(house || room || type || status || query);
   const shift = (direction: number) => {
     const date = parseWallInput(range.date, false)!.date;
@@ -214,7 +195,11 @@ export default function WorkspaceCalendar({
         </label>
         <label>
           {t('type')}
-          <CustomSelect value={type} onChange={(event) => onQuery({ species: event.target.value })}>
+          <CustomSelect
+            renderChoice={petTypeChoice}
+            value={type}
+            onChange={(event) => onQuery({ species: event.target.value })}
+          >
             <option value="">{t('allTypes')}</option>
             {['dog', 'cat', 'rabbit'].map((species) => (
               <option key={species} value={species}>
@@ -258,17 +243,37 @@ export default function WorkspaceCalendar({
       <div className="hc-toolbar">
         <div className="hc-range">
           <button type="button" aria-label={t('previous')} onClick={() => shift(-1)}>
-            ‹
+            <Icon name="chevron-left" />
           </button>
           <button type="button" onClick={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}>
             {t('today')}
           </button>
           <button type="button" aria-label={t('next')} onClick={() => shift(1)}>
-            ›
+            <Icon name="chevron-right" />
           </button>
           <h2>{title}</h2>
         </div>
         <div className="workspace-range-controls">
+          {data.admin && !scope && (
+            <a
+              className="icon-button"
+              href="/app/operations/"
+              title={uiText('ui.operations.title')}
+              aria-label={uiText('ui.operations.title')}
+            >
+              <Icon name="calendar" />
+            </a>
+          )}
+          {data.admin && (
+            <a
+              className="icon-button"
+              href="/app/settings/locations/"
+              title={t('manageLocations')}
+              aria-label={t('manageLocations')}
+            >
+              <Icon name="settings" />
+            </a>
+          )}
           <CustomDateInput
             aria-label={t('period')}
             value={range.date}
@@ -294,56 +299,72 @@ export default function WorkspaceCalendar({
       </div>
       <p className="workspace-time-note">{t('timesIn', { zone: range.zone })}</p>
       {loading && <p role="status">{t('loading')}</p>}
-      <div className="hc-scroll" tabIndex={0} aria-label={t('timeline')}>
-        <div className="hc-calendar saved-calendar-grid" role="tabpanel" aria-label={t(range.view)}>
-          <div className="hc-axis">
-            <div className="hc-label">{t('houseRoomPet')}</div>
-            <div className="saved-axis-track">
-              {range.ticks.map((tick) => (
-                <div
-                  key={tick.key}
-                  className="saved-axis-tick"
-                  style={{ left: `${position(Date.parse(tick.at))}%` }}
-                >
-                  <span>
-                    {range.view === 'day'
-                      ? time.format(new Date(tick.at))
-                      : range.view === 'year'
-                        ? new Intl.DateTimeFormat(locale, {
-                            timeZone: range.zone,
-                            month: 'short',
-                          }).format(new Date(tick.at))
-                        : new Intl.DateTimeFormat(locale, {
-                            timeZone: range.zone,
-                            weekday: 'short',
-                          }).format(new Date(tick.at))}
-                  </span>
-                  <strong>
-                    {range.view === 'day'
-                      ? ''
-                      : new Intl.DateTimeFormat(locale, {
-                          timeZone: range.zone,
-                          day: 'numeric',
-                        }).format(new Date(tick.at))}
-                  </strong>
-                </div>
-              ))}
+      <CalendarViewport
+        className="hc-scroll"
+        label={t('timeline')}
+        hint={uiText('ui.calendarTimeline.panHint')}
+      >
+        <CalendarFrame
+          className="hc-calendar saved-calendar-grid"
+          ticks={range.ticks}
+          timeline={range}
+          view={range.view}
+          role="tabpanel"
+          aria-label={t(range.view)}
+        >
+          <CalendarAxis {...range} label={t('houseRoomPet')} locale={locale} className="hc-axis" />
+          {position(now) >= 0 && position(now) < 100 && (
+            <div
+              className="workspace-now-marker"
+              data-label-align={position(now) > 85 ? 'end' : 'start'}
+              style={{
+                left: `calc(var(--label) + (100% - var(--label)) * ${position(now) / 100})`,
+              }}
+              aria-label={t('now')}
+            >
+              <span>
+                {t('now')}{' '}
+                <time dateTime={new Date(now).toISOString()}>
+                  {new Intl.DateTimeFormat(locale, {
+                    timeZone: range.zone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }).format(new Date(now))}
+                </time>
+              </span>
             </div>
-          </div>
+          )}
           {locations.map((item) => (
             <React.Fragment key={item.house.id}>
               <div className="hc-house">
-                <span>⌂ {item.house.name}</span>
-                <small>{item.house.timezone || uiText('common.notAvailable')}</small>
-                <button
-                  className="hc-settings"
-                  type="button"
-                  title={t('viewAddress')}
-                  aria-label={`${t('viewAddress')}: ${item.house.name}`}
-                  onClick={() => onAddress(item.house)}
-                >
-                  <Icon name="address" />
-                </button>
+                <LocationLabel kind="house" name={item.house.name} />
+                {item.house.timezone !== range.zone && (
+                  <small>{item.house.timezone || uiText('common.notAvailable')}</small>
+                )}
+                <div className="workspace-row-actions">
+                  {data.admin && (
+                    <button
+                      type="button"
+                      className="hc-settings"
+                      title={uiValue('ui.houses.labels', i18n.language).edit}
+                      aria-label={
+                        uiValue('ui.houses.labels', i18n.language).edit + ': ' + item.house.name
+                      }
+                      onClick={() => onManage({ houseId: item.house.id })}
+                    >
+                      <Icon name="settings" />
+                    </button>
+                  )}
+                  <button
+                    className="hc-settings"
+                    type="button"
+                    title={t('viewAddress')}
+                    aria-label={`${t('viewAddress')}: ${item.house.name}`}
+                    onClick={() => onAddress(item.house)}
+                  >
+                    <Icon name="address" />
+                  </button>
+                </div>
               </div>
               {item.rooms
                 .filter((candidate) => !room || roomKey(item.house.id, candidate.id) === room)
@@ -358,33 +379,49 @@ export default function WorkspaceCalendar({
                   }
                   return (
                     <React.Fragment key={candidate.id}>
-                      <div className="hc-room">
-                        <span>{candidate.name}</span>
-                        <small>{data.admin ? `${candidate.capacity}` : ''}</small>
-                        <button
-                          type="button"
-                          className="hc-settings"
-                          title={t('addBooking')}
-                          aria-label={`${t('addBooking')}: ${item.house.name} · ${candidate.name}`}
-                          onClick={() => onAdd({ houseId: item.house.id, roomId: candidate.id })}
-                        >
-                          <Icon name="plus" />
-                        </button>
+                      <div className="hc-room" data-room-id={candidate.id}>
+                        <LocationLabel kind="room" name={candidate.name} />
+                        <small>
+                          {data.admin
+                            ? `${t('capacity')} ${Number.isFinite(candidate.capacity) && candidate.capacity > 0 ? candidate.capacity : uiText('common.notAvailable')}`
+                            : ''}
+                        </small>
+                        <div className="workspace-row-actions">
+                          {data.admin && (
+                            <button
+                              type="button"
+                              className="hc-settings"
+                              title={uiText('ui.rooms.edit')}
+                              aria-label={uiText('ui.rooms.edit') + ': ' + candidate.name}
+                              onClick={() =>
+                                onManage({ houseId: item.house.id, roomId: candidate.id })
+                              }
+                            >
+                              <Icon name="settings" />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="hc-settings"
+                            title={t('addBooking')}
+                            aria-label={`${t('addBooking')}: ${item.house.name} · ${candidate.name}`}
+                            onClick={() => onAdd({ houseId: item.house.id, roomId: candidate.id })}
+                          >
+                            <Icon name="plus" />
+                          </button>
+                        </div>
                       </div>
                       {!groups.size && (
                         <div className="hc-pet saved-empty-room">
                           <div className="hc-label">{t('emptyBookings')}</div>
-                          <div
-                            className="hc-track"
-                            style={{ backgroundSize: `${100 / range.ticks.length}% 100%` }}
-                          />
+                          <CalendarTrack {...range} className="hc-track" />
                         </div>
                       )}
                       {[...groups].map(([key, bookings]) => {
                         const row = rows.get(key)!;
                         const current = bookings.find((b) => b.status === 'in_care') ?? bookings[0];
                         return (
-                          <div className="hc-pet" key={key}>
+                          <div className="hc-pet" data-room-id={candidate.id} key={key}>
                             <div className="hc-label">
                               <PetInfo
                                 row={row}
@@ -394,22 +431,18 @@ export default function WorkspaceCalendar({
                               />
                               <div>
                                 <strong title={row.pet.name}>{row.pet.name}</strong>
-                                <small>{t(bookingStatus(current, now))}</small>
+                                <small>{row.pet.species ? speciesText(row.pet.species) : ''}</small>
                               </div>
                             </div>
-                            <div
-                              className="hc-track"
-                              style={{ backgroundSize: `${100 / range.ticks.length}% 100%` }}
-                            >
+                            <CalendarTrack {...range} className="hc-track">
                               {bookings.map((booking) => {
                                 const start = Date.parse(booking.occupancyFrom),
                                   end =
                                     bookingStatus(booking, now) === 'overdue'
                                       ? Date.parse(range.through)
                                       : Date.parse(booking.occupancyThrough);
-                                const left = Math.max(0, position(start)),
-                                  right = Math.min(100, position(end));
-                                if (right <= left) return null;
+                                const span = timelineSpan(start, end, range.from, range.through);
+                                if (!span) return null;
                                 const description = new Intl.DateTimeFormat(locale, {
                                   timeZone: booking.timezone,
                                   dateStyle: 'medium',
@@ -421,7 +454,7 @@ export default function WorkspaceCalendar({
                                     key={booking.id}
                                     type="button"
                                     className={`hc-stay ${booking.status === 'in_care' ? 'in' : booking.status === 'planned' ? 'upcoming' : 'out'} ${bookingStatus(booking, now) === 'overdue' ? 'overdue' : ''} ${booking.status === 'cancelled' ? 'cancelled' : ''}`}
-                                    style={{ left: `${left}%`, width: `${right - left}%` }}
+                                    style={span}
                                     title={label}
                                     aria-label={label}
                                     onClick={() => onBooking(booking.id)}
@@ -434,7 +467,7 @@ export default function WorkspaceCalendar({
                                   </button>
                                 );
                               })}
-                            </div>
+                            </CalendarTrack>
                           </div>
                         );
                       })}
@@ -443,8 +476,8 @@ export default function WorkspaceCalendar({
                 })}
             </React.Fragment>
           ))}
-        </div>
-      </div>
+        </CalendarFrame>
+      </CalendarViewport>
       {!locations.length && !loading && <p className="hc-empty">{t('noRooms')}</p>}
     </section>
   );

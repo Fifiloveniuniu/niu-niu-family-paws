@@ -1,3 +1,4 @@
+import Icon from './icons';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { uiText } from './i18n.ts';
@@ -109,7 +110,7 @@ export default function CustomAutocomplete({
         required={required}
         disabled={disabled}
         autoComplete="off"
-        placeholder={placeholder}
+        placeholder={placeholder ?? label}
         data-value={value}
         value={open ? query : (selected?.label ?? '')}
         onClick={() => {
@@ -177,9 +178,7 @@ export default function CustomAutocomplete({
           input.current?.focus({ preventScroll: true });
         }}
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m7 10 5 5 5-5" />
-        </svg>
+        <Icon name="chevron-down" />
       </button>
       {open &&
         portal &&

@@ -16,7 +16,7 @@ test('saved validity templates fill reviewed dates and cancellation stays an edi
   await expect(page.getByRole('link', { name: 'Settings', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Validity templates', exact: true }).click();
   await page.getByRole('button', { name: 'Add validity template', exact: true }).click();
-  await page.getByRole('dialog').getByLabel('Template name').fill('[TEST] Saved coverage');
+  await page.getByRole('dialog').getByLabel('Template name').fill('[TEST] Configuration coverage');
   await page
     .getByRole('dialog')
     .getByRole('combobox', { name: 'Valid from', exact: true })
@@ -26,7 +26,7 @@ test('saved validity templates fill reviewed dates and cancellation stays an edi
     .getByRole('combobox', { name: 'Valid through', exact: true })
     .fill('2031-12-31');
   await page.getByRole('dialog').getByRole('button', { name: 'Save changes', exact: true }).click();
-  await expect(page.getByRole('dialog')).toContainText('[TEST] Saved coverage');
+  await expect(page.getByRole('dialog')).toContainText('[TEST] Configuration coverage');
   await page.getByRole('dialog').getByRole('button', { name: 'Close', exact: true }).click();
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   await page.getByRole('combobox', { name: 'Pet', exact: true }).click();
@@ -35,7 +35,7 @@ test('saved validity templates fill reviewed dates and cancellation stays an edi
   await page
     .getByRole('combobox', { name: 'Use a validity template (optional)', exact: true })
     .click();
-  await page.getByRole('option').filter({ hasText: '[TEST] Saved coverage' }).click();
+  await page.getByRole('option').filter({ hasText: '[TEST] Configuration coverage' }).click();
   await expect(
     page.getByRole('dialog').getByRole('combobox', { name: 'Valid from', exact: true }),
   ).toHaveValue('2026-01-01');

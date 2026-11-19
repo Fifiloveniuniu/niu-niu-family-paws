@@ -1,0 +1,70 @@
+.location-label {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.location-label .location-label-kind {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.location-label-kind > svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.location-label .location-label-name {
+  display: block;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.location-label-house .location-label-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+html .hc.saved-workspace .saved-calendar-grid .hc-house,
+.hc-booking-dialog .hc-range-calendar .hc-range-house {
+  min-height: 64px;
+  padding-block: 12px;
+  background: var(--md-house-container);
+  color: var(--md-on-primary-container);
+  border-top: 2px solid var(--md-primary-outline);
+}
+html .hc.saved-workspace .saved-calendar-grid .hc-room {
+  min-height: 58px;
+  background: var(--md-room-container);
+  color: var(--md-on-surface);
+}
+html .saved-workspace .hc-room > .location-label-room {
+  margin-inline-start: 18px;
+  padding-inline-start: 12px;
+  border-inline-start: 2px solid var(--md-outline-variant);
+}
+.hc-booking-dialog .hc-range-house > .location-label {
+  display: grid;
+}
+.hc-booking-dialog .hc-range-room-name > .location-label-room {
+  padding-inline-start: 10px;
+  border-inline-start: 2px solid var(--md-outline-variant);
+}
+.house-list h3 .location-label-house {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--md-house-container);
+  color: var(--md-on-primary-container);
+}
+.house-list .saved-rooms {
+  margin-inline-start: 12px;
+  padding-inline-start: 12px;
+  border-inline-start: 2px solid var(--md-outline-variant);
+}

@@ -1,3 +1,4 @@
+import Icon from './icons';
 import { languageName, localeFor, supportedLanguages, type Language, uiText } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
 import { useEffect, useId, useRef } from 'react';
@@ -70,14 +71,9 @@ export default function MarketingLanguageMenu({
           setOpen(!open);
         }}
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" />
-        </svg>
+        <Icon name="globe" />
         <span>{languageName(language)}</span>
-        <svg className="language-chevron" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m7 10 5 5 5-5" />
-        </svg>
+        <Icon name="chevron-down" className="language-chevron" />
       </button>
       {open && (
         <div

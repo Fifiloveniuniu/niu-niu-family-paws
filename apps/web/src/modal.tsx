@@ -2,18 +2,20 @@ import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Icon from './icons';
-export default function Modal({
+function NativeModal({
   title,
   children,
   onClose,
   disabled = false,
   className = '',
+  header,
 }: {
   title: string;
   children: React.ReactNode;
   onClose: () => void;
   disabled?: boolean;
   className?: string;
+  header?: React.ReactNode;
 }) {
   const ref = React.useRef<HTMLDialogElement>(null);
   const id = React.useId();
@@ -22,16 +24,33 @@ export default function Modal({
     const dialog = ref.current;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     dialog?.showModal();
-    dialog
-      ?.querySelector<HTMLInputElement>(
+    [
+      ...(dialog?.querySelectorAll<HTMLElement>(
         'input:not(:disabled):not([type=file]), [role=combobox]:not(:disabled)',
-      )
+      ) ?? []),
+    ]
+      .find((node) => node.getClientRects().length > 0 && !node.closest('[hidden]'))
       ?.focus();
     return () => {
       dialog?.close();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
   }, []);
+  const heading = (
+    <div className="dialog-heading">
+      <h2 id={id}>{title}</h2>
+      <button
+        className="icon-button"
+        type="button"
+        aria-label={uiText('ui.modal.close', {}, i18n.language)}
+        title={uiText('ui.modal.close', {}, i18n.language)}
+        disabled={disabled}
+        onClick={onClose}
+      >
+        <Icon name="close" />
+      </button>
+    </div>
+  );
   return (
     <dialog
       ref={ref}
@@ -68,20 +87,21 @@ export default function Modal({
         if (!disabled) onClose();
       }}
     >
-      <div className="dialog-heading">
-        <h2 id={id}>{title}</h2>
-        <button
-          className="icon-button"
-          type="button"
-          aria-label={uiText('ui.modal.close', {}, i18n.language)}
-          title={uiText('ui.modal.close', {}, i18n.language)}
-          disabled={disabled}
-          onClick={onClose}
-        >
-          <Icon name="close" />
-        </button>
-      </div>
+      {header ? (
+        <div className="dialog-fixed-header">
+          {heading}
+          {header}
+        </div>
+      ) : (
+        heading
+      )}
       {children}
     </dialog>
   );
+}
+
+// Embedded editors reuse the owning dialog instead of opening a second native modal.
+type ModalProps = React.ComponentProps<typeof NativeModal> & { embedded?: boolean };
+export default function Modal({ embedded = false, ...props }: ModalProps) {
+  return embedded ? <>{props.children}</> : <NativeModal {...props} />;
 }

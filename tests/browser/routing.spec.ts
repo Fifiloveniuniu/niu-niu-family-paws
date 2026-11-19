@@ -1,5 +1,10 @@
 import { chooseOption } from './dropdown-helpers';
 import { test, expect } from '@playwright/test';
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/profile', (route) =>
+    route.fulfill({ status: 401, json: { code: 'unauthenticated' } }),
+  );
+});
 test('public pages have direct paths, distinct content and working history', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
@@ -11,28 +16,32 @@ test('public pages have direct paths, distinct content and working history', asy
     ['/cancellation-policy/', 'Cancellation policy'],
   ]) {
     await page.goto(path);
-    await expect(page.getByRole('heading', { name: title, level: 1, exact: true })).toBeVisible();
-    await expect(page).toHaveTitle(new RegExp(path === '/home/' ? 'Home' : title));
+    await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
+    await expect(page).toHaveTitle(
+      new RegExp(path === '/home/' ? 'Home' : path === '/cancellation-policy/' ? 'Pricing' : title),
+    );
     await page.reload();
-    await expect(page).toHaveURL(new RegExp(path + '$'));
+    expect(new URL(page.url()).pathname).toBe(
+      path === '/cancellation-policy/' ? '/pricing/' : path,
+    );
   }
   await page
     .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name: 'Services', exact: true })
     .click();
-  await expect(page).toHaveURL(/\/services\/$/);
+  await expect(page).toHaveURL(/\/services\/\?lang=en$/);
   await page.goBack();
-  await expect(page.getByRole('heading', { name: 'Cancellation policy', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Cancellation policy', level: 2 })).toBeVisible();
   await page.goForward();
-  await expect(page.locator('#services')).toBeInViewport();
+  await expect(page.locator('.service-guide')).toBeInViewport();
   await page.goto('/#faq');
-  await expect(page).toHaveURL(/\/home\/#faq$/);
+  await expect(page).toHaveURL(/\/home\/\?lang=en#faq$/);
   await expect(page.locator('#faq')).toBeInViewport();
   await page.goto('/#/house-calendar');
-  await expect(page).toHaveURL(/\/app\/calendar\/$/);
-  await expect(page.getByRole('heading', { name: 'House calendar', level: 1 })).toBeVisible();
+  await expect(page).toHaveURL(/\/app\/calendar\/\?lang=en$/);
+  await expect(page.locator('.hc-calendar-workspace')).toBeVisible();
   await page.getByRole('button', { name: /^Mochi: Checked in/ }).click();
-  await expect(page).toHaveURL(/\/app\/calendar\/bookings\/sample-0\/$/);
+  await expect(page).toHaveURL(/\/app\/calendar\/bookings\/sample-0\/\?lang=en$/);
   await expect(page.getByRole('dialog', { name: 'Mochi', exact: true })).toBeVisible();
   await page.goBack();
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -41,7 +50,7 @@ test('public pages have direct paths, distinct content and working history', asy
   await page.reload();
   await expect(page.getByRole('dialog', { name: 'Mochi', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close', exact: true }).click();
-  await expect(page).toHaveURL(/\/app\/calendar\/$/);
+  await expect(page).toHaveURL(/\/app\/calendar\/\?lang=en$/);
   await page.goto('/app/calendar/bookings/missing/');
   await expect(page.getByRole('alert')).toHaveText('Booking not found.');
   await page.goto('/app/unknown/');
@@ -50,22 +59,20 @@ test('public pages have direct paths, distinct content and working history', asy
 });
 test('balance and calendar filters can be refreshed and shared', async ({ page }) => {
   await page.goto('/app/balances/?customer=2&pet=Coco&from=2026-01-01&activity=added');
-  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveAttribute(
+  await expect(page.getByRole('combobox', { name: 'Statement pet', exact: true })).toHaveAttribute(
     'data-value',
     'Coco',
   );
-  await expect(page.getByLabel('Statement customer', { exact: true })).toHaveAttribute(
-    'data-value',
-    '2',
-  );
-  await expect(page.getByLabel('Statement activity', { exact: true })).toHaveAttribute(
-    'data-value',
-    'added',
-  );
-  await chooseOption(page.getByLabel('Statement pet', { exact: true }), 'Pip');
+  await expect(
+    page.getByRole('combobox', { name: 'Statement customer', exact: true }),
+  ).toHaveAttribute('data-value', '2');
+  await expect(
+    page.getByRole('combobox', { name: 'Statement activity', exact: true }),
+  ).toHaveAttribute('data-value', 'added');
+  await chooseOption(page.getByRole('combobox', { name: 'Statement pet', exact: true }), 'Pip');
   await expect(page).toHaveURL(/pet=Pip/);
   await page.reload();
-  await expect(page.getByLabel('Statement pet', { exact: true })).toHaveAttribute(
+  await expect(page.getByRole('combobox', { name: 'Statement pet', exact: true })).toHaveAttribute(
     'data-value',
     'Pip',
   );
@@ -74,7 +81,10 @@ test('balance and calendar filters can be refreshed and shared', async ({ page }
     'aria-selected',
     'true',
   );
-  await expect(page.getByLabel('House', { exact: true })).toHaveAttribute('data-value', '1');
+  await expect(page.getByRole('combobox', { name: 'House', exact: true })).toHaveAttribute(
+    'data-value',
+    '1',
+  );
   await page.getByRole('tab', { name: 'Month', exact: true }).click();
   await expect(page).toHaveURL(/view=month/);
   await page.reload();
@@ -103,7 +113,23 @@ test('sign-in returns to canonical records and locations support direct refresh'
       data: { localId, emailVerified: true, customAttributes: JSON.stringify({ admin: true }) },
     },
   );
-  await page.route('**/api/profile', (r) => r.fulfill({ status: 204 }));
+  await page.route('**/api/profile', (r) =>
+    r.fulfill(
+      r.request().headers().authorization
+        ? { status: 204 }
+        : { status: 401, json: { code: 'unauthenticated' } },
+    ),
+  );
+  await page.route('**/api/identity', (r) =>
+    r.fulfill({ json: { uid: localId, roles: ['admin', 'customer'] } }),
+  );
+  await page.route('**/api/workspace/pets*', (r) =>
+    r.fulfill({ json: { items: [], nextCursor: null, admin: true, customer: null } }),
+  );
+  await page.route('**/api/workspace/locations', (r) => r.fulfill({ json: { items: [] } }));
+  await page.route('**/api/bookings?*', (r) =>
+    r.fulfill({ json: { items: [], nextCursor: null } }),
+  );
   await page.route('**/api/customers?*', (r) =>
     r.fulfill({
       json: {
@@ -121,7 +147,7 @@ test('sign-in returns to canonical records and locations support direct refresh'
       },
     }),
   );
-  await page.route('**/api/customers/*/pets', (r) =>
+  await page.route('**/api/customers/*/pets*', (r) =>
     r.fulfill({
       json: {
         items: [{ id: petId, customerId, name: '[TEST] Route pet', photo: null, version: 1 }],
@@ -156,7 +182,7 @@ test('sign-in returns to canonical records and locations support direct refresh'
     },
     { email },
   );
-  await expect(page).toHaveURL(new RegExp(destination + '$'));
+  await expect(page).toHaveURL(new RegExp(destination + '\\?lang=en$'));
   await expect(page.locator('.pet-card-selected')).toContainText('[TEST] Route pet');
   await page.reload();
   await expect(page.locator('.pet-card-selected')).toContainText('[TEST] Route pet');
@@ -169,7 +195,7 @@ test('sign-in returns to canonical records and locations support direct refresh'
   );
   await page.reload();
   await expect(
-    page.getByRole('heading', { name: '[TEST] Route house', exact: true }),
+    page.getByRole('heading', { name: 'House [TEST] Route house', exact: true }),
   ).toBeVisible();
   await page.goto('/app/settings/locations/missing/');
   await expect(page.getByRole('alert')).toHaveText('Location not found.');

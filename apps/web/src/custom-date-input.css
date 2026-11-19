@@ -12,10 +12,10 @@
   width: 100%;
   min-width: 0;
   padding-right: 42px !important;
-  border: 1px solid #dce5de;
+  border: 1px solid var(--md-outline-variant);
   border-radius: 8px;
-  background: #fff;
-  color: #293f35;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
   font: inherit;
 }
 .hc .custom-date-toggle {
@@ -31,12 +31,12 @@
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #31594c;
+  color: var(--md-link);
 }
 .custom-date-error {
   font-size: 12px;
   line-height: 1.5;
-  color: #884b30;
+  color: var(--md-error-ink);
   margin-top: 6px;
 }
 .custom-date-options {
@@ -47,11 +47,11 @@
   box-sizing: border-box;
   overflow: auto;
   overscroll-behavior: contain;
-  border: 1px solid #c5cdbd;
+  border: 1px solid var(--md-outline-variant);
   border-radius: 16px;
-  background: #faf8f2;
-  color: #293f35;
-  box-shadow: 0 12px 30px #293f351a;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  box-shadow: var(--md-shadow);
   font:
     14px/1.5 'Paws Nunito',
     'PingFang SC',
@@ -73,10 +73,10 @@
   padding: 6px;
 }
 .custom-date-options button:hover {
-  background: #e7eee3;
+  background: var(--md-primary-soft);
 }
 .custom-date-options button:focus-visible {
-  outline: 2px solid #86b9a7;
+  outline: 2px solid var(--md-focus);
   outline-offset: -2px;
 }
 .custom-date-options button:disabled {
@@ -99,7 +99,7 @@
 }
 .custom-date-weekdays {
   text-align: center;
-  color: #526457;
+  color: var(--md-on-surface-variant);
   font-size: 12px;
   margin-bottom: 4px;
 }
@@ -110,8 +110,8 @@
   width: 100%;
 }
 .custom-date-week [aria-selected='true'] button {
-  background: #31594c;
-  color: #fff;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
 }
 .custom-date-week button[aria-current='date'] {
   text-decoration: underline;
@@ -119,7 +119,7 @@
   font-weight: 700;
 }
 .custom-date-week .outside-month {
-  color: #6c786b;
+  color: var(--md-on-surface-variant);
 }
 .custom-date-months {
   display: grid;
@@ -132,7 +132,7 @@
   gap: 8px;
   padding-top: 12px;
   margin-top: 12px;
-  border-top: 1px solid #dce5de;
+  border-top: 1px solid var(--md-outline-variant);
 }
 .custom-date-time label {
   display: grid;
@@ -146,18 +146,18 @@
   min-height: 40px !important;
   padding: 8px !important;
   font-size: 16px !important;
-  border: 1px solid #dce5de !important;
+  border: 1px solid var(--md-outline-variant) !important;
   border-radius: 8px;
-  background: #fff;
-  color: #293f35;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
 }
 .custom-date-time > span {
   padding-block: 8px;
 }
 .custom-date-time > button {
   margin-left: auto;
-  background: #31594c;
-  color: #fff;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
   padding-inline: 12px;
 }
 .custom-date-footer {
@@ -166,7 +166,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  border-top: 1px solid #dce5de;
+  border-top: 1px solid var(--md-outline-variant);
   margin-top: 12px;
   padding-top: 8px;
 }

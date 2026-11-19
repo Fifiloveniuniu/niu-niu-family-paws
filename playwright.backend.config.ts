@@ -1,11 +1,12 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/backend-browser',
+  outputDir: './test-results-backend',
   workers: 1,
   use: {
     headless: true,
     baseURL: 'http://localhost:4184',
-    channel: process.env.CI ? undefined : 'chrome',
+    channel: 'chrome',
     trace: 'retain-on-failure',
   },
   webServer: [

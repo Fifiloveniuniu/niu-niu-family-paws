@@ -19,3 +19,5 @@ firebase-debug.*
 *.tfstate
 *.tfstate.*
 dist-dev
+test-results-backend/
+test-results-local/

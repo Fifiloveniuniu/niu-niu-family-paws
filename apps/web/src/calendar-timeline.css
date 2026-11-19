@@ -1,0 +1,241 @@
+.calendar-timeline-axis {
+  display: grid;
+  grid-template-columns: var(--label, 180px) minmax(0, 1fr);
+  min-height: 62px;
+  background: var(--md-surface);
+  border-bottom: 1px solid var(--line, var(--md-outline-variant));
+}
+.calendar-timeline-axis .calendar-timeline-label {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  min-width: 0;
+  background: var(--md-surface);
+}
+.calendar-timeline-axis .calendar-timeline-axis-track {
+  display: block;
+  position: relative;
+  min-width: 0;
+}
+.calendar-timeline-axis .calendar-timeline-tick {
+  overflow: hidden;
+  padding: 8px 6px;
+  color: var(--md-on-surface-variant);
+  line-height: 1.5;
+}
+.calendar-timeline-track {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+.calendar-timeline-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.hc-booking-dialog .hc-range-calendar {
+  --label: var(--room-label);
+  --calendar-min-width: 880px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.hc-booking-dialog .hc-time-request {
+  z-index: 3;
+  min-height: 40px;
+  top: 19px;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  border-color: var(--md-primary);
+}
+.hc-booking-dialog .hc-time-request.picked {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.hc-booking-dialog .hc-time-available {
+  background: var(--md-success-soft);
+  color: var(--md-on-success-container);
+}
+.hc-booking-dialog .hc-range-house {
+  background: var(--md-surface-container);
+  color: var(--md-on-surface);
+}
+.hc-booking-dialog .hc-range-room {
+  grid-template-columns: var(--label) minmax(0, 1fr);
+}
+
+.hc-booking-dialog .workspace-availability-navigation {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  width: min(520px, 100%);
+  margin-inline: auto;
+  gap: 12px;
+  text-align: center;
+}
+.hc-booking-dialog .workspace-availability-navigation > span {
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.calendar-timeline-track > button:focus-visible {
+  outline: 3px solid var(--md-focus);
+  outline-offset: -3px;
+}
+.calendar-timeline-viewport {
+  min-width: 0;
+  overflow-x: auto;
+}
+.calendar-timeline-pan-hint {
+  margin: 0 0 8px;
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.hc-booking-dialog .calendar-timeline-pan-hint:not([hidden]) {
+  margin-block: 0 -16px;
+}
+
+/* Availability and the requested stay have separate lanes, never stacked labels. */
+.hc-booking-dialog .booking-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--md-on-surface-variant);
+}
+.hc-booking-dialog .booking-calendar-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.booking-calendar-swatch {
+  flex: none;
+  width: 24px;
+  height: 14px;
+  border: 1px solid var(--md-primary-outline);
+  border-radius: 4px;
+}
+.booking-calendar-swatch.available {
+  background: var(--md-success-soft);
+  border-color: var(--md-success-outline);
+}
+.booking-calendar-swatch.unavailable {
+  background: var(--md-secondary-container);
+  border-color: var(--md-secondary-outline);
+}
+.booking-calendar-swatch.requested {
+  background: var(--md-primary-container);
+  border-color: var(--md-primary);
+}
+.hc-booking-dialog .calendar-timeline-viewport {
+  container-type: inline-size;
+}
+.hc-booking-dialog .hc-range-house > span {
+  display: block;
+  position: sticky;
+  left: 12px;
+  max-width: calc(100cqw - 24px);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.hc-booking-dialog .hc-range-calendar .hc-range-room {
+  height: auto;
+  min-height: 104px;
+}
+.hc-booking-dialog .hc-range-room-name {
+  min-width: 0;
+  gap: 10px;
+  padding: 12px;
+}
+.hc-booking-dialog .hc-range-room-name :is(strong, small) {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.hc-booking-dialog .hc-range-room-name small {
+  font-size: 13px;
+}
+.hc-booking-dialog .hc-range-room-name .booking-room-choice {
+  max-width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--md-field-outline);
+  border-radius: 20px;
+  background: var(--md-surface);
+  color: var(--md-primary);
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.hc-booking-dialog .hc-range-room-name .booking-room-choice[aria-pressed='true'] {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  border-color: var(--md-primary);
+}
+.hc-booking-dialog .hc-time-track :is(.hc-time-available, .hc-time-unavailable) {
+  top: 14px;
+  bottom: auto;
+  height: 28px;
+  min-width: 0;
+  padding: 0;
+  border-radius: 4px;
+}
+.hc-booking-dialog .hc-time-unavailable {
+  background: var(--md-secondary-container);
+  border-color: var(--md-secondary-outline);
+}
+.hc-booking-dialog .hc-time-track .hc-time-request {
+  top: 56px;
+  height: 28px;
+  min-height: 0;
+  min-width: 0;
+  padding: 0;
+  border-radius: 4px;
+}
+.hc-booking-dialog .hc-time-track {
+  isolation: isolate;
+  z-index: 0;
+}
+.hc-booking-dialog .hc-wizard-progress {
+  align-items: start;
+}
+
+.hc-booking-dialog .hc-time-available:is(:hover, :focus-visible) {
+  background: var(--md-success-container);
+}
+.calendar-timeline:has(> .calendar-timeline-continuous-grid) {
+  position: relative;
+  isolation: isolate;
+}
+.calendar-timeline-continuous-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--label, 180px);
+  width: calc(100% - var(--label, 180px));
+  z-index: 1;
+  background-size: 100% 100%;
+  pointer-events: none;
+}
+.calendar-timeline:has(> .calendar-timeline-continuous-grid) .calendar-timeline-track {
+  background-image: none !important;
+}
+
+/* Keep continuous time lines behind sticky house text, including when panning. */
+.hc-booking-dialog .hc-range-house > .location-label {
+  width: fit-content;
+  z-index: 2;
+}
+.hc-booking-dialog .hc-range-house :is(.location-label-kind, .location-label-name) {
+  width: fit-content;
+  max-width: 100%;
+  background: var(--md-surface);
+  box-shadow: 4px 0 0 var(--md-surface);
+}

@@ -1,0 +1,440 @@
+/* Public pages retain the original forest/porcelain brand, independent of app preferences. */
+:root:not([data-ui-style]) {
+  --md-primary: #31594c;
+  --md-primary-hover: #406b5b;
+  --md-primary-soft: #e7eee3;
+  --md-on-primary: #fff;
+  --md-surface: #fff;
+  --md-surface-container-low: #faf8f2;
+  --md-on-surface: #293f35;
+  --md-on-surface-variant: #657065;
+  --md-field-outline: #b6c2b0;
+}
+/* Warm Material roles: terracotta actions, peach selection, cream chrome and independent status colors. */
+:root[data-ui-style] {
+  --md-primary: #9c4f2e;
+  --md-on-primary: #ffffff;
+  --md-primary-hover: #7a3d24;
+  --md-primary-container: #ffe0cc;
+  --md-on-primary-container: #4a2817;
+  --md-primary-soft: #fff0e6;
+  --md-primary-outline: #dba98c;
+  --md-secondary: #69594f;
+  --md-secondary-container: #f2e8df;
+  --md-on-secondary-container: #514139;
+  --md-secondary-outline: #d3c3b7;
+  --md-house-container: #f3ddc9;
+  --md-room-container: #fff9f3;
+  --md-surface: #ffffff;
+  --md-surface-container-low: #fff9f3;
+  --md-surface-container: #faf0e6;
+  --md-surface-warm: var(--md-surface-container-low);
+  --md-on-surface: #30251f;
+  --md-on-surface-variant: #69594f;
+  --md-outline: #8b7a6f;
+  --md-outline-variant: #e3d6cb;
+  --md-field-outline: #b9a89a;
+  --md-disabled-container: #ebe5df;
+  --md-on-disabled: #6d6158;
+  --md-success: #2e6b45;
+  --md-success-soft: #ebf4e8;
+  --md-success-container: #d9ebd5;
+  --md-on-success-container: #193a24;
+  --md-success-outline: #9bbd97;
+  --md-error: #b3261e;
+  --md-error-container: #fce9e7;
+  --md-error-outline: #f2b8b5;
+  --md-warning: #7a4d00;
+  --md-warning-container: #fff4ce;
+  --md-warning-outline: #e8c775;
+  --md-tertiary: #70612f;
+  --md-tertiary-container: #f3e6b7;
+  --md-focus: var(--md-primary);
+  --md-shadow: 0 16px 48px #3f281e26, 0 2px 8px #3f281e14;
+  --md-action-shadow: 0 2px 5px #3f281e24;
+  --md-scrim: #3f281e66;
+  --md-media-scrim: #3f281e99;
+  color: var(--md-on-surface);
+  accent-color: var(--md-link);
+}
+html[data-ui-style] .hc.saved-workspace {
+  --brand: var(--md-primary);
+  --ink: var(--md-on-surface);
+  --muted: var(--md-on-surface-variant);
+  --line: var(--md-outline-variant);
+}
+html[data-ui-style] :is(.portal, .saved-workspace),
+html[data-ui-style] .marketing-site {
+  color: var(--md-on-surface);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace, .marketing-site, .marketing-header, .marketing-footer)
+  :is(a, button, summary, input, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--md-focus);
+  outline-offset: 3px;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace, .marketing-site, .marketing-header)
+  :is(.button, .hc-apply) {
+  min-height: 44px;
+  border: 1px solid var(--md-primary);
+  border-radius: 24px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  padding: 10px 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace, .marketing-site, .marketing-header)
+  :is(.button, .hc-apply):hover:not(:disabled) {
+  background: var(--md-primary-hover);
+  border-color: var(--md-primary-hover);
+  box-shadow: var(--md-action-shadow);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(.language, .hc-manage) {
+  min-height: 44px;
+  border-color: var(--md-outline-variant);
+  border-radius: 24px;
+  background: var(--md-surface);
+  color: var(--md-link);
+  line-height: 1.4;
+}
+html[data-ui-style] :is(.portal, .saved-workspace, .marketing-header) .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+  border-color: var(--md-outline-variant);
+  border-radius: 12px;
+  background: var(--md-surface);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.language, .hc-manage, .icon-button):hover:not(:disabled) {
+  background: var(--md-primary-soft);
+  border-color: var(--md-field-outline);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(button, input, textarea):disabled {
+  cursor: not-allowed;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.customer-form, .workspace-form, .workspace-filters, .hc-settings-form, .profile-section)
+  :is(
+    input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']):not(
+        .custom-select-native
+      ),
+    textarea
+  ),
+html[data-ui-style] :is(.portal, .saved-workspace) .custom-autocomplete > input,
+html[data-ui-style] :is(.portal, .saved-workspace, .hc) .custom-select > .custom-select-trigger {
+  min-height: 44px;
+  border-color: var(--md-field-outline);
+  border-radius: 8px;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font-size: 16px;
+  line-height: 1.5;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(input, textarea)::placeholder {
+  color: var(--md-on-surface-variant);
+  opacity: 1;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(input, textarea, .custom-select-trigger):focus-visible {
+  border-color: var(--md-link);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.customer-form, .workspace-form, .hc-settings-form)
+  label {
+  color: var(--md-on-surface-variant);
+  line-height: 1.5;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(h1, h2, h3, h4) {
+  color: var(--md-on-surface);
+  line-height: 1.35;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .workspace-table th {
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .workspace-table tbody tr:hover {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.workspace-context, .workspace-metrics, .hc-review-card) {
+  background: var(--md-surface-container);
+  border-color: var(--md-outline-variant);
+  color: var(--md-on-surface);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(.portal-role, .profile-role-badge) {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is([role='tab'][aria-selected='true'], .workspace-buttons button[aria-pressed='true']) {
+  color: var(--md-on-primary-container);
+  background: var(--md-primary-container);
+  border-color: var(--md-link);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) [role='alert'] {
+  padding: 12px 16px;
+  border: 1px solid var(--md-error-outline);
+  border-radius: 8px;
+  background: var(--md-error-container);
+  color: var(--md-error-ink);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) [role='status']:not(:empty) {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] dialog.app-dialog,
+html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog {
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  border-color: var(--md-outline-variant);
+  border-radius: 24px;
+  box-shadow: var(--md-shadow);
+  overscroll-behavior: contain;
+}
+html[data-ui-style] dialog.app-dialog::backdrop,
+html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog::backdrop {
+  background: var(--md-scrim);
+  backdrop-filter: blur(3px);
+}
+html[data-ui-style] dialog.app-dialog .dialog-heading {
+  align-items: flex-start;
+  gap: 20px;
+}
+html[data-ui-style] dialog.app-dialog .dialog-heading h2,
+html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog .dialog-heading h2 {
+  padding-block: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+html[data-ui-style] dialog.app-dialog .dialog-heading .icon-button {
+  color: var(--md-on-surface-variant);
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+html[data-ui-style] dialog.app-dialog .portal-actions {
+  align-items: center;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .custom-select-options,
+html[data-ui-style] .custom-autocomplete-options,
+html[data-ui-style] .custom-date-options {
+  border-color: var(--md-outline-variant);
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] .custom-select-options [role='option'] {
+  min-height: 44px;
+  border: 0;
+}
+html[data-ui-style] .custom-select-options [role='option']:is(:hover, [data-active]) {
+  background: var(--md-primary-soft);
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] .custom-select-options [role='option'][aria-selected='true'] {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  font-weight: 600;
+}
+@media (max-width: 600px) {
+  html[data-ui-style] :is(.portal, .saved-workspace) :is(input, textarea, .custom-select-trigger) {
+    font-size: 16px;
+  }
+  html[data-ui-style] dialog.app-dialog .portal-actions > :is(.button, .language) {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui-style]
+    :is(.portal, .saved-workspace, .marketing-site, .marketing-header)
+    :is(.button, .hc-apply) {
+    transition: none;
+  }
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(.portal-card, .pet-card, .customer-list) {
+  background: var(--md-surface);
+  border-color: var(--md-outline-variant);
+  border-radius: 16px;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-house {
+  background: var(--md-surface-container);
+  color: var(--md-on-surface);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-room {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.in {
+  background: var(--md-success-container);
+  color: var(--md-on-success-container);
+  border-color: var(--md-success-outline);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.overdue {
+  background: var(--md-warning-container);
+  color: var(--md-warning-ink);
+  border-color: var(--md-warning-outline);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.cancelled {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+html[data-ui-style] .marketing-header nav a[aria-current='page'] {
+  color: var(--md-link);
+  text-decoration-color: var(--md-link);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .custom-date-field > input {
+  min-height: 44px;
+  padding: 9px 52px 9px 12px;
+  padding-right: 52px !important;
+  border-color: var(--md-field-outline);
+  background: var(--md-surface);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .custom-date-toggle {
+  right: 0;
+  width: 44px;
+  min-height: 44px;
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .custom-date-week [aria-selected='true'] button {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+html[data-ui-style] .custom-date-options button:hover:not(:disabled) {
+  background: var(--md-primary-soft);
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] dialog.photo-dialog {
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  border-radius: 24px;
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] dialog.photo-dialog::backdrop {
+  background: var(--md-media-scrim);
+}
+html[data-ui-style] .photo-close {
+  min-height: 44px;
+  border-color: var(--md-outline-variant);
+  color: var(--md-link);
+}
+html[data-ui-style] .saved-workspace .hc-range > button {
+  min-width: 44px;
+  min-height: 44px;
+  background: var(--md-surface);
+  border-color: var(--md-field-outline);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .hc .hc-search input {
+  border: 1px solid var(--md-field-outline);
+  background: var(--md-surface);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog :is(p, label) {
+  font-size: 14px;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  dialog.app-dialog
+  :is(.button, .hc-apply, .language) {
+  font-size: 14px;
+}
+
+/* Color communicates the same state in every shared control. */
+html[data-ui-style] :is(.portal, .saved-workspace) :is(.button, .hc-apply):disabled {
+  background: var(--md-disabled-container);
+  color: var(--md-on-disabled);
+  border-color: var(--md-disabled-container);
+  opacity: 1;
+  box-shadow: none;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.language, .hc-manage, .icon-button, .custom-select-trigger):disabled {
+  background: var(--md-surface-container);
+  color: var(--md-on-disabled);
+  border-color: var(--md-outline-variant);
+  opacity: 1;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(input, textarea):disabled {
+  background: var(--md-surface-container);
+  color: var(--md-on-disabled);
+  opacity: 1;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(input, textarea, .custom-select-trigger)[aria-invalid='true'] {
+  border-color: var(--md-error-ink);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .custom-date-error[role='status'] {
+  color: var(--md-error-ink);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.upcoming {
+  background: var(--md-primary-soft);
+  color: var(--md-on-primary-container);
+  border-color: var(--md-primary-outline);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.out {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  border-color: var(--md-secondary-outline);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .hc-notice {
+  background: var(--md-warning-container);
+  color: var(--md-warning-ink);
+}
+html[data-ui-style] .marketing-site :is(.cute-note, .world-note),
+html[data-ui-style] .marketing-footer .cute-note {
+  color: var(--md-tertiary);
+}
+
+html[data-ui-style] .custom-date-week [aria-selected='true'] button:hover {
+  background: var(--md-primary-hover);
+  color: var(--md-on-primary);
+}
+
+html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog .booking-room-choice:disabled {
+  background: var(--md-surface-container);
+  color: var(--md-on-disabled);
+  border-color: var(--md-outline-variant);
+  opacity: 1;
+}
+html[data-ui-style] .custom-date-options button:disabled,
+html[data-ui-style] .custom-select-options [role='option'][aria-disabled='true'] {
+  background: transparent;
+  color: var(--md-on-disabled);
+  opacity: 1;
+}
+
+/* Cream chrome frames white content; timeline colors retain their status meaning. */
+html[data-ui-style] .marketing-header,
+html[data-ui-style] .marketing-footer {
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface);
+  border-color: var(--md-outline-variant);
+}
+
+html[data-ui-style] :is(.portal, .saved-workspace) .icon-button:hover:not(:disabled) {
+  background: var(--md-secondary-container);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .workspace-field-note {
+  color: var(--md-on-surface-variant);
+}

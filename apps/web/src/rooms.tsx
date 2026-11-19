@@ -1,10 +1,11 @@
+import LocationLabel from './location-label';
 import React from 'react';
 import './rooms.css';
 import { useTranslation } from 'react-i18next';
 import { uiText, speciesText } from './i18n.ts';
 import { apiJson, ApiError } from './api-client';
 import Modal from './modal';
-import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
+import UnsavedChanges, { confirmDiscardChanges, markFormSaved } from './unsaved-changes';
 import Icon from './icons';
 import type { components } from '../../../packages/contracts/generated';
 type Room = components['schemas']['Room'];
@@ -13,10 +14,18 @@ export default function Rooms({
   houseId,
   addressReady,
   onChanged,
+  initialEditId,
+  onEditorClosed,
+  embedded = false,
+  onBusyChange,
 }: {
   houseId: string;
   addressReady: boolean;
   onChanged?: () => void;
+  initialEditId?: string;
+  onEditorClosed?: () => void;
+  embedded?: boolean;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const { i18n } = useTranslation();
   const [rooms, setRooms] = React.useState<Room[]>([]);
@@ -65,7 +74,7 @@ export default function Rooms({
     const input: RoomWrite = room
       ? {
           name: room.name,
-          capacity: room.capacity,
+          capacity: room.capacity ?? 0,
           costs: { ...room.costs },
           version: room.version,
         }
@@ -75,11 +84,22 @@ export default function Rooms({
     setError('');
     setUncertain(false);
   }
+  const requestedEditor = React.useRef('');
+  React.useEffect(() => {
+    if (!initialEditId || !addressReady || loading || requestedEditor.current === initialEditId)
+      return;
+    const room = rooms.find((item) => item.id === initialEditId);
+    if (room) {
+      requestedEditor.current = initialEditId;
+      open(room);
+    }
+  }, [initialEditId, rooms, loading, addressReady]);
   function close() {
     if (!saving && !uncertain && confirmDiscardChanges(i18n.language, form.current)) {
       setEditor(null);
       setError('');
       void load();
+      onEditorClosed?.();
     }
   }
   async function save(event: React.FormEvent) {
@@ -96,9 +116,11 @@ export default function Rooms({
           a.name.localeCompare(b.name),
         ),
       );
+      markFormSaved(form.current);
       setEditor(null);
       setUncertain(false);
       onChanged?.();
+      onEditorClosed?.();
     } catch (error) {
       if (current === generation.current) {
         report(error);
@@ -108,58 +130,85 @@ export default function Rooms({
       if (current === generation.current) setSaving(false);
     }
   }
+  React.useEffect(() => {
+    if (embedded && editor)
+      form.current?.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }, [embedded, editor?.id]);
   const blocked = saving || uncertain;
+  React.useEffect(() => onBusyChange?.(blocked), [blocked, onBusyChange]);
   return (
-    <section className="saved-rooms" aria-label={label('title')}>
-      <div className="customer-heading">
-        <h4>{label('title')}</h4>
-        <button
-          type="button"
-          className="language"
-          disabled={!addressReady || blocked}
-          onClick={() => open()}
-        >
-          {label('add')}
-        </button>
-      </div>
-      {!addressReady && <p>{uiText('ui.houses.addressMissing')}</p>}
-      {loading && <p role="status">{label('loading')}</p>}
-      {!loading && !rooms.length && !error && <p>{label('empty')}</p>}
-      {error && !editor && (
-        <>
-          <p role="alert">{label(error)}</p>
-          <button className="language" onClick={() => void load()}>
-            {label('retry')}
+    <section
+      className={embedded ? 'embedded-location-editor' : 'saved-rooms'}
+      aria-label={label('title')}
+    >
+      <div hidden={embedded}>
+        <div className="customer-heading">
+          <h4>{label('title')}</h4>
+          <button
+            type="button"
+            className="language"
+            disabled={!addressReady || blocked}
+            onClick={() => open()}
+          >
+            {label('add')}
           </button>
-        </>
-      )}
-      <ul>
-        {rooms.map((room) => (
-          <li key={room.id}>
-            <span>
-              <strong>{room.name}</strong>
-              <br />
-              {label('capacity')}: {room.capacity}
-              <br />
-              {(['dog', 'cat', 'rabbit'] as const)
-                .map((s) => `${speciesText(s)}: ${room.costs[s] ?? uiText('common.notAvailable')}`)
-                .join(' · ')}
-            </span>
-            <button
-              type="button"
-              className="icon-button"
-              title={label('edit')}
-              aria-label={`${label('edit')}: ${room.name}`}
-              disabled={!addressReady || blocked}
-              onClick={() => open(room)}
-            >
-              <Icon name="edit" />
+        </div>
+        {!addressReady && <p>{uiText('ui.houses.addressMissing')}</p>}
+        {loading && <p role="status">{label('loading')}</p>}
+        {!loading && !rooms.length && !error && <p>{label('empty')}</p>}
+        {error && !editor && (
+          <>
+            <p role="alert">{label(error)}</p>
+            <button className="language" onClick={() => void load()}>
+              {label('retry')}
             </button>
-          </li>
+          </>
+        )}
+        <ul>
+          {rooms.map((room) => (
+            <li key={room.id}>
+              <span>
+                <LocationLabel kind="room" name={room.name} />
+                <br />
+                {label('capacity')}: {room.capacity}
+                <br />
+                {(['dog', 'cat', 'rabbit'] as const)
+                  .map(
+                    (s) => `${speciesText(s)}: ${room.costs[s] ?? uiText('common.notAvailable')}`,
+                  )
+                  .join(' · ')}
+              </span>
+              <button
+                type="button"
+                className="icon-button"
+                title={label('edit')}
+                aria-label={`${label('edit')}: ${room.name}`}
+                disabled={!addressReady || blocked}
+                onClick={() => open(room)}
+              >
+                <Icon name="edit" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {embedded &&
+        !editor &&
+        (loading ? (
+          <p role="status">label('loading')</p>
+        ) : (
+          <>
+            <p role="alert">
+              {!addressReady ? uiText('ui.houses.addressMissing') : label(error || 'empty')}
+            </p>
+            <button className="language" onClick={() => void load()}>
+              {label('retry')}
+            </button>
+          </>
         ))}
-      </ul>
       {editor && (
         <Modal
+          embedded={embedded}
           title={label(editor.input.version ? 'edit' : 'add')}
           onClose={close}
           disabled={blocked}

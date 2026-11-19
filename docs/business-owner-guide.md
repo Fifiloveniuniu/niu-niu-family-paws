@@ -1,19 +1,17 @@
 # Making changes to your website
 
-You can ask Codex for changes in everyday English or Simplified Chinese. You do not need to write code, run commands, or manage GitHub yourself.
+## Change the app's appearance
 
-Open this project in Codex and say:
+Inside the app, click the palette icon, or open Menu → Appearance on a phone. Choose Google, Apple, Microsoft Light or Microsoft Dark. Each choice changes colors and component styling together across navigation, fields, dropdowns, calendars and dialogs. The preview shows the palette together. Dark Modern also makes the work areas and forms dark. Google is the default; use Reset to Google to restore it.
 
-> Read AGENTS.md and docs/session-handoff.md, then help me update the website. I am the business owner and do not code.
+Choices appear immediately and are remembered in this browser, including its other open app tabs. They do not change another person's appearance or the public marketing site. The marketing navbar has no theme button. If browser storage is unavailable, the dialog explains that changes last for this session. English and Chinese labels are available through the language menu. No separate corner-style setting is needed.
 
-Then describe what you want. For example:
 
-- “Change our contact information to these details: …”
-- “Update the daycare description in English and Chinese to say …”
-- “The Chinese text is cut off on my phone. Please fix it.”
-- “Show me what is already live and what still needs my decision.”
+## Current app navigation and management
 
-For a problem, describe what you clicked, what happened, and what you expected. A screenshot can help. For prices, services, contact details, package terms, or photos, supply the approved information or assets. Codex must ask about missing business rules rather than make them up.
+Administrators use **Calendar / Balances / Customers / Pricing**. Customer view uses **Calendar / Balances / Pets**. Settings is not a navbar button. Manage houses and rooms from Calendar; open employee house access from that management page. Balances provides validity templates and the cancellation-policy draft. Employees open their assigned-house care workspace. My profile shows the actual signed-in account’s roles even while viewing a customer.
+
+These features are being merged after local validation; the hosted site changes only after the final deployment. Paid bookings, package purchases, automated refunds and withdrawals need the remaining approved payment and business rules. For pets without a booking, the room-association rule still needs your decision.
 
 ## What Codex will handle
 
@@ -177,7 +175,7 @@ Only current preview balance additions, corrections and policy updates appear. B
 
 当前仅显示预览中的余额增加、更正及规则更新，预约扣减和取消返还尚未接入。在三个工作区页面间切换会保留预览数据，退出或刷新后重置，不创建正式财务明细或付款。
 
-## Integrated local workspace — 2026-11-16
+## Historical workspace layout — superseded
 
 The local administrator preview now opens on Calendar and uses five tabs in this order: **Calendar / Customers / Balances / Statement / Settings**. Customers contains the existing saved customer and pet tools. Balances opens a full page; calendar/review shortcuts still open focused dialogs. Settings links to saved house management and Cancellation policy. Your personal profile is available beside your account at the top.
 
@@ -191,7 +189,7 @@ On the local Balances page, choose a customer and pet in the left sidebar. The s
 
 本地寄养余额页面在左侧选择客户与宠物，右侧显示所选宠物照片、记录天数、已计划天数、可计划天数、有效日期及调整记录。手机可横向滑动宠物列表或筛选客户，余额数字逐行显示。“增加余额”打开独立弹窗；取消、关闭或 Esc 会保护未保存修改。日历中的原有余额弹窗仍可使用，目前仍为规划预览。
 
-## Latest navigation — 2026-11-16
+## Historical navigation — superseded
 
 The four main tabs are now **Calendar / Customers / Balances / Settings**. Open **Balances → Overview** to manage pet credits, or **Balances → Statement** for transaction filters, details and CSV export. A pet’s View statement shortcut opens this same statement view filtered to that pet. Returning to Overview retains the selected pet. Settings contains Cancellation policy; Houses and rooms has been removed from Settings. House management remains in the Calendar’s gear action. This replaces the earlier five-tab navigation instructions; all planning and financial limitations still apply.
 
@@ -391,3 +389,35 @@ The reviewed marketing version is now published at https://niu-niu-family-paws.w
 Services now includes Drop-in visits (care for pets at home) and Dog walking. Find them in the Services menu and Pricing, in English and Chinese. Prices, visit/walk length and service area remain to be confirmed. Preview: http://localhost:4180/services/#drop-in. Not published yet.
 
 服务项目现已加入“上门照护”和“遛狗服务”，服务菜单及价格页均可查看，支持中英文。价格、时长及服务范围仍待确认。目前为本地预览，尚未上线。
+
+## Local booking and balance update — 2026-11-18
+
+In the local app, choose a customer, optionally narrow by pet type, then choose their pet. The selected pet keeps its avatar inside the field. Picking a day fills the date immediately; select the hour and minute and use Apply to complete the time. Choose green available space, review the details and save. Staff plans remain explicitly unbilled while the financial rules are pending. The clearly labeled Practice room is for local testing, with a test-only address rather than a real business location.
+
+Balances now has Validity templates: save a name and reviewed dates, then choose that template when adding or adjusting a pet's balance. Changing or archiving a template leaves existing balances unchanged. Calendar house/room gears open focused editing dialogs. These changes are local and have not been committed, pushed or deployed.
+
+本地应用中，请先选择客户，可按宠物类型筛选，再选择宠物；选中后，输入框内也会显示宠物头像。点击日期后，日期会立即填入输入框；请再选择小时与分钟，点击“应用”完成时间设置。选择绿色可用空间，核对详情后保存。收费规则尚待确认，员工预约计划会明确标注未扣除余额。“测试房间”仅用于本地测试，所示地址不是实际营业地址。
+
+余额页面现支持“有效期模板”：保存名称及已核对的日期，之后为宠物添加或调整余额时即可选用。修改或归档模板不会更改已有余额。日历中房屋及房间旁的设置图标可打开编辑弹窗。以上更新仅在本地，尚未提交、推送或部署。
+
+
+## Account roles and management links — local preview
+
+My profile shows the roles attached to your signed-in Google account: Admin, Employee and/or Customer. These labels cannot be edited in the profile, and viewing as another customer does not change your own roles. If roles cannot be verified, refresh to retry. The app bar no longer has Settings: use the Manage houses & rooms icon in Calendar, or Cancellation policy in Balances. Pricing management is still being built. These changes are local and have not been published.
+
+“我的资料”显示当前 Google 登录账号的角色：管理员、员工和／或客户。角色不能在个人资料中修改，代客户查看时也不会变成对方的角色。如无法核实角色，请刷新重试。应用导航栏已移除“设置”；请在日历中点击“管理房屋与房间”图标，或在余额页点击“取消政策”。价格管理仍待实现。以上仅为本地更新，尚未发布。
+
+
+## Pricing, pages and staff operations — local preview
+
+Administrators can open **Pricing** to review the supplied rates and edit prices, packages or holiday dates in a dialog. A package uses its fixed USD price and boarding-day quantity; optional regular-band/weight comparison shows savings. These changes update displayed prices without changing past bookings or statements. Customers do not see price-editing controls. The public site now shows the supplied prices and no longer offers daycare.
+
+Use **Previous page / Next page** and **Rows per page** in Customers, Pets and Balances. Statement export includes all matching permitted entries, even when only one page is displayed. Pet/customer choices can load further results.
+
+Assigned employees can use **House operations** to record arrival/pickup, verify weight during a stay, and correct actual handoff times. Planned times and original values remain in history. Their house assignment does not permit balance or price changes. To assign an existing employee, open Calendar → Manage houses & rooms → Employee house access, find their verified Google sign-in email, select houses and save. Clearing all houses removes their operational access. This does not create an employee account or role. Payment collection and boarding-day expiry are still unconfigured. All of this remains local and unpublished.
+
+管理员可在“价格管理”中核对海报价格，并通过弹窗修改价格、寄养天数套餐及节假日。套餐使用固定美元价格与天数；可选择常规体重区间及比较体重，展示节省金额。修改不会重写历史预约或账单。客户无法编辑价格。公开网站现展示所提供的价格，不再提供日间托管。
+
+客户、宠物及余额列表支持“上一页／下一页”和“每页条数”。账单导出包含所有符合筛选条件且有权查看的记录，不仅是当前页。宠物与客户选项可继续加载。
+
+已分配房屋的员工可在“房屋运营”中记录实际送达、接回，在照护期间核实体重，并更正交接时间；计划时间与原始数值保留在历史中。房屋权限不包含财务或价格管理权限，不会自动授权员工。管理员可在“日历 → 管理房屋与房间 → 员工房屋权限”中，通过已核实的 Google 登录邮箱查找已有员工，选择房屋并保存；取消全部选择会移除运营权限。本功能不会创建员工账号或授予员工角色。收款方式与寄养天数有效期仍待确认。以上为本地预览，尚未上线。

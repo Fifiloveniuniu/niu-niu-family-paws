@@ -1,8 +1,11 @@
+import Icon from './icons';
 import React from 'react';
 import { useDropdownState } from './dropdown-state';
 import './custom-select.css';
 
-type Props = React.SelectHTMLAttributes<HTMLSelectElement>;
+type Props = React.SelectHTMLAttributes<HTMLSelectElement> & {
+  renderChoice?: (value: string, label: string) => React.ReactNode;
+};
 type Choice = { value: string; label: string; disabled: boolean; lang?: string };
 
 function text(node: React.ReactNode): string {
@@ -29,7 +32,17 @@ function choices(children: React.ReactNode, disabled = false): Choice[] {
 
 /** Custom single-select UI; the inaccessible native field retains form/change semantics. */
 export default function CustomSelect(props: Props) {
-  const { children, value, defaultValue, onChange, disabled, id, className, ...rest } = props;
+  const {
+    children,
+    value,
+    defaultValue,
+    onChange,
+    disabled,
+    id,
+    className,
+    renderChoice,
+    ...rest
+  } = props;
   const options = choices(children);
   const [localValue, setLocalValue] = React.useState(
     String(defaultValue ?? options[0]?.value ?? ''),
@@ -229,11 +242,12 @@ export default function CustomSelect(props: Props) {
         }}
       >
         <span className="custom-select-value">
-          {selected && selectedOption ? selectedOption.label : 'N/A'}
+          {selectedOption
+            ? ((selected ? renderChoice?.(selected, selectedOption.label) : undefined) ??
+              selectedOption.label)
+            : 'N/A'}
         </span>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m7 10 5 5 5-5" />
-        </svg>
+        <Icon name="chevron-down" />
       </button>
       {open && (
         <div
@@ -265,7 +279,7 @@ export default function CustomSelect(props: Props) {
                 choose(index);
               }}
             >
-              <span>{option.label}</span>
+              <span>{renderChoice?.(option.value, option.label) ?? option.label}</span>
               <span aria-hidden="true">{option.value === selected ? '✓' : ''}</span>
             </div>
           ))}
