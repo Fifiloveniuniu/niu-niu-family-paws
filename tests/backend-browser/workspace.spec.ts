@@ -238,9 +238,9 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.owner.jwt);
   await page.goto('/app/balances/?lang=en');
+  await expect(page.locator('.workspace-table').first().locator('tbody tr')).toHaveCount(3);
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await expect(page.getByRole('link', { name: 'Pets', exact: true })).toBeVisible();
-  await expect(page.locator('.workspace-table').first().locator('tbody tr')).toHaveCount(3);
   await expect(page.getByRole('button', { name: 'Add balance', exact: true })).toHaveCount(0);
   const forbidden = await page.evaluate(async (cid) => {
     // @ts-ignore Test-only Vite module import.
