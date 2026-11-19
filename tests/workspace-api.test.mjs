@@ -84,3 +84,22 @@ test('statement filter schema rejects forged actor, unsupported activity and mal
     );
   assert.equal(calls, 0);
 });
+
+test('authenticated request budgets are per verified identity and allow photo-rich navigation', async (t) => {
+  let calls = 0;
+  const app = buildApp({
+    verify: async (token) => {
+      calls++;
+      return { uid: token, email_verified: true, google: true };
+    },
+    store: {},
+    workspace: { locations: async () => ({ items: [] }) },
+  });
+  t.after(() => app.close());
+  const read = (uid) =>
+    app.inject({ url: '/api/workspace/locations', headers: { authorization: 'Bearer ' + uid } });
+  for (let i = 0; i < 600; i++) assert.equal((await read('first-owner')).statusCode, 200);
+  assert.equal((await read('first-owner')).statusCode, 429);
+  assert.equal((await read('second-owner')).statusCode, 200);
+  assert.equal(calls, 602);
+});

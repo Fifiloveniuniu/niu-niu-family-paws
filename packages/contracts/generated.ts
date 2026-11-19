@@ -21,6 +21,7 @@ export interface paths {
                     from?: string;
                     through?: string;
                     kind?: "added" | "correction" | "terms";
+                    pageSize?: "25" | "50" | "100";
                 };
                 header?: never;
                 path?: never;
@@ -60,6 +61,8 @@ export interface paths {
                 query?: {
                     customerId?: string;
                     cursor?: string;
+                    pageSize?: "25" | "50" | "100";
+                    petId?: string;
                 };
                 header?: never;
                 path?: never;
@@ -740,7 +743,7 @@ export interface paths {
             };
             cookie?: never;
         };
-        /** @description Owner or administrator only. 50 pets per page. */
+        /** @description Owner or administrator only. Bounded pages of 25, 50 or 100 pets; default 50. */
         get: operations["listPets"];
         put?: never;
         post?: never;
@@ -964,7 +967,6 @@ export interface components {
             customerId?: string;
             /** Format: uuid */
             petId?: string;
-            /** Format: uuid */
             cursor?: string;
             /** Format: date-time */
             from?: string;
@@ -972,6 +974,8 @@ export interface components {
             through?: string;
             /** @enum {string} */
             kind?: "added" | "correction" | "terms";
+            /** @enum {string} */
+            pageSize?: "25" | "50" | "100";
         };
         WorkspaceEvents: {
             items: {
@@ -1312,6 +1316,7 @@ export interface operations {
         parameters: {
             query?: {
                 cursor?: string;
+                pageSize?: "25" | "50" | "100";
             };
             header?: never;
             path: {
@@ -1553,6 +1558,7 @@ export interface operations {
                 cursor?: string;
                 /** @description Case-insensitive prefix of customer name, contact email, or server-maintained Google login email. Applied before pagination. */
                 search?: string;
+                pageSize?: "25" | "50" | "100";
             };
             header?: never;
             path?: never;

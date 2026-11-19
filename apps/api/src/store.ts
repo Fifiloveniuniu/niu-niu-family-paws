@@ -119,13 +119,14 @@ export function firestoreStore(database: Firestore): CustomerStore {
         return customer;
       });
     },
-    async list(cursor, search) {
-      let query = customers.orderBy(FieldPath.documentId()).limit(51);
+    async list(cursor, search, pageSize) {
+      const size = Number(pageSize ?? 50);
+      let query = customers.orderBy(FieldPath.documentId()).limit(size + 1);
       if (search) query = query.where('searchKeys', 'array-contains', search);
       if (cursor) query = query.startAfter(cursor);
       const snapshot = await query.get();
-      const items = snapshot.docs.slice(0, 50).map((doc) => customerFromDocument(doc.data()));
-      return { items, nextCursor: snapshot.size > 50 ? items.at(-1)!.id : null };
+      const items = snapshot.docs.slice(0, size).map((doc) => customerFromDocument(doc.data()));
+      return { items, nextCursor: snapshot.size > size ? items.at(-1)!.id : null };
     },
     async save(id, input, actor) {
       const customerRef = customers.doc(id);
