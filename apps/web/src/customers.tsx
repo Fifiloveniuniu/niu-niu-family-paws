@@ -1,3 +1,4 @@
+import './customer-workspace.css';
 import { Pagination } from './pagination';
 import { withoutLanguage } from './language-url.ts';
 import {
@@ -198,7 +199,10 @@ export default function Customers({
     const customer = parsedRoute.customerId || params.get('customer');
     const pet = parsedRoute.petId || params.get('pet');
     const lookup = params.get('lookup');
-    if (!customer) return;
+    if (!customer) {
+      if (!onlyMine) setPetCustomer(null);
+      return;
+    }
     let active = true;
     const controller = new AbortController();
     void (async () => {
@@ -279,7 +283,11 @@ export default function Customers({
     void load(undefined, '');
   }
   return (
-    <section className="customer-section" aria-labelledby="customers-title">
+    <section
+      className="customer-section customer-workspace"
+      data-selected={petCustomer ? 'true' : 'false'}
+      aria-labelledby="customers-title"
+    >
       <div className="customer-heading">
         <div>
           <h2 id="customers-title">{labels.title}</h2>
@@ -288,10 +296,10 @@ export default function Customers({
           {labels.add}
         </button>
       </div>
-      <p className="customer-intro">{labels.intro}</p>
+      <p className="customer-workspace-intro">{uiText('ui.customerView.intro')}</p>
       <section className="customer-filters" aria-label={uiText('ui.customers.customerFilters')}>
         <div className="hc-filters-heading">
-          <h2>{uiText('ui.customers.filters')}</h2>
+          <span className="sr-only">{uiText('ui.customers.filters')}</span>
           <button
             className="icon-button"
             title={uiText('ui.customers.clearCustomerFilters')}
@@ -302,7 +310,6 @@ export default function Customers({
           </button>
         </div>
         <div className="customer-filter-fields">
-          {' '}
           <form
             className="customer-search"
             role="search"
@@ -318,12 +325,19 @@ export default function Customers({
               <input
                 id="customer-search"
                 type="search"
+                placeholder={uiText('ui.customerView.search')}
                 maxLength={254}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
-              <button className="language" disabled={loading || saving} type="submit">
-                {labels.search}
+              <button
+                className="icon-button"
+                title={labels.search}
+                aria-label={labels.search}
+                disabled={loading || saving}
+                type="submit"
+              >
+                <Icon name="search" />
               </button>
             </div>
           </form>
@@ -520,7 +534,11 @@ export default function Customers({
                       {labels.loginEmail}: {customer.loginEmail}
                     </p>
                   )}
-                  <span className="customer-language" lang={customer.language}>
+                  <span
+                    className="customer-language"
+                    lang={customer.language}
+                    title={labels.language}
+                  >
                     {languageName(customer.language)}
                   </span>
                 </div>
@@ -616,8 +634,15 @@ export default function Customers({
                 <button
                   className="back-to-customers"
                   onClick={() => {
-                    directoryPanel.current?.focus({ preventScroll: true });
-                    directoryPanel.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+                    if (!navigate('/app/customers/' + location.search)) return;
+                    setPetCustomer(null);
+                    requestAnimationFrame(() => {
+                      directoryPanel.current?.focus({ preventScroll: true });
+                      directoryPanel.current?.scrollIntoView({
+                        block: 'start',
+                        behavior: 'instant',
+                      });
+                    });
                   }}
                 >
                   {uiText('ui.customers.customers')}
@@ -640,7 +665,8 @@ export default function Customers({
             </>
           ) : (
             <div className="pet-selection-empty">
-              <h3>{uiText('ui.customers.customerSPets')}</h3>
+              <Icon name="customers" />
+              <h3>{uiText('ui.customerView.choose')}</h3>
               <p>{uiText('ui.customers.selectACustomerFromTheListToViewAnd')}</p>
             </div>
           )}
