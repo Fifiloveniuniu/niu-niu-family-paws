@@ -127,6 +127,7 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.reload();
   await expect(page.locator('.workspace-table').first()).toContainText('5');
+  await page.getByRole('tab', { name: 'Activity', exact: true }).click();
   await expect(page.locator('.workspace-statement')).toContainText('5');
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV', exact: true }).click();

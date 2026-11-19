@@ -1,3 +1,4 @@
+import './workspace-views.css';
 import { CustomerPicker, PetPicker } from './workspace-pickers';
 import { useCursorPage, Pagination } from './pagination';
 import ValidityTemplates, { TemplatePicker } from './validity-templates';
@@ -243,6 +244,8 @@ export default function WorkspaceBalances({
   const [templates, setTemplates] = React.useState(false);
   const { i18n } = useTranslation();
 
+  const activity = search.get('panel') === 'activity';
+  const b = (key: string) => uiText('ui.balanceView.' + key);
   const kind = search.get('kind') ?? '',
     from = search.get('from') ?? '',
     through = search.get('through') ?? '';
@@ -360,6 +363,34 @@ export default function WorkspaceBalances({
   const rows = balances.items;
   return (
     <section className="saved-balances">
+      <div className="workspace-view-heading">
+        <h1>{t('balances')}</h1>
+        <p>{b('intro')}</p>
+      </div>
+      <div className="workspace-view-tabs" role="tablist" aria-label={t('balances')}>
+        {[false, true].map((value) => (
+          <button
+            key={String(value)}
+            type="button"
+            role="tab"
+            id={value ? 'activity-tab' : 'balances-tab'}
+            aria-selected={activity === value}
+            tabIndex={activity === value ? 0 : -1}
+            onKeyDown={(event) => {
+              if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+                event.preventDefault();
+                const next = event.key === 'Home' ? false : event.key === 'End' ? true : !value;
+                onFilters({ panel: next ? 'activity' : '' });
+                document.getElementById(next ? 'activity-tab' : 'balances-tab')?.focus();
+              }
+            }}
+            aria-controls={value ? 'activity-panel' : 'balances-panel'}
+            onClick={() => onFilters({ panel: value ? 'activity' : '' })}
+          >
+            {b(value ? 'activity' : 'current')}
+          </button>
+        ))}
+      </div>
       {templates && <ValidityTemplates onClose={() => setTemplates(false)} />}
       <div className="workspace-section-actions workspace-balance-toolbar">
         {data.admin && !data.customer && (
@@ -410,61 +441,103 @@ export default function WorkspaceBalances({
           </div>
         )}
       </div>
-      <div className="workspace-table-scroll">
-        <table className="workspace-table">
-          <caption className="sr-only">{t('balances')}</caption>
-          <thead>
-            <tr>
-              <th>{t('pet')}</th>
-              {!data.customer && <th>{t('customer')}</th>}
-              <th>{t('balance')}</th>
-              <th>{t('validFrom')}</th>
-              <th>{t('validThrough')}</th>
-              {data.admin && (
+      <section id="balances-panel" role="tabpanel" aria-labelledby="balances-tab" hidden={activity}>
+        <p className="workspace-view-hint">{b('currentHint')}</p>
+        <div className="workspace-table-scroll">
+          <table className="workspace-table">
+            <caption className="sr-only">{t('balances')}</caption>
+            <thead>
+              <tr>
+                <th>{t('pet')}</th>
+                {!data.customer && <th>{t('customer')}</th>}
+                <th>{t('balance')}</th>
+                <th>{b('validity')}</th>
                 <th>
-                  <span className="sr-only">{t('editBalance')}</span>
+                  <span className="sr-only">{b('petActivity')}</span>
                 </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={petKey(row.customer.id, row.pet.id)}>
-                <td>
-                  <span className="workspace-table-pet">
-                    <PetInfo row={row} scope={scope} />
-                    <strong>{row.pet.name}</strong>
-                  </span>
-                </td>
-                {!data.customer && <td>{row.customer.name}</td>}
-                <td>
-                  {row.account ? `${row.account.days} ${t('days')}` : uiText('common.notAvailable')}
-                </td>
-                <td>{row.account?.validFrom ?? uiText('common.notAvailable')}</td>
-                <td>{row.account?.validThrough ?? uiText('common.notAvailable')}</td>
                 {data.admin && (
-                  <td>
-                    <button
-                      className="icon-button"
-                      title={t('editBalance')}
-                      aria-label={`${t('editBalance')}: ${row.pet.name}`}
-                      onClick={() => onAdjust(row)}
-                    >
-                      <Icon name="edit" />
-                    </button>
-                  </td>
+                  <th>
+                    <span className="sr-only">{t('editBalance')}</span>
+                  </th>
                 )}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {balances.loading && <p role="status">{t('loading')}</p>}
-      <Pagination page={balances} label={uiText('ui.pagination.balances')} />
-      {!balances.loading && !balances.error && !rows.length && <p>{t('emptyMatches')}</p>}
-      <section className="workspace-statement" aria-label={t('history')}>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={petKey(row.customer.id, row.pet.id)}>
+                  <td className="balance-pet-cell">
+                    <span className="workspace-table-pet">
+                      <PetInfo row={row} scope={scope} />
+                      <strong>{row.pet.name}</strong>
+                    </span>
+                  </td>
+                  {!data.customer && <td className="balance-customer-cell">{row.customer.name}</td>}
+                  <td className="balance-days-cell">
+                    {row.account ? (
+                      <strong className="balance-days">
+                        {row.account.days} <small>{t('days')}</small>
+                      </strong>
+                    ) : (
+                      <span className="workspace-muted">{b('noBalance')}</span>
+                    )}
+                  </td>
+                  <td className="balance-validity-cell">
+                    {row.account ? (
+                      <span className="balance-validity">
+                        <span>{row.account.validFrom}</span>
+                        <span>– {row.account.validThrough}</span>
+                      </span>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className="balance-history-cell">
+                    <button
+                      type="button"
+                      className="icon-button"
+                      title={b('petActivity')}
+                      aria-label={`${b('petActivity')}: ${row.pet.name}`}
+                      onClick={() =>
+                        onFilters({ pet: petKey(row.customer.id, row.pet.id), panel: 'activity' })
+                      }
+                    >
+                      <Icon name="clock" />
+                    </button>
+                  </td>
+                  {data.admin && (
+                    <td className="balance-edit-cell">
+                      <button
+                        className="icon-button"
+                        title={t('editBalance')}
+                        aria-label={`${t('editBalance')}: ${row.pet.name}`}
+                        onClick={() => onAdjust(row)}
+                      >
+                        <Icon name="edit" />
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {balances.loading && <p role="status">{t('loading')}</p>}
+        <Pagination page={balances} label={uiText('ui.pagination.balances')} />
+        {!balances.loading && !balances.error && !rows.length && <p>{t('emptyMatches')}</p>}
+      </section>
+      <section
+        id="activity-panel"
+        role="tabpanel"
+        aria-labelledby="activity-tab"
+        hidden={!activity}
+        className="workspace-statement"
+        aria-label={t('history')}
+      >
         <div className="customer-heading">
-          <h2>{t('history')}</h2>
+          <div>
+            <h2>{b('activity')}</h2>
+            <p className="workspace-view-hint">{b('activityHint')}</p>
+          </div>
           <button
             className="language"
             disabled={!valid || exporting}
@@ -508,7 +581,8 @@ export default function WorkspaceBalances({
           </p>
         )}
         {loading && <p role="status">{t('loading')}</p>}
-        <div className="workspace-metrics">
+        <div className="workspace-metrics" aria-label={b('pageSummary')}>
+          <span className="workspace-muted">{b('pageSummary')}</span>
           <span>
             {t('shownAdded')}:{' '}
             <strong>{valid ? totals.added : uiText('common.notAvailable')}</strong>
@@ -537,25 +611,40 @@ export default function WorkspaceBalances({
             <tbody>
               {events.map((row) => (
                 <tr key={row.event.id}>
-                  <td>{formatter.format(new Date(row.event.at))}</td>
-                  <td>{row.pet.name}</td>
-                  <td>
+                  <td className="activity-date-cell">{formatter.format(new Date(row.event.at))}</td>
+                  <td className="activity-pet-cell">
+                    <strong>{row.pet.name}</strong>
+                    {!data.customer && (
+                      <small className="activity-customer">{row.customer.name}</small>
+                    )}
+                  </td>
+                  <td className="activity-kind-cell">
                     {t(
                       row.event.delta > 0 ? 'added' : row.event.delta < 0 ? 'correction' : 'terms',
                     )}
                   </td>
-                  <td>
-                    {row.event.delta > 0 ? '+' : ''}
-                    {row.event.delta}
+                  <td className="activity-delta-cell">
+                    <strong
+                      className="activity-change"
+                      data-direction={
+                        row.event.delta > 0 ? 'added' : row.event.delta < 0 ? 'removed' : 'terms'
+                      }
+                    >
+                      {row.event.delta > 0 ? '+' : ''}
+                      {row.event.delta} <small>{t('days')}</small>
+                    </strong>
                   </td>
-                  <td>{row.event.daysAfter}</td>
-                  <td>
+                  <td className="activity-after-cell" data-label={t('balanceAfter')}>
+                    {row.event.daysAfter}
+                  </td>
+                  <td className="activity-detail-cell">
                     <button
-                      className="language"
+                      className="icon-button"
+                      title={t('entryDetails')}
                       aria-label={`${t('entryDetails')}: ${row.pet.name} · ${row.event.at}`}
                       onClick={() => setDetail(row)}
                     >
-                      {t('entryDetails')}
+                      <Icon name="search" />
                     </button>
                   </td>
                 </tr>

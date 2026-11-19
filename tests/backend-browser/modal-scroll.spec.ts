@@ -15,9 +15,7 @@ for (const width of [390, 1280])
         await import('/node_modules/.vite/deps/firebase_auth.js');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
-    await expect(page.locator('.saved-balances > .workspace-table-scroll tbody tr')).toHaveCount(
-      25,
-    );
+    await expect(page.locator('#balances-panel .workspace-table tbody tr')).toHaveCount(25);
     await page.getByRole('button', { name: 'Add balance', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Add balance', exact: true });
     await expect(dialog).toBeVisible();

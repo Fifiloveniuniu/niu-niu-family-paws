@@ -84,6 +84,7 @@ test('populated local app has white content, clear controls and available practi
   await booking.getByRole('button', { name: 'Cancel', exact: true }).click();
   await page.getByRole('link', { name: 'Balances', exact: true }).click();
   await expect(page.locator('.workspace-table').first().locator('tbody tr')).toHaveCount(25);
+  await page.getByRole('tab', { name: 'Activity', exact: true }).click();
   await expect(page.locator('.workspace-statement tbody tr').first()).toBeVisible();
   await page.screenshot({ path: '/tmp/local-balances-clean-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });

@@ -1264,5 +1264,17 @@
   "ui.datePicker.timeRequired": "请选择时间以完成日期设置。",
   "ui.autocomplete.toggle": "展开或收起{{field}}选项",
   "ui.publicPrices.checking": "正在核对最新价格，暂时显示店主提供的参考价格…",
-  "ui.publicPrices.unavailable": "暂时无法加载当前价格。请重试以查看最新价格。"
+  "ui.publicPrices.unavailable": "暂时无法加载当前价格。请重试以查看最新价格。",
+  "ui.balanceView.current": "当前余额",
+  "ui.balanceView.activity": "变动记录",
+  "ui.balanceView.intro": "按宠物查看寄养天数，并清楚了解每次变动。",
+  "ui.balanceView.currentHint": "查看已保存的天数及有效日期。点击时钟可查看该宠物的变动记录。",
+  "ui.balanceView.activityHint": "查看已记录的余额变动。导出包含所有分页中符合筛选条件的记录。",
+  "ui.balanceView.validity": "有效日期",
+  "ui.balanceView.noBalance": "尚无余额记录",
+  "ui.balanceView.petActivity": "查看变动记录",
+  "ui.balanceView.pageSummary": "本页变动",
+  "ui.balanceView.daysUnit": "寄养天数",
+  "ui.balanceView.reason": "备注",
+  "ui.balanceView.allBalances": "返回全部余额"
 }
