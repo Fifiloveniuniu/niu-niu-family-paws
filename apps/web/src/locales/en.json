@@ -848,7 +848,13 @@
     "error": "Couldn’t load or save your profile. Please try again.",
     "conflict": "Your profile was updated elsewhere. Your edits are still here. Choose Try again to get the saved profile; this will replace your unsaved edits.",
     "forbidden": "We couldn’t verify access to your profile. Sign out and sign in again.",
-    "invalid": "Enter your name using 120 characters or fewer."
+    "invalid": "Enter your name using 120 characters or fewer.",
+    "roles": "Signed-in account roles",
+    "rolesUnavailable": "Account roles could not be verified. Reload the page to try again.",
+    "roleIdentity": "These roles belong to your signed-in Google account, including when viewing as a customer. Only an authorized administrator can change permissions.",
+    "admin": "Admin",
+    "employee": "Employee",
+    "customer": "Customer"
   },
   "ui.siteAccountLink.signInCouldNotFinishAllowTheGooglePopup": "Sign-in could not finish. Allow the Google popup and try again.",
   "ui.siteAccountLink.openApp": "Open app",

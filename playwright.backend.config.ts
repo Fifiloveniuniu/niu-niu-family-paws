@@ -3,6 +3,7 @@ export default defineConfig({
   testDir: './tests/backend-browser',
   workers: 1,
   use: {
+    headless: true,
     baseURL: 'http://localhost:4184',
     channel: process.env.CI ? undefined : 'chrome',
     trace: 'retain-on-failure',

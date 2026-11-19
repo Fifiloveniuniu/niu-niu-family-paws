@@ -1716,6 +1716,50 @@
           }
         }
       }
+    },
+    "/api/identity": {
+      "get": {
+        "operationId": "getSignedInIdentity",
+        "description": "Current backend-verified account roles, independent of customer view-as context. Google identities have personal customer access.",
+        "responses": {
+          "200": {
+            "description": "Signed-in identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "uid",
+                    "roles"
+                  ],
+                  "properties": {
+                    "uid": {
+                      "type": "string"
+                    },
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "admin",
+                          "employee",
+                          "customer"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Verified identity required"
+          }
+        }
+      }
     }
   }
 }
