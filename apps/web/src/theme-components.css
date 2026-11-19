@@ -763,7 +763,7 @@ html[data-ui-style] .saved-calendar-grid .hc-stay {
 
 /* Compact location headings: actions sit at the right edge of the label panel. */
 html[data-ui-style] .hc.saved-workspace .saved-calendar-grid :is(.hc-house, .hc-room) {
-  --calendar-actions-width: 70px;
+  --calendar-actions-width: 68px;
   display: block;
   position: relative;
   padding-block: 10px;
@@ -785,7 +785,7 @@ html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) > .workspace-r
   transform: translateY(-50%);
   width: var(--calendar-actions-width);
   margin: 0;
-  gap: 6px;
+  gap: 0;
   background: var(--md-surface);
 }
 html[data-ui-style] .saved-calendar-grid .hc-settings {
@@ -836,7 +836,7 @@ html[data-ui-style] .saved-calendar .workspace-time-note {
 }
 @media (max-width: 700px) {
   html[data-ui-style] .hc.saved-workspace .saved-calendar-grid :is(.hc-house, .hc-room) {
-    --calendar-actions-width: 94px;
+    --calendar-actions-width: 88px;
   }
   html[data-ui-style] .saved-calendar-grid .hc-settings {
     width: 44px;
