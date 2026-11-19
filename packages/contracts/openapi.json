@@ -351,6 +351,393 @@
             "nullable": true
           }
         }
+      },
+      "PriceRate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "nameZh",
+          "kind",
+          "species",
+          "minWeightLb",
+          "maxWeightLb",
+          "minCents",
+          "maxCents",
+          "days",
+          "comparisonRateId",
+          "comparisonWeightLb",
+          "active",
+          "source"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "nameZh": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "boarding",
+              "package",
+              "service",
+              "addon"
+            ]
+          },
+          "species": {
+            "type": "string",
+            "enum": [
+              "dog",
+              "cat",
+              "rabbit"
+            ]
+          },
+          "minWeightLb": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000,
+            "nullable": true
+          },
+          "maxWeightLb": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000,
+            "nullable": true
+          },
+          "minCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000000
+          },
+          "maxCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000000
+          },
+          "days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000,
+            "nullable": true
+          },
+          "comparisonRateId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "comparisonWeightLb": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000,
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 120
+          }
+        }
+      },
+      "PricingConfig": {
+        "type": "object",
+        "required": [
+          "rates",
+          "holidays",
+          "holidayPercent",
+          "version",
+          "updatedAt"
+        ],
+        "properties": {
+          "rates": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "$ref": "#/components/schemas/PriceRate"
+            }
+          },
+          "holidays": {
+            "type": "array",
+            "maxItems": 1000,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          "holidayPercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "PricingWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rates",
+          "holidays",
+          "holidayPercent",
+          "version",
+          "operationId"
+        ],
+        "properties": {
+          "rates": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "$ref": "#/components/schemas/PriceRate"
+            }
+          },
+          "holidays": {
+            "type": "array",
+            "maxItems": 1000,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          "holidayPercent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990
+          },
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CancellationDraft": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "fullDays",
+          "halfDays",
+          "shortPercent",
+          "basis",
+          "version",
+          "updatedAt"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "fullDays": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 3650
+          },
+          "halfDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3649
+          },
+          "shortPercent": {
+            "type": "string",
+            "maxLength": 6,
+            "pattern": "^$|^(?:100(?:\\.0{1,2})?|[0-9]{1,2}(?:\\.[0-9]{1,2})?)$"
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "",
+              "hours",
+              "calendar"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CancellationDraftWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "fullDays",
+          "halfDays",
+          "shortPercent",
+          "basis",
+          "version",
+          "operationId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "fullDays": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 3650
+          },
+          "halfDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3649
+          },
+          "shortPercent": {
+            "type": "string",
+            "maxLength": 6,
+            "pattern": "^$|^(?:100(?:\\.0{1,2})?|[0-9]{1,2}(?:\\.[0-9]{1,2})?)$"
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "",
+              "hours",
+              "calendar"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ValidityTemplate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "name",
+          "validFrom",
+          "validThrough",
+          "active",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validThrough": {
+            "type": "string",
+            "format": "date"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ValidityTemplatePage": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidityTemplate"
+            }
+          }
+        }
+      },
+      "ValidityTemplateWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationId",
+          "version",
+          "name",
+          "validFrom",
+          "validThrough",
+          "active"
+        ],
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validThrough": {
+            "type": "string",
+            "format": "date"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
       }
     }
   },
@@ -1118,6 +1505,214 @@
           },
           "403": {
             "description": "Assigned employee or administrator required"
+          }
+        }
+      }
+    },
+    "/api/public/pricing": {
+      "get": {
+        "operationId": "getPublicPricing",
+        "responses": {
+          "200": {
+            "description": "Active publicly displayed service prices; no actor or customer data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pricing": {
+      "get": {
+        "operationId": "getPricingConfig",
+        "responses": {
+          "200": {
+            "description": "Current administrator pricing configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingConfig"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Administrator required"
+          }
+        }
+      },
+      "put": {
+        "operationId": "savePricingConfig",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PricingWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audited versioned pricing configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingConfig"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Version or operation conflict"
+          },
+          "403": {
+            "description": "Administrator required"
+          }
+        }
+      }
+    },
+    "/api/settings/cancellation-draft": {
+      "get": {
+        "security": [
+          {
+            "firebase": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved policy draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancellationDraft"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No saved draft"
+          },
+          "403": {
+            "description": "Administrator required"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "firebase": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancellationDraftWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved policy draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancellationDraft"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid fields"
+          },
+          "403": {
+            "description": "Administrator required"
+          },
+          "409": {
+            "description": "Version or retry conflict"
+          }
+        }
+      }
+    },
+    "/api/validity-templates": {
+      "get": {
+        "security": [
+          {
+            "firebase": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Administrator validity templates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidityTemplatePage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Administrator required"
+          }
+        }
+      }
+    },
+    "/api/validity-templates/{id}": {
+      "put": {
+        "security": [
+          {
+            "firebase": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidityTemplateWrite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved validity template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidityTemplate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid dates or fields"
+          },
+          "403": {
+            "description": "Administrator required"
+          },
+          "409": {
+            "description": "Version or operation conflict"
           }
         }
       }

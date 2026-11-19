@@ -1,3 +1,6 @@
+import { validityTemplateStore } from './validity-templates.ts';
+import { cancellationDraftStore } from './cancellation-draft.ts';
+import { pricingStore } from './pricing.ts';
 import { employeeAssignmentStore } from './employee-assignments.ts';
 import { operationsStore } from './operations.ts';
 import { workspaceStore } from './workspace.ts';
@@ -40,6 +43,9 @@ const app = buildApp({
   bookings: bookingStore(getFirestore()),
   employeeAssignments: employeeAssignmentStore(getFirestore(), auth),
   operations: operationsStore(getFirestore()),
+  pricing: pricingStore(getFirestore()),
+  cancellationDraft: cancellationDraftStore(getFirestore()),
+  validityTemplates: validityTemplateStore(getFirestore()),
   workspace: workspaceStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(), async (uid) => {

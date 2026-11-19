@@ -1,3 +1,7 @@
+## Saved boarding configuration API — 2026-11-18
+
+Administrator-only audited pricing, holiday dates/surcharge, validity templates and cancellation drafts persist with version checks and idempotent receipts. Public pricing returns active rates only. Source rates are owner-supplied; policy drafts do not enable financial enforcement or paid booking. Existing credited terms and historical prices remain unchanged. No deployment.
+
 ## Scoped record pagination API — 2026-11-18
 
 Bounded customer, pet, balance and statement pages support 25/50/100 rows. Statement continuation binds identity and filters, includes its timestamp anchor and survives deletion of the last row. Authorization and filters precede paging. Photo-rich navigation uses a separate verified-identity request budget; unauthenticated traffic retains its IP limit. No production deployment.

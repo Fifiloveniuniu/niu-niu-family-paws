@@ -1,3 +1,6 @@
+import { validityTemplateRoutes, type ValidityTemplateStore } from './validity-templates.ts';
+import { cancellationDraftRoutes, type CancellationDraftStore } from './cancellation-draft.ts';
+import { pricingRoutes, type PricingStore } from './pricing.ts';
 import { employeeAssignmentRoutes, type EmployeeAssignmentStore } from './employee-assignments.ts';
 import { operationsRoutes, type OperationsStore } from './operations.ts';
 import { uuidSchema, emptyObjectSchema, containsControlCharacters } from './validation.ts';
@@ -35,6 +38,9 @@ export interface CustomerStore {
 }
 export class Conflict extends Error {}
 export function buildApp(deps: {
+  validityTemplates?: ValidityTemplateStore;
+  cancellationDraft?: CancellationDraftStore;
+  pricing?: PricingStore;
   operations?: OperationsStore;
   employeeAssignments?: EmployeeAssignmentStore;
   verify: (token: string) => Promise<Identity>;
@@ -62,6 +68,11 @@ export function buildApp(deps: {
     reply.header('Cache-Control', 'private, no-store').header('X-Content-Type-Options', 'nosniff');
   });
   app.get('/health', async () => ({ ok: true }));
+  if (deps.pricing)
+    app.get('/api/public/pricing', { schema: { querystring: emptyObjectSchema } }, async () => {
+      const config = await deps.pricing!.get();
+      return { ...config, rates: config.rates.filter((rate) => rate.active) };
+    });
   app.register(
     async (api) => {
       api.decorateRequest('identity', null);
@@ -79,6 +90,9 @@ export function buildApp(deps: {
       });
       if (deps.employeeAssignments) employeeAssignmentRoutes(api, deps.employeeAssignments);
       if (deps.operations) operationsRoutes(api, deps.operations);
+      if (deps.pricing) pricingRoutes(api, deps.pricing);
+      if (deps.cancellationDraft) cancellationDraftRoutes(api, deps.cancellationDraft);
+      if (deps.validityTemplates) validityTemplateRoutes(api, deps.validityTemplates);
       if (deps.workspace) workspaceRoutes(api, deps.workspace);
       if (deps.bookings) bookingRoutes(api, deps.bookings);
       if (deps.balances) balanceRoutes(api, deps.balances);
