@@ -493,13 +493,6 @@ export default function HouseCalendar({
                         ))}
                       </CustomSelect>
                     </label>
-                    <time>
-                      {now.toLocaleTimeString(locale, {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        timeZone: clockTimezone,
-                      })}
-                    </time>
                   </div>
                 </div>
               </div>
