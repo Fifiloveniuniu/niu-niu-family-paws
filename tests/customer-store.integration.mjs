@@ -773,18 +773,38 @@ test('bookings atomically protect whole-stay capacity, cross-house pet isolation
     pickup: '2030-01-03T10:00:00.000Z',
   };
   const ids = [randomUUID(), randomUUID()];
+  const inputs = ids.map((_, index) => ({
+    ...body,
+    petId: pids[index],
+    operationId: randomUUID(),
+  }));
   const race = await Promise.allSettled(
-    ids.map((id, index) =>
-      store.save(admin, id, { ...body, petId: pids[index], operationId: randomUUID() }),
-    ),
+    ids.map((id, index) => store.save(admin, id, inputs[index])),
   );
-  assert.equal(race.filter((r) => r.status === 'fulfilled').length, 1);
+  // An exhausted emulator transaction retry may surface before the domain conflict.
+  // Replay the identical operation after the winner commits; never accept overbooking.
+  for (const [index, result] of race.entries()) {
+    if (result.status === 'rejected' && [4, 10, 14].includes(result.reason?.code)) {
+      [race[index]] = await Promise.allSettled([store.save(admin, ids[index], inputs[index])]);
+    }
+  }
+  assert.equal(race.filter((r) => r.status === 'fulfilled').length, 1, JSON.stringify(race));
   assert.ok(
     race.some(
       (r) =>
         r.status === 'rejected' &&
         r.reason instanceof BookingConflict &&
         r.reason.issue === 'capacity',
+    ),
+    JSON.stringify(
+      race,
+      Object.getOwnPropertyNames(new Error()).concat([
+        'status',
+        'reason',
+        'value',
+        'code',
+        'issue',
+      ]),
     ),
   );
   const first = race.find((r) => r.status === 'fulfilled').value;
