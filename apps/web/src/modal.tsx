@@ -22,7 +22,11 @@ export default function Modal({
     const dialog = ref.current;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     dialog?.showModal();
-    dialog?.querySelector<HTMLInputElement>('input:not([type=file]), [role=combobox]')?.focus();
+    dialog
+      ?.querySelector<HTMLInputElement>(
+        'input:not(:disabled):not([type=file]), [role=combobox]:not(:disabled)',
+      )
+      ?.focus();
     return () => {
       dialog?.close();
       if (opener?.isConnected) opener.focus({ preventScroll: true });

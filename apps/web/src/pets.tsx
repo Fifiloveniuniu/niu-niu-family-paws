@@ -71,6 +71,7 @@ export default function Pets({
   customerId,
   title,
   onReady,
+  onChanged,
   selectedPetId,
   routable = false,
 }: {
@@ -79,6 +80,7 @@ export default function Pets({
   selectedPetId?: string;
   routable?: boolean;
   onReady?: () => void;
+  onChanged?: () => void;
 }) {
   const { i18n } = useTranslation();
   const labels = uiValue('ui.pets.labels', i18n.language);
@@ -198,6 +200,7 @@ export default function Pets({
       setEditor(null);
       setUncertain(false);
       setSaved(true);
+      onChanged?.();
       await load();
     } catch (e) {
       if (alive.current) {

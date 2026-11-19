@@ -28,7 +28,15 @@ const englishMessages = englishCatalog['ui.customers.labels'];
 function customerRequest<T>(path: string, body?: CustomerWrite) {
   return apiJson<T>('/customers' + path, { body });
 }
-export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
+export default function Customers({
+  refreshKey = 0,
+  onViewAs,
+  onChanged,
+}: {
+  refreshKey?: number;
+  onViewAs?: (customer: Customer) => void;
+  onChanged?: () => void;
+}) {
   const { i18n } = useTranslation();
 
   const labels = uiValue('ui.customers.labels', i18n.language);
@@ -167,6 +175,7 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
       setEditor(null);
       setUncertain(false);
       setMessage('saved');
+      onChanged?.();
       setLoaded(true);
       void load();
     } catch (error) {
@@ -512,6 +521,17 @@ export default function Customers({ refreshKey = 0 }: { refreshKey?: number }) {
                   </span>
                 </div>
                 <div className="customer-row-actions">
+                  {onViewAs && (
+                    <button
+                      className="icon-button"
+                      type="button"
+                      title={uiText('ui.workspace.viewAs')}
+                      aria-label={`${uiText('ui.workspace.viewAs')}: ${customer.name}`}
+                      onClick={() => onViewAs(customer)}
+                    >
+                      <Icon name="account" />
+                    </button>
+                  )}
                   <button
                     className="icon-button"
                     title={labels.edit}

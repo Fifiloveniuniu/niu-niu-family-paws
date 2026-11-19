@@ -2,7 +2,13 @@ import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const drafts = new Set<HTMLElement>();
+const drafts = new Map<HTMLElement, () => void>();
+
+/** Release only a form whose write has been confirmed by the server. */
+export function markFormSaved(container: Element | null) {
+  if (!container) return;
+  for (const [element, release] of drafts) if (container.contains(element)) release();
+}
 
 export function confirmDiscardChanges(
   language: string,
@@ -10,7 +16,7 @@ export function confirmDiscardChanges(
   retainWorkspace = false,
 ) {
   if (
-    ![...drafts].some(
+    ![...drafts.keys()].some(
       (element) =>
         (!retainWorkspace || !element.closest('[data-retained-workspace]')) &&
         (container === undefined || container?.contains(element)),
@@ -29,16 +35,17 @@ export default function UnsavedChanges({ active }: { active: boolean }) {
   React.useEffect(() => {
     const element = notice.current;
     if (!active || !element) return;
-    drafts.add(element);
     const warn = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = '';
     };
-    window.addEventListener('beforeunload', warn);
-    return () => {
+    const release = () => {
       drafts.delete(element);
       window.removeEventListener('beforeunload', warn);
     };
+    drafts.set(element, release);
+    window.addEventListener('beforeunload', warn);
+    return release;
   }, [active]);
   return active ? (
     <p ref={notice} className="unsaved-notice" role="status">
