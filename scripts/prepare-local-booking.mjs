@@ -41,10 +41,14 @@ try {
   const pets = await db.collectionGroup('pets').where('testFixture', '==', true).get();
   for (const pet of pets.docs)
     await db.runTransaction(async (tx) => {
-      const current = await tx.get(pet.ref),
-        before = current.data();
+      const [current, customer] = await Promise.all([
+        tx.get(pet.ref),
+        tx.get(pet.ref.parent.parent),
+      ]);
+      const before = current.data();
       if (
         !before ||
+        customer.data()?.testFixture !== true ||
         before.testFixture !== true ||
         before.species !== undefined ||
         !['dog', 'cat', 'rabbit'].includes(before.testSpecies)

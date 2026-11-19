@@ -41,7 +41,7 @@ test('local workflow preparation is repeatable and preserves existing edits and 
     batch.set(db.doc('customers/' + cid), {
       id: cid,
       name: '[TEST] Tool family ' + i,
-      testFixture: true,
+      testFixture: i !== 5,
       version: 1,
       createdAt: now,
       updatedAt: now,
@@ -54,6 +54,7 @@ test('local workflow preparation is repeatable and preserves existing edits and 
         customerId: cid,
         name: '[TEST] Tool pet',
         testFixture: !(i === 0 && species === 'dog'),
+        ...(i === 0 && species === 'dog' ? { species, weightKg: 42 } : {}),
         testSpecies: species,
         photo: photo.sha256,
         photoCredit: {
@@ -71,6 +72,8 @@ test('local workflow preparation is repeatable and preserves existing edits and 
   await batch.commit();
   const protectedPath = `customers/${id('local-photo-customer-0')}/pets/${id('local-photo-dog-0')}`;
   const protectedBefore = (await db.doc(protectedPath).get()).data();
+  const unmarkedCustomerPet = `customers/${id('local-photo-customer-5')}/pets/${id('local-photo-cat-5')}`;
+  const unmarkedBefore = (await db.doc(unmarkedCustomerPet).get()).data();
   const seed = () => {
     const result = spawnSync(process.execPath, ['scripts/seed-local-workflows.mjs'], {
       cwd: new URL('..', import.meta.url),
@@ -82,14 +85,16 @@ test('local workflow preparation is repeatable and preserves existing edits and 
     return JSON.parse(result.stdout.trim().split('\n').at(-1));
   };
   const first = seed();
-  assert.equal(first.createdBookings, 17);
-  assert.equal(first.createdBalances, 17);
+  assert.equal(first.createdBookings, 14);
+  assert.equal(first.createdBalances, 14);
   assert.deepEqual((await db.doc(protectedPath).get()).data(), protectedBefore);
   assert.equal((await db.doc(protectedPath + '/balances/boarding').get()).exists, false);
   assert.equal(
     (await db.collection('bookings').where('petId', '==', protectedBefore.id).get()).empty,
     true,
   );
+  assert.deepEqual((await db.doc(unmarkedCustomerPet).get()).data(), unmarkedBefore);
+  assert.equal((await db.doc(unmarkedCustomerPet + '/balances/boarding').get()).exists, false);
   const editedPath = `customers/${id('local-photo-customer-1')}/pets/${id('local-photo-dog-1')}`;
   await db.doc(editedPath).update({ name: '[TEST] Retained edit', weightKg: 42, version: 99 });
   await db.doc(editedPath + '/balances/boarding').update({ days: 17, version: 99 });
@@ -106,4 +111,5 @@ test('local workflow preparation is repeatable and preserves existing edits and 
     bookingBefore,
   );
   assert.deepEqual((await db.doc(protectedPath).get()).data(), protectedBefore);
+  assert.deepEqual((await db.doc(unmarkedCustomerPet).get()).data(), unmarkedBefore);
 });
