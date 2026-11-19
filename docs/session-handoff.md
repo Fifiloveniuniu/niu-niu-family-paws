@@ -1,3 +1,7 @@
+## House Add room shortcut — 2026-11-18
+
+Calendar house rows replace the address icon with an administrator-only + that opens a single focused Add room dialog for that house. Clicking the house name still opens its saved address. Missing-address houses keep room creation disabled. English desktop/Chinese mobile localhost Chrome journeys create/save/reload a test room and check address access; production build passes. No deployment.
+
 ## Calendar selected timezone — 2026-11-18
 
 The saved calendar timezone selector now controls the range, date axis, Today picker/action and Now marker instead of isolated display state. The selected zone is retained in the URL/reload and after saving a booking. Switching from today follows the new zone’s current date; deliberately browsed dates remain selected. Unrecognized URL zones fall back to the browser zone. Build and two actual localhost Chrome regression journeys pass (English 1440px, Chinese 390px), including LA/Tokyo date rollover, UTC, reload and historical selection. No deployment.

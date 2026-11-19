@@ -15,6 +15,7 @@ export default function Rooms({
   addressReady,
   onChanged,
   initialEditId,
+  initialCreate = false,
   onEditorClosed,
   embedded = false,
   onBusyChange,
@@ -23,6 +24,7 @@ export default function Rooms({
   addressReady: boolean;
   onChanged?: () => void;
   initialEditId?: string;
+  initialCreate?: boolean;
   onEditorClosed?: () => void;
   embedded?: boolean;
   onBusyChange?: (busy: boolean) => void;
@@ -85,6 +87,12 @@ export default function Rooms({
     setUncertain(false);
   }
   const requestedEditor = React.useRef('');
+  React.useEffect(() => {
+    if (initialCreate && addressReady && !loading && !error && !requestedEditor.current) {
+      requestedEditor.current = 'create';
+      open();
+    }
+  }, [initialCreate, addressReady, loading, error]);
   React.useEffect(() => {
     if (!initialEditId || !addressReady || loading || requestedEditor.current === initialEditId)
       return;

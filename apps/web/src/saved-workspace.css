@@ -1016,3 +1016,17 @@
     padding: 0 16px env(safe-area-inset-bottom);
   }
 }
+
+.hc .workspace-house-address {
+  display: block;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+}
+.hc .workspace-house-address:hover .location-label-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
