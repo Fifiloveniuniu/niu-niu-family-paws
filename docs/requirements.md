@@ -1,3 +1,7 @@
+## Workspace usability and business metrics — 2026-11-18
+
+Owner request: replace the house address icon with + for Add room, make Balances/Activity intuitive, provide a Business metrics tab, and make Customers clean and compact. House names retain address access. Balances and Activity have separate retained-filter views and per-pet history shortcuts. Customers retains search, contact edits, linking, view-as, pagination and pet deep links in a compact master/detail presentation. Business metrics is administrator-only, uses complete backend aggregates and separates planned/actual handoffs and period/current totals. Revenue remains unavailable until payments are configured; no new financial rules are implied. English/Chinese and mobile/desktop are required throughout. See the current handoff for sequential PR and deployment status.
+
 # Product requirements
 
 ## Current owner theme direction — familiar apps, complete components, readable text

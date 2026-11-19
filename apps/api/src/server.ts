@@ -1,3 +1,4 @@
+import { businessMetricsStore } from './business-metrics.ts';
 import { employeeAssignmentStore } from './employee-assignments.ts';
 import { operationsStore } from './operations.ts';
 import { pricingStore } from './pricing.ts';
@@ -36,6 +37,7 @@ initializeApp(
 );
 const auth = getAuth();
 const app = buildApp({
+  businessMetrics: businessMetricsStore(getFirestore()),
   verify: firebaseIdentity(auth),
   houses: houseStore(getFirestore()),
   rooms: roomStore(getFirestore()),

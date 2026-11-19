@@ -1,3 +1,4 @@
+import BusinessMetrics from './business-metrics';
 import EmployeeAssignments from './employee-assignments';
 import { CustomerPicker } from './workspace-pickers';
 import AdminPricing from './admin-pricing';
@@ -103,7 +104,7 @@ export default function SavedWorkspace({
     identityKey,
     scope,
     range,
-    active,
+    active && view !== 'business-metrics',
     view === 'balances' || view === 'admin-pricing',
   );
   const admin = data?.admin ?? initialAdmin;
@@ -217,19 +218,30 @@ export default function SavedWorkspace({
                 ['/app/calendar/', 'calendar', 'calendar'],
                 ['/app/balances/', 'balances', 'balance'],
                 ['/app/customers/', data?.customer || !admin ? 'pets' : 'customers', 'customers'],
-                ...(admin && !scope ? [['/app/pricing/', 'pricing', 'balance']] : []),
+                ...(admin && !scope
+                  ? [
+                      ['/app/pricing/', 'pricing', 'balance'],
+                      ['/app/metrics/', 'businessMetrics', 'metrics'],
+                    ]
+                  : []),
               ].map(([path, label, icon]) => (
                 <a
                   key={path}
                   href={href(path)}
                   aria-current={
                     view ===
-                    (label === 'pets' ? 'customers' : label === 'pricing' ? 'admin-pricing' : label)
+                    (label === 'pets'
+                      ? 'customers'
+                      : label === 'pricing'
+                        ? 'admin-pricing'
+                        : label === 'businessMetrics'
+                          ? 'business-metrics'
+                          : label)
                       ? 'page'
                       : undefined
                   }
                 >
-                  <Icon name={icon as 'calendar' | 'balance' | 'customers'} />
+                  <Icon name={icon as 'calendar' | 'balance' | 'customers' | 'metrics'} />
                   <span>{t(label)}</span>
                 </a>
               ))}
@@ -304,7 +316,13 @@ export default function SavedWorkspace({
             )}
             {view === 'admin-pricing' &&
               (admin && !scope ? <AdminPricing /> : <p role="alert">{t('denied')}</p>)}
-            {view !== 'personal' && view !== 'admin-pricing' && (
+            {view === 'business-metrics' &&
+              (admin && !scope ? (
+                <BusinessMetrics zone={zone} search={params} />
+              ) : (
+                <p role="alert">{t('denied')}</p>
+              ))}
+            {view !== 'personal' && view !== 'admin-pricing' && view !== 'business-metrics' && (
               <>
                 {error && (
                   <div className="workspace-error" role="alert">

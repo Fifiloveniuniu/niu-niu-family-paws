@@ -1,3 +1,17 @@
+## Reviewing the refreshed workspace
+
+In Calendar, click **+** beside a house to add a room directly. Click the house name to see its saved address. A house needs its address completed before rooms can be added.
+
+In **Balances**, use **Current balances** for saved days and validity dates, or **Activity** for recorded changes. The clock beside a pet opens that pet’s activity. Filters stay selected when switching views. CSV export includes every matching page, while displayed change totals cover only the current page. Existing balance adjustments and validity templates still use focused dialogs.
+
+In **Customers**, search by customer or pet, then choose a customer to manage their pets. Phone screens open a compact pet view; **Back to customer list** keeps your search. Edit and Google-account-link icons remain beside customer records.
+
+Administrators have a **Business metrics** tab. Choose 7/30/90 days or custom dates and a timezone. Scheduled arrivals/pickups and recorded actual handoffs are counted separately. Current customer/pet totals, pets in care, overdue pickups and saved boarding-day totals are labeled separately from the reporting period. Revenue stays unavailable until payment collection is configured. Use Refresh for a new snapshot.
+
+日历中，点击房屋旁的 **+** 可直接添加房间；点击房屋名称可查看地址。房屋需要先完善地址。**余额**分为“当前余额”和“变动记录”，宠物旁的时钟可查看该宠物的记录，导出包含所有符合筛选条件的分页。**客户**支持按客户或宠物查找；手机中可返回客户列表并保留搜索。管理员的**经营概况**支持日期和时区筛选，分别统计计划与实际交接；当前总数另行标示，收款未配置前不显示营收。
+
+These changes are developed locally; see the current handoff for PR and deployment status.
+
 # Making changes to your website
 
 ## Change the app's appearance

@@ -1,0 +1,185 @@
+.business-metrics {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+.business-metrics-heading,
+.business-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+}
+.business-metrics h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+.business-metrics h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.business-metrics-heading p,
+.business-metrics-note,
+.business-metric .business-metric-hint {
+  margin: 6px 0 0;
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+}
+.business-period {
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+  background: var(--md-surface);
+}
+.business-period-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.hc .business-period-presets [aria-pressed='true'] {
+  background: var(--md-primary-soft);
+  border-color: var(--md-primary-outline);
+  color: var(--md-primary);
+}
+.business-period-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(180px, 1.2fr);
+  gap: 14px;
+}
+.business-period-fields label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 0;
+}
+.business-metrics > section {
+  margin-top: 30px;
+}
+.business-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 16px 0 0;
+}
+.business-metric {
+  padding: 20px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+  background: var(--md-surface);
+}
+.business-metric dt {
+  font-size: 14px;
+  font-weight: 600;
+}
+.business-metric dd {
+  margin: 12px 0;
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.business-metric[data-metric='overdue'] dd {
+  color: var(--md-on-surface);
+}
+.business-metric .business-metric-hint {
+  line-height: 1.5;
+}
+.business-recorded-days {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin: 28px 0 18px;
+  padding: 20px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+  background: var(--md-surface-container);
+}
+.business-recorded-days > div {
+  flex: 1;
+  min-width: 180px;
+}
+.business-recorded-days p,
+.business-payment-note p {
+  margin: 6px 0 0;
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+}
+.business-recorded-days strong {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.business-recorded-days small {
+  font-size: 13px;
+  font-weight: 500;
+}
+.business-payment-note {
+  display: flex;
+  gap: 12px;
+  padding: 18px 0;
+  border-top: 1px solid var(--md-outline-variant);
+}
+.business-payment-note > svg {
+  flex: none;
+  margin-top: 2px;
+}
+.business-payment-note h2 {
+  font-size: 14px;
+}
+.business-metrics-updated {
+  margin-top: 12px;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+}
+.business-metrics-error {
+  padding: 16px;
+  color: var(--md-error-ink);
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 10px;
+}
+@media (max-width: 900px) {
+  .business-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .business-period {
+    padding: 14px;
+  }
+  .business-period-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .business-period-fields > label:last-child {
+    grid-column: 1 / -1;
+  }
+  .business-metric-grid {
+    gap: 10px;
+  }
+  .business-metric {
+    padding: 14px;
+  }
+  .business-metric dt {
+    min-height: 42px;
+    line-height: 1.5;
+  }
+  .business-metric dd {
+    font-size: 30px;
+    margin-block: 8px;
+  }
+  .business-section-heading {
+    flex-wrap: wrap;
+  }
+  .business-recorded-days {
+    padding: 16px;
+  }
+}
+
+.business-metric .business-metric-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+}

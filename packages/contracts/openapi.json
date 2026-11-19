@@ -12,6 +12,92 @@
       }
     },
     "schemas": {
+      "BusinessMetricsQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from",
+          "through"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "through": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BusinessMetrics": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customers",
+          "pets",
+          "inCare",
+          "overdue",
+          "scheduledArrivals",
+          "scheduledPickups",
+          "actualArrivals",
+          "actualPickups",
+          "recordedDays",
+          "from",
+          "through",
+          "generatedAt"
+        ],
+        "properties": {
+          "customers": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pets": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "inCare": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "overdue": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "scheduledArrivals": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "scheduledPickups": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "actualArrivals": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "actualPickups": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "recordedDays": {
+            "type": "number",
+            "minimum": 0
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "through": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "WorkspaceEventQuery": {
         "type": "object",
         "additionalProperties": false,
@@ -747,6 +833,57 @@
     }
   ],
   "paths": {
+    "/api/business-metrics": {
+      "get": {
+        "summary": "Administrator-only aggregate operational metrics; no customer records or inferred revenue",
+        "security": [
+          {
+            "firebase": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "through",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recorded counts; from inclusive and through exclusive. Up to 366 days. Current counts are independent of the period. Recorded days include every saved validity range.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessMetrics"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid range"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Administrator required"
+          }
+        }
+      }
+    },
     "/api/workspace/events": {
       "get": {
         "summary": "Scoped recorded boarding activity with customer/pet/date/kind filters and stable cursor pagination",
