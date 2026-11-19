@@ -1,8 +1,8 @@
-import { validityTemplateRoutes, type ValidityTemplateStore } from './validity-templates.ts';
-import { cancellationDraftRoutes, type CancellationDraftStore } from './cancellation-draft.ts';
-import { pricingRoutes, type PricingStore } from './pricing.ts';
 import { employeeAssignmentRoutes, type EmployeeAssignmentStore } from './employee-assignments.ts';
 import { operationsRoutes, type OperationsStore } from './operations.ts';
+import { pricingRoutes, type PricingStore } from './pricing.ts';
+import { cancellationDraftRoutes, type CancellationDraftStore } from './cancellation-draft.ts';
+import { validityTemplateRoutes, type ValidityTemplateStore } from './validity-templates.ts';
 import { uuidSchema, emptyObjectSchema, containsControlCharacters } from './validation.ts';
 import { requestIdentity, type Identity, type ProfileIdentity } from './request-context.ts';
 import Fastify, { type FastifyRequest } from 'fastify';
@@ -38,8 +38,6 @@ export interface CustomerStore {
 }
 export class Conflict extends Error {}
 export function buildApp(deps: {
-  validityTemplates?: ValidityTemplateStore;
-  cancellationDraft?: CancellationDraftStore;
   pricing?: PricingStore;
   operations?: OperationsStore;
   employeeAssignments?: EmployeeAssignmentStore;
@@ -52,6 +50,8 @@ export function buildApp(deps: {
   balances?: BalanceStore;
   bookings?: BookingStore;
   workspace?: WorkspaceStore;
+  validityTemplates?: ValidityTemplateStore;
+  cancellationDraft?: CancellationDraftStore;
 }) {
   const app = Fastify({
     logger: false,

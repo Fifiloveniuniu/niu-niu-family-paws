@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 dist/
 build/
 coverage/
@@ -21,3 +21,4 @@ firebase-debug.*
 dist-dev
 test-results-backend/
 test-results-local/
+__pycache__/

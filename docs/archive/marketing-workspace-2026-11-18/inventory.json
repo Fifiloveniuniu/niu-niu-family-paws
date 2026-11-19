@@ -1,0 +1,586 @@
+{
+  "originalBranch": "fix/calm-flower-and-metric-placeholders",
+  "originalHead": "9068b74b0f520b5feb13fe6ae27657be01637b56",
+  "backupDirectory": "/Users/harryliu/Projects/niu-niu-family-paws-local-backups/marketing-20261118-220353",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "gitBlob": "694d2d7ef1e3e92785480b9545a3ffaefc9b70eb",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/cinematic-scroll.ts",
+      "gitBlob": "711372aa376a3ed3f5ad85e2e94e006f20f4c2e6",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/cinematic-story.css",
+      "gitBlob": "dde5eec638aa2873c6f3e20a49e7f551d880204c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/garden-art.tsx",
+      "gitBlob": "d263204f81ea8c13e3d1f1129abc8d9794c9bda7",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/home-illustration.tsx",
+      "gitBlob": "5c715572e41f755395757a5ad089809c51be4096",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/language-selector.tsx",
+      "gitBlob": "e48b40bd191e21f9000dae5db1d8d64bdb87312b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "gitBlob": "f3a7cdbb8bf3e593397df5529bad57c47cffb9a5",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-easing.ts",
+      "gitBlob": "3ea5c1bfc70fa2d3e24a7d50c1c3a57dafcbffff",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-galleries.tsx",
+      "gitBlob": "b47b83e5bb036be3b87123a4aba2b2ed3f6e95e4",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-home-sections.tsx",
+      "gitBlob": "0df1e76e3d337704d0c538c930cdcca69fa67ad3",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-home.tsx",
+      "gitBlob": "5888a42543335ddb8d5cd7411a59b307094506f9",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-language-menu.tsx",
+      "gitBlob": "27efae80b62f7e3fcc5ea6e55ecddf59188cb542",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-messages.ts",
+      "gitBlob": "6a422053c1ffe7c44697319db648f2fdb7359a5b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-navigation.ts",
+      "gitBlob": "749c53a64fb023db580315f8bfaa2cba96c6ddbf",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-pages.tsx",
+      "gitBlob": "e6dc3c363b9e0c80b8bfa6b2e8604ce8c949b290",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-preview.ts",
+      "gitBlob": "66273fd2ab27d4f503d2f2ef360d0b76a44fc38d",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-sections.tsx",
+      "gitBlob": "cb5e4ca2fb71efa836bbad4755d640c3afc2254b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-shell.tsx",
+      "gitBlob": "27377762c36d98886c1afd1c89b977dd18af87ab",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/marketing-system.css",
+      "gitBlob": "b62ae56c79cea91c6afdd935390c05c8521d1261",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/public-marketing-content.ts",
+      "gitBlob": "53ddd02adc59d6750a817570919cca3e00117fe0",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/scene-contrast.ts",
+      "gitBlob": "0f258aa65f9fe9d8e14f3d1a4e0521c5dd938d29",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/scene-field.ts",
+      "gitBlob": "1e30c1349e88ac6f34d54350bf8cc71bd981ae45",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/shape-morphs.ts",
+      "gitBlob": "5ad3ae3ab671365485749d8245deda86566a60b3",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/site-account-link.tsx",
+      "gitBlob": "f9848859875547e3493b2e500f426454e8c8014c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/story-landscape.tsx",
+      "gitBlob": "a1c7abf8191ebf48810244d9ce4def10c348787b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/use-marketing-motion.ts",
+      "gitBlob": "d15141e9efb4b36f20253802968bc0a85b2e4bd1",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "apps/web/src/use-route.ts",
+      "gitBlob": "51a9ed325dbe7e360f22833be6a409ee0b06774d",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/business-owner-guide.md",
+      "gitBlob": "e319935a124c187c1bcdfff023d13b392fd3d0eb",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/marketing-content.md",
+      "gitBlob": "b90c2c483a1d70266a1800fb613a753d5f0189dc",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/motion-studies/2026-11-17.html",
+      "gitBlob": "4438cfeef11f79fddfbada03cf9a96390d6d640b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/motion-studies/README.md",
+      "gitBlob": "171ee421273a8caf5ea2d42aa7556c96ccdfd5e1",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/motion-studies/chapter-window.html",
+      "gitBlob": "c9f26d2609a329c89c3bf4f398e35b1d73ab5980",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/calm-spaces-photos-1440.png",
+      "gitBlob": "345720d1c6d03069ba8dc9210da71ac9bea8953a",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/calm-spaces-photos-390.png",
+      "gitBlob": "7152b9633a6198ca405c36b06e1d83459d5092a1",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/centered-background-expansion.png",
+      "gitBlob": "d5aef23a163212e9f9e9e7bf936aec9fe524fd85",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-centered-expansion.png",
+      "gitBlob": "19bbc97e007fe0ca875f02143a78aad3311ad938",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-controls-confirmed.png",
+      "gitBlob": "9255db5ee5814314c25b8400b51447695f0cc60a",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-controls-previous-before-count.png",
+      "gitBlob": "824879c05aa03edfe6dcd7897798e18bc885921c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-controls-sides-1440.png",
+      "gitBlob": "9e4d739700132ead0871746e305fae70bc18ed51",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-controls-sides-390.png",
+      "gitBlob": "21be53a228d6cb201bc7416bb577862a077f65ba",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-opacity-1440.png",
+      "gitBlob": "321eab83c79ca22552b9f5f8d38eb22b15519434",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/chapter-opacity-390.png",
+      "gitBlob": "ef78d5e99d9d2f33d207d6150868779ea37a31a2",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/clean-final-green-mobile.png",
+      "gitBlob": "6659173fbf1a0c1de4ed76159655e1f2c3583d7f",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/clean-final-green-zh.png",
+      "gitBlob": "8402b3565b71aef6b14daf80848b0b134d826332",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/composition-audit-1440.png",
+      "gitBlob": "c936a93bca62d276d2978ba750eb20b97c579f7f",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/composition-audit-390.png",
+      "gitBlob": "c9d5bd13bb56422d5521749b72db5db10df18910",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/connected-welcome-desktop.png",
+      "gitBlob": "fb598ece6db89aed49a5de45ed09b441882b496f",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/connected-welcome-mobile.png",
+      "gitBlob": "d5ffea26b3681f04447a0424f7f8deb71b21ae32",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/consistent-progress-mobile.png",
+      "gitBlob": "efdda55706b002c3c89a3f7cc15c165b4472aa97",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/creative-service-motion-mobile.png",
+      "gitBlob": "7eec926bb73f3bd8995a90d1bc882e49b4380d0f",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/creative-service-motion-poses.png",
+      "gitBlob": "04c46a0190b87f8813850f9507a16d39c8b2a064",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/crisp-green-circle.png",
+      "gitBlob": "14446dd5937a6879a26c4ca253d038589ad35803",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/cute-hero-desktop.png",
+      "gitBlob": "5bb7cd451a159694b70b1dc60465026a70be1256",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/cute-hero-mobile.png",
+      "gitBlob": "d027b6c334d35af78d8027aa41daf9fd0ae270ae",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/diagonal-final-green.png",
+      "gitBlob": "f4c543f333a2acf44eb7fd6cd08384f936c5f3b3",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/diagonal-moon-aligned.png",
+      "gitBlob": "5f194cb51d3c18cd0c8083c18747eada23bae5b6",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/diagonal-moon-mask.png",
+      "gitBlob": "5f194cb51d3c18cd0c8083c18747eada23bae5b6",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/equal-metric-size-1440.png",
+      "gitBlob": "901f54553cfecc36564bc1e48df8e6bbea204aa3",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/equal-metric-size-390.png",
+      "gitBlob": "1dcfe0b6a953a24efeed5a4e5c35d737698d895a",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/equal-service-insets-1440.png",
+      "gitBlob": "0aece6bbb4533303800fe39c9d0b8a528075fa16",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/equal-service-insets-390.png",
+      "gitBlob": "2ea5547223fcf3d77dd79f119968be384353d71c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-pets-enter-1440.png",
+      "gitBlob": "3dfd21cb262c4d8ec9083f1a101612f063c0e294",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-pets-enter-390.png",
+      "gitBlob": "69f4591fa6e54123f28c11a57a781d1a23197e31",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-pets-gather-1440.png",
+      "gitBlob": "73d51048f220de2c42f622a32c50fc7bfc6113bc",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-pets-gather-390.png",
+      "gitBlob": "f02730824cea492d924dde29f483269430fc68b6",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-pets-settled-1440.png",
+      "gitBlob": "e491d8eebf270a27923152b798be85fb1ebb4ad2",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-pets-settled-390.png",
+      "gitBlob": "0edb89e016a2ee590f7e0ea73ff96ca097051961",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-spacing-1440.png",
+      "gitBlob": "4117cccc613622c38739f5f4f493a40a022ec42c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/experience-spacing-390.png",
+      "gitBlob": "fc6cd2432ca8e0665f804bc5b94e55b5bf19e0ce",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/faq-flower-1440.png",
+      "gitBlob": "f8d12e1f8851686713a4d9b9e59049b0667fec48",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/faq-flower-390.png",
+      "gitBlob": "def12a381459afb39de1d5d0141789d68cb0e92d",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/flower-window-transition.png",
+      "gitBlob": "95d60f14d24feb90013e72c7bd00c9ce30b255e4",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/foliage-crossing-scene.png",
+      "gitBlob": "00a10cd44a319c5ab72216e74a11ff6fd99c9545",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/following-flower-mobile-zh.png",
+      "gitBlob": "ebcebac5978f762d89f1f7321bda7a3284f3e253",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/footer-return-in-motion.png",
+      "gitBlob": "e34d426a053e32453b3ebc007e7065f38a9c958d",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/footer-without-repeated-links.png",
+      "gitBlob": "88340c8d09c52b40df70a778d06b8b54cfa6be66",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/hero-right-ear-accents-1440.png",
+      "gitBlob": "9bd212f1af5665909dae10f719d1738d864883ed",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/hero-right-ear-accents-390.png",
+      "gitBlob": "9409a656afadadb0fd74ee9f93fedf9bda779fca",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/marketing-expanded-mobile-menu.png",
+      "gitBlob": "ef65929db9a387dc2e3fe4a2a1453b1f1776d64c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/marketing-hover-dropdown.png",
+      "gitBlob": "b9353ec9e9faf47939261d63c3645b81e77e0d98",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/metrics-without-placeholder-bars-mobile.png",
+      "gitBlob": "25e886d6c15069386271d338ddb0d64df2b3e25f",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/metrics-without-placeholder-bars.png",
+      "gitBlob": "8a66e29d69c8e279e54ab312560f557cb517b7d7",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/mobile-footer-bottom-spacing.png",
+      "gitBlob": "fc8bf5448227d82362bb9281d1badc2b9b6b8430",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/motion-study-orbit.png",
+      "gitBlob": "c4d2f16400d662e1e73567c259a846cd7cc39b54",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/motion-study-paper.png",
+      "gitBlob": "7802027ae37d5aa0a8bea4835aa6ec796090991b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/paired-pets-1440.png",
+      "gitBlob": "cb204b85430c10192a828336ec0a3c26ed2a0547",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/paired-pets-390.png",
+      "gitBlob": "36ecf28fca342ca7a367b806be8b5f4488ef48b2",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/paper-piece-motion-mobile.png",
+      "gitBlob": "46998afe931a9e45f4233463008ab3becdce60a2",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/plants-entering-viewport.png",
+      "gitBlob": "97438a3911d7d817b18c024b387ac75d315232c6",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/progress-tint-green.png",
+      "gitBlob": "b5febff4aa1ea69008803971a45dcbc11799ff17",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/progress-tint-mobile.png",
+      "gitBlob": "40a9d52a11353b65283149197e581f060356460b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/quiet-spatial-contrast.png",
+      "gitBlob": "c98253bc4bffc1c2eeee061278afaef6fc434bed",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/realistic-preview-mobile.png",
+      "gitBlob": "51d48195a0eeda1abfce3d28dc84ad6f82c2359c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/realistic-preview-pricing.png",
+      "gitBlob": "ecccbbc38470a4bf399559a11aa2572fd0bc2732",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/realistic-preview-stories.png",
+      "gitBlob": "8ba4a7381e634f0524e475b3ee99200cedfcd87f",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/realistic-preview-zh.png",
+      "gitBlob": "78deba2ae9feda8730032f37bac40950fc0dd476",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/replaying-metric-numbers.png",
+      "gitBlob": "fc36b425aa04ddf77c79f9bdc66086b6af82b1b9",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/service-arrows-mobile.png",
+      "gitBlob": "e8e6ebbe5e22dca4c3ec5e91c78037e1c14d5c87",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/shape-changing-icons.png",
+      "gitBlob": "f92f08c6c22778fee9bb6cc198a2f7ba666a3624",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/spatial-contrast-transition.png",
+      "gitBlob": "89b295f32d582cf26b364b47c7796d9bda8ca1cc",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/testimonial-closing-quote.png",
+      "gitBlob": "67eb7151d1b7ef2725c9991470ab396922311221",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/thoughtful-heading-mobile.png",
+      "gitBlob": "334235b27f5d759939361d5a996586b7491ec7c0",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/thoughtful-heading-unclipped.png",
+      "gitBlob": "80e4f6a48c381f035e36542ec4c4384d509f6956",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/unclipped-family-quote-desktop.png",
+      "gitBlob": "466b895a873a9a1c7e81898f1c3637122e99af46",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/unclipped-family-quote-mobile.png",
+      "gitBlob": "e7288af0428dd3e029b959400982fb5367d1abb0",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/warm-paper-footer-desktop.png",
+      "gitBlob": "79094e0a9ef4f815aae3bcbeda684d4e92e1b233",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/screenshots/warm-paper-footer-mobile.png",
+      "gitBlob": "bb86cbc7c2cb98b66f36dd57d8cb237a045d97e3",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "docs/session-handoff.md",
+      "gitBlob": "e880ad22993b16820d156e1897cfbe6579a41593",
+      "alreadyInMainHistory": false,
+      "archivedSnapshot": "docs/archive/marketing-workspace-2026-11-18/session-handoff.md.txt"
+    },
+    {
+      "path": "tests/browser/marketing-content.spec.ts",
+      "gitBlob": "2e0c3534b8f596ee686f505cf2d4231f828d182b",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "tests/browser/marketing-motion.spec.ts",
+      "gitBlob": "9e52cf44d80272a98787503d073ac416874226a1",
+      "alreadyInMainHistory": false,
+      "archivedSnapshot": "docs/archive/marketing-workspace-2026-11-18/marketing-motion.spec.ts.txt"
+    },
+    {
+      "path": "tests/browser/marketing-pages.spec.ts",
+      "gitBlob": "ef76d957c4bdaa85a11dda730aa03219d762dca1",
+      "alreadyInMainHistory": false,
+      "archivedSnapshot": "docs/archive/marketing-workspace-2026-11-18/marketing-pages.spec.ts.txt"
+    },
+    {
+      "path": "tests/browser/marketing-preview.spec.ts",
+      "gitBlob": "557f8e6e8c0f13f10ae2b27dc6c1938a12a45b54",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "tests/browser/marketing-scroll.spec.ts",
+      "gitBlob": "fbf2875dd5030762e57b4f68e3c82c27e87a9868",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "tests/marketing-easing.test.mjs",
+      "gitBlob": "4f702e36f32d0c1a06f671e91cd63a3fcb901e5c",
+      "alreadyInMainHistory": true
+    },
+    {
+      "path": "tests/scene-field.test.mjs",
+      "gitBlob": "e98650669ecfd57c273af85c95255491285b6d2a",
+      "alreadyInMainHistory": true
+    }
+  ],
+  "comparedMainCommit": "ddf513e0eb0d3a7decb784217d4262ad2f215988"
+}
