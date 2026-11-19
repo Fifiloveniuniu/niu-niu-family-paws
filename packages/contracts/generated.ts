@@ -958,6 +958,235 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/pricing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPublicPricing"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pricing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPricingConfig"];
+        put: operations["savePricingConfig"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/settings/cancellation-draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Saved policy draft */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CancellationDraft"];
+                    };
+                };
+                /** @description No saved draft */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Administrator required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CancellationDraftWrite"];
+                };
+            };
+            responses: {
+                /** @description Saved policy draft */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CancellationDraft"];
+                    };
+                };
+                /** @description Invalid fields */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Administrator required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Version or retry conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/validity-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Administrator validity templates */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidityTemplatePage"];
+                    };
+                };
+                /** @description Administrator required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/validity-templates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["ValidityTemplateWrite"];
+                };
+            };
+            responses: {
+                /** @description Saved validity template */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidityTemplate"];
+                    };
+                };
+                /** @description Invalid dates or fields */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Administrator required */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Version or operation conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1302,6 +1531,93 @@ export interface components {
                 pet: components["schemas"]["Pet"];
             }[];
             nextCursor: string | null;
+        };
+        PriceRate: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            nameZh: string;
+            /** @enum {string} */
+            kind: "boarding" | "package" | "service" | "addon";
+            /** @enum {string} */
+            species: "dog" | "cat" | "rabbit";
+            minWeightLb: number | null;
+            maxWeightLb: number | null;
+            minCents: number;
+            maxCents: number;
+            days: number | null;
+            /** Format: uuid */
+            comparisonRateId: string | null;
+            comparisonWeightLb: number | null;
+            active: boolean;
+            source: string;
+        };
+        PricingConfig: {
+            rates: components["schemas"]["PriceRate"][];
+            holidays: string[];
+            holidayPercent: number;
+            version: number;
+            /** Format: date-time */
+            updatedAt: string | null;
+        };
+        PricingWrite: {
+            rates: components["schemas"]["PriceRate"][];
+            holidays: string[];
+            holidayPercent: number;
+            version: number;
+            /** Format: uuid */
+            operationId: string;
+        };
+        CancellationDraft: {
+            name: string;
+            fullDays: number;
+            halfDays: number;
+            shortPercent: string;
+            /** @enum {string} */
+            basis: "" | "hours" | "calendar";
+            version: number;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        CancellationDraftWrite: {
+            name: string;
+            fullDays: number;
+            halfDays: number;
+            shortPercent: string;
+            /** @enum {string} */
+            basis: "" | "hours" | "calendar";
+            version: number;
+            /** Format: uuid */
+            operationId: string;
+        };
+        ValidityTemplate: {
+            version: number;
+            name: string;
+            /** Format: date */
+            validFrom: string;
+            /** Format: date */
+            validThrough: string;
+            active: boolean;
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ValidityTemplatePage: {
+            items: components["schemas"]["ValidityTemplate"][];
+        };
+        ValidityTemplateWrite: {
+            /** Format: uuid */
+            operationId: string;
+            version: number;
+            name: string;
+            /** Format: date */
+            validFrom: string;
+            /** Format: date */
+            validThrough: string;
+            active: boolean;
         };
     };
     responses: never;
@@ -1950,6 +2266,91 @@ export interface operations {
             };
             /** @description Assigned employee or administrator required */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getPublicPricing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active publicly displayed service prices; no actor or customer data */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingConfig"];
+                };
+            };
+        };
+    };
+    getPricingConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current administrator pricing configuration */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingConfig"];
+                };
+            };
+            /** @description Administrator required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    savePricingConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PricingWrite"];
+            };
+        };
+        responses: {
+            /** @description Audited versioned pricing configuration */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PricingConfig"];
+                };
+            };
+            /** @description Administrator required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Version or operation conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

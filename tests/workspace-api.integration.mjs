@@ -1,3 +1,5 @@
+import { cancellationDraftStore } from '../apps/api/src/cancellation-draft.ts';
+import { validityTemplateStore } from '../apps/api/src/validity-templates.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -71,6 +73,8 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
     rooms: roomStore(db),
     balances: balanceStore(db),
     bookings: bookingStore(db),
+    cancellationDraft: cancellationDraftStore(db),
+    validityTemplates: validityTemplateStore(db),
     workspace: workspaceStore(db),
   });
   t.after(async () => {
@@ -104,6 +108,57 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
     version: 0,
   });
   assert.equal(registered.status, 200);
+  const templateId = randomUUID(),
+    templatePath = '/validity-templates/' + templateId;
+  const template = {
+    operationId: randomUUID(),
+    version: 0,
+    name: '[TEST] Reviewed coverage',
+    validFrom: '2026-01-01',
+    validThrough: '2031-12-31',
+    active: true,
+  };
+  assert.equal((await own('/validity-templates')).status, 403);
+  assert.equal((await own(templatePath, template)).status, 403);
+  const templateSaved = await adm(templatePath, template);
+  assert.equal(templateSaved.status, 200);
+  assert.deepEqual((await adm(templatePath, template)).body, templateSaved.body);
+  assert.equal((await adm(templatePath, { ...template, name: 'Changed payload' })).status, 409);
+  const templateRace = await Promise.all(
+    ['A', 'B'].map((name) =>
+      adm(templatePath, { ...template, name, version: 1, operationId: randomUUID() }),
+    ),
+  );
+  assert.deepEqual(templateRace.map((result) => result.status).sort(), [200, 409]);
+  assert.equal(
+    (
+      await adm(templatePath, {
+        ...template,
+        operationId: randomUUID(),
+        version: 2,
+        validFrom: '2026-02-30',
+      })
+    ).status,
+    400,
+  );
+  const archived = await adm(templatePath, {
+    ...template,
+    version: 2,
+    operationId: randomUUID(),
+    active: false,
+  });
+  assert.equal(archived.status, 200);
+  assert.equal((await adm('/validity-templates')).body.items[0].active, false);
+  assert.equal(
+    (
+      await db
+        .doc('validityTemplates/' + templateId)
+        .collection('history')
+        .get()
+    ).size,
+    3,
+  );
+
   const cid = registered.body.id,
     pid = randomUUID(),
     otherCid = randomUUID(),
@@ -195,6 +250,22 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   assert.equal((await adm(balancePath, adjustment)).status, 200);
   assert.equal((await adm(balancePath, adjustment)).body.days, 30);
   assert.equal((await own(balancePath)).body.account.days, 30);
+  assert.equal(
+    (
+      await adm(templatePath, {
+        ...template,
+        version: 3,
+        operationId: randomUUID(),
+        validFrom: '2035-01-01',
+        validThrough: '2035-12-31',
+        active: true,
+      })
+    ).status,
+    200,
+  );
+  assert.equal((await own(balancePath)).body.account.validFrom, '2026-01-01');
+  assert.equal((await own(balancePath)).body.account.validThrough, '2031-12-31');
+
   assert.equal((await call(stranger.idToken, balancePath)).status, 403);
   assert.equal(
     (await own(balancePath, { ...adjustment, operationId: randomUUID(), version: 1 })).status,
@@ -244,12 +315,23 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
     [pid],
   );
   assert.equal((await own('/bookings?customerId=' + otherCid)).status, 403);
+  const legacyRoom = randomUUID();
+  await db.doc(`houses/${hid}/rooms/${legacyRoom}`).set({
+    id: legacyRoom,
+    houseId: hid,
+    name: '[TEST] Legacy unconfigured room',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
   const available = await own(
     '/availability',
     { customerId: cid, petId: pid, arrival: booking.arrival, pickup: booking.pickup },
     'POST',
   );
   assert.equal(available.status, 200);
+  assert.equal(available.body.rooms.find((room) => room.roomId === legacyRoom).issue, 'room_setup');
+  assert.equal(available.body.rooms.find((room) => room.roomId === legacyRoom).available, false);
   assert.equal(JSON.stringify(available.body).includes('Private pet'), false);
   assert.equal((await own(balancePath)).body.account.days, 30);
   const corrected = await adm(balancePath, {
@@ -371,7 +453,7 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   const catalog = await own('/workspace/locations');
   assert.equal(catalog.status, 200);
   assert.equal(catalog.body.items[0].house.address, '[TEST] Isolated address');
-  assert.equal(catalog.body.items[0].rooms.length, 2);
+  assert.equal(catalog.body.items[0].rooms.length, 3);
   assert.equal(JSON.stringify(catalog.body).includes('internalNote'), false);
   await auth.setCustomUserClaims(admin.localId, {});
   assert.equal((await adm('/customers')).status, 403);
