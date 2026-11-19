@@ -203,7 +203,7 @@ export default function Rooms({
       {embedded &&
         !editor &&
         (loading ? (
-          <p role="status">label('loading')</p>
+          <p role="status">{label('loading')}</p>
         ) : (
           <>
             <p role="alert">
