@@ -1153,5 +1153,6 @@
   "ui.pagination.first": "Return to first page",
   "ui.pagination.balances": "Balance pages",
   "ui.pagination.history": "History pages",
-  "ui.pagination.moreChoices": "Load more choices"
+  "ui.pagination.moreChoices": "Load more choices",
+  "ui.autocomplete.toggle": "Toggle {{field}} choices"
 }

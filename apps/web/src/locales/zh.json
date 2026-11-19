@@ -1153,5 +1153,6 @@
   "ui.pagination.first": "返回第一页",
   "ui.pagination.balances": "余额分页",
   "ui.pagination.history": "记录分页",
-  "ui.pagination.moreChoices": "加载更多选项"
+  "ui.pagination.moreChoices": "加载更多选项",
+  "ui.autocomplete.toggle": "展开或收起{{field}}选项"
 }
