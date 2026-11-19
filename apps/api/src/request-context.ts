@@ -3,6 +3,7 @@ import type { FastifyRequest } from 'fastify';
 export type Identity = {
   uid: string;
   admin?: unknown;
+  employee?: unknown;
   email_verified?: unknown;
   google?: boolean;
   email?: string;

@@ -49,7 +49,23 @@
           "photo": { "type": "string", "nullable": true, "readOnly": true, "description": "Opaque image revision; photos require authenticated API access." },
           "photoCredit": { "type": "object", "readOnly": true, "additionalProperties": false, "required": ["creator", "sourcePage", "license", "licenseUrl"], "properties": { "creator": { "type": "string" }, "sourcePage": { "type": "string" }, "license": { "type": "string" }, "licenseUrl": { "type": "string" } } },
           "version": { "type": "integer", "minimum": 1 },
-          "createdAt": { "type": "string" }, "updatedAt": { "type": "string" }
+          "createdAt": { "type": "string" }, "updatedAt": { "type": "string" },
+          "weightVerification": {
+            "type": "object",
+            "required": [
+              "weightKg",
+              "at"
+            ],
+            "properties": {
+              "weightKg": {
+                "type": "number"
+              },
+              "at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
         }
       },
       "PetWrite": {
@@ -192,6 +208,104 @@
         "properties": {
           "code": {
             "type": "string"
+          }
+        }
+      },
+      "EmployeeAssignment": {
+        "type": "object",
+        "required": [
+          "uid",
+          "email",
+          "name",
+          "houseIds",
+          "version"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "houseIds": {
+            "type": "array",
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "OperationsHouses": {
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "timezone",
+                "address"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "timezone": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "OperationsPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "booking",
+                "pet"
+              ],
+              "properties": {
+                "booking": {
+                  "$ref": "#/components/schemas/Booking"
+                },
+                "pet": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
           }
         }
       }
@@ -485,6 +599,289 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/employee-assignments/{uid}": {
+      "put": {
+        "operationId": "saveEmployeeHouseAssignments",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "houseIds",
+                  "version",
+                  "operationId"
+                ],
+                "properties": {
+                  "houseIds": {
+                    "type": "array",
+                    "maxItems": 30,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audited house assignment update; does not grant roles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeAssignment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Administrator required"
+          },
+          "409": {
+            "description": "Version or operation conflict"
+          }
+        }
+      }
+    },
+    "/api/employee-assignments": {
+      "get": {
+        "operationId": "findApprovedEmployeeAssignments",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "email",
+              "maxLength": 254
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Existing approved employee and current house assignments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeAssignment"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Administrator required"
+          },
+          "404": {
+            "description": "No active verified Google employee found"
+          }
+        }
+      }
+    },
+    "/api/operations/{id}/handoff": {
+      "put": {
+        "operationId": "correctOperationalHandoff",
+        "description": "Current assigned-house scope, audited actor and original values; does not grant financial permission.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "version",
+                  "operationId",
+                  "actualArrival",
+                  "actualPickup"
+                ],
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "actualArrival": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "actualPickup": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved audited result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "House not assigned or operation not permitted"
+          },
+          "409": {
+            "description": "Version, retry or occupancy conflict"
+          }
+        }
+      }
+    },
+    "/api/operations/{id}/weight": {
+      "put": {
+        "operationId": "verifyOperationalWeight",
+        "description": "Current assigned-house scope, audited actor and original values; does not grant financial permission.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "version",
+                  "operationId",
+                  "weightKg"
+                ],
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740990
+                  },
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "weightKg": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved audited result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "House not assigned or operation not permitted"
+          },
+          "409": {
+            "description": "Version, retry or occupancy conflict"
+          }
+        }
+      }
+    },
+    "/api/operations": {
+      "get": {
+        "operationId": "listHouseOperations",
+        "responses": {
+          "200": {
+            "description": "Currently authorized house operations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationsPage"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Assigned employee or administrator required"
+          }
+        }
+      }
+    },
+    "/api/operations/houses": {
+      "get": {
+        "operationId": "getOperationalHouses",
+        "responses": {
+          "200": {
+            "description": "Currently authorized house operations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationsHouses"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Assigned employee or administrator required"
           }
         }
       }

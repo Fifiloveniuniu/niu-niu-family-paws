@@ -9,6 +9,7 @@ export function firebaseIdentity(auth: Auth): (token: string) => Promise<Identit
     return {
       uid: user.uid,
       admin: user.customClaims?.admin,
+      employee: user.customClaims?.employee,
       email_verified: user.emailVerified && decoded.email_verified === true,
       google:
         decoded.firebase.sign_in_provider === 'google.com' &&

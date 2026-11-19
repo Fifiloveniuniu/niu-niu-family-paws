@@ -1,3 +1,4 @@
+import { assignedHouses } from './employee-access.ts';
 import { uuidSchema, emptyObjectSchema, containsControlCharacters } from './validation.ts';
 import { requestIdentity } from './request-context.ts';
 import { createHash } from 'node:crypto';
@@ -26,6 +27,14 @@ export const projectPet = (data: FirebaseFirestore.DocumentData): Pet => {
     photo,
     species: data.species ?? null,
     weightKg: data.weightKg ?? null,
+    ...(data.weightVerification
+      ? {
+          weightVerification: {
+            weightKg: data.weightVerification.weightKg,
+            at: data.weightVerification.at,
+          },
+        }
+      : {}),
     version,
     createdAt,
     updatedAt,
@@ -146,7 +155,13 @@ export function petStore(database: Firestore, photos: Photos) {
           createdAt: previous?.createdAt ?? now,
           updatedAt: now,
         };
-        transaction.set(ref, { ...pet, nameKeys: prefixes(pet.name) });
+        transaction.set(ref, {
+          ...pet,
+          ...(previous?.weightKg === weightKg && snapshot.data()?.weightVerification
+            ? { weightVerification: snapshot.data()!.weightVerification }
+            : {}),
+          nameKeys: prefixes(pet.name),
+        });
         transaction.create(ref.collection('history').doc(String(pet.version)), {
           actor: identity.uid,
           source: identity.admin === true ? 'admin' : 'self',
@@ -158,7 +173,29 @@ export function petStore(database: Firestore, photos: Photos) {
       });
     },
     async photo(identity: Identity, customerId: string, id: string) {
-      await authorize(identity, customerId);
+      try {
+        await authorize(identity, customerId);
+      } catch (error) {
+        if (!(error instanceof PetAccess) || identity.employee !== true) throw error;
+        await database.runTransaction(async (tx) => {
+          const ids = await assignedHouses(tx, database, identity);
+          if (!ids.length) throw new PetAccess();
+          const results = await Promise.all(
+            Array.from({ length: Math.ceil(ids.length / 15) }, (_, index) =>
+              tx.get(
+                database
+                  .collection('bookings')
+                  .where('customerId', '==', customerId)
+                  .where('petId', '==', id)
+                  .where('houseId', 'in', ids.slice(index * 15, index * 15 + 15))
+                  .where('status', 'in', ['planned', 'in_care'])
+                  .limit(1),
+              ),
+            ),
+          );
+          if (results.every((result) => result.empty)) throw new PetAccess();
+        });
+      }
       const snapshot = await customerRef(customerId).collection('pets').doc(id).get();
       if (!snapshot.exists || !snapshot.data()!.photo) throw new PetMissing();
       return photos.get(photoKey(projectPet(snapshot.data()!)));

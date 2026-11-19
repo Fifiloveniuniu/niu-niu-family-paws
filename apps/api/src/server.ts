@@ -1,3 +1,5 @@
+import { employeeAssignmentStore } from './employee-assignments.ts';
+import { operationsStore } from './operations.ts';
 import { workspaceStore } from './workspace.ts';
 import { firebaseIdentity } from './authentication.ts';
 import { applicationDefault, initializeApp } from 'firebase-admin/app';
@@ -36,6 +38,8 @@ const app = buildApp({
   rooms: roomStore(getFirestore()),
   balances: balanceStore(getFirestore()),
   bookings: bookingStore(getFirestore()),
+  employeeAssignments: employeeAssignmentStore(getFirestore(), auth),
+  operations: operationsStore(getFirestore()),
   workspace: workspaceStore(getFirestore()),
   store: firestoreStore(getFirestore()),
   links: linkStore(getFirestore(), async (uid) => {
