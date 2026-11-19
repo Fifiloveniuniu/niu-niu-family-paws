@@ -35,6 +35,11 @@ for (const width of [390, 1440])
         ].join('-');
       });
       await calendar.locator(`[data-date="${date}"]`).click();
+      await expect(pickup).toHaveValue(new RegExp('^' + date + ' \\d{2}:\\d{2}$'));
+      await expect(pickup).toHaveAttribute(
+        'data-value',
+        new RegExp('^' + date + 'T\\d{2}:\\d{2}$'),
+      );
       await calendar
         .getByRole('textbox', { name: label('Hour (24h)', '小时（24 小时制）'), exact: true })
         .fill('10');
@@ -75,6 +80,7 @@ test('date-only filters support keyboard selection and reject impossible typed d
   const from = page.getByRole('combobox', { name: 'Statement from', exact: true });
   await from.fill('2026-02-29');
   await expect(from).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('.custom-date-error')).toHaveCSS('color', 'rgb(179, 38, 30)');
   await expect(page.getByText('N/A', { exact: false }).first()).toBeVisible();
   await from.fill('2028-02-29');
   await expect(from).not.toHaveAttribute('aria-invalid', 'true');

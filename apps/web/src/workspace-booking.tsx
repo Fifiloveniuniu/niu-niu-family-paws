@@ -1,3 +1,9 @@
+import Icon from './icons';
+import LocationLabel from './location-label';
+import { CalendarAxis, CalendarTrack, CalendarFrame, CalendarViewport } from './calendar-timeline';
+import { dailyTimelineTicks, timelineSpan, timelineRangeLabel } from './timeline-layout';
+import { petTypes, petTypeChoice, PetTypeIcon } from './pet-type';
+import { speciesText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor, uiText } from './i18n.ts';
@@ -8,9 +14,16 @@ import Modal from './modal';
 import UnsavedChanges, { confirmDiscardChanges, markFormSaved } from './unsaved-changes';
 import { apiJson, ApiError } from './api-client';
 import { petKey, roomKey, type WorkspaceData, type Booking } from './workspace-data';
-import { PetOption } from './workspace-photos';
+import { WorkspaceAvatar, PetOption } from './workspace-photos';
 import { useWorkspaceText } from './workspace-text';
-import { resolveWallTime, zonedValue, zoneOffset, startOfZonedDay, shiftDay } from './wall-time';
+import {
+  parseWallInput,
+  resolveWallTime,
+  zonedValue,
+  zoneOffset,
+  startOfZonedDay,
+  shiftDay,
+} from './wall-time';
 import type { components } from '../../../packages/contracts/generated';
 type Available = components['schemas']['AvailabilityResult'];
 export function selectedInstant(value: string, zone: string, choice: string) {
@@ -47,6 +60,7 @@ export function ZonedField({
   const { i18n } = useTranslation();
   const result = React.useMemo(() => resolveWallTime(value, zone), [value, zone]);
   const errorId = React.useId();
+  const incomplete = !!value && !!parseWallInput(value, false);
   return (
     <div className="workspace-zoned-field">
       <label>
@@ -57,15 +71,15 @@ export function ZonedField({
           required
           value={value}
           disabled={disabled}
-          aria-invalid={(!!value && !!result.error) || undefined}
-          aria-describedby={value && result.error ? errorId : undefined}
+          aria-invalid={(!!value && !incomplete && !!result.error) || undefined}
+          aria-describedby={value && !incomplete && result.error ? errorId : undefined}
           onChange={(next) => {
             onChange(next);
             onChoice('');
           }}
         />
       </label>
-      {value && result.error && (
+      {value && !incomplete && result.error && (
         <p id={errorId} className="workspace-field-note" role="status">
           {t(result.error === 'gap' ? 'timeGap' : 'invalidDates')}
         </p>
@@ -132,6 +146,11 @@ export default function WorkspaceBooking({
   const [zone, setZone] = React.useState(initialZone);
   const [customer, setCustomer] = React.useState(existing?.customerId ?? data.customer?.id ?? '');
   const [pet, setPet] = React.useState(existing?.petId ?? '');
+  const [petType, setPetType] = React.useState(
+    data.rows.find(
+      (item) => item.customer.id === existing?.customerId && item.pet.id === existing?.petId,
+    )?.pet.species ?? '',
+  );
   const [start, setStart] = React.useState(
     existing ? zonedValue(existing.arrival, initialZone) : '',
   );
@@ -159,6 +178,9 @@ export default function WorkspaceBooking({
   const id = React.useRef(existing?.id ?? crypto.randomUUID());
   const generation = React.useRef(0);
   const form = React.useRef<HTMLFormElement>(null);
+  React.useEffect(() => {
+    form.current?.closest('dialog')?.scrollTo({ top: 0 });
+  }, [step]);
   const row = data.rows.find((item) => item.customer.id === customer && item.pet.id === pet);
   const resolvedStart = selectedInstant(start, zone, startChoice),
     resolvedEnd = selectedInstant(end, zone, endChoice);
@@ -320,23 +342,37 @@ export default function WorkspaceBooking({
     setEndChoice(initialChoice(endAt, zone));
     void loadAvailability(week, startAt, endAt, roomKey(room.houseId, room.roomId));
   }
+  const ticks = available ? dailyTimelineTicks(available.from, available.through, zone) : [];
   const heading = existing ? t('editBooking') : data.admin ? t('addBooking') : t('availability');
   return (
-    <Modal title={heading} onClose={close} disabled={blocked} className="hc-assignment-dialog">
+    <Modal
+      title={heading}
+      onClose={close}
+      disabled={blocked}
+      className="hc-assignment-dialog hc-booking-dialog"
+      header={
+        <ol className="hc-wizard-progress">
+          {['details', 'chooseRoom', 'review'].map((label, index) => (
+            <li
+              key={label}
+              aria-current={step === index + 1 ? 'step' : undefined}
+              data-step-state={
+                step > index + 1 ? 'completed' : step === index + 1 ? 'current' : 'upcoming'
+              }
+            >
+              <span className="hc-step-marker">{index + 1}</span>
+              <span className="hc-step-label">{t(label)}</span>
+            </li>
+          ))}
+        </ol>
+      }
+    >
       <form
         ref={form}
         className="hc-settings-form hc-wizard"
         onSubmit={(event) => void save(event)}
       >
         <UnsavedChanges active={dirty || blocked} />
-        <ol className="hc-wizard-progress">
-          {['details', 'chooseRoom', 'review'].map((label, index) => (
-            <li key={label} aria-current={step === index + 1 ? 'step' : undefined}>
-              <span>{index + 1}</span>
-              {t(label)}
-            </li>
-          ))}
-        </ol>
         {error && (
           <p className="workspace-form-error" role="alert">
             {t(error)}
@@ -350,7 +386,7 @@ export default function WorkspaceBooking({
           disabled={blocked}
         >
           <div className="hc-step-intro">
-            <h3>{t('details')}</h3>
+            <h3 className="sr-only">{t('details')}</h3>
             <p>{t('bookingIntro')}</p>
           </div>
           <label>
@@ -375,6 +411,28 @@ export default function WorkspaceBooking({
             />
           </label>
           <label>
+            {t('type')}
+            <CustomAutocomplete
+              label={t('type')}
+              value={petType}
+              disabled={!!existing}
+              options={[
+                { value: '', label: t('allTypes') },
+                ...petTypes.map((species) => ({
+                  value: species,
+                  label: speciesText(species),
+                  content: petTypeChoice(species),
+                  adornment: <PetTypeIcon species={species} />,
+                })),
+              ]}
+              onChange={(value) => {
+                setPetType(value);
+                setPet('');
+                invalidate();
+              }}
+            />
+          </label>
+          <label>
             {t('pet')}
             <CustomAutocomplete
               label={t('pet')}
@@ -382,11 +440,15 @@ export default function WorkspaceBooking({
               disabled={!customer || !!existing}
               value={pet}
               options={data.rows
-                .filter((item) => item.customer.id === customer)
+                .filter(
+                  (item) =>
+                    item.customer.id === customer && (!petType || item.pet.species === petType),
+                )
                 .map((item) => ({
                   value: item.pet.id,
                   label: item.pet.name,
-                  content: <PetOption row={item} />,
+                  content: <PetOption row={item} showType={false} />,
+                  adornment: <WorkspaceAvatar row={item} />,
                 }))}
               onChange={(value) => {
                 setPet(value);
@@ -465,11 +527,11 @@ export default function WorkspaceBooking({
                 void loadAvailability(week - 1);
               }}
             >
-              ‹
+              <Icon name="chevron-left" />
             </button>
             <span>
               {available
-                ? `${formatInstant(available.from, zone, locale)} – ${formatInstant(available.through, zone, locale)}`
+                ? timelineRangeLabel(available.from, available.through, zone, locale)
                 : uiText('common.notAvailable')}
             </span>
             <button
@@ -482,7 +544,7 @@ export default function WorkspaceBooking({
                 void loadAvailability(week + 1);
               }}
             >
-              ›
+              <Icon name="chevron-right" />
             </button>
           </div>
           {loading && <p role="status">{t('loading')}</p>}
@@ -491,30 +553,43 @@ export default function WorkspaceBooking({
               {t('retry')}
             </button>
           )}
-          <div className="hc-schedule-scroll" tabIndex={0} aria-label={t('roomCalendar')}>
-            <div className="hc-range-calendar">
+          <ul className="booking-calendar-legend" aria-label={t('calendarLegend')}>
+            <li>
+              <span className="booking-calendar-swatch available" aria-hidden="true" />
+              {t('freeSpace')}
+            </li>
+            <li>
+              <span className="booking-calendar-swatch unavailable" aria-hidden="true" />
+              {t('blockedSpace')}
+            </li>
+            <li>
+              <span className="booking-calendar-swatch requested" aria-hidden="true" />
+              {t('requestedStay')}
+            </li>
+          </ul>
+          <CalendarViewport
+            className="hc-schedule-scroll"
+            label={t('roomCalendar')}
+            hint={uiText('ui.calendarTimeline.panHint')}
+          >
+            <CalendarFrame
+              className="hc-range-calendar"
+              ticks={ticks}
+              view="week"
+              minColumnWidth={84}
+              timeline={available ?? undefined}
+            >
               {available && (
-                <div className="workspace-availability-axis">
-                  <strong>{t('room')}</strong>
-                  <div>
-                    {Array.from({ length: 7 }, (_, index) => {
-                      const day = shiftDay(zonedValue(available.from, zone).slice(0, 10), index);
-                      const instant = startOfZonedDay(day, zone);
-                      return (
-                        <span key={day}>
-                          {instant
-                            ? new Intl.DateTimeFormat(localeFor(i18n.language), {
-                                timeZone: zone,
-                                month: 'short',
-                                day: 'numeric',
-                                weekday: 'short',
-                              }).format(new Date(instant))
-                            : day}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
+                <CalendarAxis
+                  from={available.from}
+                  through={available.through}
+                  ticks={ticks}
+                  label={t('room')}
+                  zone={zone}
+                  locale={locale}
+                  view="week"
+                  className="workspace-availability-axis"
+                />
               )}
 
               {available &&
@@ -525,10 +600,11 @@ export default function WorkspaceBooking({
                       roomKey(room.houseId, room.roomId) ===
                         roomKey(existing!.houseId, existing!.roomId),
                   )
-                  .map((room) => {
+                  .map((room, roomIndex, rooms) => {
                     const viewFrom = Date.parse(available.from),
                       viewTo = Date.parse(available.through);
-                    const pos = (at: number) => ((at - viewFrom) / (viewTo - viewFrom)) * 100;
+                    const spanStyle = (from: number, through: number) =>
+                      timelineSpan(from, through, available.from, available.through);
                     const duration = Date.parse(pickup) - Date.parse(arrival);
                     const spans: { from: number; through: number }[] = [];
                     let cursor = viewFrom;
@@ -544,15 +620,21 @@ export default function WorkspaceBooking({
                     const picked = selected === roomKey(room.houseId, room.roomId);
                     return (
                       <React.Fragment key={roomKey(room.houseId, room.roomId)}>
-                        <div className="hc-range-house">
-                          {room.houseName} · {room.timezone}
-                        </div>
-                        <div className="hc-range-room">
+                        {(roomIndex === 0 || rooms[roomIndex - 1].houseId !== room.houseId) && (
+                          <div className="hc-range-house">
+                            <LocationLabel
+                              kind="house"
+                              name={`${room.houseName} · ${room.timezone}`}
+                            />
+                          </div>
+                        )}
+                        <div className="hc-range-room" data-selected={picked}>
                           <div className="hc-range-room-name">
-                            <strong>{room.roomName}</strong>
+                            <LocationLabel kind="room" name={room.roomName} />
                             <button
                               type="button"
                               disabled={!room.available || loading || blocked}
+                              className="booking-room-choice"
                               aria-pressed={picked}
                               aria-label={`${t('choose')} ${room.houseName} · ${room.roomName}`}
                               onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
@@ -561,7 +643,13 @@ export default function WorkspaceBooking({
                             </button>
                             {room.issue && <small>{t('issue.' + room.issue)}</small>}
                           </div>
-                          <div className="hc-time-track">
+                          <CalendarTrack
+                            from={available.from}
+                            through={available.through}
+                            ticks={ticks}
+                            className="hc-time-track"
+                            gridOverContent
+                          >
                             {spans.map((span, index) => {
                               const existingStart = Date.parse(arrival),
                                 existingEnd = Date.parse(pickup);
@@ -581,32 +669,32 @@ export default function WorkspaceBooking({
                                   key={'free-' + index}
                                   type="button"
                                   className="hc-time-available"
-                                  style={{
-                                    left: `${pos(span.from)}%`,
-                                    width: `${pos(span.through) - pos(span.from)}%`,
-                                  }}
+                                  style={spanStyle(span.from, span.through)!}
                                   disabled={!fits || loading || blocked || inCare}
                                   aria-label={`${t('freeSpace')}: ${room.houseName} · ${room.roomName}`}
                                   title={`${formatInstant(new Date(span.from).toISOString(), zone, locale)} – ${formatInstant(new Date(span.through).toISOString(), zone, locale)}`}
                                   onClick={() => chooseSpan(room, from, from + duration)}
-                                >
-                                  {t('freeSpace')}
-                                </button>
+                                />
                               );
                             })}
-                            {room.blocked.map((span, index) => (
-                              <span
-                                key={index}
-                                className="hc-time-unavailable"
-                                style={{
-                                  left: `${pos(Date.parse(span.from))}%`,
-                                  width: `${pos(Date.parse(span.through)) - pos(Date.parse(span.from))}%`,
-                                }}
-                                title={t('issue.' + span.issue)}
-                              >
-                                <span>{t('blockedSpace')}</span>
-                              </span>
-                            ))}
+                            {room.blocked.map((span, index) => {
+                              const style = spanStyle(
+                                Date.parse(span.from),
+                                Date.parse(span.through),
+                              );
+                              return (
+                                style && (
+                                  <span
+                                    key={index}
+                                    className="hc-time-unavailable"
+                                    style={style}
+                                    title={t('issue.' + span.issue)}
+                                    role="img"
+                                    aria-label={t('blockedSpace') + ': ' + t('issue.' + span.issue)}
+                                  />
+                                )
+                              );
+                            })}
                             {valid &&
                               room.available &&
                               Date.parse(pickup) > viewFrom &&
@@ -614,23 +702,21 @@ export default function WorkspaceBooking({
                                 <button
                                   type="button"
                                   className={'hc-time-request' + (picked ? ' picked' : '')}
-                                  style={{
-                                    left: `${Math.max(0, pos(Date.parse(arrival)))}%`,
-                                    width: `${Math.min(100, pos(Date.parse(pickup))) - Math.max(0, pos(Date.parse(arrival)))}%`,
-                                  }}
+                                  disabled={loading || blocked || inCare}
+                                  style={spanStyle(Date.parse(arrival), Date.parse(pickup))!}
                                   aria-label={`${t('choose')} ${room.houseName} · ${room.roomName} · ${formatInstant(arrival, zone, locale)}`}
+                                  title={`${t('requestedStay')}: ${formatInstant(arrival, zone, locale)} – ${formatInstant(pickup, zone, locale)}`}
+                                  aria-pressed={picked}
                                   onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
-                                >
-                                  {picked ? t('selected') : t('choose')}
-                                </button>
+                                />
                               )}
-                          </div>
+                          </CalendarTrack>
                         </div>
                       </React.Fragment>
                     );
                   })}
-            </div>
-          </div>
+            </CalendarFrame>
+          </CalendarViewport>
           {available && !available.rooms.length && <p>{t('noRooms')}</p>}
         </section>
         <section
@@ -640,7 +726,7 @@ export default function WorkspaceBooking({
           aria-label={t('review')}
         >
           <div className="hc-step-intro">
-            <h3>{t('review')}</h3>
+            <h3 className="sr-only">{t('review')}</h3>
           </div>
           {row && (
             <div className="hc-review-guest">
@@ -676,7 +762,6 @@ export default function WorkspaceBooking({
           <button type="button" className="hc-manage" disabled={blocked} onClick={close}>
             {t('cancel')}
           </button>
-          <span>{t('step', { step })}</span>
           <div>
             {step > 1 && (
               <button

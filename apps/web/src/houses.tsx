@@ -1,3 +1,4 @@
+import LocationLabel from './location-label';
 import { englishCatalog, uiText, uiValue } from './i18n.ts';
 import CustomSelect from './custom-select';
 import CustomAutocomplete from './custom-autocomplete';
@@ -8,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import Modal from './modal';
 import Rooms from './rooms';
 import Icon from './icons';
-import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
+import UnsavedChanges, { confirmDiscardChanges, markFormSaved } from './unsaved-changes';
 import type { components } from '../../../packages/contracts/generated';
 type House = components['schemas']['House'];
 type HouseWrite = components['schemas']['HouseWrite'];
@@ -21,10 +22,18 @@ export default function Houses({
   initialSelected = '',
   routable = false,
   onChanged,
+  initialEdit = false,
+  onEditorClosed,
+  embedded = false,
+  onBusyChange,
 }: {
   initialSelected?: string;
   routable?: boolean;
   onChanged?: () => void;
+  initialEdit?: boolean;
+  onEditorClosed?: () => void;
+  embedded?: boolean;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const { i18n } = useTranslation();
   const labels = uiValue('ui.houses.labels', i18n.language);
@@ -81,6 +90,7 @@ export default function Houses({
       setEditor(null);
       setError(null);
       if (error === 'conflict') void load();
+      onEditorClosed?.();
     }
   }
   function open(house?: House) {
@@ -99,6 +109,16 @@ export default function Houses({
     setSaved(false);
     setUncertain(false);
   }
+  const requestedEditor = React.useRef('');
+  React.useEffect(() => {
+    if (!initialEdit || !initialSelected || loading || requestedEditor.current === initialSelected)
+      return;
+    const house = items.find((item) => item.id === initialSelected);
+    if (house) {
+      requestedEditor.current = initialSelected;
+      open(house);
+    }
+  }, [initialEdit, initialSelected, items, loading]);
   async function save(event: React.FormEvent) {
     event.preventDefault();
     if (!editor || saving) return;
@@ -116,10 +136,12 @@ export default function Houses({
         ),
       );
       setSelected(house.id);
+      markFormSaved(form.current);
       setEditor(null);
       setUncertain(false);
       setSaved(true);
       onChanged?.();
+      onEditorClosed?.();
     } catch (error) {
       if (alive.current) {
         report(error);
@@ -129,95 +151,120 @@ export default function Houses({
       if (alive.current) setSaving(false);
     }
   }
+  React.useEffect(() => {
+    if (embedded && editor)
+      form.current?.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }, [embedded, editor?.id]);
   const blocked = saving || uncertain;
+  React.useEffect(() => onBusyChange?.(blocked), [blocked, onBusyChange]);
   return (
-    <section className="customer-section" aria-label={labels.title}>
-      <div className="customer-heading">
-        <h2 id={fieldId + '-title'}>{labels.title}</h2>
-        <button className="button" disabled={blocked} onClick={() => open()}>
-          {labels.add}
-        </button>
-      </div>
-      <p className="customer-intro">{labels.intro}</p>
-      {saved && <p role="status">{labels.saved}</p>}
-      {error && !editor && <p role="alert">{labels[error]}</p>}
-      {loading && <p role="status">{labels.loading}</p>}
-      {!!items.length && (
-        <label className="house-filter">
-          {labels.filter}
-          <CustomSelect
-            value={selected}
-            disabled={blocked}
-            onChange={(event) => {
-              setSelected(event.target.value);
-              if (routable)
-                navigate(
-                  '/app/settings/locations/' +
-                    (event.target.value ? encodeURIComponent(event.target.value) + '/' : ''),
-                );
-            }}
-          >
-            <option value="">{labels.all}</option>
-            {items.map((house) => (
-              <option key={house.id} value={house.id}>
-                {house.name}
-              </option>
-            ))}
-          </CustomSelect>
-        </label>
-      )}
-      {!loading && !items.length && !error && <p>{labels.empty}</p>}
-      {initialSelected &&
-        !loading &&
-        !error &&
-        !items.some((house) => house.id === initialSelected) && (
-          <p role="alert">{uiText('ui.houses.locationNotFound', {}, i18n.language)}</p>
+    <section
+      className={embedded ? 'embedded-location-editor' : 'customer-section'}
+      aria-label={labels.title}
+    >
+      <div hidden={embedded}>
+        <div className="customer-heading">
+          <h2 id={fieldId + '-title'}>{labels.title}</h2>
+          <button className="button" disabled={blocked} onClick={() => open()}>
+            {labels.add}
+          </button>
+        </div>
+        <p className="customer-intro">{labels.intro}</p>
+        {saved && <p role="status">{labels.saved}</p>}
+        {error && !editor && <p role="alert">{labels[error]}</p>}
+        {loading && <p role="status">{labels.loading}</p>}
+        {!!items.length && (
+          <label className="house-filter">
+            {labels.filter}
+            <CustomSelect
+              value={selected}
+              disabled={blocked}
+              onChange={(event) => {
+                setSelected(event.target.value);
+                if (routable)
+                  navigate(
+                    '/app/settings/locations/' +
+                      (event.target.value ? encodeURIComponent(event.target.value) + '/' : ''),
+                  );
+              }}
+            >
+              <option value="">{labels.all}</option>
+              {items.map((house) => (
+                <option key={house.id} value={house.id}>
+                  {house.name}
+                </option>
+              ))}
+            </CustomSelect>
+          </label>
         )}
-      <ul className="house-list">
-        {items
-          .filter((house) => !selected || house.id === selected)
-          .map((house) => (
-            <li key={house.id}>
-              <div>
-                <h3>
-                  {routable ? (
-                    <a href={'/app/settings/locations/' + house.id + '/'}>{house.name}</a>
-                  ) : (
-                    house.name
+        {!loading && !items.length && !error && <p>{labels.empty}</p>}
+        {initialSelected &&
+          !loading &&
+          !error &&
+          !items.some((house) => house.id === initialSelected) && (
+            <p role="alert">{uiText('ui.houses.locationNotFound', {}, i18n.language)}</p>
+          )}
+        <ul className="house-list">
+          {items
+            .filter((house) => !selected || house.id === selected)
+            .map((house) => (
+              <li key={house.id}>
+                <div>
+                  <h3>
+                    {routable ? (
+                      <a href={'/app/settings/locations/' + house.id + '/'}>
+                        <LocationLabel kind="house" name={house.name} />
+                      </a>
+                    ) : (
+                      <LocationLabel kind="house" name={house.name} />
+                    )}
+                  </h3>
+                  <p>{house.address || labels.noAddress}</p>
+                  {!house.address?.trim() && (
+                    <p role="status">{uiText('ui.houses.addressMissing')}</p>
                   )}
-                </h3>
-                <p>{house.address || labels.noAddress}</p>
-                {!house.address?.trim() && (
-                  <p role="status">{uiText('ui.houses.addressMissing')}</p>
-                )}
-                <p>
-                  {labels.timezone}: {house.timezone}
-                </p>
-                <Rooms
-                  houseId={house.id}
-                  addressReady={!!house.address?.trim()}
-                  onChanged={onChanged}
-                />
-              </div>
-              <button
-                className="icon-button"
-                title={labels.edit}
-                aria-label={`${labels.edit}: ${house.name}`}
-                disabled={blocked}
-                onClick={() => open(house)}
-              >
-                <Icon name="edit" />
-              </button>
-            </li>
-          ))}
-      </ul>
-      {error === 'error' && !editor && (
-        <button className="language" disabled={loading} onClick={() => void load()}>
-          {labels.retry}
-        </button>
-      )}
+                  <p>
+                    {labels.timezone}: {house.timezone}
+                  </p>
+                  <Rooms
+                    houseId={house.id}
+                    addressReady={!!house.address?.trim()}
+                    onChanged={onChanged}
+                  />
+                </div>
+                <button
+                  className="icon-button"
+                  title={labels.edit}
+                  aria-label={`${labels.edit}: ${house.name}`}
+                  disabled={blocked}
+                  onClick={() => open(house)}
+                >
+                  <Icon name="edit" />
+                </button>
+              </li>
+            ))}
+        </ul>
+        {error === 'error' && !editor && (
+          <button className="language" disabled={loading} onClick={() => void load()}>
+            {labels.retry}
+          </button>
+        )}
+      </div>
+      {embedded &&
+        !editor &&
+        (loading ? (
+          <p role="status">labels.loading</p>
+        ) : (
+          <>
+            <p role="alert">{error ? labels[error] : labels.empty}</p>
+            <button className="language" onClick={() => void load()}>
+              {labels.retry}
+            </button>
+          </>
+        ))}
       {editor && (
         <Modal
+          embedded={embedded}
           title={editor.input.version ? labels.edit : labels.add}
           disabled={blocked}
           onClose={close}

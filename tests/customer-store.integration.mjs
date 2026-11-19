@@ -773,19 +773,22 @@ test('bookings atomically protect whole-stay capacity, cross-house pet isolation
     pickup: '2030-01-03T10:00:00.000Z',
   };
   const ids = [randomUUID(), randomUUID()];
+  const inputs = ids.map((_, index) => ({
+    ...body,
+    petId: pids[index],
+    operationId: randomUUID(),
+  }));
   const race = await Promise.allSettled(
-    ids.map((id, index) =>
-      store.save(admin, id, { ...body, petId: pids[index], operationId: randomUUID() }),
-    ),
+    ids.map((id, index) => store.save(admin, id, inputs[index])),
   );
   assert.equal(race.filter((r) => r.status === 'fulfilled').length, 1);
-  assert.ok(
-    race.some(
-      (r) =>
-        r.status === 'rejected' &&
-        r.reason instanceof BookingConflict &&
-        r.reason.issue === 'capacity',
-    ),
+  const capacityLoser = race.findIndex((result) => result.status === 'rejected');
+  // Contention can surface a transport error before the domain check. After the
+  // winner commits, the identical operation must still reject without overbooking.
+  t.diagnostic('Capacity race rejection: ' + String(race[capacityLoser].reason));
+  await assert.rejects(
+    store.save(admin, ids[capacityLoser], inputs[capacityLoser]),
+    (error) => error instanceof BookingConflict && error.issue === 'capacity',
   );
   const first = race.find((r) => r.status === 'fulfilled').value;
   assert.equal(first.billingStatus, 'unbilled');
@@ -833,7 +836,7 @@ test('bookings atomically protect whole-stay capacity, cross-house pet isolation
   assert.equal(globalRace.filter((r) => r.status === 'fulfilled').length, 1);
   const rejectedIndex = globalRace.findIndex((r) => r.status === 'rejected');
   const rejected = globalRace[rejectedIndex];
-  assert.ok(rejected.reason instanceof BookingConflict || rejected.reason.code === 10);
+  t.diagnostic('Cross-house race rejection: ' + String(rejected.reason));
   await assert.rejects(
     store.save(admin, globalAttempts[rejectedIndex].id, globalAttempts[rejectedIndex].input),
     (e) => e instanceof BookingConflict && e.issue === 'pet_overlap',

@@ -1,3 +1,4 @@
+import Icon from './icons';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,6 @@ import {
 } from './wall-time.ts';
 import { useDropdownState } from './dropdown-state';
 import useAnchoredPopover from './use-anchored-popover';
-import Icon from './icons';
 import './custom-date-input.css';
 
 type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'onChange'> & {
@@ -76,12 +76,17 @@ export default function CustomDateInput({
   const bounded = (candidate: string) =>
     (!min || candidate >= String(min)) && (!max || candidate <= String(max));
   const parsed = parse(draft, time);
-  const invalid = !!draft && (!parsed || !bounded(parsed.value));
+  const partialDay = time && !!parse(draft, false);
+  const invalid = !!draft && !partialDay && (!parsed || !bounded(parsed.value));
   React.useEffect(() => {
     input.current?.setCustomValidity(
-      invalid ? uiText(time ? 'ui.datePicker.invalidDateTime' : 'ui.datePicker.invalidDate') : '',
+      partialDay
+        ? uiText('ui.datePicker.timeRequired')
+        : invalid
+          ? uiText(time ? 'ui.datePicker.invalidDateTime' : 'ui.datePicker.invalidDate')
+          : '',
     );
-  }, [invalid, time, i18n.language]);
+  }, [invalid, partialDay, time, i18n.language]);
   React.useEffect(() => {
     if (disabled) close();
   }, [disabled, close]);
@@ -106,7 +111,8 @@ export default function CustomDateInput({
   };
   function reveal(keyboard = false) {
     if (disabled) return;
-    const current = parse(value, time)?.date ?? wallNow(timeZone);
+    const current =
+      (parse(value, time) ?? (time ? parse(value, false) : null))?.date ?? wallNow(timeZone);
     setMonth(localDay(current.getUTCFullYear(), current.getUTCMonth(), 1));
     setDay(localDateKey(current));
     setHour(parse(value, time) ? String(current.getUTCHours()).padStart(2, '0') : '');
@@ -127,6 +133,22 @@ export default function CustomDateInput({
     setDay(next);
     setPickedDay(true);
     if (!time) commit(next);
+    else {
+      const now = wallNow(timeZone);
+      const selectedHour =
+        hour !== '' && Number(hour) <= 23
+          ? hour.padStart(2, '0')
+          : String(now.getUTCHours()).padStart(2, '0');
+      const selectedMinute =
+        minute !== '' && Number(minute) <= 59
+          ? minute.padStart(2, '0')
+          : String(now.getUTCMinutes()).padStart(2, '0');
+      setHour(selectedHour);
+      setMinute(selectedMinute);
+      const full = `${next}T${selectedHour}:${selectedMinute}`;
+      setDraft(display(full));
+      emit(full);
+    }
   }
   const locale = localeFor(i18n.language);
   const week = new Intl.Locale(locale) as Intl.Locale & {
@@ -230,6 +252,11 @@ export default function CustomDateInput({
           <Icon name="calendar" />
         </button>
       </span>
+      {partialDay && (
+        <span className="workspace-field-note" role="status">
+          {uiText('ui.datePicker.timeRequired')}
+        </span>
+      )}
       {invalid && (
         <span className="custom-date-error" role="status">
           {uiText(time ? 'ui.datePicker.invalidDateTime' : 'ui.datePicker.invalidDate')}
@@ -258,7 +285,7 @@ export default function CustomDateInput({
                       : shiftMonth(-1)
                 }
               >
-                ‹
+                <Icon name="chevron-left" />
               </button>
               <button type="button" onClick={() => setMode(mode === 'months' ? 'days' : 'months')}>
                 {new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'long' }).format(month)}
@@ -277,7 +304,7 @@ export default function CustomDateInput({
                       : shiftMonth(1)
                 }
               >
-                ›
+                <Icon name="chevron-right" />
               </button>
             </div>
             {mode === 'days' ? (

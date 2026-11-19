@@ -1,0 +1,18 @@
+Theme-aware interface icons
+
+Google Material Symbols — Google LLC
+https://github.com/google/material-design-icons
+Apache License 2.0: /licenses/material-symbols.txt
+Selected rounded SVG icons are normalized to a shared viewport and colored with the active app theme.
+
+Microsoft Codicons — Microsoft Corporation and contributors
+https://github.com/microsoft/vscode-codicons
+Creative Commons Attribution 4.0 International: /licenses/codicons.txt
+Selected SVG icons are scaled from 16px to a shared viewport and colored with the active app theme.
+
+Lucide — Copyright (c) 2026 Lucide Icons and Contributors
+https://lucide.dev
+ISC and included Feather MIT notices: /licenses/lucide.txt
+Selected SVG icons use a lighter interface stroke for the Apple-style preset; these are not Apple's SF Symbols.
+
+Per-icon original source URLs are retained in apps/web/src/theme-icons.json.

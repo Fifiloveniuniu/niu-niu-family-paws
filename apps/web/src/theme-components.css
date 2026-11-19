@@ -1,0 +1,1031 @@
+/* App component colors are semantic in every named preset. Public marketing styles are untouched. */
+html[data-ui-style] .portal-card {
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .portal-role {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .portal [role='alert'] {
+  color: var(--md-error-ink);
+}
+html[data-ui-style] .customer-section {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .customer-form {
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .customer-form input,
+html[data-ui-style] .customer-form :is(select, .custom-select-trigger) {
+  border: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-list li {
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .customer-section [role='alert'] {
+  color: var(--md-error-ink);
+}
+html[data-ui-style] .customer-search input {
+  border: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .portal-workspace {
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .workspace-buttons button {
+  background: var(--md-surface);
+}
+html[data-ui-style] .workspace-buttons button[aria-pressed='true'] {
+  color: var(--md-on-primary);
+}
+html[data-ui-style] .portal-back {
+  color: var(--md-focus);
+}
+html[data-ui-style] .portal-card {
+  background: var(--md-surface);
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal .language {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface);
+}
+html[data-ui-style] .portal .language:hover {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style] .portal-workspace {
+  background: var(--md-surface-container);
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal-workspace .eyebrow {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-form {
+  background: var(--md-surface);
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .unsaved-notice {
+  border-left: 3px solid var(--md-outline-variant);
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .customer-form input,
+html[data-ui-style] .customer-form :is(select, .custom-select-trigger) {
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .customer-search {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .customer-search label {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-search input {
+  border-color: var(--md-outline-variant);
+  background: var(--md-surface);
+}
+html[data-ui-style] .profile-identity {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .pet-card {
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal-session {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .pets-section {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .pet-card {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface);
+}
+html[data-ui-style] .pet-photo {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .customer-pet-picker :is(select, .custom-select-trigger) {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-directory-panel {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface);
+}
+html[data-ui-style] .customer-directory-panel .selected-customer {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style] .customer-select[aria-pressed='true'] {
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] .customer-pet-layout > .admin-pets {
+  background: var(--md-surface);
+}
+html[data-ui-style] .customer-directory-panel > .customer-list > li:hover {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style] .customer-directory-panel > .customer-list > li.selected-customer:hover {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style] .customer-directory-panel > .customer-list > li.selected-customer {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style]
+  .customer-directory-panel
+  > .customer-list
+  > li:has(.customer-select:focus-visible) {
+  outline: 3px solid var(--md-focus);
+}
+html[data-ui-style] .app-dialog {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline-variant);
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] .app-dialog::backdrop {
+  background: var(--md-scrim);
+}
+html[data-ui-style] .pet-photo-credit {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .hc-settings-locations > .customer-section {
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin > .portal-card {
+  background: var(--md-surface);
+}
+html[data-ui-style] .portal-admin .portal-workspace {
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .workspace-buttons .language {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .portal-admin .workspace-buttons .language[aria-pressed='true'] {
+  border-color: var(--md-outline-variant);
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] .portal-admin .customer-directory-panel {
+  background: var(--md-surface);
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .directory-toolbar {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .directory-toolbar .language {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .portal-admin .customer-language {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .portal-admin .customer-row-actions .language {
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .pet-search-tools {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .pet-search-tools > summary {
+  color: var(--md-focus);
+}
+html[data-ui-style] .portal-admin .pet-search .customer-search {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .portal-admin .customer-pet-layout > .admin-pets {
+  background: var(--md-surface);
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .selected-customer-heading {
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .portal-admin .selected-customer-heading .eyebrow {
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] .portal-admin .selected-customer-heading > p:last-child:not(.eyebrow) {
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] .portal-admin .pet-card {
+  background: var(--md-surface);
+}
+html[data-ui-style] .portal-admin .back-to-customers {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .house-filter :is(select, .custom-select-trigger) {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .house-list li {
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .customer-filters {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .customer-filters > .hc-filters-heading h2 {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-filter-fields label {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-filter-fields input {
+  border: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-ownership-filter {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .customer-ownership-filter input {
+  accent-color: var(--md-focus);
+}
+html[data-ui-style] .hc .customer-directory-panel {
+  background: var(--md-surface);
+}
+html[data-ui-style] .hc .directory-toolbar p {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .hc .customer-list > li:hover {
+  background: var(--md-primary-soft);
+}
+html[data-ui-style] .hc .customer-list > li.selected-customer {
+  background: var(--md-primary-soft);
+  border-color: var(--md-outline-variant);
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] .hc .customer-list p {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .hc .customer-pet-layout > .admin-pets {
+  background: var(--md-surface);
+}
+html[data-ui-style] .hc .pet-card .pet-photo {
+  background: var(--md-surface-container);
+}
+html[data-ui-style] .hc .pet-card-selected {
+  outline: 2px solid var(--md-focus);
+}
+html[data-ui-style] .hc-pet-preview {
+  border: 1px solid var(--md-outline-variant);
+  background: var(--md-surface-container);
+  color: var(--md-on-surface-variant);
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] .hc-pet-preview-header p {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .hc .hc-pet-preview-close {
+  color: var(--md-focus);
+}
+html[data-ui-style] .hc-pet-preview dt {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .hc .hc-pet-preview-links a {
+  color: var(--md-focus);
+}
+html[data-ui-style] .saved-rooms {
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+:root[data-color-theme='google'] {
+  --ui-font: 'Google Sans', 'Roboto', Arial, 'PingFang SC', sans-serif;
+  --ui-menu-radius: 16px;
+  --ui-option-radius: 20px;
+  --ui-chip-radius: 16px;
+  --ui-event-radius: 4px;
+  --ui-nav-radius: 20px;
+  --ui-search-radius: 8px;
+}
+
+:root[data-color-theme='apple'] {
+  --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, 'PingFang SC', sans-serif;
+  --ui-menu-radius: 10px;
+  --ui-option-radius: 6px;
+  --ui-chip-radius: 6px;
+  --ui-event-radius: 4px;
+  --ui-nav-radius: 6px;
+  --ui-search-radius: 6px;
+}
+
+:root[data-color-theme='vscode-light'] {
+  --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, 'PingFang SC', sans-serif;
+  --ui-menu-radius: 4px;
+  --ui-option-radius: 2px;
+  --ui-chip-radius: 4px;
+  --ui-event-radius: 3px;
+  --ui-nav-radius: 2px;
+  --ui-search-radius: 4px;
+}
+
+:root[data-color-theme='vscode-dark'] {
+  --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, 'PingFang SC', sans-serif;
+  --ui-menu-radius: 4px;
+  --ui-option-radius: 2px;
+  --ui-chip-radius: 4px;
+  --ui-event-radius: 3px;
+  --ui-nav-radius: 2px;
+  --ui-search-radius: 4px;
+}
+
+/* Geometry and typography apply to all shared component families, including top-layer popovers. */
+html[data-ui-style]
+  :is(
+    .portal,
+    .hc,
+    .marketing-header,
+    .app-dialog,
+    .hc-pet-preview,
+    .custom-select-options,
+    .custom-autocomplete-options,
+    .custom-date-options
+  ),
+html[data-ui-style]
+  :is(.portal, .hc, .app-dialog)
+  :is(h1, h2, h3, h4, input, textarea, select, button) {
+  font-family: var(--ui-font);
+}
+html[data-ui-style] :is(.portal, .saved-workspace, .app-dialog, .marketing-header) button {
+  border-radius: var(--ui-action-radius);
+}
+html[data-ui-style] :is(.portal, .saved-workspace, .app-dialog, .marketing-header) .icon-button {
+  border-radius: var(--ui-icon-radius);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace, .app-dialog)
+  :is(
+    .customer-form,
+    .customer-search,
+    .customer-directory-panel,
+    .portal-card,
+    .pet-card,
+    .profile-identity,
+    .saved-cancellation-policy,
+    .employee-operations,
+    .hc-coverage-card,
+    .hc-review-card,
+    .workspace-table-scroll
+  ) {
+  border-radius: var(--ui-card-radius);
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(input[type='search'], .hc-search input) {
+  border-radius: var(--ui-search-radius);
+}
+html[data-ui-style]
+  :is(.custom-select-options, .custom-autocomplete-options, .custom-date-options, .hc-pet-preview) {
+  border-radius: var(--ui-menu-radius);
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  border-color: var(--md-outline-variant);
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] .custom-select-options [role='option'],
+html[data-ui-style] .custom-autocomplete-options [role='option'] {
+  border-radius: var(--ui-option-radius);
+}
+html[data-ui-style]
+  :is(.custom-select-options, .custom-autocomplete-options)
+  [role='option'][data-active]:not([aria-selected='true']) {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] .custom-date-options :is(button, input) {
+  border-radius: var(--ui-option-radius);
+}
+html[data-color-theme='apple'] .custom-date-week button,
+html[data-color-theme='google'] .custom-date-week button {
+  border-radius: 50%;
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.portal-role, .profile-role-badge, .workspace-status-badge, .hc-tags > span, .hc-chip) {
+  border-radius: var(--ui-chip-radius);
+}
+html[data-ui-style] .hc :is(.hc-stay, .hc-time-request, .hc-time-available) {
+  border-radius: var(--ui-event-radius);
+}
+html[data-ui-style] .marketing-header .app-header-nav a {
+  color: var(--md-on-surface-variant);
+  border-radius: var(--ui-nav-radius);
+}
+html[data-ui-style] .marketing-header .app-header-nav a[aria-current='page'] {
+  color: var(--md-on-primary-container);
+  background: var(--md-primary-container);
+  border-bottom-color: transparent;
+}
+html[data-color-theme^='vscode-'] .marketing-header .app-header-nav a[aria-current='page'] {
+  border-bottom: 2px solid var(--md-focus);
+  border-radius: 0;
+  background: var(--md-surface-container-low);
+  color: var(--md-on-surface);
+}
+html[data-ui-style] .hc :is(.hc-pet-preview-close, .hc-pet-preview-links a) {
+  color: var(--md-focus);
+}
+html[data-ui-style] .hc :is(.hc-notice, .unsaved-notice) {
+  border-radius: var(--ui-card-radius);
+  color: var(--md-on-warning-container);
+  background: var(--md-warning-container);
+  border-color: var(--md-warning-outline);
+}
+html[data-ui-style] .hc .hc-pet-preview-trigger:hover {
+  box-shadow: 0 0 0 2px var(--md-focus);
+}
+html[data-ui-style] .hc .workspace-table :is(td, th),
+html[data-ui-style] .hc :is(.hc-grid, .hc-range-calendar) {
+  border-color: var(--md-outline-variant);
+}
+html[data-ui-style] .portal .workspace-buttons button[aria-pressed='true'] {
+  color: var(--md-on-primary);
+  background: var(--md-primary);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .pet-photo-credit {
+  color: var(--md-on-surface-variant);
+}
+
+/* Readable foregrounds use source-palette neutrals when decorative accents are too faint for text. */
+:root[data-ui-style] {
+  --md-link: var(--md-focus);
+  --md-error-ink: var(--md-on-surface);
+  --md-warning-ink: var(--md-on-surface);
+  --md-success-ink: var(--md-on-surface);
+}
+html[data-ui-style] :is(.portal, .hc, .app-dialog) :is(input, textarea)::placeholder {
+  color: var(--md-on-surface-variant);
+  opacity: 1;
+}
+html[data-ui-style] :is(.portal, .hc, .app-dialog) :is(button, input, textarea, select):disabled,
+html[data-ui-style] .custom-select-options [aria-disabled='true'] {
+  opacity: 1;
+  color: var(--md-on-disabled);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(h1, h2, h3, h4, label, p) {
+  overflow-wrap: anywhere;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .custom-select-value {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog :is(label, p) {
+  font-size: 14px;
+  line-height: 1.5;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.cancelled {
+  opacity: 1;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-stay.overdue {
+  color: var(--md-on-warning-container);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  .hc-wizard-progress
+  li[data-step-state='completed'] {
+  color: var(--md-on-success-container);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) :is(.language, .hc-manage):hover:not(:disabled) {
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style]
+  :is(.portal, .saved-workspace)
+  :is(.workspace-error, .workspace-form-error, .unsaved-notice, .hc-notice) {
+  color: var(--md-on-warning-container);
+}
+html[data-ui-style] .appearance-choice:has(input:checked) {
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style]
+  .appearance-choice:has(input:checked)
+  .appearance-choice-copy
+  > span:not(.appearance-palette-preview) {
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .icon-button:hover:not(:disabled) {
+  color: var(--md-on-secondary-container);
+}
+html[data-ui-style] .location-label-house .location-label-kind {
+  color: var(--md-on-primary-container);
+}
+
+/* The selected item owns both halves of its color pair; hover never replaces only one half. */
+html[data-ui-style] .custom-select-options [role='option'][aria-selected='true'],
+html[data-ui-style]
+  .custom-select-options
+  [role='option'][aria-selected='true']:is(:hover, [data-active]),
+html[data-ui-style] .custom-autocomplete-options [role='option'][aria-selected='true'] {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+html[data-ui-style]
+  .custom-select-options
+  [role='option'][aria-selected='true']
+  :is(span, small, strong),
+html[data-ui-style]
+  .custom-autocomplete-options
+  [role='option'][aria-selected='true']
+  :is(span, small, strong) {
+  color: inherit;
+  opacity: 1;
+}
+/* App header uses one continuous surface; active items do not inherit marketing underlines. */
+html[data-ui-style] header.marketing-header {
+  background: var(--md-surface-container-low);
+  background-image: none;
+  border-bottom: 1px solid var(--md-outline-variant);
+  box-shadow: none;
+}
+html[data-ui-style] .marketing-header :is(.marketing-menu, .header-actions, .app-header-nav) {
+  background: transparent;
+}
+html[data-ui-style] .marketing-header .app-header-nav {
+  gap: 8px;
+}
+html[data-ui-style] .marketing-header .app-header-nav a {
+  padding: 8px 14px;
+  min-height: 44px;
+  text-decoration: none;
+  border-bottom: 0;
+}
+html[data-color-theme='google'] .marketing-header .app-header-nav a[aria-current='page'] {
+  background: #d3e3fd;
+  color: #041e49;
+}
+html[data-color-theme='apple'] .marketing-header .app-header-nav a[aria-current='page'] {
+  background: var(--md-surface);
+  color: var(--md-focus);
+}
+html[data-ui-style] .workspace-clock time {
+  color: var(--md-on-surface);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+/* Reserve a header lane for Now so its text never covers date labels. */
+html[data-ui-style] .saved-calendar-grid .hc-axis {
+  min-height: 88px;
+}
+html[data-ui-style] .saved-calendar-grid .workspace-now-marker {
+  top: 62px;
+  z-index: 5;
+  background: var(--md-focus);
+}
+html[data-ui-style] .saved-calendar-grid .workspace-now-marker > span {
+  left: 0;
+  padding: 4px 7px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+  color: var(--md-on-primary);
+  background: var(--md-primary);
+  border-radius: var(--ui-event-radius);
+}
+html[data-ui-style] .workspace-now-marker time {
+  font-variant-numeric: tabular-nums;
+}
+/* One boundary per group; whitespace separates filters from navigation. */
+html[data-ui-style] .saved-workspace .workspace-filters {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+html[data-ui-style] .saved-calendar-grid .hc-house {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .saved-calendar-grid .hc-axis + .hc-house,
+html[data-ui-style] .saved-calendar-grid .workspace-now-marker + .hc-house {
+  border-top: 0;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet {
+  border-top: 0;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet + .hc-pet {
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label {
+  padding-inline-start: 64px;
+  box-shadow: none;
+  gap: 10px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 48px;
+  top: 0;
+  bottom: 0;
+  border-inline-start: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 48px;
+  top: 50%;
+  width: 10px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label :is(strong, small) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label {
+  z-index: 6;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label strong {
+  font-size: 14px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label small {
+  font-size: 13px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-axis > .calendar-timeline-label {
+  z-index: 7;
+}
+html[data-ui-style] .saved-calendar-grid .workspace-now-marker[data-label-align='end'] > span {
+  left: auto;
+  right: 4px;
+}
+
+/* Quiet house/room headings and spacious child rows; no rule above a room's first pet. */
+html[data-ui-style] .saved-calendar-grid .hc-house,
+html[data-ui-style] .hc-booking-dialog .hc-range-calendar .hc-range-house {
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  padding-block: 18px 12px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-house .location-label-kind,
+html[data-ui-style] .hc-booking-dialog .hc-range-house .location-label-kind {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .saved-calendar-grid .hc-axis {
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .saved-calendar-grid .hc-room {
+  border-top: 0;
+  border-bottom: 0;
+  padding-block: 10px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet + .hc-room {
+  border-top: 1px solid var(--md-outline-variant);
+  padding-top: 18px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet,
+html[data-ui-style] .saved-calendar-grid .hc-pet + .hc-pet {
+  border-top: 0;
+  min-height: 76px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label {
+  padding-block: 14px;
+}
+html[data-ui-style] .saved-calendar-grid .workspace-avatar-button {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  flex: none;
+}
+html[data-ui-style] .saved-calendar-grid .hc-track {
+  min-height: 76px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-stay {
+  top: 14px;
+  bottom: 14px;
+  min-height: 44px;
+  box-shadow: 0 0 0 2px var(--md-surface);
+  padding: 8px 10px;
+}
+html[data-ui-style] .hc.saved-workspace .saved-calendar-grid .hc-house {
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+}
+html[data-ui-style]
+  .custom-select-options
+  [role='option'][aria-selected='true'][aria-disabled='true'] {
+  color: var(--md-on-primary-container);
+  opacity: 1;
+}
+html[data-ui-style] .custom-date-week [aria-selected='true'] button:disabled {
+  color: var(--md-on-disabled);
+  background: var(--md-disabled-container);
+  outline: 2px solid var(--md-focus);
+  outline-offset: -2px;
+}
+html[data-ui-style] :is(.portal, .saved-workspace) .custom-date-error[role='status'] {
+  color: var(--md-error);
+}
+/* Location controls belong to their headings, not the distant edge of the time grid. */
+html[data-ui-style] .hc.saved-workspace .saved-calendar-grid :is(.hc-house, .hc-room) {
+  display: grid;
+  grid-template-columns: minmax(0, calc(var(--label) - 28px)) minmax(0, 1fr);
+  align-items: start;
+  gap: 4px 0;
+  border-bottom: 0;
+}
+html[data-ui-style] .hc.saved-workspace .saved-calendar-grid .hc-room {
+  border-top: 0;
+}
+html[data-ui-style]
+  .saved-calendar-grid
+  :is(.hc-house, .hc-room)
+  > :is(.location-label, small, .workspace-row-actions) {
+  grid-column: 1;
+  position: relative;
+  z-index: 3;
+  min-width: 0;
+  background: var(--md-surface);
+}
+html[data-ui-style] .saved-calendar-grid .workspace-row-actions {
+  justify-content: flex-start;
+  gap: 6px;
+  margin-top: 4px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-room > :is(small, .workspace-row-actions) {
+  margin-inline-start: 30px;
+}
+html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) > small {
+  margin-block: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+html[data-ui-style] .saved-calendar-grid .hc-settings {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 10px;
+  color: var(--md-link);
+  background: transparent;
+  border: 0;
+  border-radius: var(--ui-icon-radius);
+}
+html[data-ui-style] .saved-calendar-grid .hc-settings:hover {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet {
+  height: auto;
+  box-shadow: none;
+}
+html[data-ui-style] .hc-booking-dialog .hc-range-room {
+  border-bottom: 0;
+}
+html[data-ui-style] .saved-calendar-grid .hc-stay {
+  z-index: 3;
+}
+
+/* Compact location headings: actions sit at the right edge of the label panel. */
+html[data-ui-style] .hc.saved-workspace .saved-calendar-grid :is(.hc-house, .hc-room) {
+  --calendar-actions-width: 70px;
+  display: block;
+  position: relative;
+  padding-block: 10px;
+  min-height: 64px;
+}
+html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) > .location-label {
+  width: calc(var(--label) - 28px - var(--calendar-actions-width) - 8px);
+}
+html[data-ui-style] .saved-calendar-grid .hc-room > .location-label {
+  width: calc(var(--label) - 46px - var(--calendar-actions-width) - 8px);
+}
+html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) > .workspace-row-actions {
+  position: absolute;
+  inset-inline-start: calc(var(--label) - 14px - var(--calendar-actions-width));
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--calendar-actions-width);
+  margin: 0;
+  gap: 6px;
+  background: var(--md-surface);
+}
+html[data-ui-style] .saved-calendar-grid .hc-settings {
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 6px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet,
+html[data-ui-style] .saved-calendar-grid .hc-track {
+  min-height: 64px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-pet > .hc-label {
+  padding-block: 10px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-stay {
+  top: 10px;
+  bottom: 10px;
+  min-height: 44px;
+}
+html[data-ui-style] .saved-calendar-grid .hc-axis {
+  height: auto;
+  min-height: 82px;
+}
+html[data-ui-style] .saved-calendar-grid .workspace-now-marker {
+  top: 56px;
+}
+html[data-ui-style] .saved-workspace .hc-content {
+  padding-top: 16px;
+}
+html[data-ui-style] .saved-workspace .workspace-topbar,
+html[data-ui-style] .saved-workspace .workspace-customer-filter {
+  margin-bottom: 10px;
+}
+html[data-ui-style] .saved-workspace .workspace-filters {
+  gap: 10px;
+  margin-block: 10px;
+}
+html[data-ui-style] .saved-workspace .workspace-filters label {
+  gap: 4px;
+}
+html[data-ui-style] .saved-calendar .hc-toolbar {
+  gap: 10px;
+  margin-block: 10px 6px;
+}
+html[data-ui-style] .saved-calendar .workspace-time-note {
+  margin-block: 6px;
+}
+@media (max-width: 700px) {
+  html[data-ui-style] .hc.saved-workspace .saved-calendar-grid :is(.hc-house, .hc-room) {
+    --calendar-actions-width: 94px;
+  }
+  html[data-ui-style] .saved-calendar-grid .hc-settings {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 10px;
+  }
+}
+html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) > .location-label {
+  width: calc(var(--label) - 28px);
+}
+html[data-ui-style] .saved-calendar-grid .hc-room > .location-label {
+  width: calc(var(--label) - 46px);
+}
+html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) .location-label-kind {
+  min-height: 32px;
+  padding-inline-end: calc(var(--calendar-actions-width) + 8px);
+}
+html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) > .workspace-row-actions {
+  top: 10px;
+  transform: none;
+}
+@media (max-width: 700px) {
+  html[data-ui-style] .saved-calendar-grid :is(.hc-house, .hc-room) .location-label-kind {
+    min-height: 44px;
+  }
+}
+/* Native-family icon geometry switches with CSS, keeping server/public markup stable. */
+.paws-icon > .icon-family {
+  display: none;
+}
+html[data-color-theme='google'] .paws-icon > .icon-google,
+html[data-color-theme='apple'] .paws-icon > .icon-apple,
+html[data-color-theme^='vscode-'] .paws-icon > .icon-microsoft {
+  display: inline;
+}
+html[data-ui-style] .paws-icon > .icon-legacy {
+  display: none;
+}
+.paws-icon
+  :is(.icon-google, .icon-microsoft)
+  :is(path, rect, circle, line, polygon, polyline, ellipse) {
+  fill: currentColor;
+  stroke: none;
+}
+.paws-icon .icon-apple :is(path, rect, circle, line, polygon, polyline, ellipse) {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+html[data-ui-style] :is(.portal, .saved-workspace, .app-dialog) :is(.button, .hc-apply) {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  gap: 8px;
+}
+html[data-ui-style] :is(.portal, .saved-workspace, .app-dialog) .paws-icon {
+  flex-shrink: 0;
+}
+html[data-color-theme='google']
+  :is(.portal, .saved-workspace, .marketing-header)
+  :is(.icon-button, .hc-settings) {
+  border-color: transparent;
+  background: transparent;
+  border-radius: 50%;
+}
+html[data-color-theme='google']
+  :is(.portal, .saved-workspace, .marketing-header)
+  :is(.icon-button, .hc-settings):hover:not(:disabled) {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+html[data-color-theme='apple']
+  :is(.portal, .saved-workspace, .marketing-header)
+  :is(.icon-button, .hc-settings) {
+  border-color: transparent;
+  background: transparent;
+  border-radius: 8px;
+}
+html[data-color-theme^='vscode-']
+  :is(.portal, .saved-workspace, .marketing-header)
+  :is(.icon-button, .hc-settings) {
+  border-color: transparent;
+  background: transparent;
+  border-radius: 4px;
+}
+/* Wizard state colors and labels belong to the active preset, not a separate fixed palette. */
+html[data-ui-style] .hc-booking-dialog .hc-wizard-progress li .hc-step-label {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  border-radius: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+html[data-ui-style] .hc-booking-dialog .hc-wizard-progress li[data-step-state='upcoming'] {
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style]
+  .hc-booking-dialog
+  .hc-wizard-progress
+  li[data-step-state='upcoming']
+  .hc-step-marker {
+  color: var(--md-on-surface-variant);
+  background: var(--md-secondary-container);
+  border: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .hc-booking-dialog .hc-wizard-progress li[data-step-state='current'] {
+  color: var(--md-link);
+  font-weight: 600;
+}
+html[data-ui-style]
+  .hc-booking-dialog
+  .hc-wizard-progress
+  li[data-step-state='current']
+  .hc-step-marker {
+  color: var(--md-on-primary);
+  background: var(--md-primary);
+  border: 1px solid var(--md-primary);
+}
+html[data-ui-style] .hc-booking-dialog .hc-wizard-progress li[data-step-state='completed'] {
+  color: var(--md-on-surface);
+}
+html[data-ui-style]
+  .hc-booking-dialog
+  .hc-wizard-progress
+  li[data-step-state='completed']
+  .hc-step-marker {
+  color: var(--md-on-primary-container);
+  background: var(--md-primary-container);
+  border: 1px solid var(--md-primary);
+}
+html[data-ui-style] .hc-booking-dialog .hc-wizard-progress li::after {
+  background: var(--md-outline-variant);
+}
+html[data-ui-style] .hc-booking-dialog .hc-wizard-progress li[data-step-state='completed']::after {
+  background: var(--md-primary);
+}
+html[data-ui-style] .hc-booking-dialog .hc-step-marker {
+  font-size: 14px;
+}
+html[data-ui-style] .embedded-location-editor {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+html[data-ui-style] .embedded-location-editor .customer-form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+html[data-color-theme='apple']
+  .hc-booking-dialog
+  .hc-wizard-progress
+  li[data-step-state='completed']
+  .hc-step-marker {
+  background: color-mix(in srgb, var(--md-primary) 14%, var(--md-surface));
+}
+/* A foreground/background pair changes atomically; animation must not wash text out between states. */
+html[data-ui-style]
+  :is(.portal, .saved-workspace, .marketing-header, .app-dialog)
+  :is(.button, .hc-apply, .language, .icon-button) {
+  transition: box-shadow 120ms ease;
+}
+html[data-ui-style] .hc .hc-booking-dialog .hc-range-room-name .booking-room-choice {
+  color: var(--md-link);
+  background: var(--md-surface);
+}
+html[data-ui-style]
+  .hc
+  .hc-booking-dialog
+  .hc-range-room-name
+  .booking-room-choice[aria-pressed='true'] {
+  color: var(--md-on-primary);
+  background: var(--md-primary);
+}
+html[data-ui-style] .hc .hc-booking-dialog .hc-range-room-name .booking-room-choice:disabled {
+  color: var(--md-on-disabled);
+  background: var(--md-disabled-container);
+  opacity: 1;
+}
+html[data-ui-style] :is(.portal, .saved-workspace, .marketing-header, .appearance-dialog) a,
+html[data-ui-style] .customer-directory-panel > .customer-list > li {
+  transition: box-shadow 120ms ease;
+}
+html[data-ui-style] .hc .custom-date-error[role='status'] {
+  color: var(--md-error);
+}
+html[data-ui-style]
+  :is(.portal, .hc)
+  :is(input, textarea, .custom-select-trigger)[aria-invalid='true'] {
+  border-color: var(--md-error);
+}

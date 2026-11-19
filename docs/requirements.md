@@ -1,5 +1,126 @@
 # Product requirements
 
+## Current owner theme direction — familiar apps, complete components, readable text
+
+Use named presets matching familiar apps' colors and component styling: Google (default), Apple, Microsoft Light and Microsoft Dark. Curate away extra editor/terminal options and replace the invented palette collection and separate Soft/Clean switch. Apply each theme consistently to every app component family, including typography, surfaces, borders, geometry, focus, hover/selected/disabled/validation states, calendars, forms, dropdowns, tables, dialogs and feedback. Text and content must remain very readable; verify contrast and wrapping on mobile/desktop and both languages. Keep the shared house/room hierarchy, modal scrolling and existing business workflows. Marketing keeps its original colors and has no theme control. This clarification supersedes earlier palette/style suggestions below.
+
+
+## Crafted theme direction — implemented locally
+
+Refine every app palette and style as a complete visual composition, drawing on strong product design and editor/terminal theme references (VS Code, Sublime Text, JetBrains and terminal themes). Coordinate neutral surfaces, contrast, interaction accents, parent/child hierarchy, borders and depth. Provide palette previews that demonstrate actual component relationships. Soft/Clean must differ in elevation and borders as well as corners. Keep the existing warm default, white work areas, bilingual usability and independent status colors. Marketing retains its previous colors and no theme control.
+
+## Appearance customization — implemented locally
+
+Appearance controls and preferences apply only to `/app/` routes. Public marketing navigation has no theme button and retains the original forest/porcelain colors and shapes. Route changes remove app appearance attributes on public pages and restore the saved choice when returning to the app; storage events never recolor public pages.
+
+Provide bilingual browser-local Appearance controls for changing colors and component styles. Warm/Soft remains the default; offer Warm, Blue, Forest and Iris colors with Soft/Clean corners, immediate preview, persistence across pages/reloads, tab synchronization and reset. Explain when unavailable browser storage makes changes session-only. Preserve accessible status colors and visually distinct house/room identities in every preset. This is a personal browser preference, not an account or organization branding setting.
+
+
+## Latest owner design direction — clean, clear Material Design
+
+Use **Material Design** as the shared UI standard across the app and marketing site, while preserving the owner’s explicit requirements and brand style. This is a visual/interaction requirement, not authorization to replace the technology stack or add a component library.
+
+- Use consistent typography, spacing, alignment, component sizing and clear visual hierarchy. Keep labels, instructions and primary actions concise; remove repeated information and unnecessary decoration.
+- Apply consistent Material-style fields, custom dropdowns/autocomplete, date pickers, buttons, tabs, dialogs, tables, pagination, tooltips and feedback. Keep controls recognizable, with visible focus, selected, disabled, loading, validation and empty states.
+- Preserve white app content below navigation, consistent warm neutral input borders matching search fields, terracotta focus and peach selection, borderless spaced dropdown items, non-red dropdown hover, and only one open dropdown. The owner’s latest 2026-11-18 warm-style instruction supersedes the earlier cool Google-blue and light-green color choices. Use color consistently and maintain readable contrast.
+- Make houses and rooms visually distinct in both calendars and location management: stronger full-width parent house headers, lighter indented room rows, recognizable roof/door icons and bilingual type captions. Do not rely on color alone.
+- Maintain compact readable calendar grids with single continuous borders, clear dates/statuses/availability and accessible pet details. Keep booking dialogs spacious and readable with viewport clearance and unclipped fields.
+- Preserve responsive desktop/mobile layouts, keyboard and touch usability, accessible names, readable text sizing and bilingual English/Simplified Chinese content without clipping. Use restrained motion and respect reduced-motion preferences.
+- Review complete user flows, not isolated components, so navigation, forms, pricing, balances, calendar and profile feel consistent and easy to understand. Material defaults must not reintroduce removed Settings navigation, duplicate headers or unwanted booking fields.
+
+Documentation only; implementation and visual/browser validation remain future work. No code, commits, pushes or deployment.
+
+
+## Latest owner requirement — roles on My profile
+
+My profile must show the signed-in user’s assigned role or roles (Admin, Employee, Customer), using clear localized labels in English and Simplified Chinese. Show all applicable roles for a multi-role identity, based on trusted backend authorization data rather than a user-editable profile field. Viewing a role must not allow self-promotion. During impersonation, distinguish the actual signed-in user’s roles from the customer context so the profile does not misrepresent identity or authority.
+
+Documentation only; no application/test implementation, commits, pushes or deployment.
+
+
+## Latest owner navigation clarification — remove Settings button
+
+Remove the **Settings button from the app navigation bar**. Admin primary tabs are Calendar / Balances / Customers / Pricing; customer-context tabs remain Calendar / Balances / Pets. This supersedes earlier instructions to show Settings in navigation. Keep existing required management workflows reachable through their relevant feature pages; removing this button does not remove those requirements. My profile remains a secondary account action.
+
+Documentation only; no application code, commits, pushes or deployment.
+
+
+## Latest owner requirements — balance pagination and admin Pricing tab
+
+- Add **pagination to the Balances page** for growing balance records and statement/history lists. Apply customer/pet/date filters before pagination, retain filters while changing pages, and reset to the first page when filters change. Use stable ordering and backend pagination so the UI does not need to download every record. Handle empty results, first/last pages and loading/errors clearly.
+- Add an **admin-only Pricing tab** alongside Calendar, Balances and Customers. Keep customer-context navigation Calendar / Balances / Pets; do not expose admin price editing to customers or employees. Enforce administrator authorization on the backend.
+- Pricing provides a focused place to manage boarding weight-band rates, fixed-price boarding-day packages and their derived USD/percentage savings, grooming/service/add-on prices, and holiday surcharge pricing. Admins also configure holiday dates. Preserve owner-approved facts, required validation and audited changes; do not invent missing rates.
+- Price changes must not silently rewrite purchased packages, confirmed bookings, payment allocations or historical statements. Recheck current quotes before new booking/purchase confirmation. Effective-date and treatment of existing unconfirmed quotes remain to be specified.
+
+Documentation only; no application/test code, commits, pushes or deployment.
+
+
+## Latest owner requirement — pagination
+
+- Paginate growing record lists, including customers, pets, balance/statement history, booking history and administrative payment/withdrawal lists. Calendar date navigation remains separate from record-list pagination.
+- Provide clear page navigation and range/count information where available, with a consistent page-size control and accessible labels in English and Simplified Chinese. Actual page-size defaults are implementation choices, not business facts.
+- Apply search, filters, sort and role/customer/assigned-house authorization **before** pagination on the backend; do not download every record merely to paginate in the browser. Use deterministic ordering and stable continuation/cursor handling.
+- Preserve active filters, sort and page size while navigating; changing search/filter/sort resets to the first page. Handle loading, errors, empty results and deleted/moved records without misleading stale rows or duplicate/missing results in an unchanged dataset.
+- Pagination must not limit complete filtered statement exports or autocomplete discovery: exports cover the permitted filtered dataset, and autocomplete must allow discovery beyond its first result page.
+
+Documentation only; no code, commits, pushes or deployment.
+
+
+## Latest owner confirmation — balance plus card payment
+
+- A customer can pay for a boarding booking using their available **boarding-day balance**, then pay the uncovered portion by **card** when that balance is insufficient. This is supported mixed payment, not a requirement to buy another package. Direct all-card booking remains supported.
+- Show total boarding-day usage, days covered by balance, uncovered usage, itemized USD card amount, separate holiday card fee and expected remaining day balance before confirmation. Do not charge the card for the portion already covered by days.
+- Holiday additional fees remain card charges even when the available day balance covers the full ordinary stay. Grooming remains directly charged.
+- Record both payment portions and preserve original rates, day deductions and card-payment references. Prevent duplicate card charges, duplicate deductions and booking confirmation with an unpaid remainder. Coordinate capacity, balance reservation and payment success; failed payment must not leave a confirmed unpaid booking or permanently consume days.
+- Exact allocation of available days across differently priced dates, fractional-day shortfalls, mixed-payment cancellation/refund allocation and provider/payment timing still need approved rules. Do not assume which dates a day balance covers or silently convert one day to a fixed dollar value.
+
+Documentation only; no code, commits, pushes or deployment.
+
+
+## Latest owner clarification — fixed-price boarding-day packages
+
+- Package discounts use a **fixed purchase price for a defined number of boarding days**, such as a30-day package; they are not primarily entered as a percentage discount. Actual package prices remain owner-configured.
+- Present package day quantity, fixed USD price, and savings as both a **USD amount** and a **percentage**, compared with the equivalent regular boarding price for the same pet/pricing category.
+- Calculation: regular equivalent total = package day quantity × applicable regular daily rate; USD savings = regular equivalent total − fixed package price; savings percentage = USD savings ÷ regular equivalent total ×100. Do not invent rates or compute a percentage with a zero/missing comparison price.
+- Preserve the package price and comparison-rate inputs used at purchase. Holiday card fees remain separately itemized and must not be represented as included package savings without an approved rule.
+- USD amounts follow the confirmed cent-flooring rule. Savings-percentage display precision and package eligibility/price tables still need specification.
+
+Documentation only; no code, commits, pushes or deployment.
+
+
+## Latest owner confirmation — direct charges and discounted boarding days
+
+- Grooming charges the customer directly in USD; do not spend boarding-day balances on grooming.
+- Boarding supports **direct customer payment** for the itemized stay, or use of **prepaid boarding days purchased at a discount**. A direct-paid stay must not also deduct prepaid days. A day-funded stay deducts its confirmed day usage when booked.
+- Holiday additional fees remain separate credit-card charges on configured holiday dates, including for prepaid-day bookings.
+- Fixed package prices, eligible day quantities/tiers and purchase terms must be configured from owner-approved facts; do not invent them. Show derived USD and percentage savings against equivalent regular boarding pricing. Retain purchase price, discount and day quantity for statements and admin-selected withdrawal valuation.
+- Payment provider/timing and failure/refund rules for direct payments, day purchases and holiday card fees still require decisions. Mixed day-plus-card payment for insufficient days is confirmed; direct-paid cancellation refund destination and mixed-payment refund allocation remain unspecified.
+
+Documentation only; no application/test implementation, commits, pushes or deployment.
+
+
+## Latest owner confirmations — holiday card fees and employee permissions
+
+- Same-date drop-off and pickup costs **one boarding day**. Monday-to-Tuesday remains two.
+- A50% refund of3 deducted boarding days restores **1.5 boarding days**, without rounding that refund up to a whole day.
+- Administrators configure holiday dates. The additional20% holiday fee applies only to holiday dates and is charged to the **customer’s credit card**, separately from boarding-day balance. This supersedes holiday surcharge deductions in boarding days and the earlier1.2-day examples. Round base boarding-day usage up once for the entire stay. A two-date stay deducts2 boarding days even if both dates are holidays, plus the itemized holiday card fee. Card-payment provider, collection timing, failure handling and holiday-fee refund terms still need decisions.
+- Employees assigned to a house may verify pet weights and correct actual drop-off/pickup records for that house. Retain original values, corrected values and responsible employee in history; enforce assigned-house scope on the backend.
+- Discard the **$95 X-Large Dog – Long Hair / Double Coat** bath row. The **$115** row remains; the separate$95 XL short-hair row is unchanged. Preserve info/parsed.json as the original transcription.
+
+These are documentation requirements, not implemented or tested functionality. No code, commits, pushes or deployment.
+
+
+## Latest owner decisions — 2026-11-18 (takes precedence)
+
+- Employees are assigned to houses. Scope employee calendar/operational access and actual drop-off/pickup to assigned houses, with backend enforcement. House assignments do not grant administrator financial permissions. Assignment management and correction/weight-verification permissions remain unspecified.
+- Weight boundaries use the next higher bucket (the shared8lb boundary selects8–15lb). Do not invent rates for gaps/out-of-range weights.
+- Sum boarding-day usage for the entire stay, including holiday adjustments, then round up once to a whole day; never round each day separately. Floor USD amounts to the nearest cent. Partial-refund rounding and USD flooring stage remain to be confirmed.
+- Unused boarding-day balances are withdrawable with administrator approval. Admin pays externally for now. For withdrawal/refund payout valuation, admin chooses the original purchase price or deducted booking price; retain the selected basis and calculation in history. Multi-rate allocation remains unspecified.
+- Boarding-day expiry is still unconfirmed. Balance is boarding days, while prices/payments/payouts are USD.
+
+Documentation only; no application/test implementation, commits, pushes or deployment. See [consolidated requirements](booking-and-billing-requirements.md).
+
+
 Canonical requirements, consolidated from owner instructions through 2026-11-16. Later explicit owner decisions supersede earlier proposals in historical handoff entries. “Confirmed” describes requested behavior, not implementation status. Do not invent unresolved business rules or treat example numbers as real rates/capacities.
 
 ## Current focus and delivery
@@ -16,7 +137,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-16.
 
 - One shared Google sign-in supports administrator, employee and customer roles; one identity can have multiple roles and own pets.
 - Customers access only their own profile, pets, packages/balances, bookings, calendars and history. They cannot edit roles or balances.
-- Employees access necessary operational information and record actual handoffs. Employee house scope and some permissions remain undecided.
+- Employees access necessary operational information and record actual handoffs. Employees are assigned to houses; some operational permissions remain undecided.
 - Administrators manage customers, pets, houses, rooms, business rules, balances and operations across houses.
 - Enforce current roles and record ownership on the server, including image reads. UI visibility is not authorization.
 - Maintain one canonical customer/person and stable pet records. No automatic merging/linking by editable name/email.
@@ -46,7 +167,7 @@ Canonical requirements, consolidated from owner instructions through 2026-11-16.
 - Admin adjusts applicable constraints/closures through UI. Show affected future bookings before changes that would cause conflicts; exact change policy remains unresolved.
 - Provide a dynamic house map for a selected date/time, plus room timelines, to inspect occupancy and help optimize placements. No required dragging; provide tap/click/keyboard actions and mobile room-list access.
 - Distinguish planned occupancy from actual presence. Keep overdue pets visibly in care until pickup is recorded.
-- No actual business addresses, room capacities, capacity group values or pricing have been supplied. Do not seed example values as approved business rules.
+- Actual business addresses, room capacities and capacity group values remain unconfigured. Owner-supplied poster prices/ranges and policies are recorded in info/parsed.json; currency code, conflicting rows and charging mechanics still need resolution. Do not treat fictional sample values as approved business rules.
 
 ## 4. Customer calendars, timeline and availability — confirmed
 
@@ -59,10 +180,28 @@ Canonical requirements, consolidated from owner instructions through 2026-11-16.
 - Keep selected booking details when a package purchase is needed.
 - Do not advertise a working paid booking/refund flow before its dependencies and approved rules are implemented.
 
+## Latest balance clarification — takes precedence
+
+Owner explicitly confirmed **boarding days** after rejecting USD and generic credits. Pricing remains USD. Deduct boarding days when booked; qualifying cancellation restores days; manual bank redemption converts days to USD under a rule still to be defined. Never interpret days as dollars or generic grooming credits. The20% holiday-day adjustment implies fractional boarding-day usage, with precision to specify. Monday-to-Tuesday counts as two billable days and cancellation notice uses calendar days. The prior “USD never expire” statement does not decide expiry for boarding days; confirm its relationship to earlier first-use/validity rules. Documentation only; no coding.
+
+## Latest financial decisions — 2026-11-18 (override earlier unresolved notes)
+
+Full consolidated specification and all supplied poster tables: [booking-and-billing-requirements.md](booking-and-billing-requirements.md). Latest owner instruction is documentation only; do not code.
+
+
+- **Updated:** pricing is USD; customer/pet balance is boarding days. Earlier USD-wallet wording is superseded. Preserve day records and represent monetary quotes/payouts separately.
+- Deduct the calculated boarding-day charge atomically **when the booking is confirmed**, alongside its itemized USD quote. Explicit administrator overrides take precedence over ordinary configured rules and must be audited.
+- Every calendar date throughout the year is billable; do not exclude weekends/months. How partial/same-day stays become billable units is still awaiting confirmation.
+- Cancellation refunds generally restore boarding days to balance. No-shows and notice under seven days receive no standard refund. Existing confirmed headlines remain full refund at14 days and half at7 days; exact notice-day calculation still needs confirmation.
+- Customers may request redemption of boarding days into a USD bank payment; conversion needs definition. For the current phase, an administrator pays externally and records the result; payment-provider integration is later. Reserve requested money to prevent simultaneous booking spend, and restore it if a request is rejected/cancelled without payment.
+- The poster's20% holiday surcharge is charged to boarding-day balance and applies **only to holiday dates**, not every date in a stay. Admin-configured actual holiday dates remain necessary.
+- Use the owner-supplied prices in info/parsed.json and reflect them on the marketing site. USD is now confirmed even though the original transcription's currency_code is null. Prorate numeric boarding price ranges by pet weight within the selected band. Preserve overlapping weight boundaries/conflicting categorical rows for review; do not silently resolve them.
+- Remove daycare as a service; retain pet boarding. This does not remove separately requested grooming, drop-in visits, dog walking or academy content.
+
 ## 5. Packages, prices and balances — confirmed
 
 - Packages contain **30 days**.
-- Package prices depend on **pet type and weight range**, not a per-exact-weight multiplication.
+- Prices depend on pet type and the supplied weight bands. Latest clarification: numeric boarding price ranges are prorated by weight within the band; do not multiply the band price directly by weight.
 - Customers prepay days before booking. Actual payment method/confirmation remains undecided.
 - Packages last **three months from first use**, not purchase or booking creation. First use refers to the first day of care covered by the package; exact activation/expiry boundaries still need decisions.
 - Latest owner simplification: balance setup uses one explicit valid-from/valid-through date range and reusable named policy templates. Remove the separate eligible-month selector/check; do not combine overlapping month and date policies. January–September was an earlier example, not a default.
@@ -219,3 +358,7 @@ Owner clarification: shapes resize when needed by the composition; the sun shoul
 ## Marketing page navigation clarification — 2026-11-17
 
 Latest owner direction: main navbar items open their dedicated pages in order Home / Services / About us / FAQs. Navbar active state belongs to the current page and must not change or move as Home scrolls. Home owns the cinematic scroll story and separate chapter controls; order its Services introduction before About to match the navigation. Page entry remains aligned to the top, with restrained movement-only animation and reduced-motion access. Preserve existing Home section deep links and detailed content.
+
+## Latest service/quotation clarification — 2026-11-18
+
+Users supply pet weight and booking dates for an automatic itemized boarding quote, or select a service and grooming-store appointment for an itemized service/add-on quote. Printed boarding ranges are prorated by weight (for example8–15lb maps proportionally from$52 to$58 within that band). Currency/balance are USD. See the consolidated booking/billing specification for full source tables, latest rules and remaining boundary/rounding questions. Owner requested Markdown updates only—no coding.

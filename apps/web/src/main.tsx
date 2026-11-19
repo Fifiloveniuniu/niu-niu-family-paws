@@ -1,3 +1,4 @@
+import { setAppearanceScope } from './theme-preferences';
 import useLanguageUrl from './use-language-url';
 import { withLanguage } from './language-url.ts';
 import { navigate, routeUrl } from './routing';
@@ -30,6 +31,9 @@ import { initReactI18next, useTranslation } from 'react-i18next';
 import './style.css';
 import './marketing.css';
 import './marketing-system.css';
+import './material-theme.css';
+import './theme-presets.css';
+import './theme-components.css';
 const Portal = React.lazy(() => import('./portal'));
 
 void i18n.use(initReactI18next).init({
@@ -60,6 +64,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
   const page = route.kind;
   const marketingRoot = React.useRef<HTMLElement>(null);
   const appVisible = route.path.startsWith('/app/') && page !== 'not-found';
+  React.useLayoutEffect(() => setAppearanceScope(appVisible), [appVisible]);
   useMarketingHeader(!appVisible);
   useMarketingMotion(marketingRoot, route.path, i18n.language);
   const previousDestination = React.useRef(route.path + (route.hash ?? ''));
@@ -77,6 +82,8 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
       about: t('approach'),
       faqs: t('questions'),
       pricing: uiText('ui.main.pricing'),
+      operations: uiText('ui.operations.title'),
+      'admin-pricing': uiText('ui.pricingAdmin.title'),
       contact: t('contact'),
       spaces: uiText('ui.main.ourSpaces'),
       academy: uiText('ui.main.groomingAcademy'),

@@ -1,3 +1,4 @@
+import { petTypeChoice } from './pet-type';
 import { withoutLanguage } from './language-url.ts';
 import { localeFor, type Language, uiText } from './i18n.ts';
 import CalendarPetPreview from './calendar-pet-preview';
@@ -588,6 +589,7 @@ export default function HouseCalendar({
                     {uiText('ui.houseCalendar.petType')}
                     <CustomSelect
                       aria-label={uiText('ui.houseCalendar.petType')}
+                      renderChoice={petTypeChoice}
                       value={speciesFilter}
                       onChange={(event) => {
                         setSpeciesFilter(event.target.value);

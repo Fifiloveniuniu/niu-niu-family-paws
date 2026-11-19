@@ -13,7 +13,7 @@
     "contracts": "openapi-typescript packages/contracts/openapi.json -o packages/contracts/generated.ts",
     "dev:api": "node --watch apps/api/src/server.ts",
     "check:api": "tsc --project apps/api/tsconfig.json",
-    "test:store": "firebase emulators:exec --only auth,firestore --project demo-niu-niu --config firebase.test.json \"node --test tests/*integration.mjs\"",
+    "test:store": "firebase emulators:exec --only auth,firestore --project demo-niu-niu --config firebase.test.json \"node --test --test-concurrency=1 tests/*integration.mjs\"",
     "dev:local": "FAMILY_PAWS_LOCAL_DEMO=true vite --mode test --host localhost --port 4180 --strictPort",
     "dev:local:api": "FAMILY_PAWS_EMULATORS=true GCLOUD_PROJECT=demo-niu-niu FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8085 PORT=8081 node --watch apps/api/src/server.ts",
     "dev:local:emulators": "firebase emulators:start --only auth,firestore --project demo-niu-niu --config firebase.test.json",

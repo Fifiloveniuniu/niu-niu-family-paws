@@ -1,3 +1,5 @@
+import Icon from './icons';
+import AppearanceControl from './appearance';
 import { type Language, uiText } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -72,6 +74,7 @@ export function MarketingHeader({
   }, [page]);
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
+      if (document.querySelector('dialog:modal')) return;
       if (event.key === 'Escape') {
         setOpen(false);
         setDropdown(null);
@@ -79,6 +82,7 @@ export function MarketingHeader({
       }
     };
     const outside = (event: PointerEvent) => {
+      if (document.querySelector('dialog:modal')) return;
       if (!header.current?.contains(event.target as Node)) {
         setOpen(false);
         setDropdown(null);
@@ -173,7 +177,9 @@ export function MarketingHeader({
         onClick={() => setOpen(!open)}
       >
         {open ? uiText('ui.marketingShell.close') : uiText('ui.marketingShell.menu')}{' '}
-        <span aria-hidden="true">{open ? '×' : '☰'}</span>
+        <span aria-hidden="true">
+          {page === 'app' ? <Icon name={open ? 'close' : 'menu'} /> : open ? '×' : '☰'}
+        </span>
       </button>
       <div id="marketing-menu" className="marketing-menu">
         {navigation}
@@ -181,7 +187,6 @@ export function MarketingHeader({
           <nav aria-label={uiText('ui.marketingShell.mainNavigation')}>
             {link('/home/', t('home'), 'home')}
             {submenu('services', '/services/', t('services'), [
-              ['/services/#daycare', t('day')],
               ['/services/#boarding', t('night')],
               ['/services/#drop-in', uiText('ui.marketingShell.dropInVisits')],
               ['/services/#dog-walking', uiText('ui.marketingShell.dogWalking')],
@@ -208,6 +213,7 @@ export function MarketingHeader({
         )}
         <div className="header-actions">
           <MarketingLanguageMenu onChange={onLanguageChange} />
+          {page === 'app' && <AppearanceControl />}
           {account ?? <SiteAccountLink />}
         </div>
       </div>

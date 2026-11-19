@@ -20,9 +20,14 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   await page.route('**/api/customers/*/pets', (route) =>
     route.fulfill({ json: { items: [], nextCursor: null } }),
   );
+  await page.route('**/api/identity', (route) =>
+    route.fulfill({ json: { uid: localId, roles: ['customer'] } }),
+  );
   let loseResponse = true;
   await page.route('**/api/profile', async (route) => {
     const req = route.request();
+    if (!req.headers().authorization)
+      return route.fulfill({ status: 401, json: { code: 'unauthenticated' } });
     expect(req.headers().authorization).toMatch(/^Bearer /);
     if (req.method() === 'GET') return route.fulfill(profile ? { json: profile } : { status: 204 });
     const input = req.postDataJSON();
@@ -56,6 +61,7 @@ test('customer saves their own profile, keeps edits during access refresh, and r
     },
     { email },
   );
+  await page.goto('/app/account/profile/');
   await expect(page.getByRole('heading', { name: 'My profile', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add customer', exact: true })).toHaveCount(0);
   await page.getByRole('textbox', { name: 'Your name', exact: true }).fill('王小明');
@@ -89,6 +95,7 @@ test('customer saves their own profile, keeps edits during access refresh, and r
   await expect(page.getByRole('textbox', { name: '您的姓名', exact: true })).toHaveValue('王小明');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: 'test-results/profile-mobile-zh.png', fullPage: true });
+  await page.getByRole('button', { name: '菜单', exact: true }).click();
   await page.locator('.hc-account-menu>summary').click();
   await page.getByRole('button', { name: '退出登录', exact: true }).click();
   await expect(page.getByRole('heading', { name: '我的资料', exact: true })).toHaveCount(0);

@@ -1,12 +1,11 @@
-import AdminPricing from './admin-pricing';
-import SavedCancellationPolicy from './saved-cancellation-policy';
-import { CustomerPicker } from './workspace-pickers';
 import EmployeeAssignments from './employee-assignments';
+import { CustomerPicker } from './workspace-pickers';
+import AdminPricing from './admin-pricing';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarketingHeader } from './marketing-shell';
 import type { Language } from './i18n.ts';
-import { uiText, localeFor } from './i18n.ts';
+import { uiText, uiValue, localeFor } from './i18n.ts';
 import { currentRoute, navigate, updateQuery } from './routing';
 import { apiJson, ApiError } from './api-client';
 import CustomAutocomplete from './custom-autocomplete';
@@ -19,6 +18,8 @@ import Customers from './customers';
 import Pets from './pets';
 import Profile from './profile';
 import Houses from './houses';
+import Rooms from './rooms';
+import SavedCancellationPolicy from './saved-cancellation-policy';
 import {
   useWorkspaceData,
   petKey,
@@ -121,6 +122,12 @@ export default function SavedWorkspace({
   >(false);
   const [editing, setEditing] = React.useState<Booking | null>(null);
   const [balance, setBalance] = React.useState<false | PetRow | undefined>(false);
+  const [manageLocation, setManageLocation] = React.useState<{
+    houseId: string;
+    roomId?: string;
+  } | null>(null);
+  const managementRoot = React.useRef<HTMLDivElement>(null);
+  const [locationBusy, setLocationBusy] = React.useState(false);
   const [address, setAddress] = React.useState<LocationRow['house'] | null>(null);
   const [contact, setContact] = React.useState<Customer | null>(null);
   const [employeeAssignments, setEmployeeAssignments] = React.useState(false);
@@ -154,6 +161,7 @@ export default function SavedWorkspace({
     setEditing(null);
     setBalance(false);
     setContact(null);
+    setManageLocation(null);
     setOwnEditor(false);
     setEmployeeAssignments(false);
     setAction(null);
@@ -238,10 +246,10 @@ export default function SavedWorkspace({
         />
         <div className="hc-body">
           <main className="hc-content" id="main">
-            <div className="workspace-topbar">
-              {view === 'calendar' ? <WorkspaceClock /> : <span />}
-              <div className="workspace-primary-actions">
-                {view === 'calendar' && (
+            {view === 'calendar' && (
+              <div className="workspace-topbar">
+                <WorkspaceClock />
+                <div className="workspace-primary-actions">
                   <button
                     className="hc-apply"
                     disabled={!data || !data.rows.length}
@@ -250,9 +258,9 @@ export default function SavedWorkspace({
                     <Icon name="plus" />
                     {t(admin ? 'addBooking' : 'availability')}
                   </button>
-                )}
+                </div>
               </div>
-            </div>
+            )}
             {data?.admin && !data.customer && ['calendar', 'customers'].includes(view) && (
               <div className="workspace-customer-filter">
                 <label>
@@ -393,6 +401,7 @@ export default function SavedWorkspace({
                               onBooking={showBooking}
                               onAdd={(room) => setAdding(room)}
                               onAddress={setAddress}
+                              onManage={setManageLocation}
                               loading={loading}
                             />
                           ) : (
@@ -506,7 +515,6 @@ export default function SavedWorkspace({
                     )
                   )
                     setOwnEditor(false);
-                  setEmployeeAssignments(false);
                 }}
               >
                 <div data-own-profile-editor>
@@ -515,10 +523,56 @@ export default function SavedWorkspace({
                     showHeading={false}
                     onSaved={() => {
                       setOwnEditor(false);
-                      setEmployeeAssignments(false);
                       changed();
                     }}
                   />
+                </div>
+              </Modal>
+            )}
+            {manageLocation && data?.admin && (
+              <Modal
+                title={
+                  manageLocation.roomId
+                    ? uiText('ui.rooms.edit')
+                    : uiValue('ui.houses.labels', i18n.language).edit
+                }
+                disabled={locationBusy}
+                onClose={() => {
+                  if (confirmDiscardChanges(i18n.language, managementRoot.current))
+                    setManageLocation(null);
+                }}
+              >
+                <div ref={managementRoot}>
+                  {manageLocation.roomId ? (
+                    <Rooms
+                      houseId={manageLocation.houseId}
+                      addressReady={
+                        !!data.locations
+                          .find((item) => item.house.id === manageLocation.houseId)
+                          ?.house.address?.trim()
+                      }
+                      embedded
+                      onBusyChange={setLocationBusy}
+                      initialEditId={manageLocation.roomId}
+                      onChanged={changed}
+                      onEditorClosed={() => {
+                        setLocationBusy(false);
+                        setManageLocation(null);
+                      }}
+                    />
+                  ) : (
+                    <Houses
+                      embedded
+                      onBusyChange={setLocationBusy}
+                      initialSelected={manageLocation.houseId}
+                      initialEdit
+                      onChanged={changed}
+                      onEditorClosed={() => {
+                        setLocationBusy(false);
+                        setManageLocation(null);
+                      }}
+                    />
+                  )}
                 </div>
               </Modal>
             )}

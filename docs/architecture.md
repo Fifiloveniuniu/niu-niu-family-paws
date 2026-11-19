@@ -1,5 +1,10 @@
 # Architecture and planned workflows
 
+## Browser appearance preferences
+
+Appearance is frontend-only: version-2 `family-paws:appearance` contains a supported palette name, with a bundled component style defined by `theme-catalog.ts`, `theme-presets.css` and `theme-components.css`. Migrate legacy custom and retired preset names to supported presets. Validate malformed/unknown data and fall back to Google. Scope root palette/style attributes to app routes; remove them and restore original marketing metadata on public routes. Restore the saved choice on app navigation/history. Cross-tab storage events update app appearance without recoloring marketing pages. Storage failures leave working session-only changes with an explanation. Initialize before React mounting without inline scripts or CSP changes. No API, Firestore, account synchronization or authorization changes.
+
+
 ## Request path
 
 Browser -> Firebase Hosting frontend -> Cloud Run REST API -> Firestore.
@@ -111,3 +116,26 @@ Workspace event reads join immutable boarding events and canonical customer/pet 
 Authenticated admin/customer pages use the canonical workspace APIs rather than calendar fixtures. Canonical customer/pet and house/room pairs identify rows and filters. Admin customer context is an explicit server-checked filter, retaining actual Firebase identity/audit actor; normal users derive their own scope on the server. Calendar occupancy windows, directory pagination, current accounts and recorded statement filters/exports read persisted data. Versions and stable operation IDs protect manual adjustments, staff plans and actual handoffs; uncertain saves retain frozen inputs for identical retries. Confirmed forms release only their own draft notice, and context changes protect retained customer drafts.
 
 Custom date controls capture neutral wall values; selected IANA zones resolve real UTC instants, reject DST gaps and require explicit repeated-time choices. Availability uses aggregate free/blocked spans without private guest identities. Staff bookings remain explicitly unbilled, and customer paid booking is unavailable until financial policy is configured. An isolated named-database browser harness exercises the same real authentication/stores/routes used by production, without writing owner/demo records. Native Chrome walkthrough and final combined deployment remain outstanding.
+
+## Saved validity templates and explicit partial date input (implemented; deployment deferred)
+
+Administrator-only validity templates store named, reviewed valid-from/valid-through dates and active/archive state. Writes use versions, immutable actual-actor history and actor/target/payload-bound operation receipts; identical retries return the original result. Template dates are copied into balance adjustments rather than linked dynamically, so editing or archiving a template never rewrites existing account coverage or balance events. These templates do not infer financial activation, billable units or expiry policy.
+
+Date/time pickers immediately expose the selected day as a partial wall value, without inventing a midnight time. The field requires an explicit time before scheduling can advance; the existing IANA-gap/fold resolution remains authoritative. Autocomplete options can provide an avatar/icon adornment shared by the selected input. Type filtering uses canonical pet metadata, without inferring species from editable names.
+
+The local fixture preparation script guards the demo emulator addresses/project, migrates only still-marked synthetic pets with absent (not explicitly cleared) species from their recorded testSpecies, preserves images/credits and existing accounts/bookings, and creates one clearly labeled practice house/room only if absent. It cannot run against production.
+
+
+## Current-account role display (implemented; deployment deferred)
+
+`GET /api/identity` returns only the authenticated actor UID and role names, with private/no-store caching and no caller-selected scope. Current Firebase account state supplies exact-boolean Admin/Employee claims; verified Google identities have the existing personal Customer access. This display endpoint grants no permissions and has no write operation. Profile uses the generated contract, keeps account roles distinct from view-as customer records, refreshes on visibility resume, and omits unverified roles on errors without blocking ordinary profile editing. Location management is reachable from Calendar and cancellation configuration from Balances after removal of the Settings header action. Pricing navigation and management are implemented through the separate boarding-configuration feature.
+
+
+## Local pricing, paging and assigned-house operations — 2026-11-18
+
+The new versioned pricing configuration, bounded record-list reads, filter-bound statement cursors and employee operational transactions are described in [pricing-and-operations.md](pricing-and-operations.md). Added composite indexes remain undeployed. The canonical Pet read contract now includes optional verification weight/date; the actor/reference stays in trusted storage/history. Employee role is checked against current Auth state and current trusted house assignments, including inside operational write transactions. No financial permissions or paid-booking lifecycle are granted by operational access. Public pricing exposes active configuration only. All local e2e runs use isolated headless Chrome, never the owner's Chrome profile.
+
+
+## Shared presentation layer
+
+The public site and authenticated pages use shared Material color roles in `apps/web/src/material-theme.css`, alongside existing fonts and branding. Dialogs and form controls reuse the existing React components. The saved main calendar and booking wizard share viewport, frame, axis and track components from `calendar-timeline.tsx`; `timeline-layout.ts` owns timezone-aware day boundaries, visible interval clipping and grid positioning. Use these components for new timeline views instead of independently calculating dates or percentages. See [UI conventions](ui-design.md) for usage and validation boundaries. This presentation work does not change the Google Cloud architecture or financial rules.

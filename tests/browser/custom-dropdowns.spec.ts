@@ -47,7 +47,7 @@ for (const width of [390, 1440])
           .getByRole('option')
           .nth(1)
           .evaluate((e) => getComputedStyle(e).backgroundColor),
-      ).toBe('rgb(231, 238, 227)');
+      ).toBe('rgb(194, 231, 255)');
       await status.click();
       await expect(house).toHaveAttribute('aria-expanded', 'false');
       await expect(page.getByRole('listbox')).toHaveCount(1);
@@ -94,11 +94,13 @@ test('custom selector stays visible inside a modal and Escape closes only the dr
   await page.getByRole('button', { name: 'Add booking', exact: true }).click();
   const dialog = page.getByRole('dialog');
   const pet = dialog.getByRole('combobox', { name: 'Pet', exact: true });
-  await expect(pet).toHaveText('N/A');
+  await expect(pet).toBeDisabled();
+  await chooseOption(dialog.getByRole('combobox', { name: 'Customer', exact: true }), '1');
   await pet.click();
   await expect(page.getByRole('listbox')).toBeVisible();
-  await chooseOption(pet, 'Miso');
-  await expect(pet).toContainText('Miso');
+  const selected = await page.getByRole('option').first().getAttribute('data-value');
+  await page.getByRole('option').first().click();
+  await expect(pet).toHaveAttribute('data-value', selected!);
   await pet.click();
   await pet.press('Escape');
   await expect(page.getByRole('listbox')).toHaveCount(0);

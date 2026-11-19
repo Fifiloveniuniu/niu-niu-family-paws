@@ -1,3 +1,5 @@
+import { parseWallInput } from './wall-time';
+import { petTypes, petTypeChoice, PetTypeIcon } from './pet-type';
 import CustomDateInput from './custom-date-input';
 import { localeFor, speciesText, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
@@ -57,6 +59,7 @@ export default function AssignmentDialog({
 
   const [customer, setCustomer] = React.useState('');
   const [pet, setPet] = React.useState('');
+  const [petType, setPetType] = React.useState('');
   const [start, setStart] = React.useState(localDateTimeValue(sampleDateAtOffset(anchor, 0)));
   const [end, setEnd] = React.useState('');
   const [house, setHouse] = React.useState(initial ? String(initial.house) : '');
@@ -73,7 +76,13 @@ export default function AssignmentDialog({
   const dayOffset = (dateValue: string) => sampleDayOffset(anchor, new Date(dateValue));
   const begin = dayOffset(start);
   const finish = dayOffset(end);
-  const valid = !!selected && Number.isFinite(begin) && Number.isFinite(finish) && finish > begin;
+  const valid =
+    !!selected &&
+    !!parseWallInput(start, true) &&
+    !!parseWallInput(end, true) &&
+    Number.isFinite(begin) &&
+    Number.isFinite(finish) &&
+    finish > begin;
   const roomIssue = (
     candidateHouse: PlacementHouse,
     candidateRoom: PlacementHouse['rooms'][number],
@@ -283,6 +292,28 @@ export default function AssignmentDialog({
             />
           </label>
           <label>
+            {uiText('ui.houseCalendar.petType')}
+            <CustomAutocomplete
+              label={uiText('ui.houseCalendar.petType')}
+              value={petType}
+              disabled={false}
+              options={[
+                { value: '', label: uiText('ui.houseCalendar.allTypes') },
+                ...petTypes.map((species) => ({
+                  value: species,
+                  label: speciesText(species),
+                  content: petTypeChoice(species),
+                  adornment: <PetTypeIcon species={species} />,
+                })),
+              ]}
+              onChange={(value) => {
+                setPetType(value);
+                setPet('');
+                invalidate();
+              }}
+            />
+          </label>
+          <label>
             {uiText('ui.calendarAssignment.pet')}
             <CustomAutocomplete
               label={uiText('ui.calendarAssignment.pet')}
@@ -290,21 +321,19 @@ export default function AssignmentDialog({
               disabled={!customer}
               value={pet}
               options={pets
-                .filter((item) => item.customerId === customer)
+                .filter(
+                  (item) => item.customerId === customer && (!petType || item.species === petType),
+                )
                 .map((item) => ({
                   value: item.name,
                   label: item.name,
                   search: item.name + ' ' + speciesText(item.species),
+                  adornment: <PetProfileAvatar name={item.name} />,
                   content: (
                     <span className="custom-autocomplete-pet">
-                      <span aria-hidden="true">
-                        {item.species === 'dog' ? '🐕' : item.species === 'cat' ? '🐈' : '🐇'}
-                      </span>
                       <PetProfileAvatar name={item.name} />
                       <span>
                         <strong>{item.name}</strong>
-                        <br />
-                        <small>{speciesText(item.species)}</small>
                       </span>
                     </span>
                   ),

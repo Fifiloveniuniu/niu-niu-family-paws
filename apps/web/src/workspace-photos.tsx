@@ -8,6 +8,7 @@ import useAnchoredPopover from './use-anchored-popover';
 import { useWorkspaceText } from './workspace-text';
 import { petKey, scopedUrl, type PetRow } from './workspace-data';
 import Icon from './icons';
+import { PetTypeIcon } from './pet-type';
 const PhotoLoader = React.createContext<(row: PetRow) => Promise<string>>(async () => {
   throw Error('Photo provider unavailable');
 });
@@ -122,24 +123,18 @@ export function WorkspaceAvatar({ row, large = false }: { row: PetRow; large?: b
     </span>
   );
 }
-export function PetOption({ row }: { row: PetRow }) {
+export function PetOption({ row, showType = true }: { row: PetRow; showType?: boolean }) {
   return (
     <span className="workspace-pet-option">
-      <span aria-hidden="true">
-        {row.pet.species === 'dog'
-          ? '🐕'
-          : row.pet.species === 'cat'
-            ? '🐈'
-            : row.pet.species === 'rabbit'
-              ? '🐇'
-              : '•'}
-      </span>
+      {showType && <PetTypeIcon species={row.pet.species ?? ''} />}
       <WorkspaceAvatar row={row} />
       <span>
         <strong>{row.pet.name}</strong>
-        <small>
-          {row.pet.species ? speciesText(row.pet.species) : uiText('common.notAvailable')}
-        </small>
+        {showType && (
+          <small>
+            {row.pet.species ? speciesText(row.pet.species) : uiText('common.notAvailable')}
+          </small>
+        )}
       </span>
     </span>
   );
