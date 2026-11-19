@@ -1,3 +1,4 @@
+import EmployeeAssignments from './employee-assignments';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarketingHeader } from './marketing-shell';
@@ -113,6 +114,7 @@ export default function SavedWorkspace({
   const [balance, setBalance] = React.useState<false | PetRow | undefined>(false);
   const [address, setAddress] = React.useState<LocationRow['house'] | null>(null);
   const [contact, setContact] = React.useState<Customer | null>(null);
+  const [employeeAssignments, setEmployeeAssignments] = React.useState(false);
   const [ownEditor, setOwnEditor] = React.useState(false);
   const [detail, setDetail] = React.useState<Booking | null>(null);
   const [detailError, setDetailError] = React.useState(false);
@@ -144,6 +146,7 @@ export default function SavedWorkspace({
     setBalance(false);
     setContact(null);
     setOwnEditor(false);
+    setEmployeeAssignments(false);
     setAction(null);
     setDetail(null);
     setNotice('');
@@ -415,6 +418,12 @@ export default function SavedWorkspace({
                             <section className="workspace-settings">
                               <div className="customer-heading">
                                 <h2>{t('manageLocations')}</h2>
+                                <button
+                                  className="language"
+                                  onClick={() => setEmployeeAssignments(true)}
+                                >
+                                  {uiText('ui.employeeAssignments.title')}
+                                </button>
                                 <a className="language" href="/pricing/#cancellation-policy">
                                   {uiText('ui.houseCalendar.cancellationPolicy')}
                                 </a>
@@ -433,6 +442,9 @@ export default function SavedWorkspace({
                   </>
                 )}
               </>
+            )}
+            {employeeAssignments && data?.admin && (
+              <EmployeeAssignments onClose={() => setEmployeeAssignments(false)} />
             )}
             {data && adding !== false && (
               <WorkspaceBooking
@@ -484,6 +496,7 @@ export default function SavedWorkspace({
                     )
                   )
                     setOwnEditor(false);
+                  setEmployeeAssignments(false);
                 }}
               >
                 <div data-own-profile-editor>
@@ -492,6 +505,7 @@ export default function SavedWorkspace({
                     showHeading={false}
                     onSaved={() => {
                       setOwnEditor(false);
+                      setEmployeeAssignments(false);
                       changed();
                     }}
                   />

@@ -13,6 +13,7 @@ export type RouteKind =
   | 'customers'
   | 'balances'
   | 'settings'
+  | 'operations'
   | 'personal'
   | 'not-found';
 export type AppRoute = {
@@ -93,6 +94,7 @@ export function parseRoute(input: string): AppRoute {
     '/app/customers/': 'customers',
     '/app/balances/': 'balances',
     '/app/settings/': 'settings',
+    '/app/operations/': 'operations',
     '/app/account/profile/': 'personal',
   };
   if (staticRouteKinds[path]) return { ...base, kind: staticRouteKinds[path] };

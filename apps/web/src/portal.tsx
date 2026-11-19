@@ -1,3 +1,4 @@
+import EmployeeOperations from './employee-operations';
 import { englishCatalog, localeFor, type Language, uiText, uiValue } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
 import React from 'react';
@@ -129,8 +130,12 @@ export default function Portal({
   }, [active]);
   const route = currentRoute();
   React.useEffect(() => {
-    if (active && access === 'employee' && !['login', 'personal'].includes(route.kind))
-      navigate('/app/account/profile/', true);
+    if (
+      active &&
+      access === 'employee' &&
+      !['login', 'personal', 'operations'].includes(route.kind)
+    )
+      navigate('/app/operations/', true);
   }, [access, route.path, active]);
   React.useEffect(() => {
     if (!import.meta.env.DEV)
@@ -204,6 +209,15 @@ export default function Portal({
     </details>
   );
 
+  if (user && (access === 'employee' || (access === 'admin' && route.kind === 'operations')))
+    return (
+      <EmployeeOperations
+        admin={access === 'admin'}
+        key={user.uid}
+        onLanguageChange={onLanguageChange}
+        account={accountControls}
+      />
+    );
   if (user && (access === 'admin' || access === 'customer'))
     return (
       <SavedWorkspace

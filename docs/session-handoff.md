@@ -1,3 +1,7 @@
+## Employee care workspace — 2026-11-18
+
+Employees land on assigned-house operations with date filters, server pagination, authorized pet photos, actual handoffs/corrections and weight verification. Administrators manage trusted employees’ house assignments from location management. Profile stays available; financial/customer administration is not exposed to employees. Bilingual dialogs preserve audit/version conflict handling and planned times. No deployment.
+
 ## Verified profile roles — 2026-11-18
 
 My profile shows every backend-verified signed-in role in English and Chinese, independently of customer view-as context. Roles refresh on returning to the tab; verification failures show an unavailable state without granting or guessing access. No editable role field and no deployment. Headless browser tests cover multi-role administrators, own customers, small screens and verification failure.

@@ -1,3 +1,8 @@
+import { employeeAssignmentStore } from '../../apps/api/src/employee-assignments.ts';
+import { operationsStore } from '../../apps/api/src/operations.ts';
+import { pricingStore } from '../../apps/api/src/pricing.ts';
+import { cancellationDraftStore } from '../../apps/api/src/cancellation-draft.ts';
+import { validityTemplateStore } from '../../apps/api/src/validity-templates.ts';
 import sharp from 'sharp';
 import { randomUUID, createHash } from 'node:crypto';
 import { initializeApp } from 'firebase-admin/app';
@@ -20,7 +25,8 @@ if (
 const app = initializeApp({ projectId: 'demo-niu-niu' });
 const db = getFirestore(app, 'integration-browser-' + randomUUID());
 const auth = getAuth(app);
-async function identity(admin = false) {
+const createdIdentities = [];
+async function identity(admin = false, employee = false) {
   const sub = randomUUID();
   const jwt =
     [
@@ -50,11 +56,14 @@ async function identity(admin = false) {
   );
   if (!response.ok) throw Error('Cannot initialize emulator identity');
   const user = await response.json();
-  if (admin) await auth.setCustomUserClaims(user.localId, { admin: true, employee: true });
-  return { jwt, uid: user.localId };
+  if (admin || employee) await auth.setCustomUserClaims(user.localId, { admin, employee });
+  const result = { jwt, uid: user.localId, email: sub + '@example.test' };
+  createdIdentities.push(result);
+  return result;
 }
-const administrator = await identity(true),
-  owner = await identity();
+const administrator = await identity(true, true),
+  owner = await identity(),
+  employee = await identity(false, true);
 const photos = new Map();
 const api = buildApp({
   verify: firebaseIdentity(auth),
@@ -69,6 +78,11 @@ const api = buildApp({
   rooms: roomStore(db),
   balances: balanceStore(db),
   bookings: bookingStore(db),
+  employeeAssignments: employeeAssignmentStore(db, auth),
+  operations: operationsStore(db),
+  pricing: pricingStore(db),
+  cancellationDraft: cancellationDraftStore(db),
+  validityTemplates: validityTemplateStore(db),
   workspace: workspaceStore(db),
 });
 const cid = randomUUID(),
@@ -99,7 +113,7 @@ for (let i = 0; i < 100; i++) {
     version: 1,
     createdAt: now,
     updatedAt: now,
-    ...(i === 0 ? { ownerUid: owner.uid } : {}),
+    ...(i === 0 ? { ownerUid: owner.uid, loginEmail: owner.email } : {}),
   });
   for (let j = 0; j < 3; j++) {
     const petId = i === 0 && j === 0 ? pid : randomUUID();
@@ -138,12 +152,21 @@ await db.doc(`houses/${hid}/rooms/${rid}`).set({
   createdAt: now,
   updatedAt: now,
 });
-api.get('/__test-fixture', async () => ({ administrator, owner, cid, pid, hid, rid }));
+await db.doc('employeeAssignments/' + employee.uid).set({ houseIds: [hid], version: 1 });
+api.get('/__test-fixture', async () => ({
+  administrator: await identity(true, true),
+  owner,
+  employee,
+  cid,
+  pid,
+  hid,
+  rid,
+}));
 await api.listen({ host: '127.0.0.1', port: 8092 });
 
 for (const signal of ['SIGINT', 'SIGTERM'])
   process.once(signal, async () => {
     await api.close();
-    await Promise.all([administrator, owner].map((user) => auth.deleteUser(user.uid)));
+    await Promise.allSettled(createdIdentities.map((user) => auth.deleteUser(user.uid)));
     process.exit(0);
   });
