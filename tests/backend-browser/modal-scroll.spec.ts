@@ -54,9 +54,21 @@ test('photo viewer locks an already-scrolled public page and restores its positi
   await page.goto('/spaces/?lang=en#space-gallery');
   const photo = page.locator('.photo-open').first();
   await photo.scrollIntoViewIfNeeded();
-  const before = await page.evaluate(() => window.scrollY);
-  expect(before).toBeGreaterThan(0);
+  await photo.locator('img').evaluate((image: HTMLImageElement) => image.decode());
+  await page.evaluate(() => document.fonts.ready);
+  // Measure at the real click, after Playwright's actionability scrolling.
+  await photo.evaluate((button) =>
+    button.addEventListener(
+      'click',
+      () => {
+        button.setAttribute('data-opening-scroll', String(window.scrollY));
+      },
+      { once: true, capture: true },
+    ),
+  );
   await photo.click();
+  const before = Number(await photo.getAttribute('data-opening-scroll'));
+  expect(before).toBeGreaterThan(0);
   const dialog = page.locator('dialog.photo-dialog[open]');
   await expect(dialog).toBeVisible();
   await expect(page.locator('html')).toHaveCSS('overflow-y', 'hidden');

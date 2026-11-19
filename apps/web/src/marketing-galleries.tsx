@@ -35,11 +35,13 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
   const title = useId();
   useEffect(() => {
     if (selected !== null) dialog.current?.showModal();
-    else dialog.current?.close();
+    else {
+      dialog.current?.close();
+      opener.current?.focus({ preventScroll: true });
+    }
   }, [selected]);
   const close = () => {
     setSelected(null);
-    opener.current?.focus();
   };
   return (
     <section className="photo-gallery" aria-labelledby={title}>
@@ -96,7 +98,10 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
         ref={dialog}
         className="photo-dialog"
         aria-label={uiText('ui.marketingGalleries.photoViewer')}
-        onCancel={close}
+        onCancel={(event) => {
+          event.preventDefault();
+          close();
+        }}
         onClose={close}
         onClick={(event) => {
           if (event.target === event.currentTarget) close();
