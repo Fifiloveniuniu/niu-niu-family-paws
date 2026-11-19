@@ -1,3 +1,7 @@
+## Boarding configuration screens — 2026-11-18
+
+Admin navigation is Calendar / Balances / Customers / Pricing with no Settings button. Pricing edits source rates, fixed-price packages, explicit comparisons/savings, service prices and holiday dates/surcharge. Balances provides validity templates and a saved cancellation draft; location management and employee assignments remain reachable through calendar management. Templates copy reviewed dates and never rewrite existing accounts; cancellation drafts do not activate automatic refunds. No deployment.
+
 ## Paginated workspace lists — 2026-11-18
 
 Customers, pets, balances and statement history use bounded server pages with shared bilingual controls. Filter/page-size changes reset continuation; full filtered statement exports still traverse every page. Autocomplete can search and load beyond its first page, retaining selected customer labels after reopening. Pet deep links discover later pages and private photos stay authorized. No deployment.

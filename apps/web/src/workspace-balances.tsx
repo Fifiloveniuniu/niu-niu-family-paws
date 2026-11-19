@@ -1,5 +1,6 @@
 import { CustomerPicker, PetPicker } from './workspace-pickers';
 import { useCursorPage, Pagination } from './pagination';
+import ValidityTemplates, { TemplatePicker } from './validity-templates';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor, uiText } from './i18n.ts';
@@ -171,6 +172,13 @@ export function BalanceEditor({
               onChange={(event) => setDelta(event.target.value)}
             />
           </label>
+          <TemplatePicker
+            disabled={!row}
+            onSelect={(template) => {
+              setFrom(template.validFrom);
+              setThrough(template.validThrough);
+            }}
+          />
           <div className="workspace-field-pair">
             <label>
               {t('validFrom')}
@@ -232,6 +240,7 @@ export default function WorkspaceBalances({
   onCustomer: (id: string) => void;
 }) {
   const t = useWorkspaceText();
+  const [templates, setTemplates] = React.useState(false);
   const { i18n } = useTranslation();
 
   const kind = search.get('kind') ?? '',
@@ -351,6 +360,7 @@ export default function WorkspaceBalances({
   const rows = balances.items;
   return (
     <section className="saved-balances">
+      {templates && <ValidityTemplates onClose={() => setTemplates(false)} />}
       <div className="workspace-section-actions workspace-balance-toolbar">
         {data.admin && !data.customer && (
           <label>
@@ -387,6 +397,12 @@ export default function WorkspaceBalances({
         )}
         {data.admin && (
           <div className="workspace-primary-actions">
+            <a className="language" href="/app/settings/cancellation/">
+              {uiText('ui.houseCalendar.cancellationPolicy')}
+            </a>
+            <button className="language" onClick={() => setTemplates(true)}>
+              {uiText('ui.templates.title')}
+            </button>
             <button className="hc-apply" disabled={false} onClick={() => onAdjust(undefined)}>
               <Icon name="plus" />
               {t('addBalance')}

@@ -1,3 +1,5 @@
+import AdminPricing from './admin-pricing';
+import SavedCancellationPolicy from './saved-cancellation-policy';
 import { CustomerPicker } from './workspace-pickers';
 import EmployeeAssignments from './employee-assignments';
 import React from 'react';
@@ -111,7 +113,7 @@ export default function SavedWorkspace({
     scope,
     range,
     active,
-    view === 'balances',
+    view === 'balances' || view === 'admin-pricing',
   );
   const admin = data?.admin ?? initialAdmin;
   const [adding, setAdding] = React.useState<
@@ -208,33 +210,23 @@ export default function SavedWorkspace({
           page="app"
           showNavigation={false}
           onLanguageChange={onLanguageChange}
-          account={
-            <div className="workspace-account-actions">
-              {admin && (
-                <a
-                  className="icon-button"
-                  href={href('/app/settings/')}
-                  title={t('settings')}
-                  aria-label={t('settings')}
-                >
-                  <Icon name="settings" />
-                </a>
-              )}
-              {account}
-            </div>
-          }
+          account={account}
           navigation={
             <nav className="app-header-nav" aria-label={uiText('ui.houseCalendar.workspace')}>
               {[
                 ['/app/calendar/', 'calendar', 'calendar'],
                 ['/app/balances/', 'balances', 'balance'],
                 ['/app/customers/', data?.customer || !admin ? 'pets' : 'customers', 'customers'],
+                ...(admin && !scope ? [['/app/pricing/', 'pricing', 'balance']] : []),
               ].map(([path, label, icon]) => (
                 <a
                   key={path}
                   href={href(path)}
                   aria-current={
-                    view === (label === 'pets' ? 'customers' : label) ? 'page' : undefined
+                    view ===
+                    (label === 'pets' ? 'customers' : label === 'pricing' ? 'admin-pricing' : label)
+                      ? 'page'
+                      : undefined
                   }
                 >
                   <Icon name={icon as 'calendar' | 'balance' | 'customers'} />
@@ -311,7 +303,9 @@ export default function SavedWorkspace({
                 <Profile onSaved={changed} />
               </div>
             )}
-            {view !== 'personal' && (
+            {view === 'admin-pricing' &&
+              (admin && !scope ? <AdminPricing /> : <p role="alert">{t('denied')}</p>)}
+            {view !== 'personal' && view !== 'admin-pricing' && (
               <>
                 {error && (
                   <div className="workspace-error" role="alert">
@@ -427,25 +421,29 @@ export default function SavedWorkspace({
                         )}
                         {view === 'settings' &&
                           (data.admin ? (
-                            <section className="workspace-settings">
-                              <div className="customer-heading">
-                                <h2>{t('manageLocations')}</h2>
-                                <button
-                                  className="language"
-                                  onClick={() => setEmployeeAssignments(true)}
-                                >
-                                  {uiText('ui.employeeAssignments.title')}
-                                </button>
-                                <a className="language" href="/pricing/#cancellation-policy">
-                                  {uiText('ui.houseCalendar.cancellationPolicy')}
-                                </a>
-                              </div>
-                              <Houses
-                                initialSelected={route.locationId}
-                                routable={route.locations}
-                                onChanged={changed}
-                              />
-                            </section>
+                            route.cancellation ? (
+                              <SavedCancellationPolicy />
+                            ) : (
+                              <section className="workspace-settings">
+                                <div className="customer-heading">
+                                  <h2>{t('manageLocations')}</h2>
+                                  <button
+                                    className="language"
+                                    onClick={() => setEmployeeAssignments(true)}
+                                  >
+                                    {uiText('ui.employeeAssignments.title')}
+                                  </button>
+                                  <a className="language" href="/app/settings/cancellation/">
+                                    {uiText('ui.houseCalendar.cancellationPolicy')}
+                                  </a>
+                                </div>
+                                <Houses
+                                  initialSelected={route.locationId}
+                                  routable={route.locations}
+                                  onChanged={changed}
+                                />
+                              </section>
+                            )
                           ) : (
                             <p>{t('denied')}</p>
                           ))}

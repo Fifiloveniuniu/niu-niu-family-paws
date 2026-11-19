@@ -598,3 +598,13 @@
   position: relative;
   overflow-y: auto;
 }
+
+.admin-pricing .workspace-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.admin-pricing .hc-scales {
+  flex-wrap: wrap;
+}
