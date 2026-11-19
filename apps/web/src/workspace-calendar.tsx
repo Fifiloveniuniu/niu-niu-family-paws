@@ -297,7 +297,6 @@ export default function WorkspaceCalendar({
           </div>
         </div>
       </div>
-      <p className="workspace-time-note">{t('timesIn', { zone: range.zone })}</p>
       {loading && <p role="status">{t('loading')}</p>}
       <CalendarViewport
         className="hc-scroll"

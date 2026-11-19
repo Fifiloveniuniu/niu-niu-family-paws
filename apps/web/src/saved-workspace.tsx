@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarketingHeader } from './marketing-shell';
 import type { Language } from './i18n.ts';
-import { uiText, uiValue, localeFor } from './i18n.ts';
+import { uiText, uiValue } from './i18n.ts';
 import { currentRoute, navigate, updateQuery } from './routing';
 import { apiJson, ApiError } from './api-client';
 import CustomAutocomplete from './custom-autocomplete';
@@ -41,13 +41,7 @@ import './workspace.css';
 import './saved-workspace.css';
 function WorkspaceClock() {
   const t = useWorkspaceText();
-  const { i18n } = useTranslation();
   const [zone, setZone] = React.useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const [now, setNow] = React.useState(new Date());
-  React.useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 30000);
-    return () => clearInterval(timer);
-  }, []);
   const zones = React.useMemo(
     () => [...new Set([zone, 'UTC', ...Intl.supportedValuesOf('timeZone')])],
     [zone],
@@ -68,13 +62,6 @@ function WorkspaceClock() {
           ))}
         </CustomSelect>
       </label>
-      <time dateTime={now.toISOString()}>
-        {new Intl.DateTimeFormat(localeFor(i18n.language), {
-          timeZone: zone,
-          hour: '2-digit',
-          minute: '2-digit',
-        }).format(now)}
-      </time>
     </div>
   );
 }

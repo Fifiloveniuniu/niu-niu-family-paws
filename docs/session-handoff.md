@@ -1,3 +1,7 @@
+## Calendar timezone display cleanup — 2026-11-18
+
+Removed the calendar “Times shown in …” note and the current time beneath the timezone selector in both saved and preview calendars. Retained the timezone label/selector and timeline Now indicator. The timezone dropdown now shares the filters’ label layout, weight and padding; computed Chrome styles match on desktop and mobile. Delivery PR: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/158. Production build, formatting and actual localhost headless Chrome checks passed in English desktop (1440px) and Chinese mobile (390px). No deployment.
+
 ## Current merged delivery and workspace reconciliation — 2026-11-18
 
 The owner explicitly requested that all remaining project changes be checked in. Application implementation through PR #154 is merged on `main` at `1dd19320a106fd6e05964ac1d6cc83cdd8efb9fa`, with verified signatures and green CI: 74 unit tests, 15 Auth/Firestore integrations, API check, build, formatting and 48 isolated headless Chrome journeys. The 17 selected shared-control/profile/routing journeys also passed locally. No production deployment occurred.
