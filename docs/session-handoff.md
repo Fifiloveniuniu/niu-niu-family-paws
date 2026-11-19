@@ -1,3 +1,7 @@
+## Compact Customers workspace — local, 2026-11-18
+
+Removed the duplicate customer selector from the directory page, simplified search/filter chrome, tightened directory rows and kept contact editing, account linking, view-as and server pagination. Desktop pairs the directory with a focused pet pane; phones show the selected customer’s compact pet rows with Back retaining search. Header/marketing copy no longer crowds the selected customer. Actual localhost Chrome checks cover bilingual desktop/mobile, saved contact edits, back navigation and paginated pet deep links. Review images: docs/review/customers-2026-11-18. No deployment.
+
 ## Balances and Activity redesign — local, 2026-11-18
 
 Balances uses separate Current balances / Activity tabs with retained URL filters. Day quantities, grouped validity dates and per-pet activity shortcuts replace the stacked table presentation. Mobile rows keep actions visible; Activity retains pagination, entry details and complete filtered CSV export. Page totals remain explicitly page-scoped. Existing manual credits, validity templates and cancellation drafts remain intact. Build and focused localhost Chrome journeys pass, including bilingual desktop/mobile, persistence, paging/export and modal scrolling; review screenshots are in docs/review/balances-2026-11-18. No deployment.

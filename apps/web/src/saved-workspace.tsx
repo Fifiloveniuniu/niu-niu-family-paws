@@ -262,7 +262,7 @@ export default function SavedWorkspace({
                 </div>
               </div>
             )}
-            {data?.admin && !data.customer && ['calendar', 'customers'].includes(view) && (
+            {data?.admin && !data.customer && view === 'calendar' && (
               <div className="workspace-customer-filter">
                 <label>
                   {t('customer')}
@@ -271,17 +271,7 @@ export default function SavedWorkspace({
                     value=""
                     initial={data.customers}
                     onChange={(value) => {
-                      if (value)
-                        navigate(
-                          scopedUrl(
-                            view === 'customers'
-                              ? '/app/customers/'
-                              : view === 'balances'
-                                ? '/app/balances/'
-                                : '/app/calendar/',
-                            value,
-                          ),
-                        );
+                      if (value) navigate(scopedUrl('/app/calendar/', value));
                     }}
                   />
                 </label>

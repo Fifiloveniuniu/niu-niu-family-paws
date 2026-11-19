@@ -1276,5 +1276,8 @@
   "ui.balanceView.pageSummary": "本页变动",
   "ui.balanceView.daysUnit": "寄养天数",
   "ui.balanceView.reason": "备注",
-  "ui.balanceView.allBalances": "返回全部余额"
+  "ui.balanceView.allBalances": "返回全部余额",
+  "ui.customerView.intro": "查找客户，管理宠物与联系方式。",
+  "ui.customerView.search": "姓名或邮箱",
+  "ui.customerView.choose": "选择一位客户"
 }

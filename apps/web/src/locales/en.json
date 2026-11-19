@@ -1282,5 +1282,8 @@
   "ui.balanceView.pageSummary": "Changes on this page",
   "ui.balanceView.daysUnit": "boarding days",
   "ui.balanceView.reason": "Note",
-  "ui.balanceView.allBalances": "Back to all balances"
+  "ui.balanceView.allBalances": "Back to all balances",
+  "ui.customerView.intro": "Find a customer, then manage their pets and contact details.",
+  "ui.customerView.search": "Name or email",
+  "ui.customerView.choose": "Choose a customer"
 }
