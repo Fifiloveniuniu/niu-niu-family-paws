@@ -1,0 +1,263 @@
+{
+  "description": "Transcription of the five supplied posters. Source titles, row wording, capitalization and prices are preserved without interpreting conflicts or business rules. Newlines in source labels preserve printed line breaks.",
+  "price_symbol": "$",
+  "currency_code": null,
+  "weight_unit": "lb",
+  "sources": {
+    "price1.jpg": {
+      "title": "Niu Niu\nDog Boarding",
+      "wechat": "Ilikesunflower2017",
+      "pricing_basis": "per day",
+      "prices": [
+        {
+          "source_label": "0-8 pounds",
+          "price": 50
+        },
+        {
+          "source_label": "8-15 pounds",
+          "price": {
+            "min": 52,
+            "max": 58
+          }
+        },
+        {
+          "source_label": "16-35 pounds",
+          "price": {
+            "min": 62,
+            "max": 72
+          }
+        },
+        {
+          "source_label": "36-55 pounds",
+          "price": {
+            "min": 73,
+            "max": 76
+          }
+        },
+        {
+          "source_label": "56-75 pounds",
+          "price": {
+            "min": 77,
+            "max": 85
+          }
+        },
+        {
+          "source_label": "76-85 pounds",
+          "price": {
+            "min": 88,
+            "max": 100
+          }
+        }
+      ],
+      "policies": [
+        "LONG WEEKEND: Add 20% Holiday Rate",
+        "HOLIDAY POLICY: Holiday period we only accept customers with package."
+      ],
+      "tagline": "Your dog’s home away from home.",
+      "table_title": "BOARDING PRICE TABLE",
+      "column_titles": [
+        "SIZE (WEIGHT)",
+        "PRICE (PER DAY)"
+      ]
+    },
+    "price2.jpg": {
+      "title": "Niu Niu\nDog Bath Price List",
+      "includes": [
+        "Bath with oatmeal shampoo",
+        "Brush-out",
+        "Nails clipped & filed",
+        "Ears cleaned",
+        "Paw pad trim"
+      ],
+      "prices": [
+        {
+          "source_label": "Small Dog (<20 lbs)",
+          "price": 55
+        },
+        {
+          "source_label": "Medium Dog (<45 lbs)",
+          "price": 65
+        },
+        {
+          "source_label": "Large Dog - Short Hair\n(<65 lbs)",
+          "price": 75
+        },
+        {
+          "source_label": "Large Dog - Long Hair\n(<65 lbs)",
+          "price": 90
+        },
+        {
+          "source_label": "X-Large Dog - Short Hair\n(>65 lbs)",
+          "price": 95
+        },
+        {
+          "source_label": "X-Large Dog - Long Hair\n/ Double Coat (>65 lbs)",
+          "price": 95
+        },
+        {
+          "source_label": "X-Large Dog - Long Hair/\nDouble Coat (>65 lbs)",
+          "price": 115
+        }
+      ],
+      "surcharges": [
+        {
+          "source_label": "+ Double Coat +$30",
+          "price": 30
+        }
+      ],
+      "includes_title": "Dog Bath Includes:"
+    },
+    "price3.jpg": {
+      "title": "Dog Grooming\nPRICE LIST",
+      "includes": [
+        "Bath with oatmeal shampoo",
+        "Hair cut with sanitary trim",
+        "Brush-out",
+        "Nails clipped & filed",
+        "Ears plucked & cleaned"
+      ],
+      "prices": [
+        {
+          "source_label": "Xsmall Dog-Straight/Wavy coat (<10 Lbs)",
+          "price": 80
+        },
+        {
+          "source_label": "Xsmall Dog-Doodle/Curly coat (<10 Lbs)",
+          "price": 110
+        },
+        {
+          "source_label": "Small Dog-Straight/Wavy coat (<20 Lbs)",
+          "price": 95
+        },
+        {
+          "source_label": "Small Dog-Doodle/Curly coat (<20 Lbs)",
+          "price": 125
+        },
+        {
+          "source_label": "Medium Dog-Straight/Wavy coat (<40 Lbs)",
+          "price": 120
+        },
+        {
+          "source_label": "Medium Dog-Doodle/Curly coat (<40 Lbs)",
+          "price": 145
+        },
+        {
+          "source_label": "Large Dog-Straight/Wavy coat (<60 Lbs)",
+          "price": 150
+        },
+        {
+          "source_label": "Large Dog-Doodle/Curly coat (<60 Lbs)",
+          "price": 165
+        },
+        {
+          "source_label": "Xlarge Dog-Doodle/Curly coat (>60 Lbs)",
+          "price": 195
+        }
+      ],
+      "includes_title": "DOG GROOMING INCLUDES"
+    },
+    "price4.jpg": {
+      "title": "CAT BATH PRICE LIST",
+      "prices": [
+        {
+          "source_label": "GENERAL CLEANING BATH (SHORT HAIR)",
+          "price": 95
+        },
+        {
+          "source_label": "DEEP CLEANING BATH (SHORT HAIR)",
+          "price": 115
+        },
+        {
+          "source_label": "GENERAL CLEANING BATH (LONG HAIR)",
+          "price": 105
+        },
+        {
+          "source_label": "DEEP CLEANING BATH (LONG HAIR)",
+          "price": 125
+        }
+      ],
+      "includes": [
+        "Bath",
+        "Dry",
+        "Deshedding",
+        "Nail trim",
+        "Ear and eye cleaning"
+      ],
+      "add_ons": [
+        {
+          "source_label": "FULL BODY HAIR CUT",
+          "price": 80
+        },
+        {
+          "source_label": "DE MATTING AND SHEDDING (SHORT HAIR; 20 MINS)",
+          "price": 35
+        },
+        {
+          "source_label": "DE MATTING AND SHEDDING (LONG HAIR; 30 MINS)",
+          "price": 55
+        },
+        {
+          "source_label": "SANITARY AND BELLY TRIM",
+          "price": 50
+        },
+        {
+          "source_label": "SANITARY AND PAD TRIM",
+          "price": 20
+        },
+        {
+          "source_label": "NON-PRESCRIPTION FLEA TREATMENT",
+          "price": 25
+        },
+        {
+          "source_label": "TEETH BRUSH",
+          "price": 15
+        },
+        {
+          "source_label": "EAR CARE CLEANING (WAX-BUILDUP REMOVAL)",
+          "price": 15
+        },
+        {
+          "source_label": "DEGREASE TREATMENT (BACK FUR)",
+          "price": 15
+        },
+        {
+          "source_label": "DEGREASE TREATMENT (FULL BODY)",
+          "price": 50
+        }
+      ],
+      "add_ons_title": "CAT ADD-ON CARES"
+    },
+    "groom_academy.jpg": {
+      "brand": "Niu Niu 宠物美容培训",
+      "audience_zh": "华人新移民",
+      "headline_zh": "别再只盯着按摩、保险和地产执照了！",
+      "claims_zh": [
+        "美国养宠家庭数量庞大",
+        "宠物美容行业需求稳定、就业灵活"
+      ],
+      "offerings_zh": [
+        "零基础技能培训",
+        "宠物美容考证指导",
+        "就业积累经验",
+        "未来可自主创业开店"
+      ],
+      "inquiry_topics_zh": [
+        "学习周期",
+        "课程内容",
+        "费用",
+        "就业方向"
+      ],
+      "call_to_action_zh": "欢迎私信咨询",
+      "taglines": [
+        "Good Pets Happier Lives",
+        "用专业 让毛孩子更幸福"
+      ],
+      "english_summary": "Pet grooming training promoted to new Chinese immigrants: beginner skills training, certification exam guidance, gaining work experience, and potential future business ownership. Message privately about course duration, content, fees and career directions.",
+      "course_duration": null,
+      "course_fee": null,
+      "certifying_body": null,
+      "contact_handle": null,
+      "title": "华人新移民"
+    }
+  }
+}
