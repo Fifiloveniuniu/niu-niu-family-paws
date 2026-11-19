@@ -1,3 +1,4 @@
+import { metricsRange, type BusinessMetricsStore, type MetricsQuery } from './business-metrics.ts';
 import { employeeAssignmentRoutes, type EmployeeAssignmentStore } from './employee-assignments.ts';
 import { operationsRoutes, type OperationsStore } from './operations.ts';
 import { pricingRoutes, type PricingStore } from './pricing.ts';
@@ -38,6 +39,7 @@ export interface CustomerStore {
 }
 export class Conflict extends Error {}
 export function buildApp(deps: {
+  businessMetrics?: BusinessMetricsStore;
   pricing?: PricingStore;
   operations?: OperationsStore;
   employeeAssignments?: EmployeeAssignmentStore;
@@ -145,6 +147,17 @@ export function buildApp(deps: {
           if (requestIdentity(request).admin !== true)
             return reply.code(403).send({ code: 'forbidden' });
         });
+        if (deps.businessMetrics)
+          admin.get<{ Querystring: MetricsQuery }>(
+            '/business-metrics',
+            {
+              schema: {
+                querystring: spec.components.schemas.BusinessMetricsQuery,
+                response: { 200: spec.components.schemas.BusinessMetrics },
+              },
+            },
+            async (request) => deps.businessMetrics!.read(metricsRange(request.query)),
+          );
         admin.get<{ Querystring: { cursor?: string; search?: string; pageSize?: string } }>(
           '/customers',
           {

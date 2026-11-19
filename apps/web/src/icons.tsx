@@ -12,6 +12,7 @@ export default function Icon({
   className = '',
 }: {
   name:
+    | 'metrics'
     | 'address'
     | 'calendar'
     | 'customers'

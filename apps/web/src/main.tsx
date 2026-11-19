@@ -84,6 +84,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
       pricing: uiText('ui.main.pricing'),
       operations: uiText('ui.operations.title'),
       'admin-pricing': uiText('ui.pricingAdmin.title'),
+      'business-metrics': uiText('ui.metrics.title'),
       contact: t('contact'),
       spaces: uiText('ui.main.ourSpaces'),
       academy: uiText('ui.main.groomingAcademy'),
