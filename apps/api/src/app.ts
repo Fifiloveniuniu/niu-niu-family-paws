@@ -88,6 +88,15 @@ export function buildApp(deps: {
         if (identity.email_verified !== true) return reply.code(403).send({ code: 'forbidden' });
         (request as typeof request & { identity: Identity }).identity = identity;
       });
+      api.get('/identity', { schema: { querystring: emptyObjectSchema } }, async (request) => {
+        const identity = requestIdentity(request);
+        const roles: ('admin' | 'employee' | 'customer')[] = [];
+        if (identity.admin === true) roles.push('admin');
+        if (identity.employee === true) roles.push('employee');
+        // Every verified Google identity has a personal customer workspace.
+        if (identity.google === true) roles.push('customer');
+        return { uid: identity.uid, roles };
+      });
       if (deps.employeeAssignments) employeeAssignmentRoutes(api, deps.employeeAssignments);
       if (deps.operations) operationsRoutes(api, deps.operations);
       if (deps.pricing) pricingRoutes(api, deps.pricing);

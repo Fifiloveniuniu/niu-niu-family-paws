@@ -50,7 +50,7 @@ async function identity(admin = false) {
   );
   if (!response.ok) throw Error('Cannot initialize emulator identity');
   const user = await response.json();
-  if (admin) await auth.setCustomUserClaims(user.localId, { admin: true });
+  if (admin) await auth.setCustomUserClaims(user.localId, { admin: true, employee: true });
   return { jwt, uid: user.localId };
 }
 const administrator = await identity(true),

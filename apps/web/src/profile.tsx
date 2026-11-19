@@ -8,17 +8,19 @@ import {
   uiValue,
 } from './i18n.ts';
 import CustomSelect from './custom-select';
-import { ApiError, apiOptionalJson } from './api-client';
+import { ApiError, apiOptionalJson, apiJson } from './api-client';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
 import Pets from './pets';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
 import { AccountLinkRequest } from './account-link';
-import type { components } from '../../../packages/contracts/generated';
+import type { components, operations } from '../../../packages/contracts/generated';
 
 type Customer = components['schemas']['Customer'];
 type ProfileWrite = components['schemas']['ProfileWrite'];
+type AccountIdentity =
+  operations['getSignedInIdentity']['responses'][200]['content']['application/json'];
 const englishMessages = englishCatalog['ui.profile.labels'];
 
 function profileRequest(input?: ProfileWrite): Promise<Customer | null> {
@@ -35,6 +37,8 @@ export default function Profile({
 }) {
   const { i18n } = useTranslation();
   const labels = uiValue('ui.profile.labels', i18n.language);
+  const [roles, setRoles] = React.useState<('admin' | 'employee' | 'customer')[] | null>(null);
+  const [rolesError, setRolesError] = React.useState(false);
   const [profile, setProfile] = React.useState<Customer | null>(null);
   const [input, setInput] = React.useState<ProfileWrite>({
     name: '',
@@ -90,9 +94,27 @@ export default function Profile({
   }
   React.useEffect(() => {
     alive.current = true;
+    let roleRequest = 0;
+    function refreshRoles() {
+      if (document.visibilityState !== 'visible') return;
+      const request = ++roleRequest;
+      setRoles(null);
+      setRolesError(false);
+      void apiJson<AccountIdentity>('/identity')
+        .then((identity) => {
+          if (alive.current && request === roleRequest) setRoles(identity.roles);
+        })
+        .catch(() => {
+          if (alive.current && request === roleRequest) setRolesError(true);
+        });
+    }
+    refreshRoles();
+    document.addEventListener('visibilitychange', refreshRoles);
     void load();
     return () => {
       alive.current = false;
+      roleRequest++;
+      document.removeEventListener('visibilitychange', refreshRoles);
     };
   }, []);
   async function save(event: React.FormEvent) {
@@ -135,6 +157,18 @@ export default function Profile({
         </span>
       )}
       <p>{labels.intro}</p>
+      {rolesError && <p role="status">{labels.rolesUnavailable}</p>}
+      {roles && (
+        <div className="profile-roles" aria-label={labels.roles}>
+          <strong>{labels.roles}</strong>
+          <ul>
+            {roles.map((role) => (
+              <li key={role}>{labels[role]}</li>
+            ))}
+          </ul>
+          <p>{labels.roleIdentity}</p>
+        </div>
+      )}
       {loading && <p role="status">{labels.loading}</p>}
       {error && <p role="alert">{labels[error]}</p>}
       {saved && <p role="status">{labels.saved}</p>}

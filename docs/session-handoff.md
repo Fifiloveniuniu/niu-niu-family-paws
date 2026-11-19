@@ -1,3 +1,7 @@
+## Verified profile roles — 2026-11-18
+
+My profile shows every backend-verified signed-in role in English and Chinese, independently of customer view-as context. Roles refresh on returning to the tab; verification failures show an unavailable state without granting or guessing access. No editable role field and no deployment. Headless browser tests cover multi-role administrators, own customers, small screens and verification failure.
+
 ## Saved boarding configuration API — 2026-11-18
 
 Administrator-only audited pricing, holiday dates/surcharge, validity templates and cancellation drafts persist with version checks and idempotent receipts. Public pricing returns active rates only. Source rates are owner-supplied; policy drafts do not enable financial enforcement or paid booking. Existing credited terms and historical prices remain unchanged. No deployment.

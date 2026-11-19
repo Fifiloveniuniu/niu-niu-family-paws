@@ -848,7 +848,13 @@
     "error": "资料加载或保存失败，请重试。",
     "conflict": "资料已在其他页面更新，您还没保存的修改仍保留在这里。请点击“重试”获取最新资料后再编辑；重新加载会替换未保存的修改。",
     "forbidden": "暂时无法访问您的资料。请退出后重新登录。",
-    "invalid": "请填写姓名，最多 120 个字符。"
+    "invalid": "请填写姓名，最多 120 个字符。",
+    "roles": "当前登录账号的角色",
+    "rolesUnavailable": "暂时无法核实账号角色，请刷新页面重试。",
+    "roleIdentity": "这些角色属于当前登录的 Google 账号，代客户查看时也不会改变。只有获授权的管理员才能更改权限。",
+    "admin": "管理员",
+    "employee": "员工",
+    "customer": "客户"
   },
   "ui.siteAccountLink.signInCouldNotFinishAllowTheGooglePopup": "无法完成登录。请允许 Google 弹出窗口后重试。",
   "ui.siteAccountLink.openApp": "打开应用",
