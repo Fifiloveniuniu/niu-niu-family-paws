@@ -1,3 +1,5 @@
+import { employeeAssignmentRoutes, type EmployeeAssignmentStore } from './employee-assignments.ts';
+import { operationsRoutes, type OperationsStore } from './operations.ts';
 import { uuidSchema, emptyObjectSchema, containsControlCharacters } from './validation.ts';
 import { requestIdentity, type Identity, type ProfileIdentity } from './request-context.ts';
 import Fastify, { type FastifyRequest } from 'fastify';
@@ -29,6 +31,8 @@ export interface CustomerStore {
 }
 export class Conflict extends Error {}
 export function buildApp(deps: {
+  operations?: OperationsStore;
+  employeeAssignments?: EmployeeAssignmentStore;
   verify: (token: string) => Promise<Identity>;
   store: CustomerStore;
   pets?: PetStore;
@@ -64,6 +68,8 @@ export function buildApp(deps: {
         if (identity.email_verified !== true) return reply.code(403).send({ code: 'forbidden' });
         (request as typeof request & { identity: Identity }).identity = identity;
       });
+      if (deps.employeeAssignments) employeeAssignmentRoutes(api, deps.employeeAssignments);
+      if (deps.operations) operationsRoutes(api, deps.operations);
       if (deps.workspace) workspaceRoutes(api, deps.workspace);
       if (deps.bookings) bookingRoutes(api, deps.bookings);
       if (deps.balances) balanceRoutes(api, deps.balances);

@@ -1,3 +1,4 @@
+import { employeeHouse } from './employee-access.ts';
 import { createHash } from 'node:crypto';
 import { FieldPath, Filter, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
@@ -109,13 +110,15 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
     identity: Identity,
     cid: string,
     pid?: string,
+    houseId?: string,
   ) {
     const c = await tx.get(database.doc('customers/' + cid));
     if (
       !c.exists ||
       !(
         identity.admin === true ||
-        (identity.google === true && c.data()!.ownerUid === identity.uid)
+        (identity.google === true && c.data()!.ownerUid === identity.uid) ||
+        (await employeeHouse(tx, database, identity, houseId))
       )
     )
       throw new PetAccess();
@@ -134,7 +137,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
     input: Pick<BookingWrite, 'customerId' | 'petId' | 'houseId' | 'roomId'>,
     previous?: Booking | null,
   ) {
-    const pet = await authorize(tx, identity, input.customerId, input.petId);
+    const pet = await authorize(tx, identity, input.customerId, input.petId, input.houseId);
     const houseRef = database.doc('houses/' + input.houseId),
       roomRef = houseRef.collection('rooms').doc(input.roomId);
     const lockIds = [...new Set([input.houseId, ...(previous ? [previous.houseId] : [])])];
@@ -154,7 +157,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
     if (!house.address?.trim() || !validTimezone(house.timezone))
       throw new BookingConflict('house_setup');
     if (!pet!.species) throw new BookingConflict('pet_setup');
-    const units = room.costs[pet!.species];
+    const units = room.costs?.[pet!.species];
     if (!units) throw new BookingConflict('room_setup');
     const stays = [
       ...new Map(
@@ -213,7 +216,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
         const snapshot = await tx.get(bookings.doc(id));
         if (!snapshot.exists) throw new PetMissing();
         const booking = projectBooking(snapshot.data()!);
-        await authorize(tx, identity, booking.customerId, booking.petId);
+        await authorize(tx, identity, booking.customerId, booking.petId, booking.houseId);
         return booking;
       });
     },
@@ -326,7 +329,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
               houseId: house.id,
               roomId: room.id,
               species: pet!.species ?? '',
-              units: pet!.species ? (room.costs[pet!.species] ?? 0) : 0,
+              units: pet!.species ? (room.costs?.[pet!.species] ?? 0) : 0,
               arrival,
               pickup,
               status: 'planned',
@@ -437,11 +440,21 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
       });
     },
     async action(identity, id, input) {
-      if (identity.admin !== true) throw new PetAccess();
+      if (identity.admin !== true && (identity.employee !== true || input.action === 'cancel'))
+        throw new PetAccess();
       const at = timestamp(input.at);
       if (Date.parse(at) > clock()) throw new PetInvalid();
       const hash = signature(['action', identity.uid, id, { ...input, at }]);
       return database.runTransaction(async (tx) => {
+        if (identity.admin !== true) {
+          const current = await tx.get(bookings.doc(id));
+          if (
+            !current.exists ||
+            !(await employeeHouse(tx, database, identity, current.data()!.houseId))
+          )
+            throw new PetAccess();
+        }
+
         const [old, op] = await Promise.all([
           tx.get(bookings.doc(id)),
           tx.get(database.doc('bookingOperations/' + input.operationId)),
@@ -473,7 +486,8 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
               database.doc('houseSchedules/' + previous.houseId),
               database.doc('petSchedules/' + petLockId(previous.customerId, previous.petId)),
             ];
-        if (!ctx) await authorize(tx, identity, previous.customerId, previous.petId);
+        if (!ctx)
+          await authorize(tx, identity, previous.customerId, previous.petId, previous.houseId);
         const releaseLocks = await Promise.all(releaseRefs.map((ref) => tx.get(ref)));
         const now = new Date(clock()).toISOString();
         const next: Booking = {
