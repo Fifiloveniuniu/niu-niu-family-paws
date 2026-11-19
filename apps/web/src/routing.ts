@@ -13,6 +13,7 @@ export type RouteKind =
   | 'customers'
   | 'balances'
   | 'settings'
+  | 'admin-pricing'
   | 'operations'
   | 'personal'
   | 'not-found';
@@ -27,6 +28,7 @@ export type AppRoute = {
   bookingId?: string;
   locationId?: string;
   locations?: boolean;
+  cancellation?: boolean;
 };
 export const publicPaths = [
   '/home/',
@@ -94,9 +96,12 @@ export function parseRoute(input: string): AppRoute {
     '/app/customers/': 'customers',
     '/app/balances/': 'balances',
     '/app/settings/': 'settings',
+    '/app/pricing/': 'admin-pricing',
     '/app/operations/': 'operations',
     '/app/account/profile/': 'personal',
   };
+  if (path === '/app/settings/cancellation/')
+    return { ...base, kind: 'settings', cancellation: true };
   if (staticRouteKinds[path]) return { ...base, kind: staticRouteKinds[path] };
   const recordIdPattern = '([A-Za-z0-9_-]+)';
   let recordMatch = path.match(new RegExp('^/app/calendar/bookings/' + recordIdPattern + '/$'));
