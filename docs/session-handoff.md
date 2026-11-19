@@ -1,3 +1,9 @@
+## Final validation follow-ups — 2026-11-18
+
+PR #154 includes the app-family/calendar work plus readiness and scroll fixes: wait for customer rows before opening the phone menu; restore photo-viewer focus after closing with `preventScroll`; measure opening scroll at the actual click after image/font readiness. Five modal-scroll journeys and the focused photo recheck pass locally; both saved-workspace journeys pass.
+
+Firestore race regressions retain exactly-one-winner assertions and replay the identical rejected operation after the winning transaction commits, requiring the specific capacity or cross-house pet-overlap conflict. This checks durable invariants independently of transient contention error categories. Integration files run sequentially against the shared emulator; concurrent saves within each race remain concurrent. All 15 integrations pass in43.4 seconds. Required full GitHub CI must still pass before merging PR #154; consult its current status. No deployment or financial activation.
+
 ## Delivery status checkpoint — 2026-11-18, about 8:10 PM PST
 
 Owner authorized finishing requirements through signed feature PRs and merges. Root owner worktree is preserved; delivery is prepared in `/tmp/family-paws-requirements-20261118`. Only isolated headless Chrome was used. No production deployment. Latest source review also masks continuous timeline lines beneath sticky booking-house text; eight layout cases pass. Two local walkthroughs timed out across computer sleep; the focused Apple flow passes in 8.3 seconds and all four complete family walkthroughs pass together in 34.7 seconds with temporary `caffeinate -i`. A later full run was stopped after another 13-minute suspension during a layout case. Rely on the required full GitHub CI result for final uninterrupted validation, not that interrupted local attempt.
