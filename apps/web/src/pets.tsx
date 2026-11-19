@@ -1,3 +1,4 @@
+import { Pagination } from './pagination';
 import { englishCatalog, uiText, uiValue, speciesText, localeFor } from './i18n.ts';
 import { ApiError, apiJson, apiBlob } from './api-client';
 import React from 'react';
@@ -86,6 +87,11 @@ export default function Pets({
   const labels = uiValue('ui.pets.labels', i18n.language);
   const headingId = React.useId();
   const [items, setItems] = React.useState<Pet[]>([]);
+  const [pageSize, setPageSize] = React.useState('25');
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const cursors = React.useRef<string[]>(['']);
+  const target = React.useRef({ id: selectedPetId, found: false });
+  if (target.current.id !== selectedPetId) target.current = { id: selectedPetId, found: false };
   const [cursor, setCursor] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -115,20 +121,19 @@ export default function Pets({
             : 'error',
     );
   }
-  async function load(next?: string) {
+  async function load(next?: string, index = 0, size = pageSize) {
     const version = ++generation.current;
+    setItems([]);
+    setPageIndex(index);
+    if (index === 0) cursors.current = [''];
     setLoading(true);
     setError(null);
     try {
       const page: components['schemas']['PetPage'] = await apiJson<
         components['schemas']['PetPage']
-      >(path + (next ? '?cursor=' + next : ''));
+      >(path + '?' + new URLSearchParams({ pageSize: size, ...(next ? { cursor: next } : {}) }));
       if (!alive.current || version !== generation.current) return;
-      setItems((previous) =>
-        next
-          ? [...new Map([...previous, ...page.items].map((p) => [p.id, p])).values()]
-          : page.items,
-      );
+      setItems(page.items);
       setCursor(page.nextCursor);
     } catch (e) {
       if (alive.current && version === generation.current) report(e);
@@ -148,8 +153,11 @@ export default function Pets({
     if (!loading) onReady?.();
   }, [loading, onReady]);
   React.useEffect(() => {
-    if (selectedPetId && !loading && !error && cursor && !items.some((p) => p.id === selectedPetId))
-      void load(cursor);
+    if (items.some((p) => p.id === selectedPetId)) target.current.found = true;
+    if (selectedPetId && !target.current.found && !loading && !error && cursor) {
+      cursors.current = [...cursors.current.slice(0, pageIndex + 1), cursor];
+      void load(cursor, pageIndex + 1);
+    }
   }, [selectedPetId, loading, error, cursor, items]);
   function open(pet?: Pet) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
@@ -416,17 +424,36 @@ export default function Pets({
               {labels.reload}
             </button>
           )}
-          {cursor && (
-            <button
-              className="language"
-              disabled={blocked || loading}
-              onClick={() => void load(cursor)}
-            >
-              {labels.more}
-            </button>
-          )}
         </div>
       )}
+      <Pagination
+        label={uiText('ui.pagination.pets')}
+        page={{
+          items,
+          index: pageIndex,
+          size: pageSize,
+          loading: loading || blocked,
+          error: !!error,
+          nextCursor: cursor,
+          reload: () => void load(cursors.current[pageIndex], pageIndex),
+          reset: () => void load(),
+          previous: () => {
+            target.current.found = true;
+            void load(cursors.current[pageIndex - 1], pageIndex - 1);
+          },
+          next: () => {
+            if (cursor) {
+              cursors.current = [...cursors.current.slice(0, pageIndex + 1), cursor];
+              void load(cursor, pageIndex + 1);
+            }
+          },
+          setSize: (size) => {
+            target.current.found = true;
+            setPageSize(size);
+            void load(undefined, 0, size);
+          },
+        }}
+      />
     </section>
   );
 }

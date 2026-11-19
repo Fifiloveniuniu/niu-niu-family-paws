@@ -22,13 +22,14 @@ export type WorkspaceData = {
   locations: LocationRow[];
   bookings: Booking[];
 };
-async function allPets(scope: string | undefined, signal: AbortSignal) {
+async function allPets(scope: string | undefined, signal: AbortSignal, firstOnly = false) {
   let cursor: string | null = null;
   const seen = new Set<string>();
   let first: components['schemas']['WorkspacePets'] | null = null;
   const items: PetRow[] = [];
   do {
     const params = new URLSearchParams();
+    if (firstOnly) params.set('pageSize', '25');
     if (scope) params.set('customerId', scope);
     if (cursor) params.set('cursor', cursor);
     const page = await apiJson<components['schemas']['WorkspacePets']>(
@@ -44,10 +45,10 @@ async function allPets(scope: string | undefined, signal: AbortSignal) {
       if (seen.has(cursor)) throw new Error('Invalid pagination');
       seen.add(cursor);
     }
-  } while (cursor);
+  } while (cursor && !firstOnly);
   return { ...first!, items };
 }
-async function allCustomers(signal: AbortSignal) {
+async function allCustomers(signal: AbortSignal, firstOnly = false) {
   let cursor: string | null = null;
   const seen = new Set<string>();
   const items: Customer[] = [];
@@ -61,7 +62,7 @@ async function allCustomers(signal: AbortSignal) {
       if (seen.has(cursor)) throw new Error('Invalid pagination');
       seen.add(cursor);
     }
-  } while (cursor);
+  } while (cursor && !firstOnly);
   return items;
 }
 async function allBookings(
@@ -95,8 +96,9 @@ export function useWorkspaceData(
   scope: string | undefined,
   range: { from: string; through: string },
   enabled = true,
+  firstOnly = false,
 ) {
-  const key = identity + ':' + (scope ?? '');
+  const key = identity + ':' + (scope ?? '') + ':' + firstOnly;
   const [state, setState] = React.useState<{
     key: string;
     data: WorkspaceData | null;
@@ -122,10 +124,10 @@ export function useWorkspaceData(
       try {
         let base = common.current?.key === key ? common.current.data : null;
         if (full || !base) {
-          const directory = await allPets(scope, abort.signal);
+          const directory = await allPets(scope, abort.signal, firstOnly);
           const [customers, locations] = await Promise.all([
             directory.admin && !scope
-              ? allCustomers(abort.signal)
+              ? allCustomers(abort.signal, firstOnly)
               : Promise.resolve(directory.customer ? [directory.customer] : []),
             apiJson<components['schemas']['WorkspaceLocations']>('/workspace/locations', {
               signal: abort.signal,
@@ -158,7 +160,7 @@ export function useWorkspaceData(
         }
       }
     },
-    [key, scope, range.from, range.through, enabled],
+    [key, scope, range.from, range.through, enabled, firstOnly],
   );
   React.useEffect(() => {
     if (!enabled) return;

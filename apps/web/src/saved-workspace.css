@@ -587,3 +587,14 @@
     flex-basis: 100%;
   }
 }
+
+.saved-balances,
+.workspace-statement {
+  min-width: 0;
+  max-width: 100%;
+}
+/* Keep long customer lists inside their own scrolling panel, clear of page controls. */
+.hc .customer-directory-panel > .customer-list {
+  position: relative;
+  overflow-y: auto;
+}

@@ -10,6 +10,7 @@ export type AutocompleteOption = {
   label: string;
   search?: string;
   content?: React.ReactNode;
+  adornment?: React.ReactNode;
 };
 type Props = {
   label: string;
@@ -20,6 +21,9 @@ type Props = {
   disabled?: boolean;
   placeholder?: string;
   name?: string;
+  onMore?: () => void;
+  moreLoading?: boolean;
+  onQueryChange?: (query: string) => void;
 };
 /** A selection is always an option ID; typed text only filters the permitted options. */
 export default function CustomAutocomplete({
@@ -31,6 +35,9 @@ export default function CustomAutocomplete({
   disabled,
   placeholder,
   name,
+  onMore,
+  moreLoading,
+  onQueryChange,
 }: Props) {
   const [open, setOpen] = useDropdownState(false);
   const [query, setQuery] = React.useState('');
@@ -66,6 +73,7 @@ export default function CustomAutocomplete({
   function reveal() {
     if (disabled) return;
     setQuery('');
+    onQueryChange?.('');
     setActive(0);
     setOpen(true);
   }
@@ -78,7 +86,15 @@ export default function CustomAutocomplete({
     input.current?.focus({ preventScroll: true });
   }
   return (
-    <span className="custom-autocomplete" ref={root}>
+    <span
+      className={'custom-autocomplete' + (selected?.adornment ? ' has-adornment' : '')}
+      ref={root}
+    >
+      {selected?.adornment && (
+        <span className="custom-autocomplete-adornment" aria-hidden="true">
+          {selected.adornment}
+        </span>
+      )}
       <input
         ref={input}
         name={name}
@@ -102,6 +118,7 @@ export default function CustomAutocomplete({
         onChange={(e) => {
           if (!open) setOpen(true);
           setQuery(e.target.value);
+          onQueryChange?.(e.target.value);
           setActive(0);
           if (value) onChange('');
         }}
@@ -145,41 +162,70 @@ export default function CustomAutocomplete({
           reveal();
         }}
       />
+      <button
+        type="button"
+        className="custom-autocomplete-toggle"
+        tabIndex={-1}
+        disabled={disabled}
+        aria-label={uiText('ui.autocomplete.toggle', { field: label })}
+        aria-controls={open ? id : undefined}
+        aria-expanded={open}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => {
+          if (open) close();
+          else reveal();
+          input.current?.focus({ preventScroll: true });
+        }}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m7 10 5 5 5-5" />
+        </svg>
+      </button>
       {open &&
         portal &&
         createPortal(
           <div
             ref={popup}
-            id={id}
-            role="listbox"
-            aria-label={label}
             popover="manual"
             className="custom-select-options custom-autocomplete-options"
           >
-            {filtered.length ? (
-              filtered.map((o, index) => (
-                <div
-                  key={o.value}
-                  id={`${id}-${index}`}
-                  role="option"
-                  aria-label={o.label}
-                  aria-selected={o.value === value}
-                  data-value={o.value}
-                  data-index={index}
-                  data-active={index === active || undefined}
-                  onPointerMove={() => setActive(index)}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    choose(index);
-                  }}
-                >
-                  {o.content ?? o.label}
-                </div>
-              ))
-            ) : (
-              <p role="status">{uiText('ui.autocomplete.noMatches')}</p>
+            <div id={id} role="listbox" aria-label={label}>
+              {filtered.length ? (
+                filtered.map((o, index) => (
+                  <div
+                    key={o.value}
+                    id={`${id}-${index}`}
+                    role="option"
+                    aria-label={o.label}
+                    aria-selected={o.value === value}
+                    data-value={o.value}
+                    data-index={index}
+                    data-active={index === active || undefined}
+                    onPointerMove={() => setActive(index)}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      choose(index);
+                    }}
+                  >
+                    {o.content ?? o.label}
+                  </div>
+                ))
+              ) : (
+                <p role="status">{uiText('ui.autocomplete.noMatches')}</p>
+              )}
+            </div>
+            {onMore && (
+              <button
+                type="button"
+                className="language"
+                disabled={moreLoading}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => onMore()}
+              >
+                {uiText(moreLoading ? 'ui.workspace.loading' : 'ui.pagination.moreChoices')}
+              </button>
             )}
           </div>,
           portal,

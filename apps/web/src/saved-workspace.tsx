@@ -1,3 +1,4 @@
+import { CustomerPicker } from './workspace-pickers';
 import EmployeeAssignments from './employee-assignments';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -105,7 +106,13 @@ export default function SavedWorkspace({
     () => calendarRange(date, scale, browserZone),
     [date, scale, browserZone],
   );
-  const { data, loading, error, refresh } = useWorkspaceData(identityKey, scope, range, active);
+  const { data, loading, error, refresh } = useWorkspaceData(
+    identityKey,
+    scope,
+    range,
+    active,
+    view === 'balances',
+  );
   const admin = data?.admin ?? initialAdmin;
   const [adding, setAdding] = React.useState<
     false | { houseId: string; roomId: string } | undefined
@@ -252,35 +259,28 @@ export default function SavedWorkspace({
                     {t(admin ? 'addBooking' : 'availability')}
                   </button>
                 )}
-                {view === 'balances' && admin && (
-                  <button
-                    className="hc-apply"
-                    disabled={!data || !data.rows.length}
-                    onClick={() => setBalance(undefined)}
-                  >
-                    <Icon name="plus" />
-                    {t('addBalance')}
-                  </button>
-                )}
               </div>
             </div>
-            {data?.admin && !data.customer && view !== 'personal' && (
+            {data?.admin && !data.customer && ['calendar', 'customers'].includes(view) && (
               <div className="workspace-customer-filter">
                 <label>
                   {t('customer')}
-                  <CustomAutocomplete
+                  <CustomerPicker
                     label={t('allCustomers')}
                     value=""
-                    placeholder={t('allCustomers')}
-                    options={data.customers.map((customer) => ({
-                      value: customer.id,
-                      label: customer.name,
-                      search: [customer.name, customer.email, customer.phone, customer.loginEmail]
-                        .filter(Boolean)
-                        .join(' '),
-                    }))}
+                    initial={data.customers}
                     onChange={(value) => {
-                      if (value) navigate(scopedUrl('/app/calendar/', value));
+                      if (value)
+                        navigate(
+                          scopedUrl(
+                            view === 'customers'
+                              ? '/app/customers/'
+                              : view === 'balances'
+                                ? '/app/balances/'
+                                : '/app/calendar/',
+                            value,
+                          ),
+                        );
                     }}
                   />
                 </label>
@@ -289,7 +289,18 @@ export default function SavedWorkspace({
             {data?.admin && scope && data.customer && (
               <div className="workspace-context" role="status">
                 <strong>{t('viewingAs', { name: data.customer.name })}</strong>
-                <button className="language" onClick={() => navigate('/app/calendar/')}>
+                <button
+                  className="language"
+                  onClick={() =>
+                    navigate(
+                      view === 'balances'
+                        ? '/app/balances/'
+                        : view === 'customers'
+                          ? '/app/customers/'
+                          : '/app/calendar/',
+                    )
+                  }
+                >
                   {t('exitView')}
                 </button>
               </div>
@@ -410,6 +421,7 @@ export default function SavedWorkspace({
                             search={params}
                             onFilters={(values) => updateQuery(values)}
                             onSelect={(key) => updateQuery({ pet: key })}
+                            onCustomer={(id) => navigate(scopedUrl('/app/balances/', id))}
                             onAdjust={(row) => setBalance(row)}
                           />
                         )}

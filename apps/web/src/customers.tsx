@@ -1,3 +1,4 @@
+import { Pagination } from './pagination';
 import { withoutLanguage } from './language-url.ts';
 import {
   englishCatalog,
@@ -47,6 +48,9 @@ export default function Customers({
   const [filterReset, setFilterReset] = React.useState(0);
   const ownGeneration = React.useRef(0);
   const [items, setItems] = React.useState<Customer[]>([]);
+  const [pageSize, setPageSize] = React.useState('25');
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const cursors = React.useRef<string[]>(['']);
   const [cursor, setCursor] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -109,21 +113,21 @@ export default function Customers({
             : 'error',
     );
   }
-  async function load(next?: string, query = activeSearch) {
+  async function load(next?: string, query = activeSearch, index = 0, size = pageSize) {
     const generation = ++request.current;
     setLoading(true);
+    setItems([]);
+    setPageIndex(index);
+    if (index === 0) cursors.current = [''];
     setError(null);
     try {
       const params = new URLSearchParams();
+      params.set('pageSize', size);
       if (next) params.set('cursor', next);
       if (query.trim()) params.set('search', query.trim());
       const page = await customerRequest<components['schemas']['CustomerPage']>('?' + params);
       if (!alive.current || generation !== request.current) return;
-      setItems((previous) =>
-        next
-          ? [...new Map([...previous, ...page.items].map((item) => [item.id, item])).values()]
-          : page.items,
-      );
+      setItems(page.items);
       setCursor(page.nextCursor);
       setLoaded(true);
     } catch (error) {
@@ -571,14 +575,32 @@ export default function Customers({
           )}
 
           {loading && <p role="status">{labels.loading}</p>}
-          {cursor && !onlyMine && (
-            <button
-              className="language"
-              disabled={loading || saving}
-              onClick={() => void load(cursor)}
-            >
-              {labels.more}
-            </button>
+          {!onlyMine && (
+            <Pagination
+              label={uiText('ui.pagination.customers')}
+              page={{
+                items,
+                index: pageIndex,
+                size: pageSize,
+                loading: loading || saving,
+                error: !!error,
+                nextCursor: cursor,
+                reload: () => void load(cursors.current[pageIndex], activeSearch, pageIndex),
+                reset: () => void load(),
+                previous: () =>
+                  void load(cursors.current[pageIndex - 1], activeSearch, pageIndex - 1),
+                next: () => {
+                  if (cursor) {
+                    cursors.current = [...cursors.current.slice(0, pageIndex + 1), cursor];
+                    void load(cursor, activeSearch, pageIndex + 1);
+                  }
+                },
+                setSize: (size) => {
+                  setPageSize(size);
+                  void load(undefined, activeSearch, 0, size);
+                },
+              }}
+            />
           )}
         </div>
         <div

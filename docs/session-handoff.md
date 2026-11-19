@@ -1,3 +1,7 @@
+## Paginated workspace lists — 2026-11-18
+
+Customers, pets, balances and statement history use bounded server pages with shared bilingual controls. Filter/page-size changes reset continuation; full filtered statement exports still traverse every page. Autocomplete can search and load beyond its first page, retaining selected customer labels after reopening. Pet deep links discover later pages and private photos stay authorized. No deployment.
+
 ## Employee care workspace — 2026-11-18
 
 Employees land on assigned-house operations with date filters, server pagination, authorized pet photos, actual handoffs/corrections and weight verification. Administrators manage trusted employees’ house assignments from location management. Profile stays available; financial/customer administration is not exposed to employees. Bilingual dialogs preserve audit/version conflict handling and planned times. No deployment.

@@ -1,3 +1,5 @@
+import { CustomerPicker, PetPicker } from './workspace-pickers';
+import { useCursorPage, Pagination } from './pagination';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor, uiText } from './i18n.ts';
@@ -8,7 +10,7 @@ import Modal from './modal';
 import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges, markFormSaved } from './unsaved-changes';
 import { apiJson, ApiError } from './api-client';
-import { PetOption, PetInfo } from './workspace-photos';
+import { PetOption, PetInfo, WorkspaceAvatar } from './workspace-photos';
 import { petKey, type WorkspaceData, type PetRow, type EventRow } from './workspace-data';
 import { useWorkspaceText } from './workspace-text';
 import { parseWallInput, shiftDay, startOfZonedDay } from './wall-time';
@@ -29,7 +31,11 @@ export function BalanceEditor({
   const { i18n } = useTranslation();
   const [customer, setCustomer] = React.useState(initial?.customer.id ?? data.customer?.id ?? '');
   const [pet, setPet] = React.useState(initial?.pet.id ?? '');
-  const row = data.rows.find((item) => item.customer.id === customer && item.pet.id === pet);
+  const [pickedRow, setPickedRow] = React.useState<PetRow | undefined>(initial);
+  const row =
+    pickedRow?.customer.id === customer && pickedRow.pet.id === pet
+      ? pickedRow
+      : data.rows.find((item) => item.customer.id === customer && item.pet.id === pet);
   const [delta, setDelta] = React.useState('');
   const [from, setFrom] = React.useState(initial?.account?.validFrom ?? '');
   const [through, setThrough] = React.useState(initial?.account?.validThrough ?? '');
@@ -111,21 +117,16 @@ export function BalanceEditor({
         <fieldset disabled={blocked}>
           <label>
             {t('customer')}
-            <CustomAutocomplete
+            <CustomerPicker
               label={t('customer')}
               required
               disabled={!!data.customer || !!initial}
               value={customer}
-              options={data.customers.map((item) => ({
-                value: item.id,
-                label: item.name,
-                search: [item.name, item.email, item.phone, item.loginEmail]
-                  .filter(Boolean)
-                  .join(' '),
-              }))}
+              initial={initial ? [initial.customer] : data.customers}
               onChange={(value) => {
                 setCustomer(value);
                 setPet('');
+                setPickedRow(undefined);
                 setFrom('');
                 setThrough('');
                 operation.current = crypto.randomUUID();
@@ -134,23 +135,18 @@ export function BalanceEditor({
           </label>
           <label>
             {t('pet')}
-            <CustomAutocomplete
+            <PetPicker
               label={t('pet')}
               required
               disabled={!customer || !!initial}
-              value={pet}
-              options={data.rows
-                .filter((item) => item.customer.id === customer)
-                .map((item) => ({
-                  value: item.pet.id,
-                  label: item.pet.name,
-                  content: <PetOption row={item} />,
-                }))}
-              onChange={(value) => {
-                setPet(value);
-                const selected = data.rows.find(
-                  (item) => item.customer.id === customer && item.pet.id === value,
-                );
+              scope={customer || undefined}
+              initial={
+                initial ? [initial] : data.rows.filter((row) => row.customer.id === customer)
+              }
+              value={pet && customer ? petKey(customer, pet) : ''}
+              onChange={(_key, selected) => {
+                setPet(selected?.pet.id ?? '');
+                setPickedRow(selected);
                 setFrom(selected?.account?.validFrom ?? '');
                 setThrough(selected?.account?.validThrough ?? '');
                 operation.current = crypto.randomUUID();
@@ -224,6 +220,7 @@ export default function WorkspaceBalances({
   onAdjust,
   search,
   onFilters,
+  onCustomer,
 }: {
   data: WorkspaceData;
   scope?: string;
@@ -232,22 +229,22 @@ export default function WorkspaceBalances({
   onAdjust: (row?: PetRow) => void;
   search: URLSearchParams;
   onFilters: (values: Record<string, string>) => void;
+  onCustomer: (id: string) => void;
 }) {
   const t = useWorkspaceText();
   const { i18n } = useTranslation();
-  const [shown, setShown] = React.useState(25);
+
   const kind = search.get('kind') ?? '',
     from = search.get('from') ?? '',
     through = search.get('through') ?? '';
-  const [events, setEvents] = React.useState<EventRow[]>([]);
-  const [cursor, setCursor] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
+
   const [error, setError] = React.useState(false);
   const [exporting, setExporting] = React.useState(false);
   const [detail, setDetail] = React.useState<EventRow | null>(null);
-  const generation = React.useRef(0);
   const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const chosen = data.rows.find((row) => petKey(row.customer.id, row.pet.id) === selected);
+  const pair = selected.split('/');
+  const chosen =
+    pair.length === 2 ? { customer: { id: pair[0] }, pet: { id: pair[1] } } : undefined;
   const valid =
     (!selected || !!chosen) &&
     (!from || (!!parseWallInput(from, false) && !!startOfZonedDay(from, zone))) &&
@@ -272,41 +269,16 @@ export default function WorkspaceBalances({
     }
     return result;
   }, [scope, chosen?.customer.id, chosen?.pet.id, kind, from, through, zone]);
-  const load = React.useCallback(
-    async (next?: string) => {
-      const request = ++generation.current;
-      if (!valid) {
-        setEvents([]);
-        setCursor(null);
-        setLoading(false);
-        return;
-      }
-      setLoading(true);
-      setError(false);
-      try {
-        const query = new URLSearchParams(params);
-        if (next) query.set('cursor', next);
-        const page = await apiJson<components['schemas']['WorkspaceEvents']>(
-          '/workspace/events?' + query,
-        );
-        if (request !== generation.current) return;
-        setEvents((previous) => (next ? [...previous, ...page.items] : page.items));
-        setCursor(page.nextCursor);
-      } catch {
-        if (request === generation.current) setError(true);
-      } finally {
-        if (request === generation.current) setLoading(false);
-      }
-    },
-    [params.toString(), valid],
-  );
-  React.useEffect(() => {
-    void load();
-    return () => {
-      generation.current++;
-    };
-  }, [load, data.rows]);
-  React.useEffect(() => setShown(25), [selected, scope]);
+  const history = useCursorPage<EventRow>('/workspace/events?' + params, data.rows, valid);
+  const events = history.items,
+    loading = history.loading;
+  const balanceParams = new URLSearchParams();
+  if (scope) balanceParams.set('customerId', scope);
+  if (chosen) {
+    balanceParams.set('customerId', chosen.customer.id);
+    balanceParams.set('petId', chosen.pet.id);
+  }
+  const balances = useCursorPage<PetRow>('/workspace/pets?' + balanceParams, data.rows);
   const entries = (rows: EventRow[]): StatementEntry[] =>
     rows.map(({ customer, pet, event }) => ({
       id: event.id,
@@ -376,23 +348,30 @@ export default function WorkspaceBalances({
       setExporting(false);
     }
   }
-  const rows = selected
-    ? data.rows.filter((row) => petKey(row.customer.id, row.pet.id) === selected)
-    : data.rows;
+  const rows = balances.items;
   return (
     <section className="saved-balances">
-      <div className="workspace-section-actions">
+      <div className="workspace-section-actions workspace-balance-toolbar">
+        {data.admin && !data.customer && (
+          <label>
+            {t('customer')}
+            <CustomerPicker
+              label={t('allCustomers')}
+              value=""
+              initial={data.customers}
+              onChange={(id) => {
+                if (id) onCustomer(id);
+              }}
+            />
+          </label>
+        )}
         <label>
           {t('pet')}
-          <CustomAutocomplete
+          <PetPicker
             label={t('allPets')}
             value={selected}
-            placeholder={t('allPets')}
-            options={data.rows.map((row) => ({
-              value: petKey(row.customer.id, row.pet.id),
-              label: row.pet.name + ' · ' + row.customer.name,
-              content: <PetOption row={row} />,
-            }))}
+            scope={scope}
+            initial={rows}
             onChange={onSelect}
           />
         </label>
@@ -405,6 +384,14 @@ export default function WorkspaceBalances({
           >
             <Icon name="reset" />
           </button>
+        )}
+        {data.admin && (
+          <div className="workspace-primary-actions">
+            <button className="hc-apply" disabled={false} onClick={() => onAdjust(undefined)}>
+              <Icon name="plus" />
+              {t('addBalance')}
+            </button>
+          </div>
         )}
       </div>
       <div className="workspace-table-scroll">
@@ -425,7 +412,7 @@ export default function WorkspaceBalances({
             </tr>
           </thead>
           <tbody>
-            {rows.slice(0, shown).map((row) => (
+            {rows.map((row) => (
               <tr key={petKey(row.customer.id, row.pet.id)}>
                 <td>
                   <span className="workspace-table-pet">
@@ -456,12 +443,9 @@ export default function WorkspaceBalances({
           </tbody>
         </table>
       </div>
-      {rows.length > shown && (
-        <button className="language" onClick={() => setShown((value) => value + 25)}>
-          {t('more')}
-        </button>
-      )}
-      {!rows.length && <p>{t('emptyMatches')}</p>}
+      {balances.loading && <p role="status">{t('loading')}</p>}
+      <Pagination page={balances} label={uiText('ui.pagination.balances')} />
+      {!balances.loading && !balances.error && !rows.length && <p>{t('emptyMatches')}</p>}
       <section className="workspace-statement" aria-label={t('history')}>
         <div className="customer-heading">
           <h2>{t('history')}</h2>
@@ -502,7 +486,7 @@ export default function WorkspaceBalances({
         {error && (
           <p role="alert">
             {t('loadError')}{' '}
-            <button className="language" onClick={() => void load()}>
+            <button className="language" onClick={history.reload}>
               {t('retry')}
             </button>
           </p>
@@ -564,11 +548,7 @@ export default function WorkspaceBalances({
           </table>
         </div>
         <p>{t('shown', { count: events.length })}</p>
-        {cursor && (
-          <button className="language" disabled={loading} onClick={() => void load(cursor)}>
-            {t('more')}
-          </button>
-        )}
+        <Pagination page={history} label={uiText('ui.pagination.history')} />
       </section>
       {detail && (
         <Modal title={t('history')} onClose={() => setDetail(null)}>
