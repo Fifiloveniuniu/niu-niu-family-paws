@@ -1,3 +1,7 @@
+## Calendar selected timezone — 2026-11-18
+
+The saved calendar timezone selector now controls the range, date axis, Today picker/action and Now marker instead of isolated display state. The selected zone is retained in the URL/reload and after saving a booking. Switching from today follows the new zone’s current date; deliberately browsed dates remain selected. Unrecognized URL zones fall back to the browser zone. Build and two actual localhost Chrome regression journeys pass (English 1440px, Chinese 390px), including LA/Tokyo date rollover, UTC, reload and historical selection. No deployment.
+
 ## Calendar timezone display cleanup — 2026-11-18
 
 Removed the calendar “Times shown in …” note and the current time beneath the timezone selector in both saved and preview calendars. Retained the timezone label/selector and timeline Now indicator. The timezone dropdown now shares the filters’ label layout, weight and padding; computed Chrome styles match on desktop and mobile. Delivery PR: https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/158. Production build, formatting and actual localhost headless Chrome checks passed in English desktop (1440px) and Chinese mobile (390px). No deployment.

@@ -39,9 +39,8 @@ import { wallDateKey, wallNow, zonedValue } from './wall-time';
 import './house-calendar.css';
 import './workspace.css';
 import './saved-workspace.css';
-function WorkspaceClock() {
+function WorkspaceClock({ zone, onChange }: { zone: string; onChange: (zone: string) => void }) {
   const t = useWorkspaceText();
-  const [zone, setZone] = React.useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const zones = React.useMemo(
     () => [...new Set([zone, 'UTC', ...Intl.supportedValuesOf('timeZone')])],
     [zone],
@@ -53,7 +52,7 @@ function WorkspaceClock() {
         <CustomSelect
           aria-label={t('clockTimezone')}
           value={zone}
-          onChange={(event) => setZone(event.target.value)}
+          onChange={(event) => onChange(event.target.value)}
         >
           {zones.map((value) => (
             <option key={value} value={value}>
@@ -85,17 +84,21 @@ export default function SavedWorkspace({
   const scope = params.get('asCustomer') || undefined;
   const view = route.kind;
   const browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const initialDay = React.useRef(wallDateKey(wallNow(browserZone)));
-  const date = params.get('date') || initialDay.current;
+  const requestedZone = params.get('zone');
+  const zone =
+    requestedZone &&
+    (requestedZone === browserZone ||
+      requestedZone === 'UTC' ||
+      Intl.supportedValuesOf('timeZone').includes(requestedZone))
+      ? requestedZone
+      : browserZone;
+  const date = params.get('date') || wallDateKey(wallNow(zone));
   const scale = (
     ['day', 'week', 'month', 'year'].includes(params.get('view') ?? '')
       ? params.get('view')
       : 'week'
   ) as CalendarView;
-  const range = React.useMemo(
-    () => calendarRange(date, scale, browserZone),
-    [date, scale, browserZone],
-  );
+  const range = React.useMemo(() => calendarRange(date, scale, zone), [date, scale, zone]);
   const { data, loading, error, refresh } = useWorkspaceData(
     identityKey,
     scope,
@@ -186,7 +189,8 @@ export default function SavedWorkspace({
     void refresh(true);
     const query = new URLSearchParams();
     if (scope) query.set('asCustomer', scope);
-    query.set('date', zonedValue(booking.occupancyFrom, browserZone).slice(0, 10));
+    query.set('zone', zone);
+    query.set('date', zonedValue(booking.occupancyFrom, zone).slice(0, 10));
     query.set('view', 'week');
     query.set('house', booking.houseId);
     navigate('/app/calendar/?' + query);
@@ -235,7 +239,16 @@ export default function SavedWorkspace({
           <main className="hc-content" id="main">
             {view === 'calendar' && (
               <div className="workspace-topbar">
-                <WorkspaceClock />
+                <WorkspaceClock
+                  zone={zone}
+                  onChange={(nextZone) =>
+                    updateQuery({
+                      zone: nextZone,
+                      date:
+                        date === wallDateKey(wallNow(zone)) ? wallDateKey(wallNow(nextZone)) : date,
+                    })
+                  }
+                />
                 <div className="workspace-primary-actions">
                   <button
                     className="hc-apply"
