@@ -11,7 +11,7 @@ Choices appear immediately and are remembered in this browser, including its oth
 
 Administrators use **Calendar / Balances / Customers / Pricing**. Customer view uses **Calendar / Balances / Pets**. Settings is not a navbar button. Manage houses and rooms from Calendar; open employee house access from that management page. Balances provides validity templates and the cancellation-policy draft. Employees open their assigned-house care workspace. My profile shows the actual signed-in account’s roles even while viewing a customer.
 
-These features are being merged after local validation; the hosted site changes only after the final deployment. Paid bookings, package purchases, automated refunds and withdrawals need the remaining approved payment and business rules. For pets without a booking, the room-association rule still needs your decision.
+These app features are merged after validation; the hosted site changes only after the final deployment. Paid bookings, package purchases, automated refunds and withdrawals need the remaining approved payment and business rules. For pets without a booking, the room-association rule still needs your decision.
 
 ## What Codex will handle
 

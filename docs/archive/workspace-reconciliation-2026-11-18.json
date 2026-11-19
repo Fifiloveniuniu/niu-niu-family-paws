@@ -1,0 +1,854 @@
+{
+  "description": "Disposition of every modified/deleted/untracked file captured before the original workspace was aligned with merged main. Runtime code is canonical; this inventory does not reapply an older snapshot.",
+  "files": [
+    {
+      "path": ".gitignore",
+      "originalSha256": "0189c5fc21bd64f0bbad9dc1019e0c144f9ee66dc434fe480ca7c42c05f7ba09",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/app.ts",
+      "originalSha256": "64c9f95d7b24d8668a45421134152a0da4b10b76324ea952850c8a819ac3fae3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/authentication.ts",
+      "originalSha256": "107f014066c63da9c06b8c5c513b0664a3a5e1c3e7913fa6613c0dcfe41de34b",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/bookings.ts",
+      "originalSha256": "adabf8af15b48d33293acb1568243833ee51fce0718658b54daa3c4d22afc8fe",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/cancellation-draft.ts",
+      "originalSha256": "1314bb855f4c2979603df4c7d608b9eb1e0d55e779a45e350396941a8ba9257d",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/employee-access.ts",
+      "originalSha256": "6fe91e8fdec1a4cf649d2e1ba9016e546629e8b51718088ee54c59d3fe592aa1",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/employee-assignments.ts",
+      "originalSha256": "adef27ee50ff3981f95cc8facfec2bd5f06fdbc100436b5a3d70773cb534cc59",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/operations.ts",
+      "originalSha256": "2020b3556532bb264b2d9eaf28f8f44e31a0efab45372bce5b862cc43c043cf1",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/pets.ts",
+      "originalSha256": "7937b440be6d6834e8800bc483d7fd968a3c017dc6cfaa8c878d5b49c6ecec68",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/pricing.ts",
+      "originalSha256": "0770b68ae2e879284c888e87af05c98d21f334e3aa96d6113308ae86418bcb0c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/request-context.ts",
+      "originalSha256": "7015ed591b0aa3507619abad02ec4454182851d9229c030ffeea75e47009342f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "originalSha256": "0fc05bc19e3bafbbc83f1b40d9d9abbef66c2604eb241f90161a19c0c8f9c1f3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/store.ts",
+      "originalSha256": "292934d7c7484ff856d1e4830ebad6b7d7f784c717544b56c7062b85b0f33a3f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/validity-templates.ts",
+      "originalSha256": "01528882f74232f00d080ee6e34b005f82180b91eddcbc15e95110bc7ca11f44",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/api/src/workspace.ts",
+      "originalSha256": "6ac488bda684229fb55566e4c36a1c9bcf528ad89005146ff709a79189997ec3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/admin-pricing.tsx",
+      "originalSha256": "8f4b97919b679acdf70ed101bc0cf3e80d211051dbbe443522b93e1e091852de",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/appearance.css",
+      "originalSha256": "2959149b5ceeb1f903f303ceee6dd01612b1cdfce251c1205415e1c3d5179a31",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/appearance.tsx",
+      "originalSha256": "dab6dfcb01b5e62285039215f4cc23253eb79c6fc2f5376a7a7f4ea107d65f89",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/calendar-assignment.tsx",
+      "originalSha256": "c741779dcf46cbf45c9c4dfe637f7135ad20d62345832e5f14c1506ecb05e9bf",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/calendar-timeline.css",
+      "originalSha256": "df5463986442143597968e1aaa82edb023bb8216459bd68746a4096ee784b259",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/calendar-timeline.tsx",
+      "originalSha256": "071ca0d9bd2622a37ea8a1a6908c507871cc50c7d91d7e6c74c4a3bb6909632a",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/cancellation-policy.tsx",
+      "originalSha256": "4c4f12a2f249f91ed02384681104bf46d35a30977d006c50b92480c9cb7e4a15",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/custom-autocomplete.css",
+      "originalSha256": "9833092a71b29e5c8f1440f41c654233f5f2782ff673ea20967682d18530f798",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/custom-autocomplete.tsx",
+      "originalSha256": "8c30ab683c0127fe1b0d46bea71170b6ff1cfdb23d1186932a58eb3300c6efc9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/custom-date-input.css",
+      "originalSha256": "b47b3c6be77e4a80e227352305628aad1eb1fe56bcf557afa15dd72af786b1e3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/custom-date-input.tsx",
+      "originalSha256": "20abbb8afe652a05d6a2e146d47095e2d1e3655723d6797c5fb301cfe0067535",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/custom-select.css",
+      "originalSha256": "1a10352f40a77c24c11c9261f74e5d2f14c4fdae0eac725ffea18f2f0bc798d5",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/custom-select.tsx",
+      "originalSha256": "7fb8a853da485a8cd4ffbda8b39c2fdc6391a41bd0237e0f67baa8b551716735",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/customers.tsx",
+      "originalSha256": "44503bf01cbecde42da3fc67e2cafd28f0b971a3933a63b70ae73116fd1751fd",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/employee-assignments.tsx",
+      "originalSha256": "ac5042a693e7a1b3f31a03c8039a68748ea81e6ff1cf1efecb13770ee748fc7f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/employee-operations.tsx",
+      "originalSha256": "ef9afe7cb0a82c3eff535579bbcbb155336c7e2d1ddb1f2a6320dd55a12231c5",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/entry.tsx",
+      "originalSha256": "23e9108cce82e28a382857c14f4a2e5b8c6ade21a11a2dde27c1c17c690aa8ca",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/house-calendar.css",
+      "originalSha256": "d4fdab1386102a09af14fc0f6b720f6c90e17f713f06d0aa4b32d31e568946b9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/house-calendar.tsx",
+      "originalSha256": "80a55fb0941024d766f717c89fbb7ba8ebe4ccfeaa9049e6f1a545bad20c959e",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/houses.tsx",
+      "originalSha256": "4d6ea538f9cf338ddf9dad176cffd1b30712014da6fd47a1acb132bf2fdf9c2a",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/icons.tsx",
+      "originalSha256": "c1f956940e5735d727b2bc069896059a229963d4f5729ab1d788836dfd8b5062",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/locales/en.json",
+      "originalSha256": "90c8f54cdb860c6006181cd074a94b1fb87ee1def94a17e486186f0506b58508",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/locales/zh.json",
+      "originalSha256": "4ec55cbff16a30bbb46c9ebbd96510dba16b968a2348ebbec5dcb8ce499479b6",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/location-label.css",
+      "originalSha256": "54462d2a3ab30eb4da20196d7ea715a3c9d6b6f083cf0f3601c5d5562e1ac291",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/location-label.tsx",
+      "originalSha256": "06cbf47825bd09efa13fb27af8260dd09d2cf227e5ec45a1dbdf44456b0b9c97",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "originalSha256": "16b295031db1ffc83d356d8bbb8101a9f5fdda73d36092c7998656d998d9d4dd",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-galleries.tsx",
+      "originalSha256": "035d06a32a4ca8ba8204b568dedd5c8404d15cd3a2f5d8931142dbe25812c14f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-home.tsx",
+      "originalSha256": "bb4ab0155a4b2ef5dadf88ab36ea4a01983143790b6ad3108f76004d23432dbd",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-language-menu.tsx",
+      "originalSha256": "ec75216dfdf8c15e7bc260d92bbde4e6e2d6123d064336449ef1302d1592dc7c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-pages.tsx",
+      "originalSha256": "8d163e370ad57950c05549d30e83658172457af4394f2cae803e301241765b83",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-preview.ts",
+      "originalSha256": "9736033b242a5768afcb776618b10dba92d70c0318e0c81ad9c375888c9a95f7",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-shell.tsx",
+      "originalSha256": "6b3ed772603d8d45cb8826ffb785159efeccaf37cac46ea69decf7e732ceab56",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/marketing-system.css",
+      "originalSha256": "f84c5e4305df6447798137bdbbade6b66d085e02e5af95231ace4d7227b6faab",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/material-theme.css",
+      "originalSha256": "297556cdb9c2e9d4d3ab6793d8242b4089bade5cc8d055de14e10f953b4891ff",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/modal.tsx",
+      "originalSha256": "aa5a5ac1048972ef95943774b82d996255f9d413a2e2f6e2d7ed798e4bebcf09",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/pagination.tsx",
+      "originalSha256": "e5f85383b471cc62363db30761c6f829590b37dc7fdf953eb29867a4ec3da12a",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/pet-type.tsx",
+      "originalSha256": "20d79c90814bbd55f91d4aadd8d378516761b0ce97b79d7263580cb5710540f9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/pets.tsx",
+      "originalSha256": "71939b582260648a5d4df3169d6594767825be9ebd08c4da54a82b6eafd15134",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/portal.tsx",
+      "originalSha256": "05de58a87e4850cf83011374427659496707f4702e6831548bbcb812affefbec",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/profile.tsx",
+      "originalSha256": "379ba0a2340912c85a4409d3cf0f02343451f41d63dab884c887e29c491cd403",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/public-prices.tsx",
+      "originalSha256": "0e7f919ac406a91c9faa042f2ec3ea03facb68e7caa1f195a81e477eedf86f3b",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/rooms.tsx",
+      "originalSha256": "381f7b05fa16ae11b794e7b34ffb73fe8800ccb9e7fc37aa105bc1c5a25a6459",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/routing.ts",
+      "originalSha256": "c99b1104a2ed90935f05bf39b4c86d7586b8709e4c06260aec39473ee75877c2",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/saved-cancellation-policy.tsx",
+      "originalSha256": "603c0c9d446499c4e4169f90ab94d320340aeb39b2764adf5f48df6e1e3b2323",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/saved-workspace.css",
+      "originalSha256": "ea1e4eda798fed871713865e38dd7475a7fc5410dd0e237c90d8db7bce3a0112",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/saved-workspace.tsx",
+      "originalSha256": "39b47d88a6c88df35e88e5b8362bd7bedab8dbe957ea9a1b2fd2c3deeb600507",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/style.css",
+      "originalSha256": "94add94662f6602703282e9b00201e6372d0492c462861c93b49b507693334db",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/theme-catalog.ts",
+      "originalSha256": "971626c37b3969fc7544d996e1e967e4b05db324ea904f8808567a3147ea34d2",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/theme-components.css",
+      "originalSha256": "6e221d2bde74d25366279e878cf1b03fde9c4d2fe686b4720d432fc1f56104f7",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/theme-icons.json",
+      "originalSha256": "ac321d91db72c99e669715a85696a851b83cb9a6c902d10514cd7741442f07c2",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/theme-preferences.ts",
+      "originalSha256": "12ef8ffdc8dc6558a108ef6bdbf2a55da2ddf035af7721a892921785629ee81a",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/theme-presets.css",
+      "originalSha256": "b039d9d0bd484509306fe34c284f861eb6f9b04b81e93a61a417efdd0a9db556",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/timeline-layout.ts",
+      "originalSha256": "d29b2f9a8493a0b1b3886b8b76a52cbb9f951512ccd855d5e78318350a85bfaa",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/use-route.ts",
+      "originalSha256": "6969cc53aaebfd5bc5a009a8d6245cdb56acb3b5d0f36628693d775b3772ff28",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/validity-templates.tsx",
+      "originalSha256": "50088a2581b3c8a6cd58d2e564df5235d93af557ab4d226fd593629c5d14ecc9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/workspace-balances.tsx",
+      "originalSha256": "e3c24db64977b1705bdc8cd3f0ef9b62a438a7a42814a52d304684776ef08151",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/workspace-booking.tsx",
+      "originalSha256": "bb683b92fb4de9a6109e9c814613d2ed97b55d60a7ecd40fa20d0c105c932382",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/workspace-calendar.tsx",
+      "originalSha256": "59400da0ec4453773aefc6c3f3114774c1bd682b1d16ed61b7aabce1f4157786",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/workspace-data.ts",
+      "originalSha256": "a9c545ef3dc8de3dc0c5b365d0ad1f678eed455e087806d0299d3b1ffe4a6c5b",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/workspace-photos.tsx",
+      "originalSha256": "3c6cb2d13fce76ee79c76b0e24ae8228b53066265eb26d21d44b88323b8e5db1",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "apps/web/src/workspace-pickers.tsx",
+      "originalSha256": "14ae59ee91ab759ec2ce2d2faf2ac8c24f0b8b6716f262adb78922c53a8d9da3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/architecture.md",
+      "originalSha256": "c19d07ef492d79514c8da5676cf45c36b3b650af83021751275db3f67c506940",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/booking-and-billing-requirements.md",
+      "originalSha256": "0dc8bf850f903d07bd38fdd13e7d9b9d7364dbb9147dafe682603428017d43a2",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/business-owner-guide.md",
+      "originalSha256": "3133b42f7fb564cc71cdbcded7d7561fe8777831becc7f85503afaa20c64a14c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/current-implementation-request.md",
+      "originalSha256": "cdfb56d5fe69c45018a9694447751fe02a9aa22db05ba987bb0eb6afeb5bb153",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/e2e-test-plan.md",
+      "originalSha256": "633c47239cca53ad8d232dd094341ba0d47251b67a7ea4e2083add657831934f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/pricing-and-operations.md",
+      "originalSha256": "596eb4c68b52ff5ff0360720cdf042d640ce7705a8687f6f5ac037b5d8486171",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/requirements.md",
+      "originalSha256": "e05db2e66c94046ecb02bb3bff94fa4b87a8a51e4521b69f6da67b0907f5d893",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "docs/session-handoff.md",
+      "originalSha256": "13adf1d152f3326840d7864e3237fea039741a1176246c80824fdee88212b534",
+      "resolution": "Historical content preserved in docs/archive/local-handoff-2026-11-18.md; current handoff updated"
+    },
+    {
+      "path": "docs/ui-design.md",
+      "originalSha256": "a45e30c26659d64d7f10d62c402fb225619e0fea97240c0a97cccc237137681c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "firestore.indexes.json",
+      "originalSha256": "2b5bd882461ef4fb7530b79face316dbfbc98a01d85754b2fc322b961190276c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "index.html",
+      "originalSha256": "708f6a9b83f36f5f31d1101aac795415c16063c76916553e88ee992a65ca83be",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/groom-academy-ai-reconstruction-do-not-use.png",
+      "originalSha256": "e14789b5e7ca79976c14ce27c3f1e03032f15bfd7acb92feca575d30833dd90c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/groom-academy-original-crop.jpg",
+      "originalSha256": "4668cc5d8627266462e0e790d4085ad171850a107f50394825d4128904bf23d9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/groom-academy-original-cutout.png",
+      "originalSha256": "848231a98cc882a348e2df888230ececa6b7c2abe52b3c5e1760d7d2e607f33b",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/groom_academy.jpg",
+      "originalSha256": "58a18b4ad78bbd585dd6df10bb3ae105c924361949c18f2c9bcdf4095a6abeb5",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/parsed.json",
+      "originalSha256": "29f29624453a28dc1e5db2675e7e13d31ef1456b449cf2585582c3916eb34098",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/price1.jpg",
+      "originalSha256": "2d9f2b0ce6e9196cfcbf850efe7d610936935b391dba4488609b02a7d072c30b",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/price2.jpg",
+      "originalSha256": "655929d4abde107f8747e65e9b222f81b9c9238fd2d3836fd95b4587f8e4a8ed",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/price3.jpg",
+      "originalSha256": "69b27040ac57e4488a356092d36a33849b915fb8ab91db5e5059007ca861ba77",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "info/price4.jpg",
+      "originalSha256": "f6552a907d9d4c7dbedc5c04f9981ea5c06c250a6df1d0b2094b824d10be8e60",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "package.json",
+      "originalSha256": "7558e6d817c1680a494fdc7a644e86fa0056a497bd0569f2310e45de21df04cb",
+      "resolution": "Checked in with later validated corrections or formatting"
+    },
+    {
+      "path": "packages/contracts/generated.ts",
+      "originalSha256": "c0516d9bcec3af489cf1f894142723b6b851f41b02d3c91c6424d79e884f0223",
+      "resolution": "Current generated contract retained; merged specification includes newer paging query parameters and cursor documentation"
+    },
+    {
+      "path": "packages/contracts/openapi.json",
+      "originalSha256": "611bfde7b43814cee7661e4f2c930e11b94ee62d68868ac8583a0b236b180401",
+      "resolution": "Current generated contract retained; merged specification includes newer paging query parameters and cursor documentation"
+    },
+    {
+      "path": "packages/pricing/calculations.ts",
+      "originalSha256": "18ce6c9b0cab719e6a81ebc2dd6f65d45e10cc27f23e0961b09f110a5e5a01db",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "packages/pricing/source-rates.json",
+      "originalSha256": "4cebb214ca2275752928dacd83ec2fd86163b59494656355f9780578433d8153",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "playwright.backend.config.ts",
+      "originalSha256": "97ee4148c59dc7294a81ffbe6bd1f38b18d0a503b281a2ff3805a9e6aa1934e3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "playwright.config.ts",
+      "originalSha256": "f830db508bcfa07e2983ca6357fa63775a1ad43f34e453f65e91db7b0eedd96a",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "playwright.local.config.ts",
+      "originalSha256": "b8baa1f40b4dc7ba2aac1c29839c1bf05b57ddd3e8a0175e70d902292f8e0708",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "public/images/marketing/grooming.HEIC",
+      "originalSha256": null,
+      "resolution": "Preserved requested deletion; PNG replacements retained"
+    },
+    {
+      "path": "public/images/marketing/washing.HEIC",
+      "originalSha256": null,
+      "resolution": "Preserved requested deletion; PNG replacements retained"
+    },
+    {
+      "path": "public/licenses/attribution.txt",
+      "originalSha256": "e864cdbd8c9e3149cb8f23309019fa8460824709a6d389e40e1f005377a3ee05",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "public/licenses/codicons.txt",
+      "originalSha256": "af5e030844efddbc7ab00dcfea8b019703753d4d9f5172d727c533a492aec665",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "public/licenses/lucide.txt",
+      "originalSha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "public/licenses/material-symbols.txt",
+      "originalSha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "scripts/assets/refine-dog-vectors.py",
+      "originalSha256": "cad9d5308cd7a04ac29f70822471bfa1925fa4aa8fccb9d0c64b153a3306f656",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "scripts/prepare-local-booking.mjs",
+      "originalSha256": "18c475c8b1a3f870a56c778127674a8c87649ffa42488c2d1044d37dc5fba891",
+      "resolution": "Checked in with named-emulator validation support and non-fixture preservation guard"
+    },
+    {
+      "path": "scripts/seed-local-workflows.mjs",
+      "originalSha256": "3c47526c14788268c661fe10c9712d7d1a4295b17430d16cc854a01b45b1e442",
+      "resolution": "Checked in with named-emulator validation support and non-fixture preservation guard"
+    },
+    {
+      "path": "tests/backend-browser/appearance.spec.ts",
+      "originalSha256": "bc080bc0eb2f194d1c47c324ad8588662cced38dc7f028b1906c9ccd5b5b83e5",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/booking-layout.spec.ts",
+      "originalSha256": "e156c7d42a13c276036ec2a7eec81bca8d84d1e640898bc4818506939e527b44",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/calendar-hierarchy.spec.ts",
+      "originalSha256": "68ffd65b00e5b9fc9953c6ddf23434ae3e9fcc40b823818fe4d07bcb8272156f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/configuration.spec.ts",
+      "originalSha256": "c94db25fece3ec57cf465ec81f1eb61b15ea4b4ce37f1afd31c1348cefaed80a",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/directory-pagination.spec.ts",
+      "originalSha256": "d6f26f51ef055ed39334b2c0804f34e5d101bc50fec17f697769544a77acd436",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/employee-assignments.spec.ts",
+      "originalSha256": "f5cfa43dc248a89ee3a808ea233c6a100cd23bebb066e48ab81bc1fd3f847f84",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/employee.spec.ts",
+      "originalSha256": "92c98709d341a84333d93e448471e6f6a5162b3177d14edc82a66f14deea3ba9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/material-ui.spec.ts",
+      "originalSha256": "8ae878f46a309e46feb2a229228a79e143e17179346b1403ca958e30d6e19479",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/modal-scroll.spec.ts",
+      "originalSha256": "d7e3aae2c86ae722966868956afeb805f8a614cf47c90ac44f50594b0a3a98e1",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/navigation.spec.ts",
+      "originalSha256": "c0b1bf682577255792a2f1a7e33ce0c7c1b92ce2710cf6112081337bb73786da",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/pagination.spec.ts",
+      "originalSha256": "d1cba8796c8fa17ebefdefbf90aee1b447971b5afea46b808fa8b840192d902d",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/pricing.spec.ts",
+      "originalSha256": "7f2cbe2e4a914c24db67a2a22bb08423facf24ed7b526f90d757728cf914859b",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/profile-roles.spec.ts",
+      "originalSha256": "787342e1863ffb1543d16f668dfa930a6fe269836609c5807a58923d7a19b95c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/public-pricing.spec.ts",
+      "originalSha256": "f6044c231132f82655ccff14e2ebc188b269c914ce689e2e3ac6b084043620d3",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/readability.ts",
+      "originalSha256": "31fdd8eb174842f2db1949853c227be28185479daae90a7f7ec457b11701d879",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/theme-components.spec.ts",
+      "originalSha256": "dbf41bd59aa805d9217ea9af85d2420f67aadb353dc6e02ef5fd7c4aa7744af9",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/backend-browser/workspace.spec.ts",
+      "originalSha256": "4463a5a5fb882cf77166098d5c05b1794861809b4775ef447204ae38bcade683",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/browser/custom-dates.spec.ts",
+      "originalSha256": "f640e3bc80b17d4c62049d318606b40e98164d122ed59bb3a9c5d7c3e8dc1794",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/browser/custom-dropdowns.spec.ts",
+      "originalSha256": "31cccfbac5265b502bb13e919e2df22231c8493f20a711f86a8377af39a6db1c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/browser/profile.spec.ts",
+      "originalSha256": "946ecdf130aa47eec6688fe29446ac2692d89fff7c5b206e3b4b4697bd5b5eed",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/browser/routing.spec.ts",
+      "originalSha256": "9957659b02087c6a6aa3a67658f5bd14cd9346e25ae1c5bcb470aaa693f117f7",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/customer-api.test.mjs",
+      "originalSha256": "46a6592b8b6e9256e4135b3f603c5c3d1b909575157f9e79184314504de8a6e0",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/customer-store.integration.mjs",
+      "originalSha256": "5b16ee5e441f57368734247b73f0a50009a1d70df7c2852bb85730de22bbc964",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/employee-assignments.integration.mjs",
+      "originalSha256": "d9a5113d817f34bb1fe2cba96f59bd803005bdc53636ce4767cc2a0546454873",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/employee-assignments.test.mjs",
+      "originalSha256": "8444e6ad8dd77b2ca8c00bc3fef6e84a5a8d772a780f0d8662cc5bb9dbd4d500",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/helpers/workspace-server.mjs",
+      "originalSha256": "f0c14dd18ea7306836f74744ef32cceb08302582d99eb8a08f1b2cbf37079aae",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/identity-api.test.mjs",
+      "originalSha256": "f5e59674c75d77f5b0bcdf7223d6891398c19711b2dd5d841439eeafa2e4fcad",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/local-browser/sample-workspace.spec.ts",
+      "originalSha256": "2055c13b4f510cafdf23a9ed4a3fec99131430eb99a794eab6ca322abce64bd0",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/operations.integration.mjs",
+      "originalSha256": "4fc7900c04b608199871a231340bc0c22386eccfb7f11c24d38fee9202d6ea04",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/pagination.integration.mjs",
+      "originalSha256": "a498fa70026bce6b96ed8f6f7da6924b7a3a348fa0d1155135625007ab586e63",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/pricing.integration.mjs",
+      "originalSha256": "3b92c20266ff552b79b5c9ad76376999c4f771d3d23fa640050f222c5423482f",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/pricing.test.mjs",
+      "originalSha256": "e2f815a73cd426cc75e13ee2d0f9fec1db8f729cdcd8beb3b3b20d78f7545cd5",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/timeline-layout.test.mjs",
+      "originalSha256": "e6782afa1ab322c66ba02b7a96753aed2c6e6023e4f2fd1a4412b64312d66439",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/workspace-api.integration.mjs",
+      "originalSha256": "10f915e0bc9961eafd940c33c3c6b5bdc75d3994b3490d43fc41d8c5aac5158c",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    },
+    {
+      "path": "tests/workspace-api.test.mjs",
+      "originalSha256": "3b70bc18097c175130e85187101bd5e05423168890182dd479a48cf50f25c638",
+      "resolution": "Checked in with original content (already merged or restored in remaining-file PRs)"
+    }
+  ],
+  "historicalStashReview": [
+    {
+      "snapshot": "28ceaa996c270f7e19425fe898c6a70d95bdce2e",
+      "changedPaths": [
+        "docs/session-handoff.md",
+        "info/groom-academy-ai-reconstruction-do-not-use.png",
+        "info/groom-academy-original-crop.jpg",
+        "info/groom-academy-original-cutout.png",
+        "info/groom_academy.jpg",
+        "info/parsed.json",
+        "info/price1.jpg",
+        "info/price2.jpg",
+        "info/price3.jpg",
+        "info/price4.jpg",
+        "public/images/marketing/grooming.HEIC",
+        "public/images/marketing/washing.HEIC",
+        "scripts/assets/refine-dog-vectors.py"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    },
+    {
+      "snapshot": "6efeddb66873fe9db6b5db54afb8287bc583d9be",
+      "changedPaths": [
+        "docs/session-handoff.md",
+        "info/groom-academy-ai-reconstruction-do-not-use.png",
+        "info/groom-academy-original-crop.jpg",
+        "info/groom-academy-original-cutout.png",
+        "info/groom_academy.jpg",
+        "info/parsed.json",
+        "info/price1.jpg",
+        "info/price2.jpg",
+        "info/price3.jpg",
+        "info/price4.jpg",
+        "public/images/marketing/grooming.HEIC",
+        "public/images/marketing/washing.HEIC",
+        "scripts/assets/refine-dog-vectors.py"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    },
+    {
+      "snapshot": "81f2b65008d4f62b6f6d1e6942373e2fe0050585",
+      "changedPaths": [
+        "docs/session-handoff.md",
+        "public/images/marketing/grooming.HEIC",
+        "public/images/marketing/washing.HEIC",
+        "scripts/assets/refine-dog-vectors.py"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    },
+    {
+      "snapshot": "2b68ba594083f3f39d361ba3fd1b7f2640e1eab7",
+      "changedPaths": [
+        "docs/session-handoff.md",
+        "public/images/marketing/grooming.HEIC",
+        "public/images/marketing/washing.HEIC",
+        "scripts/assets/refine-dog-vectors.py"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    },
+    {
+      "snapshot": "7fa88b62b2c2e23dd2036f249b042c81fbebd366",
+      "changedPaths": [
+        "docs/session-handoff.md",
+        "public/images/marketing/grooming.HEIC",
+        "public/images/marketing/washing.HEIC",
+        "scripts/assets/refine-dog-vectors.py"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    },
+    {
+      "snapshot": "598043397d339cd8ea0a0f3afac07384efea8f90",
+      "changedPaths": [
+        "apps/api/src/houses.ts",
+        "apps/web/src/calendar-settings.tsx",
+        "apps/web/src/house-calendar.tsx",
+        "apps/web/src/houses.tsx",
+        "apps/web/src/icons.tsx",
+        "apps/web/src/locales/en.json",
+        "apps/web/src/locales/zh.json",
+        "docs/session-handoff.md",
+        "packages/contracts/openapi.json",
+        "public/images/marketing/grooming.HEIC",
+        "public/images/marketing/washing.HEIC",
+        "scripts/assets/refine-dog-vectors.py",
+        "tests/browser/full-screen-booking.spec.ts",
+        "tests/browser/houses.spec.ts",
+        "tests/houses-api.test.mjs"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    },
+    {
+      "snapshot": "99401e3d07ddc2d5d48fe9bfb409b9507548ac18",
+      "changedPaths": [
+        "apps/api/src/app.ts",
+        "apps/api/src/houses.ts",
+        "apps/api/src/server.ts",
+        "packages/contracts/generated.ts",
+        "packages/contracts/openapi.json"
+      ],
+      "additionalAbsentPaths": [],
+      "disposition": "Historical safety snapshot of known project paths; retain as recovery history, without applying older versions over canonical main"
+    }
+  ]
+}
