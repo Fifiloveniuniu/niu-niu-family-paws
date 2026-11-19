@@ -4,6 +4,49 @@
  */
 
 export interface paths {
+    "/api/workspace/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Scoped recorded boarding activity with customer/pet/date/kind filters and stable cursor pagination */
+        get: {
+            parameters: {
+                query?: {
+                    customerId?: string;
+                    petId?: string;
+                    cursor?: string;
+                    from?: string;
+                    through?: string;
+                    kind?: "added" | "correction" | "terms";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Recorded events, not computed booking charges */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WorkspaceEvents"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/workspace/pets": {
         parameters: {
             query?: never;
@@ -818,6 +861,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        WorkspaceEventQuery: {
+            /** Format: uuid */
+            customerId?: string;
+            /** Format: uuid */
+            petId?: string;
+            /** Format: uuid */
+            cursor?: string;
+            /** Format: date-time */
+            from?: string;
+            /** Format: date-time */
+            through?: string;
+            /** @enum {string} */
+            kind?: "added" | "correction" | "terms";
+        };
+        WorkspaceEvents: {
+            items: {
+                customer: components["schemas"]["Customer"];
+                pet: components["schemas"]["Pet"];
+                event: components["schemas"]["BoardingEvent"];
+            }[];
+            nextCursor: string | null;
+        };
         WorkspacePets: {
             admin: boolean;
             customer: components["schemas"]["Customer"] | null;

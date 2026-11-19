@@ -52,6 +52,26 @@ export function projectBoardingAccount(data: FirebaseFirestore.DocumentData): Bo
     updatedAt,
   };
 }
+export function projectBoardingEvent(
+  data: FirebaseFirestore.DocumentData,
+  includeActor = false,
+): BoardingEvent {
+  const { id, customerId, petId, version, delta, daysAfter, validFrom, validThrough, reason, at } =
+    data;
+  return {
+    id,
+    customerId,
+    petId,
+    version,
+    delta,
+    daysAfter,
+    validFrom,
+    validThrough,
+    reason,
+    at,
+    ...(includeActor && data.actor ? { actor: data.actor } : {}),
+  };
+}
 export function validDay(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value < '0001-01-01') return false;
   const timestamp = Date.parse(value + 'T00:00:00Z');
@@ -87,38 +107,9 @@ export function balanceStore(database: Firestore): BalanceStore {
         let query = account.collection('events').orderBy('version', 'desc').limit(51);
         if (cursor) query = query.startAfter(cursor);
         const events = await tx.get(query);
-        const items = events.docs.slice(0, 50).map((doc) => {
-          const data = doc.data();
-          const {
-            id,
-            customerId,
-            petId,
-            version,
-            delta,
-            daysAfter,
-            validFrom,
-            validThrough,
-            reason,
-            actor,
-            at,
-          } = data;
-          const event: BoardingEvent = {
-            id,
-            customerId,
-            petId,
-            version,
-            delta,
-            daysAfter,
-            validFrom,
-            validThrough,
-            reason,
-            actor,
-            at,
-          };
-          if (identity.admin === true) return event;
-          const { actor: _actor, ...publicEvent } = event;
-          return publicEvent;
-        });
+        const items = events.docs
+          .slice(0, 50)
+          .map((doc) => projectBoardingEvent(doc.data(), identity.admin === true));
         return {
           account: a.exists ? projectBoardingAccount(a.data()!) : null,
           events: items,
@@ -202,6 +193,7 @@ export function balanceStore(database: Firestore): BalanceStore {
         tx.create(account.collection('events').doc(input.operationId), event);
         tx.create(operation, {
           signature,
+          kind: input.delta > 0 ? 'added' : input.delta < 0 ? 'correction' : 'terms',
           result: next,
           actor: identity.uid,
           customerId: cid,

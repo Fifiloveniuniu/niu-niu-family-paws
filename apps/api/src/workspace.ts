@@ -2,7 +2,9 @@ import { FieldPath, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
 import type { components } from '../../../packages/contracts/generated.ts';
 import { projectRoom } from './rooms.ts';
-import { projectBoardingAccount } from './balances.ts';
+import spec from '../../../packages/contracts/openapi.json' with { type: 'json' };
+import { timestamp } from './bookings.ts';
+import { projectBoardingAccount, projectBoardingEvent } from './balances.ts';
 import { requestIdentity, type Identity } from './request-context.ts';
 import { PetAccess, PetMissing, PetInvalid, projectPet } from './pets.ts';
 import { customerFromDocument } from './store.ts';
@@ -11,6 +13,10 @@ type Customer = components['schemas']['Customer'];
 type WorkspacePets = components['schemas']['WorkspacePets'];
 type WorkspaceLocations = components['schemas']['WorkspaceLocations'];
 export interface WorkspaceStore {
+  events(
+    identity: Identity,
+    input: components['schemas']['WorkspaceEventQuery'],
+  ): Promise<components['schemas']['WorkspaceEvents']>;
   pets(identity: Identity, customerId?: string, cursor?: string): Promise<WorkspacePets>;
   locations(identity: Identity): Promise<WorkspaceLocations>;
 }
@@ -85,6 +91,84 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
         };
       });
     },
+    async events(identity, input) {
+      const from = input.from ? timestamp(input.from) : null,
+        through = input.through ? timestamp(input.through) : null;
+      if (from && through && through <= from) throw new PetInvalid();
+      return database.runTransaction(async (tx) => {
+        const customer = await scope(tx, identity, input.customerId);
+        if (!customer && identity.admin !== true) return { items: [], nextCursor: null };
+        if (input.petId && !customer) throw new PetInvalid();
+        if (input.petId) {
+          const pet = await tx.get(database.doc(`customers/${customer!.id}/pets/${input.petId}`));
+          if (!pet.exists) throw new PetMissing();
+        }
+        let query: FirebaseFirestore.Query = database.collection('balanceOperations');
+        if (customer) query = query.where('customerId', '==', customer.id);
+        if (input.petId) query = query.where('petId', '==', input.petId);
+        if (input.kind) query = query.where('kind', '==', input.kind);
+        if (from) query = query.where('at', '>=', from);
+        if (through) query = query.where('at', '<', through);
+        query = query.orderBy('at', 'desc').orderBy(FieldPath.documentId(), 'desc').limit(51);
+        if (input.cursor) {
+          const last = await tx.get(database.doc('balanceOperations/' + input.cursor));
+          if (
+            !last.exists ||
+            (customer && last.data()!.customerId !== customer.id) ||
+            (input.petId && last.data()!.petId !== input.petId)
+          )
+            throw new PetInvalid();
+          query = query.startAfter(last.data()!.at, last.ref);
+        }
+        const operations = await tx.get(query);
+        const docs = operations.docs.slice(0, 50);
+        if (!docs.length) return { items: [], nextCursor: null };
+        const eventDocs = await tx.getAll(
+          ...docs.map((doc) =>
+            database.doc(
+              `customers/${doc.data().customerId}/pets/${doc.data().petId}/balances/boarding/events/${doc.id}`,
+            ),
+          ),
+        );
+        const customerRefs = [...new Set(docs.map((doc) => doc.data().customerId as string))].map(
+          (id) => database.doc('customers/' + id),
+        );
+        const petRefs = [
+          ...new Set(
+            docs.map((doc) => `customers/${doc.data().customerId}/pets/${doc.data().petId}`),
+          ),
+        ].map((path) => database.doc(path));
+        const [customerDocs, petDocs] = await Promise.all([
+          tx.getAll(...customerRefs),
+          tx.getAll(...petRefs),
+        ]);
+        const customers = new Map(
+          customerDocs.map((doc) => [
+            doc.id,
+            doc.exists ? customerFromDocument({ ...doc.data(), id: doc.id }) : null,
+          ]),
+        );
+        const pets = new Map(
+          petDocs.map((doc) => [
+            doc.ref.path,
+            doc.exists
+              ? projectPet({ ...doc.data(), id: doc.id, customerId: doc.ref.parent.parent!.id })
+              : null,
+          ]),
+        );
+        const items = docs.map((doc, index) => {
+          const owner = customers.get(doc.data().customerId),
+            pet = pets.get(`customers/${doc.data().customerId}/pets/${doc.data().petId}`);
+          if (!owner || !pet || !eventDocs[index].exists) throw new PetMissing();
+          return {
+            customer: owner,
+            pet,
+            event: projectBoardingEvent(eventDocs[index].data()!, identity.admin === true),
+          };
+        });
+        return { items, nextCursor: operations.size > 50 ? docs.at(-1)!.id : null };
+      });
+    },
     async locations(identity) {
       return database.runTransaction(async (tx) => {
         const customer = await scope(tx, identity);
@@ -134,6 +218,11 @@ export function workspaceRoutes(api: FastifyInstance, store: WorkspaceStore) {
     },
     (request) =>
       store.pets(requestIdentity(request), request.query.customerId, request.query.cursor),
+  );
+  api.get<{ Querystring: components['schemas']['WorkspaceEventQuery'] }>(
+    '/workspace/events',
+    { schema: { querystring: spec.components.schemas.WorkspaceEventQuery } },
+    (request) => store.events(requestIdentity(request), request.query),
   );
   api.get('/workspace/locations', { schema: { querystring: emptyObjectSchema } }, (request) =>
     store.locations(requestIdentity(request)),

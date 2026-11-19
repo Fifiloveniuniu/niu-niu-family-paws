@@ -7,6 +7,7 @@ test('workspace reads require verified authentication and accept only explicit b
     verify: async (token) => ({ uid: token, email_verified: token !== 'unverified', google: true }),
     store: {},
     workspace: {
+      events: async () => ({ items: [], nextCursor: null }),
       pets: async (...args) => {
         received = args;
         return { admin: false, customer: null, items: [], nextCursor: null };
@@ -50,4 +51,36 @@ test('workspace reads require verified authentication and accept only explicit b
   assert.equal(received[0].uid, 'owner');
   assert.equal(received[1], id);
   assert.equal(received[2], id + '/' + id);
+});
+
+test('statement filter schema rejects forged actor, unsupported activity and malformed dates', async (t) => {
+  let calls = 0;
+  const app = buildApp({
+    verify: async () => ({ uid: 'owner', email_verified: true, google: true }),
+    store: {},
+    workspace: {
+      events: async () => {
+        calls++;
+        return { items: [], nextCursor: null };
+      },
+    },
+  });
+  t.after(() => app.close());
+  for (const query of [
+    'actor=other',
+    'kind=payment',
+    'from=invalid',
+    'petId=not-a-pet',
+    'cursor=invalid',
+  ])
+    assert.equal(
+      (
+        await app.inject({
+          url: '/api/workspace/events?' + query,
+          headers: { authorization: 'Bearer owner' },
+        })
+      ).statusCode,
+      400,
+    );
+  assert.equal(calls, 0);
 });
