@@ -21,7 +21,7 @@ test('balances and history page on the server, preserve filters and export the w
       await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
-  const accounts = page.locator('.saved-balances > .workspace-table-scroll tbody tr');
+  const accounts = page.locator('#balances-panel .workspace-table tbody tr');
   const paging = page.getByRole('navigation', { name: 'Balance pages', exact: true });
   await expect(accounts).toHaveCount(25);
   const first = await accounts.allTextContents();
@@ -73,6 +73,7 @@ test('balances and history page on the server, preserve filters and export the w
     `/app/balances/?lang=en&asCustomer=${target.customerId}&pet=${encodeURIComponent(target.customerId + '/' + target.petId)}`,
   );
   await expect(accounts).toHaveCount(1);
+  await page.getByRole('tab', { name: 'Activity', exact: true }).click();
   const history = page.getByRole('navigation', { name: 'History pages', exact: true });
   const entries = page.locator('.workspace-statement tbody tr');
   await expect(entries).toHaveCount(25);
@@ -120,7 +121,7 @@ test('a searched customer remains readable after reopening the balance picker', 
       await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
-  await expect(page.locator('.saved-balances > .workspace-table-scroll tbody tr')).toHaveCount(25);
+  await expect(page.locator('#balances-panel .workspace-table tbody tr')).toHaveCount(25);
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
   const dialog = page.getByRole('dialog');
   const picker = dialog.getByRole('combobox', { name: 'Customer', exact: true });

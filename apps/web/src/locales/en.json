@@ -1270,5 +1270,17 @@
   "ui.datePicker.timeRequired": "Choose a time to complete this date.",
   "ui.autocomplete.toggle": "Toggle {{field}} choices",
   "ui.publicPrices.checking": "Owner-supplied reference prices are shown while we check the latest prices…",
-  "ui.publicPrices.unavailable": "Current prices could not be loaded. Try again to view the latest prices."
+  "ui.publicPrices.unavailable": "Current prices could not be loaded. Try again to view the latest prices.",
+  "ui.balanceView.current": "Current balances",
+  "ui.balanceView.activity": "Activity",
+  "ui.balanceView.intro": "Boarding days by pet, with a clear record of every change.",
+  "ui.balanceView.currentHint": "Review saved days and validity dates. Choose the clock to see a pet’s activity.",
+  "ui.balanceView.activityHint": "See recorded balance changes. Export includes all matching entries across every page.",
+  "ui.balanceView.validity": "Validity dates",
+  "ui.balanceView.noBalance": "No saved balance",
+  "ui.balanceView.petActivity": "View activity",
+  "ui.balanceView.pageSummary": "Changes on this page",
+  "ui.balanceView.daysUnit": "boarding days",
+  "ui.balanceView.reason": "Note",
+  "ui.balanceView.allBalances": "Back to all balances"
 }

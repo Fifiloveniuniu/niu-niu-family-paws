@@ -1,3 +1,7 @@
+## Balances and Activity redesign — local, 2026-11-18
+
+Balances uses separate Current balances / Activity tabs with retained URL filters. Day quantities, grouped validity dates and per-pet activity shortcuts replace the stacked table presentation. Mobile rows keep actions visible; Activity retains pagination, entry details and complete filtered CSV export. Page totals remain explicitly page-scoped. Existing manual credits, validity templates and cancellation drafts remain intact. Build and focused localhost Chrome journeys pass, including bilingual desktop/mobile, persistence, paging/export and modal scrolling; review screenshots are in docs/review/balances-2026-11-18. No deployment.
+
 ## House Add room shortcut — 2026-11-18
 
 Calendar house rows replace the address icon with an administrator-only + that opens a single focused Add room dialog for that house. Clicking the house name still opens its saved address. Missing-address houses keep room creation disabled. English desktop/Chinese mobile localhost Chrome journeys create/save/reload a test room and check address access; production build passes. No deployment.
