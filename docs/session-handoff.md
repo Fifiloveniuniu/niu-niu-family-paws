@@ -1,3 +1,7 @@
+## Owner-supplied public service prices — 2026-11-18
+
+Public pricing shows active saved owner-supplied boarding/grooming/service rates, configured holiday surcharge and explicit package savings. Removed unsupported daycare, invented preview contacts/training duration and assumed package validity. Confirmed WeChat is shown. API outages show a retry state and hide stale rates; reference prices are explicitly labeled during initial verification. Original public styling remains independent of app themes. No deployment.
+
 ## Boarding configuration screens — 2026-11-18
 
 Admin navigation is Calendar / Balances / Customers / Pricing with no Settings button. Pricing edits source rates, fixed-price packages, explicit comparisons/savings, service prices and holiday dates/surcharge. Balances provides validity templates and a saved cancellation draft; location management and employee assignments remain reachable through calendar management. Templates copy reviewed dates and never rewrite existing accounts; cancellation drafts do not activate automatic refunds. No deployment.
