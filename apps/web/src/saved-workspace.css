@@ -505,3 +505,85 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+.workspace-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+.workspace-pagination label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.workspace-pagination .custom-select {
+  min-width: 76px;
+}
+.workspace-pagination [role='alert'] {
+  flex-basis: 100%;
+}
+
+.employee-house-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.employee-house-choice input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex: none;
+}
+
+.customer-form .employee-house-choice {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+.customer-form .employee-house-choice input[type='checkbox'] {
+  accent-color: var(--md-link);
+}
+
+.operations-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: 20px;
+}
+.operations-cards article {
+  border: 1px solid var(--md-outline-variant, #d4dcd5);
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 0;
+}
+.operations-cards h2 {
+  font-size: 1.15rem;
+}
+.operations-cards dd {
+  margin: 0 0 10px;
+  overflow-wrap: anywhere;
+}
+.operations-cards dt {
+  font-weight: 600;
+}
+.workspace-pagination .custom-select {
+  width: 80px;
+  flex: none;
+}
+.workspace-pagination label {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .workspace-pagination {
+    gap: 10px;
+  }
+  .workspace-pagination [role='status'] {
+    flex-basis: 100%;
+  }
+}
