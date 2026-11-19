@@ -1,3 +1,7 @@
+## Tighter calendar row actions — 2026-11-19
+
+Removed the extra 6px gap between the settings and + buttons in house/room calendar rows. Reserved group widths match the actual controls (68px desktop, 88px phone); 44px phone touch targets are preserved. Six focused calendar/room Chrome journeys pass. Actual localhost:4180 walkthroughs verify adjacent, non-overlapping controls in English desktop and Chinese phone across all four themes. Production build and formatting pass. No deployment.
+
 ## Current workspace refresh delivery — 2026-11-18
 
 The four requested workspace changes are merged through Business metrics PR #163 at 03995192af567a1f3527fff74bb0ef358426e73c, with green CI and verified implementation signatures. Delivery PRs: [house Add room shortcut #160](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/160), [Balances/Activity #161](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/161), [compact Customers #162](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/162), [Business metrics #163](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/163). A final small follow-up translates the embedded room editor’s loading message instead of rendering literal implementation text; it also updates this handoff and the owner navigation guide.
