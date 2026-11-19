@@ -1886,3 +1886,36 @@ header.marketing-header nav {
   width: 52px;
   height: 52px;
 }
+
+.public-source-prices {
+  display: grid;
+  gap: 36px;
+  margin-block: 36px;
+}
+.public-price-scroll {
+  overflow-x: auto;
+}
+.public-source-prices table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+.public-source-prices th,
+.public-source-prices td {
+  text-align: left;
+  padding: 14px 12px;
+  border-bottom: 1px solid #d9e1d4;
+}
+.public-source-prices th:last-child,
+.public-source-prices td:last-child {
+  white-space: nowrap;
+}
+.public-source-prices small {
+  display: block;
+}
+@media (max-width: 600px) {
+  .public-source-prices th,
+  .public-source-prices td {
+    padding: 12px 8px;
+  }
+}

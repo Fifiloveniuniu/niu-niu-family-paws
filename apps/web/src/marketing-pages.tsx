@@ -1,5 +1,6 @@
+import PublicPrices from './public-prices';
 import { localeFor, publicText, uiText, uiValue } from './i18n.ts';
-import { marketingPreview, previewPrices } from './marketing-preview';
+import { marketingPreview } from './marketing-preview';
 import { PhotoGallery, StoryQuotes } from './marketing-galleries';
 import { usePublicMarketingContent } from './public-marketing-content';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +23,8 @@ export function serviceContent() {
     note: string;
     kind: 'day' | 'night' | 'grooming' | 'academy' | 'visit' | 'walk';
   }[];
-  services.splice(
+  const offered = services.filter((service) => service.id !== 'daycare');
+  offered.splice(
     2,
     0,
     {
@@ -42,15 +44,7 @@ export function serviceContent() {
       kind: 'walk' as const,
     },
   );
-  return marketingPreview
-    ? services.map((service) => ({
-        ...service,
-        note: previewPrices[service.id]
-          ? publicText(previewPrices[service.id]) +
-            uiText('ui.marketingPages.letSFindTheRightArrangementTogether')
-          : service.note,
-      }))
-    : services;
+  return offered;
 }
 export function ServiceSymbol({
   kind,
@@ -178,27 +172,15 @@ export function PricingPage() {
       <section className="editorial-page pricing-page" data-scroll-scene>
         <p className="eyebrow">{uiText('ui.marketingPages.aLittleClarityBeforeYouPlan')}</p>
         <h1>{uiText('ui.marketingPages.goodPlansStartWithClarity')}</h1>
-        <p className="page-lead">
-          {marketingPreview
-            ? uiText('ui.marketingPages.fromEverydayCareToANewCraftFindThe')
-            : uiText('ui.marketingPages.ourServicePricesAndCourseFeesAreOnTheir')}
-        </p>
+        <p className="page-lead">{uiText('ui.publicPrices.intro')}</p>
+        <PublicPrices />
         <div id="service-prices" className="price-list">
           {serviceContent().map((service, index) => (
             <article key={service.id}>
               <span className="row-number">0{index + 1}</span>
               <div>
-                <h2>
-                  {service.name}
-                  {marketingPreview && (
-                    <span className="preview-price">
-                      {(previewPrices[service.id]
-                        ? publicText(previewPrices[service.id])
-                        : undefined) ?? uiText('ui.marketingPages.confirmPricing')}
-                    </span>
-                  )}
-                </h2>
-                <p>{marketingPreview ? service.body : service.note}</p>
+                <h2>{service.name}</h2>
+                <p>{service.note}</p>
               </div>
               <a
                 className="text-link"
@@ -214,11 +196,7 @@ export function PricingPage() {
             {uiText('ui.marketingPages.forALittleMoreTimeTogether')}
           </span>
           <h2>{uiText('ui.marketingPages.boardingPackages')}</h2>
-          <p>
-            {marketingPreview
-              ? uiText('ui.marketingPages.thirtyDaysOfBoardingValidForThreeMonthsFrom')
-              : uiText('ui.marketingPages.packagesInclude30DaysValidForThreeMonthsFrom')}
-          </p>
+          <p>{uiText('ui.publicPrices.packagesPending')}</p>
         </aside>
       </section>
       <section
@@ -264,25 +242,13 @@ export function ContactPage() {
       <p className="eyebrow">{uiText('ui.marketingPages.everyGoodStoryStartsWithHello')}</p>
       <h1>{uiText('ui.marketingPages.letSTalkAboutYourLittleOne')}</h1>
       <p className="page-lead">{uiText('ui.marketingPages.tellUsAboutYourPetTheCareYouRe')}</p>
-      {marketingPreview ? (
-        <dl className="contact-details">
-          <div>
-            <dt>{uiText('ui.marketingPages.sayHello')}</dt>
-            <dd>
-              <a href="mailto:hello@niuniufamilypaws.example">hello@niuniufamilypaws.example</a>
-            </dd>
-          </div>
-          <div>
-            <dt>{uiText('ui.marketingPages.comeBy')}</dt>
-            <dd>{uiText('ui.marketingPages.mondaySaturday9Am6PmVisitsByAppointment')}</dd>
-          </div>
-        </dl>
-      ) : (
-        <>
-          <p className="contact-status">{t('pending')}</p>
-          <p>{uiText('ui.marketingPages.ourPhoneEmailAndLocationsWillAppearHereOnce')}</p>
-        </>
-      )}
+      <dl className="contact-details">
+        <div>
+          <dt>{uiText('ui.publicPrices.wechat')}</dt>
+          <dd>Ilikesunflower2017</dd>
+        </div>
+      </dl>
+      <p>{uiText('ui.marketingPages.ourPhoneEmailAndLocationsWillAppearHereOnce')}</p>
       <div className="contact-options">
         <a href="/services/">{uiText('ui.marketingPages.careForMyPet')} ↗</a>
         <a href="/academy/">{uiText('ui.marketingPages.learnToGroom')} ↗</a>
@@ -362,11 +328,9 @@ export function AcademyPage() {
           <p className="cute-note">{uiText('ui.marketingPages.everyExpertStartsSomewhere')}</p>
           <h2>{uiText('ui.marketingPages.yourLearningJourney')}</h2>
           <p>
-            {marketingPreview
-              ? uiText('ui.marketingPages.fourWeekendsInASmallLearningGroupExploringTool')
-              : uiText(
-                  'ui.marketingPages.courseContentInstructorIntroductionsEquipmentDatesAndFeesWill',
-                )}
+            {uiText(
+              'ui.marketingPages.courseContentInstructorIntroductionsEquipmentDatesAndFeesWill',
+            )}
           </p>
           <a className="text-link" href="/contact/">
             {uiText('ui.marketingPages.stayInTouchAboutClasses')} ↗

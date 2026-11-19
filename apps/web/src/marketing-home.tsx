@@ -156,19 +156,6 @@ export default function MarketingHome() {
             <h2 id="home-services-title">{t('homeServicesTitle')}</h2>
             <p>{t('homeServicesIntro')}</p>
           </div>
-          <a className="service-path" href="/services/" data-scroll-object="rise">
-            <span className="service-path-icon" aria-hidden="true">
-              <CareSymbol kind="day" />
-            </span>
-            <span>
-              <span className="eyebrow">{t('homeDayLabel')}</span>
-              <h3>{t('day')}</h3>
-              <p>{t('homeDayBody')}</p>
-            </span>
-            <span className="path-arrow" aria-hidden="true">
-              ↗
-            </span>
-          </a>
           <a className="service-path" href="/services/#boarding" data-scroll-object="rise">
             <span className="service-path-icon" aria-hidden="true">
               <CareSymbol kind="night" />
