@@ -22,3 +22,5 @@ dist-dev
 test-results-backend/
 test-results-local/
 __pycache__/
+
+gha-creds-*.json
