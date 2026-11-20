@@ -59,7 +59,7 @@ for (const width of [390, 1440])
                 .every((node) => parseFloat(getComputedStyle(node).fontSize) >= 14),
             ),
         ).toBe(true);
-        const primary = dialog.locator('.button, .hc-apply').first();
+        const primary = dialog.locator('.button:visible, .hc-apply:visible').first();
         if (await primary.count()) {
           const colors = await primary.evaluate((node) => {
             const probe = document.createElement('span');
