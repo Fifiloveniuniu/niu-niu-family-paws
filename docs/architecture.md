@@ -1,3 +1,7 @@
+## Calendar/dialog and pricing-entry follow-up — 2026-11-20
+
+Normal-calendar date headers must remain sticky inside their owning scrollport. Focused balance, validity-template and pricing dialogs keep title/actions visible with a scrolling form body; template lists adapt to cards on phones. Category translations are explicitly added with Enter and removed per language, retaining English/Chinese requirements and optional Spanish fallback. Holiday configuration offers named US actual-calendar-date presets with manual selection by year, preserves custom dates, and never automatically enables holidays or substitutes observed office weekdays. Existing pricing/date-only API schemas and cancellation draft/financial boundaries are unchanged.
+
 ## Focused price-name translations — 2026-11-20
 
 `PriceNameEditor` reuses the shared language registry and CustomSelect, stores only the active editor language locally, and writes draft names through the existing parent price state. Switching languages never changes saved values or marks the form dirty. A single visible input avoids hidden required fields; the existing English/Chinese validation and optional Spanish fallback remain. Customer preview uses the same `priceName` function as Pricing/public display. Blank optional Spanish, including whitespace, retains the fallback. Pricing dialogs have scoped dirty-notice contrast and responsive field alignment.

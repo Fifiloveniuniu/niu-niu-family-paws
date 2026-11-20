@@ -524,3 +524,11 @@ Selecciona Español en el menú de idioma. Haz clic en el nombre o la foto de un
 In Add/Edit price, choose **Name language**, then enter that language's category name. Switch between English, 简体中文 and Español; your entries stay saved in the open form. The progress note shows which required names still need filling, and the preview shows what customers will see. Spanish remains optional for existing records; leaving it blank uses the existing label. Saving updates all entered names together.
 
 新增／编辑价格时，先在“名称语言”中选择语言，再填写对应分类名称。切换英文、简体中文及西班牙语时，已输入内容会保留在当前表单中。进度提示说明仍需填写的必填语言，预览展示客户看到的名称。西班牙语维持选填；留空时使用已有名称。保存时会一起保存各语言名称。
+
+## Category names and holiday dates — 2026-11-20
+
+In Add/Edit price, choose a language, type its category name and press **Enter**. The name appears in the list below. Delete beside a name clears only that language; type a replacement and press Enter to add it again. Add pending names before saving. English and Simplified Chinese remain required; Spanish is optional.
+
+In Holiday dates & surcharge, choose the year and check the named dates you want to apply the holiday fee to. Presets use actual US calendar holidays, not substitute office weekdays. Check the selected-date list before saving. Use **Add another date** for custom dates. Nothing is selected automatically.
+
+新增／编辑价格时，选择语言，输入分类名称并按**回车**，名称会加入下方列表。点击名称旁的删除按钮仅清空该语言；输入新名称后按回车即可替换。请先添加正在输入的名称再保存。英文和简体中文仍为必填，西班牙语为选填。节假日设置中，选择年份并勾选需要加收费用的节日；列表显示美国节日实际日期，不含补休日期。可通过“添加其他日期”保留自定义设置。不会自动勾选节日。

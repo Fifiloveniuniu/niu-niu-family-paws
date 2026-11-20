@@ -105,3 +105,29 @@ html[data-ui-style] .hc .app-dialog.pricing-editor-dialog .unsaved-notice {
 .price-name-field {
   align-content: start;
 }
+.price-name-list {
+  grid-column: 1 / -1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.price-name-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  background: var(--md-surface-container);
+  border-radius: 10px;
+}
+.price-name-list li > span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.price-name-list small {
+  color: var(--md-on-surface-variant);
+}

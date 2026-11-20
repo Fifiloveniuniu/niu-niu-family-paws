@@ -33,7 +33,7 @@ function NativeModal({
       ) ?? []),
     ]
       .find((node) => node.getClientRects().length > 0 && !node.closest('[hidden]'))
-      ?.focus();
+      ?.focus({ preventScroll: className.split(' ').includes('workflow-dialog') });
     return () => {
       dialog?.close();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
