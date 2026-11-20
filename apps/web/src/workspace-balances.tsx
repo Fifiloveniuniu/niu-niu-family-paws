@@ -367,7 +367,7 @@ export default function WorkspaceBalances({
         <h1>{t('balances')}</h1>
         <p>{b('intro')}</p>
       </div>
-      <div className="workspace-view-tabs" role="tablist" aria-label={t('balances')}>
+      <div className="hc-scales workspace-view-tabs" role="tablist" aria-label={t('balances')}>
         {[false, true].map((value) => (
           <button
             key={String(value)}
@@ -387,6 +387,7 @@ export default function WorkspaceBalances({
             aria-controls={value ? 'activity-panel' : 'balances-panel'}
             onClick={() => onFilters({ panel: value ? 'activity' : '' })}
           >
+            <Icon name={value ? 'clock' : 'balance'} />
             {b(value ? 'activity' : 'current')}
           </button>
         ))}
@@ -428,11 +429,21 @@ export default function WorkspaceBalances({
         )}
         {data.admin && (
           <div className="workspace-primary-actions">
-            <a className="language" href="/app/settings/cancellation/">
-              {uiText('ui.houseCalendar.cancellationPolicy')}
+            <a
+              className="icon-button"
+              title={uiText('ui.houseCalendar.cancellationPolicy')}
+              aria-label={uiText('ui.houseCalendar.cancellationPolicy')}
+              href="/app/settings/cancellation/"
+            >
+              <Icon name="settings" />
             </a>
-            <button className="language" onClick={() => setTemplates(true)}>
-              {uiText('ui.templates.title')}
+            <button
+              className="icon-button"
+              title={uiText('ui.templates.title')}
+              aria-label={uiText('ui.templates.title')}
+              onClick={() => setTemplates(true)}
+            >
+              <Icon name="calendar" />
             </button>
             <button className="hc-apply" disabled={false} onClick={() => onAdjust(undefined)}>
               <Icon name="plus" />
@@ -533,20 +544,22 @@ export default function WorkspaceBalances({
         className="workspace-statement"
         aria-label={t('history')}
       >
-        <div className="customer-heading">
+        <div className="activity-heading">
           <div>
             <h2>{b('activity')}</h2>
             <p className="workspace-view-hint">{b('activityHint')}</p>
           </div>
           <button
-            className="language"
+            className="icon-button"
+            title={t(exporting ? 'exporting' : 'exportCsv')}
+            aria-label={t(exporting ? 'exporting' : 'exportCsv')}
             disabled={!valid || exporting}
             onClick={() => void exportCsv()}
           >
-            {t(exporting ? 'exporting' : 'exportCsv')}
+            <Icon name="download" />
           </button>
         </div>
-        <div className="workspace-filters">
+        <div className="workspace-filters activity-filter-bar">
           <label>
             {t('activity')}
             <CustomSelect
@@ -570,7 +583,19 @@ export default function WorkspaceBalances({
             <CustomDateInput value={through} onChange={(value) => onFilters({ through: value })} />
           </label>
         </div>
-        <p className="workspace-time-note">{t('timesIn', { zone })}</p>
+        <div className="activity-filter-note">
+          <span>{t('timesIn', { zone })}</span>
+          <button
+            type="button"
+            className="icon-button"
+            title={t('clearFilters')}
+            aria-label={t('clearFilters')}
+            disabled={!kind && !from && !through}
+            onClick={() => onFilters({ kind: '', from: '', through: '' })}
+          >
+            <Icon name="reset" />
+          </button>
+        </div>
         {!valid && <p role="alert">{t('invalidDates')}</p>}
         {error && (
           <p role="alert">
@@ -581,19 +606,28 @@ export default function WorkspaceBalances({
           </p>
         )}
         {loading && <p role="status">{t('loading')}</p>}
-        <div className="workspace-metrics" aria-label={b('pageSummary')}>
-          <span className="workspace-muted">{b('pageSummary')}</span>
+        <div className="activity-page-summary" aria-label={b('pageSummary')}>
+          <span>{b('pageSummary')}</span>
           <span>
-            {t('shownAdded')}:{' '}
-            <strong>{valid ? totals.added : uiText('common.notAvailable')}</strong>
+            <Icon name="plus" />
+            {t('shownAdded')} <strong>{valid ? totals.added : '—'}</strong>
           </span>
           <span>
-            {t('shownRemoved')}:{' '}
-            <strong>{valid ? totals.removed : uiText('common.notAvailable')}</strong>
+            <Icon name="edit" />
+            {t('shownRemoved')} <strong>{valid ? totals.removed : '—'}</strong>
+          </span>
+          <span>
+            {b('netChange')}{' '}
+            <strong>{valid ? (totals.net > 0 ? '+' : '') + totals.net : '—'}</strong>
           </span>
         </div>
-        {!loading && !error && valid && !events.length && <p>{t('emptyActivity')}</p>}
-        <div className="workspace-table-scroll">
+        {!loading && !error && valid && !events.length && (
+          <div className="activity-empty">
+            <Icon name="clock" />
+            <p>{t('emptyActivity')}</p>
+          </div>
+        )}
+        <div className="workspace-table-scroll" hidden={!events.length}>
           <table className="workspace-table">
             <caption className="sr-only">{t('history')}</caption>
             <thead>
@@ -602,7 +636,7 @@ export default function WorkspaceBalances({
                 <th>{t('pet')}</th>
                 <th>{t('activity')}</th>
                 <th>{t('change')}</th>
-                <th>{t('balanceAfter')}</th>
+                <th>{b('balanceTransition')}</th>
                 <th>
                   <span className="sr-only">{t('entryDetails')}</span>
                 </th>
@@ -613,15 +647,31 @@ export default function WorkspaceBalances({
                 <tr key={row.event.id}>
                   <td className="activity-date-cell">{formatter.format(new Date(row.event.at))}</td>
                   <td className="activity-pet-cell">
-                    <strong>{row.pet.name}</strong>
+                    <span className="activity-identity">
+                      <WorkspaceAvatar
+                        row={{ customer: row.customer, pet: row.pet, account: null }}
+                      />
+                      <strong>{row.pet.name}</strong>
+                    </span>
                     {!data.customer && (
                       <small className="activity-customer">{row.customer.name}</small>
                     )}
                   </td>
                   <td className="activity-kind-cell">
-                    {t(
-                      row.event.delta > 0 ? 'added' : row.event.delta < 0 ? 'correction' : 'terms',
-                    )}
+                    <span className="activity-event-kind">
+                      <Icon
+                        name={
+                          row.event.delta > 0 ? 'plus' : row.event.delta < 0 ? 'edit' : 'calendar'
+                        }
+                      />
+                      {t(
+                        row.event.delta > 0
+                          ? 'added'
+                          : row.event.delta < 0
+                            ? 'correction'
+                            : 'terms',
+                      )}
+                    </span>
                   </td>
                   <td className="activity-delta-cell">
                     <strong
@@ -634,8 +684,18 @@ export default function WorkspaceBalances({
                       {row.event.delta} <small>{t('days')}</small>
                     </strong>
                   </td>
-                  <td className="activity-after-cell" data-label={t('balanceAfter')}>
-                    {row.event.daysAfter}
+                  <td className="activity-after-cell" data-label={b('balanceTransition')}>
+                    <span className="activity-running-balance">
+                      <span>{row.event.daysAfter - row.event.delta}</span>
+                      <Icon name="chevron-right" />
+                      <strong>{row.event.daysAfter}</strong>
+                    </span>
+                    <small className="activity-note">
+                      {row.event.reason ||
+                        (row.event.delta === 0
+                          ? `${row.event.validFrom} – ${row.event.validThrough}`
+                          : '')}
+                    </small>
                   </td>
                   <td className="activity-detail-cell">
                     <button

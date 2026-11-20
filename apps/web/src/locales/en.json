@@ -1331,5 +1331,7 @@
   "ui.calendarFilters.location": "Location & timezone",
   "ui.calendarFilters.view": "Status & timezone",
   "ui.calendarFilters.hide": "Hide filters",
-  "ui.calendarFilters.show": "Show filters"
+  "ui.calendarFilters.show": "Show filters",
+  "ui.balanceView.netChange": "Net change",
+  "ui.balanceView.balanceTransition": "Before → after"
 }
