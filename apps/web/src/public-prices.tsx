@@ -1,3 +1,4 @@
+import { priceName } from './price-label';
 import Button from './button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,7 +91,7 @@ export default function PublicPrices() {
                     return (
                       <tr key={rate.id}>
                         <td>
-                          {i18n.language === 'zh' ? rate.nameZh : rate.name}
+                          {priceName(rate, i18n.language)}
                           {rate.kind === 'addon' && <small> · {t('addon')}</small>}
                         </td>
                         <td>

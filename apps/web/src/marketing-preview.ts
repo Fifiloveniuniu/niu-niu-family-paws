@@ -41,6 +41,18 @@ export const previewContent: PublicMarketingContent = {
   studentPhotos: [],
 };
 export const previewMessages = {
+  es: {
+    price: 'Consulta Precios para conocer las opciones de cuidado, peluquería y academia.',
+    pending: 'Saluda a nuestro equipo',
+    contactBody:
+      'Visita nuestras casas de cuidado y estudio de peluquería con cita previa, o contáctanos para planificar la próxima etapa de tu mascota.',
+    homeContactBody:
+      'Alojamiento, un pelaje renovado o un nuevo oficio. Cuéntanos qué tienes en mente y busquemos el siguiente paso.',
+    a1: 'Cuéntanos sobre tu mascota y las fechas que prefieres. Hablaremos de su rutina, confirmaremos la disponibilidad y te ayudaremos a preparar la visita.',
+    a2: 'Consulta Precios para alojamiento, peluquería y clases iniciales. El presupuesto final depende de las necesidades de tu mascota y del servicio elegido.',
+    a8: 'Ofrecemos formación inicial de peluquería. Contáctanos para confirmar contenido, fechas, duración y precios.',
+    a5: 'La página de Precios explica las condiciones de cancelación. Avísanos en cuanto cambien tus planes para ayudarte con el siguiente paso.',
+  },
   en: {
     price: 'See Pricing for care, grooming, and academy options.',
     pending: 'Say hello to our team',

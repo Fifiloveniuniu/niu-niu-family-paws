@@ -23,8 +23,9 @@ test('administrator edits source pricing, packages and holidays with persisted b
   await page.getByRole('tab', { name: 'Boarding-day packages', exact: true }).click();
   await page.getByRole('button', { name: 'Add price', exact: true }).click();
   const dialog = page.getByRole('dialog');
-  await dialog.getByLabel('Name (English)', { exact: true }).fill('[TEST] Thirty days');
-  await dialog.getByLabel('Name (Simplified Chinese)', { exact: true }).fill('[测试] 三十天');
+  await dialog.getByLabel('English', { exact: true }).fill('[TEST] Thirty days');
+  await dialog.getByLabel('简体中文', { exact: true }).fill('[测试] 三十天');
+  await dialog.getByLabel('Español', { exact: true }).fill('[TEST] Treinta días');
   await dialog.getByLabel('Price (USD)', { exact: true }).fill('1500.00');
   await dialog
     .getByRole('combobox', { name: 'Regular boarding band (optional)', exact: true })
@@ -50,6 +51,9 @@ test('administrator edits source pricing, packages and holidays with persisted b
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();
   await page.screenshot({ path: 'test-results-backend/pricing-phone-zh.png', fullPage: true });
+  await page.goto('/app/pricing/?lang=es');
+  await page.getByRole('tab', { name: 'Paquetes de días de alojamiento', exact: true }).click();
+  await expect(page.locator('.admin-pricing')).toContainText('[TEST] Treinta días');
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto(`/app/calendar/?lang=en&asCustomer=${fixture.cid}`);
   await expect(page.getByRole('link', { name: 'Pets', exact: true })).toBeVisible();

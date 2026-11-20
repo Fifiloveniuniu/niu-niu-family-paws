@@ -33,7 +33,11 @@ export function validatePricing(input: Write) {
       ids.has(rate.id) ||
       !rate.name.trim() ||
       !rate.nameZh.trim() ||
-      [rate.name, rate.nameZh, rate.source].some(containsControlCharacters) ||
+      (rate.nameEs !== undefined && !rate.nameEs.trim()) ||
+      (rate.nameEs === undefined
+        ? [rate.name, rate.nameZh, rate.source]
+        : [rate.name, rate.nameZh, rate.nameEs, rate.source]
+      ).some(containsControlCharacters) ||
       rate.minCents > rate.maxCents
     )
       throw new PetInvalid();

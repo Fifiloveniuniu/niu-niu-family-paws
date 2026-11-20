@@ -501,3 +501,19 @@ Assigned employees can use **House operations** to record arrival/pickup, verify
 客户、宠物及余额列表支持“上一页／下一页”和“每页条数”。账单导出包含所有符合筛选条件且有权查看的记录，不仅是当前页。宠物与客户选项可继续加载。
 
 已分配房屋的员工可在“房屋运营”中记录实际送达、接回，在照护期间核实体重，并更正交接时间；计划时间与原始数值保留在历史中。房屋权限不包含财务或价格管理权限，不会自动授权员工。管理员可在“日历 → 管理房屋与房间 → 员工房屋权限”中，通过已核实的 Google 登录邮箱查找已有员工，选择房屋并保存；取消全部选择会移除运营权限。本功能不会创建员工账号或授予员工角色。收款方式与寄养天数有效期仍待确认。以上为本地预览，尚未上线。
+
+## Calendar, pet details and Spanish — local work, 2026-11-20
+
+Both calendars use the same date controls. Scroll inside the calendar to keep its dates visible. The Add booking calendar shows unavailable ranges and your requested stay; unavailable rooms have no Choose button or requested-stay marker. Review lists normal days, holiday days and the separate holiday fee as an estimate; saving a staff plan still does not collect payment or spend balance days.
+
+Click a pet's name or photo for its information, bookings, balance and activity. Customer-view pet rows match the administrator size. Customer calendars show other occupied rooms as Busy without revealing who booked them. Activity includes recorded bookings and cancellations, newest first.
+
+Choose Español in the language menu. Price editing groups English, Simplified Chinese and Spanish names together. Custom saved prices keep their original names until you enter a Spanish translation.
+
+两个日历现在使用相同的日期控件。在日历内向下滚动时，日期表头保持可见。添加预约日历中，不可用房间不显示“选择”按钮，也不显示“所需入住时段”。核对步骤按普通日期、节假日及额外节假日费用展示估算；保存员工计划仍不会收款或扣除余额。
+
+点击宠物名称或照片，可查看资料、预约、余额和活动。客户视图中的宠物行与管理员视图大小一致。客户日历将其他客户的占用时段显示为“已占用”，不公开其身份。活动按最新优先显示预约、取消及余额变更。
+
+在语言菜单中选择 Español，可使用西班牙语。编辑价格时可分别填写英文、简体中文及西班牙语名称。已有自定义价格在填写西班牙语译名之前保留原名称。
+
+Selecciona Español en el menú de idioma. Haz clic en el nombre o la foto de una mascota para consultar sus datos, reservas, saldo y actividad. Los importes de la reserva son estimaciones; guardar un plan del personal no cobra tarjetas ni descuenta días.

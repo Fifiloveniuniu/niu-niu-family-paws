@@ -145,3 +145,18 @@ test('archived packages retain their comparison metadata without blocking band a
   archived.active = true;
   assert.throws(() => validatePricing(input));
 });
+
+test('Spanish price labels are optional for legacy data and validated when supplied', () => {
+  const input = write();
+  for (const rate of input.rates) assert.ok(rate.nameEs.trim());
+  assert.doesNotThrow(() => validatePricing(input));
+  const first = input.rates[0];
+  delete first.nameEs;
+  assert.doesNotThrow(() => validatePricing(input));
+  first.nameEs = '  ';
+  assert.throws(() => validatePricing(input));
+  first.nameEs = 'Nombre\u0000';
+  assert.throws(() => validatePricing(input));
+  first.nameEs = 'Nombre en español';
+  assert.doesNotThrow(() => validatePricing(input));
+});

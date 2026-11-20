@@ -1,3 +1,16 @@
+## Current owner requirements — calendar, pets, pricing and Spanish, 2026-11-20
+
+- Share Previous / Today / Next, date heading, day/weeks/month/year views and display timezone controls between the main and Add booking calendars. Display timezone changes must not change entered stay times.
+- In Add booking, remove available-space shading and its legend entry. Keep unavailable ranges and requested stay. An unavailable room shows neither Choose nor Requested stay. Label room-selection actions Choose.
+- Show an itemized normal-day, holiday-day, separate holiday surcharge and total cost estimate at Review, using configured rates and house-local inclusive calendar dates. Missing rates remain unavailable. This presentation does not activate payments, balance deductions or unresolved mixed-payment rules.
+- Calendars show status/holiday annotations and a live Now marker. Their date/time axis remains sticky and aligned while scrolling the calendar.
+- Customer view (including administrator view-as) shows other customers' occupied rooms/time ranges as Busy, without exposing their identities, pets or booking details.
+- Activity includes booking and cancellation records alongside balance changes, newest first with deterministic backend pagination. Existing unbilled bookings must never look like day deductions or refunds. Preserve historical activity and retry behavior.
+- Customer hover corners match selected-row corners. Pet names/photos open an information dialog with information, bookings, balance and activity. Show species icons and use matching administrator/customer pet-row geometry.
+- Pricing edits group language labels clearly. Public pricing has readable, aligned amounts and responsive sections. Preserve supplied prices and existing saved labels.
+- Support English, Simplified Chinese and Spanish across app/marketing content, language menus, forms, validation, tooltips and price labels. Translate supplied descriptions, preserve custom business labels until a translation is supplied, and retain existing profile-language compatibility.
+- Use recognizable icons wherever useful, retain clear primary-action text, and provide accessible names/tooltips for icon-only controls. Preserve responsive layouts, existing features and Google Cloud hosting.
+
 ## Shared form polish, aligned actions and customer context — 2026-11-20
 
 Remove the extra content-area border in Add balance, Add/Edit customer and Add price dialogs using the shared dialog/form styling. Use meaningful icons alongside action labels where possible. Enabled buttons/controls need reasonable theme-aware hover feedback; language-menu surfaces, selection and hover must match the chosen app theme. Leave space between customer-row hover backgrounds and dividers. Align customer search controls with Add customer, and group Pricing actions with Add price rightmost. Administrator customer view needs a persistent banner naming the customer and a clear return-to-admin action, including on failed reads, without changing actual identity or permissions.
