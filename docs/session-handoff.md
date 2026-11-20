@@ -1,3 +1,7 @@
+## Deployment-only GitHub workflow — 2026-11-19
+
+Latest owner instruction supersedes main validation: **only deploy after merging; do not run tests in GitHub.** The main-only release retains dependency installation, production compilation/build, SHA artifact transfer and existing Google Cloud deployment/health checks. Formatting, API type-check, unit, emulator and browser-test steps are removed from Actions. Local validation remains the development responsibility. PR events still do not run. See docs/continuous-delivery.md.
+
 ## Phone dashboard readability follow-up — 2026-11-19
 
 Full date values now remain visible on 320px/390px phones in every theme: date controls stack before their text can clip. Handoff category labels use two lines on narrow graphs so adjacent captions stay distinct. Regression checks measure date text against its actual available input width and verify wrapped SVG labels. All 72 local Chrome journeys pass, including the six dashboard cases; read-only populated localhost English/Chinese desktop/phone walkthroughs also pass. Review images: docs/review/dashboard-phone-2026-11-19.
