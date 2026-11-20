@@ -331,7 +331,6 @@ export default function HouseCalendar({
                 ['/app/calendar/', 'calendar'],
                 ['/app/customers/', 'customers'],
                 ['/app/balances/', 'balances'],
-                ['/app/settings/', 'settings'],
               ].map(([href, key]) => (
                 <a
                   key={key}
