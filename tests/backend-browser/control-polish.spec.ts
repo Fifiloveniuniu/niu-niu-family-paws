@@ -62,7 +62,7 @@ for (const [palette, language, width] of [
       const form = dialog.locator('form').first();
       await expect(form).toHaveCSS('border-top-width', '0px');
       await expect(form).toHaveCSS('box-shadow', 'none');
-      const save = dialog.locator('button[type="submit"]').first();
+      const save = dialog.locator('.portal-actions > .button:visible').first();
       await expect(save.locator('.paws-icon')).toHaveCount(1);
       await page.keyboard.press('Escape');
       await expect(dialog).toHaveCount(0);
