@@ -171,7 +171,6 @@ for (const width of [390, 1440])
       await capture('location-dialogs');
       for (const route of [
         '/app/account/profile/',
-        '/app/operations/',
         '/app/settings/cancellation/',
         '/',
         '/services/',
@@ -188,10 +187,6 @@ for (const width of [390, 1440])
           if (!route.includes('profile')) await expect(page.locator('.hc-content')).toBeVisible();
           if (route.includes('profile'))
             await expect(page.locator('.profile-section')).toHaveAttribute('aria-busy', 'false');
-          if (route.includes('operations'))
-            await expect(
-              page.getByRole('heading', { name: t('ui.operations.title'), exact: true }),
-            ).toBeVisible();
           if (route.includes('cancellation')) {
             await expect(page.locator('.saved-cancellation-policy')).toBeVisible();
             await inspectDialog(

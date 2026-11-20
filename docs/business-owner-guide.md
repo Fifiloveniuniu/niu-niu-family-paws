@@ -1,3 +1,9 @@
+## Booking date picker — local, 2026-11-20
+
+Choosing a day now closes the calendar and returns focus to the booking field. To change the time afterward, open the field again, edit hour/minute, then Apply. Changing the day keeps the existing time.
+
+选择日期后，日期面板会自动关闭，焦点返回预约输入框。需要修改时间时，再次打开输入框，调整小时和分钟后点击“应用”。更改日期会保留已有时间。
+
 ## Simpler Calendar — local, 2026-11-20
 
 Calendar room rows no longer show capacity. Time controls now read Previous/Today/Next, date heading, view choices, timezone. Room capacity rules still apply.

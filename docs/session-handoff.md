@@ -1,3 +1,7 @@
+## Close booking date picker on day selection — 2026-11-20
+
+The shared date/time picker commits and closes after choosing a day, matching date-only fields. It restores focus to the input and preserves existing hour/minute selection and current default-time behavior. Reopen the field to adjust time and Apply; manual entry, bounds and timezone/DST resolution remain unchanged. Updated saved-workspace and local-demo journeys reopen before editing time. Bilingual phone/desktop checks cover initial selection, existing-time preservation, keyboard selection and reopening. This is the fourth focused layer of the current gh stack batch; validation/release status follows after PR submission checks.
+
 ## Retired calendar management pages and compact filters — 2026-11-20
 
 Calendar pet rows reuse the shared pet-type icon + localized name in both saved and preview calendars. Calendar room rows no longer show capacity; enforcement/configuration are unchanged. Time controls are ordered Previous/Today/Next, date heading, view choices, timezone. GitHub auto-merge is disabled and the connected collaborator cannot enable it (repository PATCH returns 404); batch delivery will use protected `gh stack` atomic merge after verification.

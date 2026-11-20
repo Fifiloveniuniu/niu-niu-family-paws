@@ -62,6 +62,9 @@ test('populated local app has white content, clear controls and available practi
     date = (await day.getAttribute('data-date'))!;
   await day.click();
   await expect(arrival).toHaveValue(new RegExp('^' + date + ' \\d{2}:\\d{2}$'));
+  await expect(picker).toHaveCount(0);
+  await expect(arrival).toBeFocused();
+  await arrival.click();
   await picker.getByRole('textbox', { name: 'Hour (24h)', exact: true }).fill('10');
   await picker.getByRole('textbox', { name: 'Minute', exact: true }).fill('00');
   await picker.getByRole('button', { name: 'Apply date and time', exact: true }).click();
