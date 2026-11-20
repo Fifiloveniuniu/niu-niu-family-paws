@@ -24,7 +24,11 @@ test('administrator edits source pricing, packages and holidays with persisted b
   await page.getByRole('button', { name: 'Add price', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('English', { exact: true }).fill('[TEST] Thirty days');
+  await dialog.getByRole('combobox', { name: 'Name language', exact: true }).click();
+  await page.getByRole('option', { name: '简体中文', exact: true }).click();
   await dialog.getByLabel('简体中文', { exact: true }).fill('[测试] 三十天');
+  await dialog.getByRole('combobox', { name: 'Name language', exact: true }).click();
+  await page.getByRole('option', { name: 'Español', exact: true }).click();
   await dialog.getByLabel('Español', { exact: true }).fill('[TEST] Treinta días');
   await dialog.getByLabel('Price (USD)', { exact: true }).fill('1500.00');
   await dialog

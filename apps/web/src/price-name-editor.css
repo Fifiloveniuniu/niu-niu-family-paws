@@ -1,0 +1,107 @@
+.price-name-editor {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.price-name-editor legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 0;
+  font-weight: 600;
+}
+.price-name-editor > label,
+.price-name-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.price-name-editor .price-name-hint {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--md-on-surface-variant);
+}
+.price-name-field-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.price-name-field-heading label {
+  font-weight: 600;
+}
+.price-name-field-heading > span {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.price-name-language {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  width: 100%;
+}
+.price-name-language small {
+  margin-left: auto;
+  font-size: 12px;
+  color: inherit;
+}
+.price-name-completion {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--md-on-surface-variant);
+}
+.price-name-completion > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.price-name-preview {
+  display: grid;
+  gap: 4px;
+  border-left: 3px solid var(--md-primary);
+  padding: 8px 12px;
+  background: var(--md-surface-container);
+  overflow-wrap: anywhere;
+}
+.price-name-preview > span {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.price-name-preview > strong {
+  font-weight: 600;
+  color: var(--md-on-surface);
+}
+/* Keep the translation editor out of the surrounding two-column form grid. */
+.hc .app-dialog .customer-form fieldset.price-name-editor {
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.price-name-editor > :is(.price-name-hint, .price-name-completion, .price-name-preview) {
+  grid-column: 1 / -1;
+}
+.price-name-language > span,
+.price-name-language small {
+  white-space: nowrap;
+}
+html[data-ui-style] .hc .app-dialog.pricing-editor-dialog .unsaved-notice {
+  color: var(--md-on-warning-container);
+  background: var(--md-warning-container);
+}
+@media (min-width: 641px) {
+  .hc .app-dialog .customer-form fieldset.price-name-editor {
+    grid-template-columns: minmax(200px, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+.price-name-editor > label,
+.price-name-field {
+  align-content: start;
+}

@@ -1,3 +1,7 @@
+## Focused price-name translations — 2026-11-20
+
+`PriceNameEditor` reuses the shared language registry and CustomSelect, stores only the active editor language locally, and writes draft names through the existing parent price state. Switching languages never changes saved values or marks the form dirty. A single visible input avoids hidden required fields; the existing English/Chinese validation and optional Spanish fallback remain. Customer preview uses the same `priceName` function as Pricing/public display. Blank optional Spanish, including whitespace, retains the fallback. Pricing dialogs have scoped dirty-notice contrast and responsive field alignment.
+
 ## Calendar, unified activity and Spanish — 2026-11-20
 
 `CalendarControls` and the shared timeline components own saved-calendar navigation, sticky scrollports, date/holiday annotations and the live clock. Booking availability has a separate display timezone; editing it leaves booking wall times/instant resolution intact. `estimateBoarding` produces a display-only itemized estimate using supplied/configured rates, inclusive house-local dates and separately itemized holiday fees; missing prices stay unknown, with no financial mutations.

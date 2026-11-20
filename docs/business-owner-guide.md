@@ -517,3 +517,10 @@ Choose Español in the language menu. Price editing groups English, Simplified C
 在语言菜单中选择 Español，可使用西班牙语。编辑价格时可分别填写英文、简体中文及西班牙语名称。已有自定义价格在填写西班牙语译名之前保留原名称。
 
 Selecciona Español en el menú de idioma. Haz clic en el nombre o la foto de una mascota para consultar sus datos, reservas, saldo y actividad. Los importes de la reserva son estimaciones; guardar un plan del personal no cobra tarjetas ni descuenta días.
+
+
+## Price category names — language dropdown
+
+In Add/Edit price, choose **Name language**, then enter that language's category name. Switch between English, 简体中文 and Español; your entries stay saved in the open form. The progress note shows which required names still need filling, and the preview shows what customers will see. Spanish remains optional for existing records; leaving it blank uses the existing label. Saving updates all entered names together.
+
+新增／编辑价格时，先在“名称语言”中选择语言，再填写对应分类名称。切换英文、简体中文及西班牙语时，已输入内容会保留在当前表单中。进度提示说明仍需填写的必填语言，预览展示客户看到的名称。西班牙语维持选填；留空时使用已有名称。保存时会一起保存各语言名称。

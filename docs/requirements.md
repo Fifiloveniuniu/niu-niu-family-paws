@@ -1,3 +1,7 @@
+## Price category name UX follow-up — 2026-11-20
+
+Use a language dropdown (or list) in Add/Edit price, with a focused field for the selected language. Preserve draft translations while switching, open in the interface language, make required/missing names and the customer-facing fallback clear, and retain English/Chinese/Spanish support on phone and desktop. Preserve existing validation and saved price data.
+
 ## Current owner requirements — calendar, pets, pricing and Spanish, 2026-11-20
 
 - Share Previous / Today / Next, date heading, day/weeks/month/year views and display timezone controls between the main and Add booking calendars. Display timezone changes must not change entered stay times.
