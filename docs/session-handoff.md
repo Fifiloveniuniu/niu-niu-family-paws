@@ -1,3 +1,7 @@
+## Cancel superseded release workflows — 2026-11-19
+
+Latest owner instruction: merging a newer PR must cancel the previous release workflow. Workflow-level concurrency now cancels the whole older main run, including deployment, rather than only the build job. The deployment serialization lock and stale-main guard remain. Already submitted cloud operations are not rolled back; the newest release publishes the matching API/frontend. The older phone-dashboard release run was explicitly cancelled during this change.
+
 ## Deployment-only GitHub workflow — 2026-11-19
 
 Latest owner instruction supersedes main validation: **only deploy after merging; do not run tests in GitHub.** The main-only release retains dependency installation, production compilation/build, SHA artifact transfer and existing Google Cloud deployment/health checks. Formatting, API type-check, unit, emulator and browser-test steps are removed from Actions. Local validation remains the development responsibility. PR events still do not run. See docs/continuous-delivery.md.
