@@ -88,7 +88,7 @@
   min-width: 1050px;
   border: 1px solid var(--md-outline-variant);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: clip;
 }
 .saved-calendar-grid .hc-axis {
   border: 0;

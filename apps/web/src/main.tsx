@@ -34,6 +34,7 @@ import './marketing-system.css';
 import './material-theme.css';
 import './theme-presets.css';
 import './theme-components.css';
+import './workflow-layout.css';
 const Portal = React.lazy(() => import('./portal'));
 
 void i18n.use(initReactI18next).init({

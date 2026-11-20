@@ -97,29 +97,32 @@ export default function CancellationPolicyPage({
         : uiText('ui.cancellationPolicy.cutoffCalculationPending');
   return (
     <section className="hc-finance-page">
-      <div className="hc-page-toolbar">
-        <Button
-          variant="primary"
-          className="hc-apply"
-          onClick={() => {
-            setDraft(policy);
-            setError('');
-            setStale(false);
-            setUncertain(false);
-            setEditing(true);
-          }}
-        >
-          <Icon name="edit" />
-          {uiText('ui.cancellationPolicy.editPolicy')}
-        </Button>
-      </div>
       <div className="hc-policy-summary">
         <div>
           <span className="hc-draft-badge">{uiText('ui.cancellationPolicy.draft')}</span>
-          <h2>{policy.name || uiText('ui.cancellationPolicy.boardingCancellation')}</h2>
+          <h1>{policy.name || uiText('ui.cancellationPolicy.boardingCancellation')}</h1>
           <p>{basis}</p>
         </div>
-        <span>{uiText('ui.cancellationPolicy.appliesToBoardingBalance')}</span>
+        <div className="hc-policy-summary-actions">
+          {' '}
+          <div className="hc-page-toolbar">
+            <Button
+              variant="primary"
+              className="hc-apply"
+              onClick={() => {
+                setDraft(policy);
+                setError('');
+                setStale(false);
+                setUncertain(false);
+                setEditing(true);
+              }}
+            >
+              <Icon name="edit" />
+              {uiText('ui.cancellationPolicy.editPolicy')}
+            </Button>
+          </div>
+          <span>{uiText('ui.cancellationPolicy.appliesToBoardingBalance')}</span>
+        </div>
       </div>
       {saved && (
         <p className="hc-notice" role="status">
