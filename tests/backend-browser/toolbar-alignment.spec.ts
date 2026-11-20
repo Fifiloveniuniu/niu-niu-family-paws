@@ -40,7 +40,12 @@ for (const [language, width] of [
         expect(Math.abs(box.y + box.height - action.y - action.height)).toBeLessThan(2);
       }
     }
-    const row = page.locator('.customer-list > li').first();
+    const actionBeforeSearch = (await add.boundingBox())!;
+    await page.locator('.pet-search input').fill('[TEST] Alice');
+    await page.locator('.pet-search form button[type="submit"]').click();
+    await expect(page.locator('.pet-search .customer-list > li').first()).toBeVisible();
+    expect(Math.abs((await add.boundingBox())!.y - actionBeforeSearch.y)).toBeLessThan(2);
+    const row = page.locator('.customer-directory-panel > .customer-list > li').first();
     await expect(row).toBeVisible();
     await row.hover();
     const separation = await row.evaluate((node) => ({
