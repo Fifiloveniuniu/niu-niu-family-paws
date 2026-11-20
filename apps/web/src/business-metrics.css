@@ -96,7 +96,7 @@ html[data-ui-style] .business-metrics .business-period-presets .language[aria-pr
 }
 @media (max-width: 600px) {
   .business-period-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
   .business-period-fields > label:last-child {
     grid-column: 1/-1;
@@ -430,5 +430,11 @@ html[data-ui-style] .business-metrics .metrics-data-source .language[aria-presse
   .metric-chart,
   .metric-chart:last-child {
     padding: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .business-period-fields {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

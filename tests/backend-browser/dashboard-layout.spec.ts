@@ -63,6 +63,29 @@ for (const [lang, width, palette] of [
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     ).toBeTruthy();
+    const clippedDates = await page.locator('.business-period-fields input').evaluateAll(
+      (inputs) =>
+        inputs.filter((input) => {
+          const element = input as HTMLInputElement,
+            style = getComputedStyle(element);
+          const context = document.createElement('canvas').getContext('2d')!;
+          context.font = style.font;
+          return (
+            context.measureText(element.value).width >
+            element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) + 1
+          );
+        }).length,
+    );
+    expect(clippedDates).toBe(0);
+    if (width < 400)
+      await expect(
+        page
+          .locator('#handoffs-trend-title')
+          .locator('..')
+          .locator('..')
+          .locator('..')
+          .locator('.metric-chart-tick tspan'),
+      ).toHaveCount(8);
     await page.screenshot({ path: testInfo.outputPath('dashboard.png'), fullPage: true });
     const services = charts.filter({ has: page.locator('#services-trend-title') });
     await services.getByRole('button', { name: /^(View chart data|查看图表数据):/ }).click();
