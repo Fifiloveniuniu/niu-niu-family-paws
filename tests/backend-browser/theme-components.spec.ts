@@ -69,10 +69,9 @@ for (const theme of themes) {
     await expectReadableText(page);
     await expectReadableText(page, '.marketing-header');
     const family = theme.id === 'google' ? 'google' : theme.id === 'apple' ? 'apple' : 'microsoft';
-    await expect(page.locator(`.workspace-primary-actions .icon-${family}`).first()).toHaveCSS(
-      'display',
-      'inline',
-    );
+    await expect(
+      page.getByRole('button', { name: 'Add booking', exact: true }).locator(`.icon-${family}`),
+    ).toHaveCSS('display', 'inline');
     for (const row of ['.hc-house', '.hc-room']) {
       const settings = page
         .locator(`.saved-calendar-grid ${row} .workspace-row-actions button`)

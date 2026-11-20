@@ -1030,3 +1030,111 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* Filters and results are separate, with related fields grouped together. */
+.saved-calendar .calendar-filter-panel {
+  padding: 18px;
+  margin-bottom: 24px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--ui-radius, 12px);
+  background: var(--md-surface);
+}
+.calendar-filter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.calendar-filter-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+}
+.calendar-filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.filter-chevron-open {
+  transform: rotate(180deg);
+}
+.saved-workspace .saved-calendar .calendar-filter-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.calendar-filter-groups[hidden] {
+  display: none !important;
+}
+.calendar-filter-groups fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+.calendar-filter-groups legend {
+  margin: 0 0 14px;
+  padding: 0;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  font-weight: 600;
+}
+.saved-workspace .calendar-filter-groups label {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.calendar-filter-groups fieldset:first-child > label:first-of-type,
+.calendar-filter-groups .workspace-search {
+  grid-column: 1/-1;
+}
+.saved-workspace .calendar-filter-groups .workspace-clock {
+  display: block;
+  grid-column: 1/-1;
+}
+.saved-workspace .calendar-filter-groups .workspace-clock label {
+  white-space: normal;
+}
+.saved-calendar .calendar-results > .hc-toolbar {
+  margin: 0 0 14px;
+  padding: 0;
+}
+.calendar-results .hc-range {
+  padding-inline: 0;
+}
+.calendar-results .workspace-range-controls {
+  justify-content: end;
+}
+@media (max-width: 900px) {
+  .saved-workspace .saved-calendar .calendar-filter-groups {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .saved-calendar .calendar-filter-panel {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .calendar-filter-groups fieldset {
+    gap: 10px;
+  }
+  .calendar-filter-groups legend {
+    margin-bottom: 10px;
+  }
+  .calendar-results .workspace-range-controls {
+    justify-content: start;
+  }
+}

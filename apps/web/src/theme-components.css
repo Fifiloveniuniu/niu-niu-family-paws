@@ -1035,3 +1035,13 @@ html[data-ui-style]
   :is(input, textarea, .custom-select-trigger)[aria-invalid='true'] {
   border-color: var(--md-error);
 }
+
+/* Center action content consistently; field triggers retain their own alignment. */
+html[data-ui-style] .hc :is(.button, .language, .hc-apply, .icon-button, .hc-settings),
+html[data-ui-style] .hc .hc-scales [role='tab'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
