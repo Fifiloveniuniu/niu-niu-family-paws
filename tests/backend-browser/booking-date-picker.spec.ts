@@ -52,6 +52,16 @@ for (const [language, width] of [
     await expect(arrival).toBeFocused();
     await arrival.click();
     await expect(picker).toBeVisible();
+    await picker.locator('.custom-date-time input').nth(0).fill('11');
+    await picker.locator('.custom-date-time input').nth(1).fill('30');
+    const apply = picker.locator('.custom-date-time button');
+    await expect(apply.locator('.paws-icon')).toHaveCount(1);
+    const bounds = (await apply.boundingBox())!;
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width - 8);
+    await apply.click();
+    await expect(picker).toHaveCount(0);
+    await expect(arrival).toHaveValue('2030-11-07 11:30');
+    await arrival.click();
     await page.keyboard.press('Escape');
     await expect(modal).toBeVisible();
     await expect(arrival).toBeFocused();

@@ -89,7 +89,9 @@ export default function Icon({
         </g>
       ))}
       <g className="icon-legacy">
-        {name === 'globe' ? (
+        {name === 'check' ? (
+          <path d="m5 12 4 4L19 6" />
+        ) : name === 'globe' ? (
           <>
             <circle cx="12" cy="12" r="9" />
             <path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" />
