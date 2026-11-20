@@ -1134,3 +1134,6 @@ html[data-ui-style]
   background: var(--md-primary);
   color: var(--md-on-primary);
 }
+html[data-ui-style] .marketing-header .language-menu-options button:focus-visible {
+  outline-color: var(--md-focus);
+}
