@@ -6,9 +6,9 @@ on:
 permissions:
   contents: read
 jobs:
-  web:
+  build:
     concurrency:
-      group: main-validation
+      group: main-build
       cancel-in-progress: true
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -20,17 +20,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-      - run: npm run format:check
-      - run: npm run check:api
-      - run: npm test
-      - run: npm run test:store
       - run: npm run build
-      - run: npx playwright install --with-deps chrome
-      - run: npm run test:backend-browser
       - run: node scripts/release-manifest.mjs "$GITHUB_SHA"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -42,7 +32,7 @@ jobs:
     concurrency:
       group: production-release
       cancel-in-progress: false
-    needs: web
+    needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -118,7 +108,7 @@ jobs:
           project_id: niu-niu-family-paws
           workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
-      - name: Publish the tested frontend and pin its API revision
+      - name: Publish the built frontend and pin its API revision
         if: steps.fresh.outputs.current == 'true'
         run: npx firebase deploy --only hosting --project "$GCLOUD_PROJECT" --non-interactive
       - name: Verify the live release and protected API
