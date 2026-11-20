@@ -1,3 +1,7 @@
+## Aligned Customers and Pricing controls — 2026-11-20
+
+Customer search fields and reset/Add customer actions now share a responsive toolbar with aligned input/action baselines. Hovered customer rows have rounded surfaces and divider spacing outside the hover area, without increasing the overall row rhythm. Pricing groups category controls separately from holiday/Add price actions; Add price is the rightmost action. Mobile layouts wrap deliberately. Bilingual desktop/phone checks verify baseline alignment, divider gaps, rightmost pricing action and overflow. This is a focused stack layer; Chrome runs only at batch submission.
+
 ## Shared dialog and interaction polish — 2026-11-20
 
 Requested Add/Edit customer, Add balance and Add price content now reuse a borderless inner form inside the existing dialog surface. The shared Button accepts a leading icon; 62 existing labeled actions now use meaningful shared icons while retaining text/accessibility. Authored check marks use the same family-aware icon renderer. App language menus use selected theme primary/on-primary roles, including hover. Shared enabled buttons/links and form controls have restrained hover feedback without changing layout; public marketing keeps its original theme. Four named-theme journeys cover dialog borders, icons, hover and language selection at the PR submission boundary. This is another focused layer in the current gh stack batch.

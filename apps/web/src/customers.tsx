@@ -295,58 +295,64 @@ export default function Customers({
         <div>
           <h2 id="customers-title">{labels.title}</h2>
         </div>
-        <Button icon="plus" variant="primary" disabled={saving || uncertain} onClick={() => open()}>
-          {labels.add}
-        </Button>
       </div>
       <p className="customer-workspace-intro">{uiText('ui.customerView.intro')}</p>
       <section className="customer-filters" aria-label={uiText('ui.customers.customerFilters')}>
-        <div className="hc-filters-heading">
-          <span className="sr-only">{uiText('ui.customers.filters')}</span>
-          <IconButton
-            title={uiText('ui.customers.clearCustomerFilters')}
-            aria-label={uiText('ui.customers.clearCustomerFilters')}
-            onClick={resetFilters}
-          >
-            <Icon name="reset" />
-          </IconButton>
-        </div>
-        <div className="customer-filter-fields">
-          <form
-            className="customer-search"
-            role="search"
-            onSubmit={(event) => {
-              event.preventDefault();
-              setActiveSearch(search);
-              updateQuery({ customerSearch: search.trim() || null });
-              void load(undefined, search);
-            }}
-          >
-            <label htmlFor="customer-search">{labels.searchHint}</label>
-            <div className="portal-actions">
-              <SearchInput
-                id="customer-search"
+        <div className="customer-filter-toolbar">
+          <div className="customer-filter-fields">
+            <form
+              className="customer-search"
+              role="search"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setActiveSearch(search);
+                updateQuery({ customerSearch: search.trim() || null });
+                void load(undefined, search);
+              }}
+            >
+              <label htmlFor="customer-search">{labels.searchHint}</label>
+              <div className="portal-actions">
+                <SearchInput
+                  id="customer-search"
 
-                placeholder={uiText('ui.customerView.search')}
-                maxLength={254}
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-              <IconButton
-                title={labels.search}
-                aria-label={labels.search}
-                disabled={loading || saving}
-                type="submit"
-              >
-                <Icon name="search" />
-              </IconButton>
-            </div>
-          </form>
-          <PetSearch
-            key={filterReset}
-            onChoose={choosePets}
-            customerScope={onlyMine ? ownCustomer?.id || 'none' : undefined}
-          />
+                  placeholder={uiText('ui.customerView.search')}
+                  maxLength={254}
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+                <IconButton
+                  title={labels.search}
+                  aria-label={labels.search}
+                  disabled={loading || saving}
+                  type="submit"
+                >
+                  <Icon name="search" />
+                </IconButton>
+              </div>
+            </form>
+            <PetSearch
+              key={filterReset}
+              onChoose={choosePets}
+              customerScope={onlyMine ? ownCustomer?.id || 'none' : undefined}
+            />
+          </div>
+          <div className="customer-filter-actions">
+            <IconButton
+              title={uiText('ui.customers.clearCustomerFilters')}
+              aria-label={uiText('ui.customers.clearCustomerFilters')}
+              onClick={resetFilters}
+            >
+              <Icon name="reset" />
+            </IconButton>
+            <Button
+              icon="plus"
+              variant="primary"
+              disabled={saving || uncertain}
+              onClick={() => open()}
+            >
+              {labels.add}
+            </Button>
+          </div>
         </div>
         <label className="customer-ownership-filter">
           <input

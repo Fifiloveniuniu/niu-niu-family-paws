@@ -428,7 +428,7 @@ export default function AdminPricing() {
       )}
       {config && (
         <>
-          <div className="workspace-section-actions">
+          <div className="workspace-section-actions pricing-toolbar">
             <SegmentedTabs
               label={t('categories')}
               value={kind}
@@ -438,16 +438,18 @@ export default function AdminPricing() {
                 label: t(value),
               }))}
             />
-            <Button icon="plus" variant="primary" onClick={() => setEditor({})}>
-              {t('add')}
-            </Button>
-            <Button
-              icon="calendar"
-              variant="secondary"
-              onClick={() => setEditor({ holidays: true })}
-            >
-              {t('holidays')}
-            </Button>
+            <div className="pricing-toolbar-actions">
+              <Button
+                icon="calendar"
+                variant="secondary"
+                onClick={() => setEditor({ holidays: true })}
+              >
+                {t('holidays')}
+              </Button>
+              <Button icon="plus" variant="primary" onClick={() => setEditor({})}>
+                {t('add')}
+              </Button>
+            </div>
           </div>
           <p>
             {t('holidaySummary')}: {config.holidays.length} · {config.holidayPercent}%
