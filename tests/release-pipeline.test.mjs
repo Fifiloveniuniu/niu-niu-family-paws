@@ -22,6 +22,25 @@ const remote = {
   fields: [...wanted.fields, { fieldPath: '__name__', order: 'DESCENDING' }],
   state: 'READY',
 };
+test('index listing omits unsupported page size and follows server pagination', async () => {
+  const calls = [];
+  await waitForIndexes(
+    { indexes: [wanted] },
+    {
+      log: () => {},
+      read: async (url) => {
+        calls.push(url);
+        const request = new URL(url);
+        assert.equal(request.searchParams.has('pageSize'), false);
+        return request.searchParams.has('pageToken')
+          ? { indexes: [remote] }
+          : { nextPageToken: 'next/page+token' };
+      },
+    },
+  );
+  assert.equal(calls.length, 2);
+  assert.equal(new URL(calls[1]).searchParams.get('pageToken'), 'next/page+token');
+});
 test('index readiness preserves implicit name ordering and distinguishes explicit opposite ordering', () => {
   assert.equal(indexKey(wanted), indexKey(remote));
   assert.equal(

@@ -67,9 +67,7 @@ export async function waitForIndexes(
     let cursor;
     do {
       const result = await read(
-        base +
-          '/-/indexes?' +
-          new URLSearchParams({ pageSize: '100', ...(cursor ? { pageToken: cursor } : {}) }),
+        base + '/-/indexes' + (cursor ? '?' + new URLSearchParams({ pageToken: cursor }) : ''),
       );
       composite.push(...(result.indexes ?? []));
       cursor = result.nextPageToken;
