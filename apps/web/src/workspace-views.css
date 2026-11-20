@@ -356,3 +356,20 @@
 .activity-empty p {
   margin: 0;
 }
+
+.pricing-toolbar {
+  justify-content: space-between;
+  gap: 16px;
+}
+.pricing-toolbar > .shared-tabs {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.pricing-toolbar-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 8px;
+  margin-left: auto;
+}

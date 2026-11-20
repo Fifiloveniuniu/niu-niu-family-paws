@@ -69,6 +69,7 @@ for (const [palette, language, width] of [
     }
     await page.goto(`/app/balances/?lang=${language}`);
     const add = page.getByRole('button', { name: t('ui.workspace.addBalance'), exact: true });
+    await page.mouse.move(0, 0);
     const before = await add.evaluate((node) => getComputedStyle(node).boxShadow);
     await add.hover();
     expect(await add.evaluate((node) => getComputedStyle(node).boxShadow)).not.toBe(before);
