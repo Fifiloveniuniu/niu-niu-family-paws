@@ -74,7 +74,7 @@ export function TemplatePicker({
       {error && (
         <p role="alert">
           {t('loadError')}{' '}
-          <Button type="button" variant="secondary" onClick={reload}>
+          <Button icon="reset" type="button" variant="secondary" onClick={reload}>
             {t('retry')}
           </Button>
         </p>
@@ -190,6 +190,7 @@ function TemplateEditor({
         </fieldset>
         <div className="portal-actions">
           <Button
+            icon="check"
             variant="primary"
             disabled={saving || !valid || error === 'conflict' || error === 'denied'}
           >
@@ -201,7 +202,7 @@ function TemplateEditor({
                   : 'ui.workspace.save',
             )}
           </Button>
-          <Button type="button" variant="secondary" disabled={blocked} onClick={close}>
+          <Button icon="close" type="button" variant="secondary" disabled={blocked} onClick={close}>
             {uiText('ui.workspace.cancel')}
           </Button>
         </div>
@@ -227,14 +228,14 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
   return (
     <Modal title={t('title')} onClose={onClose}>
       <p>{t('intro')}</p>
-      <Button variant="primary" onClick={() => setEditing(undefined)}>
+      <Button icon="plus" variant="primary" onClick={() => setEditing(undefined)}>
         {t('add')}
       </Button>
       {loading && <p role="status">{uiText('ui.workspace.loading')}</p>}
       {error && (
         <p role="alert">
           {t('loadError')}{' '}
-          <Button variant="secondary" onClick={reload}>
+          <Button icon="reset" variant="secondary" onClick={reload}>
             {t('retry')}
           </Button>
         </p>
@@ -259,6 +260,7 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
                 <td>{t(item.active ? 'active' : 'archived')}</td>
                 <td>
                   <Button
+                    icon="edit"
                     variant="secondary"
                     aria-label={t('edit') + ': ' + item.name}
                     onClick={() => setEditing(item)}

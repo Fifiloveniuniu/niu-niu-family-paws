@@ -231,6 +231,7 @@ export default function Profile({
               </label>
             </fieldset>
             <Button
+              icon="check"
               variant="primary"
               disabled={saving || loading || error === 'conflict' || error === 'forbidden'}
               type="submit"
@@ -243,6 +244,7 @@ export default function Profile({
       )}
       {(error === 'error' || error === 'conflict') && !uncertain && (
         <Button
+          icon="reset"
           variant="secondary"
           disabled={loading || saving || uncertain}
           onClick={() => {

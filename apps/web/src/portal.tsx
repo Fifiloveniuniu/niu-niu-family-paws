@@ -315,6 +315,7 @@ export default function Portal({
                 )}
                 {access === 'denied' && (
                   <Button
+                    icon="reset"
                     variant="secondary"
                     disabled={busy}
                     onClick={() => void run(() => verify(auth.currentUser, true))}

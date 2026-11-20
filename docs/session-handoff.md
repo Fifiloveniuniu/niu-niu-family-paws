@@ -1,3 +1,7 @@
+## Shared dialog and interaction polish — 2026-11-20
+
+Requested Add/Edit customer, Add balance and Add price content now reuse a borderless inner form inside the existing dialog surface. The shared Button accepts a leading icon; 62 existing labeled actions now use meaningful shared icons while retaining text/accessibility. Authored check marks use the same family-aware icon renderer. App language menus use selected theme primary/on-primary roles, including hover. Shared enabled buttons/links and form controls have restrained hover feedback without changing layout; public marketing keeps its original theme. Four named-theme journeys cover dialog borders, icons, hover and language selection at the PR submission boundary. This is another focused layer in the current gh stack batch.
+
 ## Close booking date picker on day selection — 2026-11-20
 
 The shared date/time picker commits and closes after choosing a day, matching date-only fields. It restores focus to the input and preserves existing hour/minute selection and current default-time behavior. Reopen the field to adjust time and Apply; manual entry, bounds and timezone/DST resolution remain unchanged. Updated saved-workspace and local-demo journeys reopen before editing time. Bilingual phone/desktop checks cover initial selection, existing-time preservation, keyboard selection and reopening. This is the fourth focused layer of the current gh stack batch; validation/release status follows after PR submission checks.

@@ -85,7 +85,12 @@ export default function SiteAccountLink() {
               ✿
             </span>
             <p>{uiText('ui.siteAccountLink.yourLittleWorldOfCareAllInOnePlace')}</p>
-            <Button variant="primary" disabled={busy} onClick={() => void signIn()}>
+            <Button
+              icon="chevron-right"
+              variant="primary"
+              disabled={busy}
+              onClick={() => void signIn()}
+            >
               {busy
                 ? uiText('ui.siteAccountLink.signingIn')
                 : uiText('ui.siteAccountLink.continueWithGoogle')}

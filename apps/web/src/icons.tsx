@@ -7,11 +7,28 @@ const families = assets as Record<
     { viewBox: string; shapes: { tag: string; attrs: Record<string, string | undefined> }[] }
   >
 >;
+function iconAsset(family: string, name: string) {
+  if (name === 'check')
+    return {
+      viewBox: '0 0 24 24',
+      shapes: [
+        {
+          tag: 'path',
+          attrs: {
+            d:
+              family === 'apple' ? 'm5 12 4 4L19 6' : 'M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4Z',
+          },
+        },
+      ],
+    };
+  return families[family][name];
+}
 export default function Icon({
   name,
   className = '',
 }: {
   name:
+    | 'check'
     | 'download'
     | 'metrics'
     | 'address'
@@ -59,11 +76,13 @@ export default function Icon({
         <g key={family} className={'icon-family icon-' + family} data-icon-family={family}>
           <g
             transform={(() => {
-              const [x, y, width, height] = families[family][name].viewBox.split(/\s+/).map(Number);
+              const [x, y, width, height] = iconAsset(family, name)
+                .viewBox.split(/\s+/)
+                .map(Number);
               return `scale(${24 / width} ${24 / height}) translate(${-x} ${-y})`;
             })()}
           >
-            {families[family][name].shapes.map((shape, index) =>
+            {iconAsset(family, name).shapes.map((shape, index) =>
               React.createElement(shape.tag, { ...shape.attrs, key: index }),
             )}
           </g>

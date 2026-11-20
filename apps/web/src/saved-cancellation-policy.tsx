@@ -49,7 +49,7 @@ export default function SavedCancellationPolicy() {
     return (
       <div role="alert">
         <p>{uiText('ui.workspace.loadError')}</p>
-        <Button variant="secondary" onClick={() => void load()}>
+        <Button icon="reset" variant="secondary" onClick={() => void load()}>
           {uiText('ui.workspace.retry')}
         </Button>
       </div>

@@ -1072,3 +1072,65 @@ html[data-ui-style] .hc .shared-tabs > button[data-selected='true'] {
     min-height: 44px;
   }
 }
+
+/* Dialogs already provide their own surface: form content must not become a second card. */
+html[data-ui-style] .app-dialog :is(.customer-form, .workspace-form, .pet-form),
+html[data-ui-style] :is(.hc, .portal) .app-dialog :is(.customer-form, .workspace-form, .pet-form) {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+}
+/* Paired theme roles also own language-menu selection and interaction states. */
+html[data-ui-style] .marketing-header .language-menu-options {
+  padding: 6px;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  border: 1px solid var(--md-outline-variant);
+  box-shadow: var(--md-shadow);
+}
+html[data-ui-style] .marketing-header .language-menu-options button {
+  border-radius: var(--ui-option-radius);
+  background: transparent;
+  color: var(--md-on-surface);
+}
+html[data-ui-style] .marketing-header .language-menu-options button[aria-checked='true'] {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+html[data-ui-style]
+  .marketing-header
+  .language-menu-options
+  button:not([aria-checked='true']):is(:hover, :focus-visible) {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+html[data-ui-style]
+  :is(.hc, .portal, .app-dialog, .marketing-header)
+  :is(button, a.button, a.language, a.icon-button):not(:disabled):not(
+    [aria-disabled='true']
+  ):hover {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--md-primary) 30%, transparent);
+}
+html[data-ui-style] :is(.hc, .portal, .app-dialog) :is(.button, .hc-apply):not(:disabled):hover {
+  background: var(--md-primary-hover);
+  color: var(--md-on-primary);
+}
+html[data-ui-style]
+  :is(.hc, .portal, .app-dialog)
+  :is(
+    .custom-select-trigger,
+    .custom-autocomplete input,
+    input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='hidden']),
+    textarea
+  ):not(:disabled):hover {
+  border-color: var(--md-primary);
+}
+html[data-ui-style]
+  .marketing-header
+  .language-menu-options
+  button[aria-checked='true']:is(:hover, :focus-visible) {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}

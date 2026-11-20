@@ -116,7 +116,12 @@ export function AdminAccountLink({
             <>
               <p>{messages.verify}</p>
               <div className="portal-actions">
-                <Button variant="primary" disabled={busy} onClick={() => void decide('approve')}>
+                <Button
+                  icon="check"
+                  variant="primary"
+                  disabled={busy}
+                  onClick={() => void decide('approve')}
+                >
                   {messages.approve}
                 </Button>
                 <Button variant="secondary" disabled={busy} onClick={() => void decide('reject')}>
@@ -132,11 +137,16 @@ export function AdminAccountLink({
               </Button>
             )}
             {['open', 'requested'].includes(state.status) && (
-              <Button variant="secondary" disabled={busy} onClick={() => void decide('cancel')}>
+              <Button
+                icon="close"
+                variant="secondary"
+                disabled={busy}
+                onClick={() => void decide('cancel')}
+              >
                 {messages.cancel}
               </Button>
             )}
-            <Button variant="secondary" disabled={busy} onClick={() => void run(load)}>
+            <Button icon="reset" variant="secondary" disabled={busy} onClick={() => void run(load)}>
               {messages.refresh}
             </Button>
           </div>
@@ -227,7 +237,7 @@ export function AccountLinkRequest({
           </form>
         )
       )}
-      <Button variant="secondary" disabled={busy} onClick={() => void run()}>
+      <Button icon="reset" variant="secondary" disabled={busy} onClick={() => void run()}>
         {busy ? messages.busy : messages.refresh}
       </Button>
     </section>

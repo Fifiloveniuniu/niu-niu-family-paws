@@ -97,6 +97,7 @@ export function Pagination({
       </label>
       <span role="status">{t('range', { first, last, page: page.index + 1 })}</span>
       <Button
+        icon="chevron-left"
         variant="secondary"
         disabled={page.loading || page.index === 0}
         onClick={page.previous}
@@ -104,6 +105,7 @@ export function Pagination({
         {t('previous')}
       </Button>
       <Button
+        icon="chevron-right"
         variant="secondary"
         disabled={page.loading || page.error || !page.nextCursor}
         onClick={page.next}
@@ -113,7 +115,7 @@ export function Pagination({
       {page.error && (
         <span role="alert">
           {t('error')}{' '}
-          <Button variant="secondary" onClick={page.reload}>
+          <Button icon="reset" variant="secondary" onClick={page.reload}>
             {t('retry')}
           </Button>
           {page.index > 0 && (

@@ -218,6 +218,7 @@ export default function CustomAutocomplete({
             </div>
             {onMore && (
               <Button
+                icon="chevron-down"
                 type="button"
                 variant="secondary"
                 disabled={moreLoading}
