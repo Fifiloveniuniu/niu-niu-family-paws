@@ -96,6 +96,9 @@ for (const [width, language, palette] of [
     await expect(grid.locator(':scope > .calendar-timeline-continuous-grid')).toHaveCount(1);
     await expect(room).toHaveCSS('border-top-width', '0px');
     await expectReadableText(page);
+    await expect(
+      page.locator('.saved-calendar-grid .hc-pet .pet-type-choice .pet-type-icon').first(),
+    ).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('hierarchy-now.png') });
     const scroll = page.locator('.saved-calendar .hc-scroll');
     await scroll.evaluate((node) => {

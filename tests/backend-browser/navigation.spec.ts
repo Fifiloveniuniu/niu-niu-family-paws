@@ -1,35 +1,79 @@
 import { test, expect } from '@playwright/test';
+for (const [language, width] of [
+  ['en', 1440],
+  ['zh', 390],
+] as const) {
+  test(`retired calendar pages and buttons stay removed (${language}, ${width})`, async ({
+    page,
+    request,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const fixture = await (await request.get('/__test-fixture')).json();
+    await page.goto(`/app/calendar/?lang=${language}`);
+    await page.evaluate(async (jwt) => {
+      // @ts-ignore Local test module.
+      const { auth } = await import('/apps/web/src/auth-client.ts');
+      // @ts-ignore Vite dependency.
+      const { GoogleAuthProvider, signInWithCredential } =
+        await import('/node_modules/.vite/deps/firebase_auth.js');
+      await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
+    }, fixture.administrator.jwt);
+    for (const route of [
+      '/app/calendar/',
+      '/app/operations/',
+      '/app/settings/locations/',
+      '/app/settings/locations/' + fixture.hid + '/',
+      '/app/settings/',
+    ]) {
+      await page.goto(route + `?lang=${language}&zone=UTC`);
+      await expect(page.locator('.saved-calendar-grid')).toBeVisible();
+      await expect(page).toHaveURL(new RegExp('/app/calendar/\\?lang=' + language + '&zone=UTC'));
+      await expect(
+        page.locator('a[href*="/app/operations"], a[href*="/app/settings/locations"]'),
+      ).toHaveCount(0);
+      await expect(page.locator('.calendar-toolbar-actions > a')).toHaveCount(0);
+      await expect(page.locator('.saved-calendar-grid .hc-room').first()).not.toContainText(
+        /Capacity|容量/,
+      );
+      await expect(page.locator('.calendar-time-controls .custom-date-input')).toHaveCount(0);
+      await expect(page.locator('.workspace-clock [role="combobox"]')).toHaveAccessibleName(
+        language === 'en' ? 'Clock timezone' : '时钟时区',
+      );
+      await expect(page.locator('.workspace-clock')).not.toContainText(
+        language === 'en' ? 'Timezone' : '时区',
+      );
+    }
+    const houseEditor = page.locator('.hc-house .workspace-row-actions button').first();
+    await houseEditor.click();
+    await expect(page.locator('dialog:modal form')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(houseEditor).toBeFocused();
+    await page.goto(`/app/balances/?lang=${language}`);
+    await page
+      .getByRole('link', {
+        name: language === 'en' ? 'Cancellation policy' : '取消政策',
+        exact: true,
+      })
+      .click();
+    await expect(page.locator('.saved-cancellation-policy')).toBeVisible();
+  });
+}
 
-test('app bar omits Settings while Calendar and Balances retain administrator management', async ({
+test('employee accounts retain profile access after the operations page is removed', async ({
   page,
   request,
 }) => {
   const fixture = await (await request.get('/__test-fixture')).json();
-  await page.goto('/app/calendar/?lang=en');
+  await page.goto('/app/operations/?lang=en');
   await page.evaluate(async (jwt) => {
-    // @ts-ignore Local test-only module.
+    // @ts-ignore Local test module.
     const { auth } = await import('/apps/web/src/auth-client.ts');
-    // @ts-ignore Local test-only dependency.
+    // @ts-ignore Vite dependency.
     const { GoogleAuthProvider, signInWithCredential } =
       await import('/node_modules/.vite/deps/firebase_auth.js');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
-  }, fixture.administrator.jwt);
-  const header = page.getByRole('banner');
-  await expect(page.locator('.hc-toolbar')).toBeVisible();
-  await expect(header.getByRole('link', { name: 'Settings', exact: true })).toHaveCount(0);
-  await page.getByRole('link', { name: 'House operations', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'House operations', exact: true })).toBeVisible();
-  await expect(header.getByRole('link', { name: 'Pricing', exact: true })).toBeVisible();
-  await header.getByRole('link', { name: 'Calendar', exact: true }).click();
-  await page.getByRole('link', { name: 'Manage houses & rooms', exact: true }).click();
-  await expect(page.locator('.workspace-settings')).toBeVisible();
-  await header.getByRole('link', { name: 'Balances', exact: true }).click();
-  await page.getByRole('link', { name: 'Cancellation policy', exact: true }).click();
-  await expect(page.locator('.saved-cancellation-policy')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Edit policy', exact: true })).toBeVisible();
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/app/calendar/?lang=zh');
-  await expect(page.locator('.hc-toolbar')).toBeVisible();
-  await expect(header.locator('a[href*="/app/settings"]')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: '管理房屋与房间', exact: true })).toBeVisible();
+  }, fixture.employee.jwt);
+  await expect(page).toHaveURL(/\/app\/account\/profile\//);
+  await expect(page.locator('.profile-section')).toBeVisible();
+  await expect(page.locator('.operations-cards')).toHaveCount(0);
 });

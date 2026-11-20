@@ -181,6 +181,8 @@ for (const [width, lang] of [
     await page.goto(`/app/calendar/?lang=${lang}`);
     await expect(page.locator('.saved-calendar-grid')).toBeVisible();
     await expect(page.locator('.calendar-filter-panel fieldset')).toHaveCount(2);
+    const filterBounds = await page.locator('.calendar-filter-panel').boundingBox();
+    expect(filterBounds!.height).toBeLessThan(width >= 1200 ? 220 : 400);
     await expect(page.locator('.calendar-filter-panel .workspace-clock')).toHaveCount(0);
     await expect(page.locator('.calendar-results .workspace-clock')).toBeVisible();
     if (width >= 1200) {

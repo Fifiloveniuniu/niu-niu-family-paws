@@ -27,22 +27,24 @@ for (const palette of ['apple', 'vscode-light'] as const) {
       for (const route of ['calendar', 'pricing', 'balances']) {
         await page.goto(`/app/${route}/?lang=${language}`);
         if (route === 'calendar') {
-          const clipped = await page.locator('.calendar-toolbar-actions .paws-icon').evaluateAll(
-            (icons) =>
-              icons.filter((icon) => {
-                const frame = icon.getBoundingClientRect();
-                return [...icon.querySelectorAll('[data-icon-family]')].some((group) => {
-                  if (getComputedStyle(group).display === 'none') return false;
-                  const box = group.getBoundingClientRect();
-                  return (
-                    box.left < frame.left - 0.5 ||
-                    box.top < frame.top - 0.5 ||
-                    box.right > frame.right + 0.5 ||
-                    box.bottom > frame.bottom + 0.5
-                  );
-                });
-              }).length,
-          );
+          const clipped = await page
+            .locator('.saved-calendar-grid .hc-settings .paws-icon')
+            .evaluateAll(
+              (icons) =>
+                icons.filter((icon) => {
+                  const frame = icon.getBoundingClientRect();
+                  return [...icon.querySelectorAll('[data-icon-family]')].some((group) => {
+                    if (getComputedStyle(group).display === 'none') return false;
+                    const box = group.getBoundingClientRect();
+                    return (
+                      box.left < frame.left - 0.5 ||
+                      box.top < frame.top - 0.5 ||
+                      box.right > frame.right + 0.5 ||
+                      box.bottom > frame.bottom + 0.5
+                    );
+                  });
+                }).length,
+            );
           expect(clipped).toBe(0);
         }
         const tabs = page.locator('.shared-tabs');

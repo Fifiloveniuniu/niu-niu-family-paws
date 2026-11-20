@@ -301,7 +301,6 @@ export default function WorkspaceCalendar({
               </button>
               <h2>{title}</h2>
             </div>
-            {timeZoneControl}
             <SegmentedTabs
               label={t('calendarView')}
               value={range.view}
@@ -311,32 +310,13 @@ export default function WorkspaceCalendar({
                 label: t(view),
               }))}
             />
+            {timeZoneControl}
           </div>
           <div className="calendar-toolbar-actions">
             <button className="hc-apply" disabled={!data.rows.length} onClick={() => onAdd()}>
               <Icon name="plus" />
               {t(data.admin ? 'addBooking' : 'availability')}
             </button>
-            {data.admin && !scope && (
-              <a
-                className="icon-button"
-                href="/app/operations/"
-                title={uiText('ui.operations.title')}
-                aria-label={uiText('ui.operations.title')}
-              >
-                <Icon name="calendar" />
-              </a>
-            )}
-            {data.admin && (
-              <a
-                className="icon-button calendar-settings-action"
-                href="/app/settings/locations/"
-                title={t('manageLocations')}
-                aria-label={t('manageLocations')}
-              >
-                <Icon name="settings" />
-              </a>
-            )}
           </div>
         </div>
         {loading && <p role="status">{t('loading')}</p>}
@@ -442,11 +422,6 @@ export default function WorkspaceCalendar({
                       <React.Fragment key={candidate.id}>
                         <div className="hc-room" data-room-id={candidate.id}>
                           <LocationLabel kind="room" name={candidate.name} />
-                          <small>
-                            {data.admin
-                              ? `${t('capacity')} ${Number.isFinite(candidate.capacity) && candidate.capacity > 0 ? candidate.capacity : uiText('common.notAvailable')}`
-                              : ''}
-                          </small>
                           <div className="workspace-row-actions">
                             {data.admin && (
                               <button
@@ -496,7 +471,7 @@ export default function WorkspaceCalendar({
                                 <div>
                                   <strong title={row.pet.name}>{row.pet.name}</strong>
                                   <small>
-                                    {row.pet.species ? speciesText(row.pet.species) : ''}
+                                    {row.pet.species ? petTypeChoice(row.pet.species) : ''}
                                   </small>
                                 </div>
                               </div>

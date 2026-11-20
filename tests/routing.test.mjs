@@ -21,8 +21,8 @@ test('record paths resolve stable identifiers and reject unknown route shapes', 
     petId: 'p456',
   });
   assert.equal(parseRoute('/app/calendar/bookings/sample-0/').bookingId, 'sample-0');
-  assert.equal(parseRoute('/app/settings/locations/h123/').locationId, 'h123');
-  assert.equal(parseRoute('/app/settings/locations/').locations, true);
+  assert.equal(parseRoute('/app/settings/locations/h123/').kind, 'calendar');
+  assert.equal(parseRoute('/app/settings/locations/').kind, 'calendar');
   assert.equal(parseRoute('/app/no-such-page/').kind, 'not-found');
   assert.equal(parseRoute('/services/').kind, 'services');
 });
@@ -49,4 +49,19 @@ test('marketing destinations and legacy cancellation links resolve to their dedi
     assert.equal(parseRoute(path).kind, kind);
   assert.equal(canonicalUrl('/cancellation-policy/'), '/pricing/#cancellation-policy');
   assert.equal(canonicalUrl('/#/cancellation-policy'), '/pricing/#cancellation-policy');
+});
+
+test('retired operations and location settings pages redirect to Calendar with language and query retained', () => {
+  for (const path of [
+    '/app/operations',
+    '/app/settings/locations',
+    '/app/settings/locations/h123',
+    '/app/settings',
+  ]) {
+    assert.equal(canonicalUrl(path + '?lang=zh&zone=UTC'), '/app/calendar/?lang=zh&zone=UTC');
+    assert.equal(parseRoute(path).kind, 'calendar');
+    assert.equal(safeReturnTo(path + '/?lang=en'), '/app/calendar/?lang=en');
+  }
+  assert.equal(canonicalUrl('/#/settings?lang=zh'), '/app/calendar/?lang=zh');
+  assert.equal(parseRoute('/app/settings/cancellation/').cancellation, true);
 });

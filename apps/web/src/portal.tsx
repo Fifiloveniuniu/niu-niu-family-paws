@@ -1,6 +1,5 @@
 import Button from './button';
 import IconButton from './icon-button';
-import EmployeeOperations from './employee-operations';
 import { englishCatalog, localeFor, type Language, uiText, uiValue } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
 import React from 'react';
@@ -18,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 import { getPortalAccess } from './admin-access';
 import { auth } from './auth-client';
 import Customers from './customers';
-import Houses from './houses';
 const HouseCalendar = React.lazy(() => import('./house-calendar'));
 const SavedWorkspace = React.lazy(() => import('./saved-workspace'));
 import './workspace.css';
@@ -50,9 +48,7 @@ export default function Portal({
   const generation = React.useRef(0);
   const previousUid = React.useRef<string | null | undefined>(undefined);
   const [directoryRefresh, setDirectoryRefresh] = React.useState(0);
-  const [workspace, setWorkspace] = React.useState<'customers' | 'personal' | 'houses'>(
-    'customers',
-  );
+  const [workspace, setWorkspace] = React.useState<'customers' | 'personal'>('customers');
   const personal = workspace === 'personal';
   const verify = React.useCallback(async (current: User | null, force = false) => {
     const request = ++generation.current;
@@ -136,18 +132,11 @@ export default function Portal({
   }, [active]);
   const route = currentRoute();
   React.useEffect(() => {
-    if (
-      active &&
-      access === 'employee' &&
-      !['login', 'personal', 'operations'].includes(route.kind)
-    )
-      navigate('/app/operations/', true);
+    if (active && access === 'employee' && !['login', 'personal'].includes(route.kind))
+      navigate('/app/account/profile/', true);
   }, [access, route.path, active]);
   React.useEffect(() => {
-    if (!import.meta.env.DEV)
-      setWorkspace(
-        route.kind === 'personal' ? 'personal' : route.kind === 'settings' ? 'houses' : 'customers',
-      );
+    if (!import.meta.env.DEV) setWorkspace(route.kind === 'personal' ? 'personal' : 'customers');
   }, [route.kind]);
   const hadSession = React.useRef(false);
   React.useEffect(() => {
@@ -215,15 +204,6 @@ export default function Portal({
     </details>
   );
 
-  if (user && (access === 'employee' || (access === 'admin' && route.kind === 'operations')))
-    return (
-      <EmployeeOperations
-        admin={access === 'admin'}
-        key={user.uid}
-        onLanguageChange={onLanguageChange}
-        account={accountControls}
-      />
-    );
   if (user && (access === 'admin' || access === 'customer'))
     return (
       <SavedWorkspace
@@ -283,9 +263,7 @@ export default function Portal({
           {access === 'admin'
             ? personal
               ? labels.personalTitle
-              : workspace === 'houses'
-                ? uiText('ui.portal.houses')
-                : labels.dashboard
+              : labels.dashboard
             : access === 'employee'
               ? labels.employeeTitle
               : access === 'customer'
@@ -368,7 +346,6 @@ export default function Portal({
                   ['/app/calendar/', 'calendar'],
                   ['/app/customers/', 'customers'],
                   ['/app/balances/', 'balances'],
-                  ['/app/settings/', 'settings'],
                 ].map(([href, kind]) => (
                   <a
                     key={kind}
@@ -396,11 +373,6 @@ export default function Portal({
             >
               <Customers key={user?.uid + '-' + formEpoch} refreshKey={directoryRefresh} />
             </div>
-            {!import.meta.env.DEV && (
-              <div hidden={workspace !== 'houses'}>
-                <Houses key={user?.uid} initialSelected={route.locationId} routable />
-              </div>
-            )}
           </>
         )}
         {(access === 'admin' || access === 'customer' || access === 'employee') && (

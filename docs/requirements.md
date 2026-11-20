@@ -1,3 +1,9 @@
+## Retire management pages and compact Calendar — 2026-11-20
+
+Remove capacity text from calendar rows while retaining capacity rules and room editing. Order time controls as Previous/Today/Next, date heading, view choices, timezone.
+
+Remove House operations and Calendar settings/location pages and both Calendar toolbar links. Redirect their old URLs to Calendar, retain cancellation configuration and house/room row editing, and preserve stored records/backend authorization. Employee-only accounts retain personal profile access. Make Calendar filters compact on desktop/phone. Timezone remains a presentation control outside filters, with no visible label and an accessible name. Keep navigation/date heading/timezone/view choices together, with Add booking separate; remove the current-date input.
+
 ## Shared controls, readable tabs and saved Metrics — 2026-11-19
 
 Use the same components for the same functions across pages. Calendar, Pricing, Balances/Activity and Metrics period presets share segmented-control behavior and styling. Selected Apple controls are red with white text; Microsoft Light uses blue with white text. Inactive labels are bold. Preserve tab semantics for page panels and pressed-button semantics for reporting-range filters. The English page/navigation name is Metrics (Chinese 指标).
