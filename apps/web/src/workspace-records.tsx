@@ -206,7 +206,7 @@ export function BookingDetails({
             </Button>
             {booking.status === 'planned' ? (
               <>
-                <Button variant="primary" onClick={() => onAction('check_in')}>
+                <Button icon="check" variant="primary" onClick={() => onAction('check_in')}>
                   {t('checkIn')}
                 </Button>
                 <Button icon="close" variant="secondary" onClick={() => onAction('cancel')}>
@@ -214,7 +214,7 @@ export function BookingDetails({
                 </Button>
               </>
             ) : (
-              <Button variant="primary" onClick={() => onAction('check_out')}>
+              <Button icon="check" variant="primary" onClick={() => onAction('check_out')}>
                 {t('checkOut')}
               </Button>
             )}

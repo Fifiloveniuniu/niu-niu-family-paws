@@ -1,3 +1,4 @@
+import Button from './button';
 import { parseWallInput } from './wall-time';
 import { petTypes, petTypeChoice, PetTypeIcon } from './pet-type';
 import CustomDateInput from './custom-date-input';
@@ -687,18 +688,32 @@ export default function AssignmentDialog({
         <div className="hc-wizard-footer">
           <div className="hc-wizard-secondary">
             {step > 1 && (
-              <button className="hc-manage" type="button" onClick={() => setStep(step - 1)}>
+              <Button
+                icon="chevron-left"
+                variant="secondary"
+                className="hc-manage"
+                type="button"
+                onClick={() => setStep(step - 1)}
+              >
                 ← {uiText('ui.calendarAssignment.back')}
-              </button>
+              </Button>
             )}
-            <button className="hc-manage" type="button" onClick={close}>
+            <Button
+              icon="close"
+              variant="secondary"
+              className="hc-manage"
+              type="button"
+              onClick={close}
+            >
               {uiText('ui.calendarAssignment.cancel')}
-            </button>
+            </Button>
           </div>
           <span>
             {uiText('ui.calendarAssignment.step')} {step} {uiText('ui.calendarAssignment.of3')}
           </span>
-          <button
+          <Button
+            icon={step === 3 ? 'check' : 'chevron-right'}
+            variant="primary"
             className="hc-apply"
             disabled={
               step === 1
@@ -713,8 +728,7 @@ export default function AssignmentDialog({
               : step === 2
                 ? uiText('ui.calendarAssignment.reviewStay')
                 : uiText('ui.calendarAssignment.addToCalendar')}{' '}
-            <span aria-hidden="true">{step === 3 ? '✓' : '→'}</span>
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

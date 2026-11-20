@@ -1,3 +1,4 @@
+import Button from './button';
 import SegmentedTabs from './segmented-tabs';
 import { petTypeChoice } from './pet-type';
 import { withoutLanguage } from './language-url.ts';
@@ -392,14 +393,16 @@ export default function HouseCalendar({
               <div className="hc-page-toolbar">
                 <div className="hc-page-toolbar-actions">
                   <div className="hc-main-actions">
-                    <button
+                    <Button
+                      variant="primary"
                       className="hc-apply hc-add-placement"
                       onClick={() => setAssignment(null)}
                     >
                       <Icon name="plus" />
                       {uiText('ui.houseCalendar.addBooking')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="secondary"
                       className="hc-manage hc-add-house"
                       title={uiText('ui.houseCalendar.addHouse')}
                       aria-label={uiText('ui.houseCalendar.addHouse')}
@@ -407,7 +410,7 @@ export default function HouseCalendar({
                     >
                       <Icon name="plus" />
                       {uiText('ui.houseCalendar.addHouse')}
-                    </button>
+                    </Button>
                   </div>
                   <div className="hc-clock-controls">
                     <label>
@@ -1114,7 +1117,9 @@ export default function HouseCalendar({
                   </dd>
                 </dl>
                 <CalendarProfileLink name={selected.name} />
-                <button
+                <Button
+                  icon="balance"
+                  variant="secondary"
                   className="hc-manage"
                   onClick={() => {
                     pendingBalance.current = {
@@ -1126,7 +1131,7 @@ export default function HouseCalendar({
                   }}
                 >
                   {uiText('ui.houseCalendar.viewPetBalance')}
-                </button>
+                </Button>
                 <p>{uiText('ui.houseCalendar.noBookingOrAttendanceDataIsSaved')}</p>
               </Modal>
             )}

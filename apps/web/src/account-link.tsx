@@ -124,7 +124,12 @@ export function AdminAccountLink({
                 >
                   {messages.approve}
                 </Button>
-                <Button variant="secondary" disabled={busy} onClick={() => void decide('reject')}>
+                <Button
+                  icon="close"
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() => void decide('reject')}
+                >
                   {messages.reject}
                 </Button>
               </div>
@@ -132,7 +137,7 @@ export function AdminAccountLink({
           )}
           <div className="portal-actions">
             {state.status !== 'approved' && (
-              <Button variant="secondary" disabled={busy} onClick={() => void issue()}>
+              <Button icon="link" variant="secondary" disabled={busy} onClick={() => void issue()}>
                 {state.status === 'none' ? messages.generate : messages.regenerate}
               </Button>
             )}
@@ -231,7 +236,7 @@ export function AccountLinkRequest({
                 onChange={(event) => setCode(event.target.value)}
               />
             </label>
-            <Button variant="primary" disabled={busy} type="submit">
+            <Button icon="check" variant="primary" disabled={busy} type="submit">
               {messages.submit}
             </Button>
           </form>

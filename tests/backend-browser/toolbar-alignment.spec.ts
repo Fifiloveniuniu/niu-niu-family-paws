@@ -41,6 +41,28 @@ for (const [language, width] of [
       }
     }
     const actionBeforeSearch = (await add.boundingBox())!;
+    // A read-only visual fixture isolates result layout from direct-seed search indexing.
+    await page.route('**/api/pet-search?**', (route) =>
+      route.fulfill({
+        json: {
+          items: [
+            {
+              pet: {
+                id: fixture.pid,
+                customerId: fixture.cid,
+                name: '[TEST] Search layout pet',
+                species: 'dog',
+                version: 1,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+              customer: { id: fixture.cid, name: '[TEST] Alice', loginEmail: null },
+            },
+          ],
+          nextCursor: null,
+        },
+      }),
+    );
     await page.locator('.pet-search input').fill('[TEST] Alice');
     await page.locator('.pet-search form button[type="submit"]').click();
     await expect(page.locator('.pet-search .customer-list > li').first()).toBeVisible();

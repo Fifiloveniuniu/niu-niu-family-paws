@@ -99,7 +99,7 @@ export default function AppearanceControl() {
             <Button icon="reset" type="button" variant="secondary" onClick={resetAppearance}>
               {t('reset')}
             </Button>
-            <Button type="button" variant="primary" onClick={() => setOpen(false)}>
+            <Button icon="check" type="button" variant="primary" onClick={() => setOpen(false)}>
               {t('done')}
             </Button>
           </div>

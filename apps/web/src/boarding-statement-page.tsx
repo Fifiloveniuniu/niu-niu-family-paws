@@ -1,3 +1,4 @@
+import Button from './button';
 import CustomDateInput from './custom-date-input';
 import { localeFor, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
@@ -95,16 +96,24 @@ export default function BoardingStatement({
     <section className="hc-finance-page hc-statement-page">
       <div className="hc-page-toolbar">
         <div className="hc-statement-actions">
-          <button className="hc-manage" disabled={!rows.length || !valid} onClick={download}>
+          <Button
+            icon="download"
+            variant="secondary"
+            className="hc-manage"
+            disabled={!rows.length || !valid}
+            onClick={download}
+          >
             {uiText('ui.boardingStatementPage.exportCsv')}
-          </button>
+          </Button>
           {!hideFilters && (
-            <button
+            <Button
+              icon="balance"
+              variant="primary"
               className="hc-apply"
               onClick={() => onManageBalance(filters.pet === 'all' ? '' : filters.pet)}
             >
               {uiText('ui.boardingStatementPage.boardingBalances')}
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -201,13 +210,15 @@ export default function BoardingStatement({
                   {number(entry.after)} {uiText('ui.boardingStatementPage.days')}
                 </td>
                 <td>
-                  <button
+                  <Button
+                    icon="chevron-right"
+                    variant="secondary"
                     className="hc-manage"
                     aria-label={`${uiText('ui.boardingStatementPage.viewTransaction')}: ${entry.pet} ${entry.id}`}
                     onClick={() => setSelected(entry)}
                   >
                     {uiText('ui.boardingStatementPage.view')}
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -228,12 +239,14 @@ export default function BoardingStatement({
                         : uiText('ui.boardingStatementPage.addBoardingBalanceToAPetToStartTheir')}
                     </p>
                     {filtered && (
-                      <button
+                      <Button
+                        icon="reset"
+                        variant="secondary"
                         className="hc-manage"
                         onClick={() => setFilters({ ...emptyStatementFilters })}
                       >
                         {uiText('ui.boardingStatementPage.clearFilters')}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </td>
