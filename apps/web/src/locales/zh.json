@@ -90,13 +90,7 @@
     "剪指甲及打磨",
     "拔耳毛及清洁耳朵"
   ],
-  "ui.publicPrices.includes.price4.jpg": [
-    "洗浴",
-    "吹干",
-    "去浮毛",
-    "修剪指甲",
-    "耳部及眼部清洁"
-  ],
+  "ui.publicPrices.includes.price4.jpg": ["洗浴", "吹干", "去浮毛", "修剪指甲", "耳部及眼部清洁"],
   "ui.pagination.pageSize": "每页条数",
   "ui.pagination.range": "第 {{page}} 页 · 显示 {{first}}–{{last}} 条",
   "ui.pagination.previous": "上一页",
@@ -1384,7 +1378,7 @@
   "ui.pricingAdmin.labels": "各语言名称",
   "ui.workspace.petInformation": "资料",
   "ui.priceNameEditor.title": "价格分类名称",
-  "ui.priceNameEditor.hint": "先填写名称，再切换语言添加对应译名。",
+  "ui.priceNameEditor.hint": "输入名称后按回车，即可添加到下方列表。删除名称可清空该语言。",
   "ui.priceNameEditor.language": "名称语言",
   "ui.priceNameEditor.added": "已填写",
   "ui.priceNameEditor.optional": "选填",
@@ -1394,5 +1388,21 @@
   "ui.priceNameEditor.missing": "仍需填写：{{languages}}",
   "ui.priceNameEditor.ready": "必填名称已完成。",
   "ui.priceNameEditor.preview": "客户看到的名称",
-  "ui.priceNameEditor.empty": "尚未填写名称"
+  "ui.priceNameEditor.empty": "尚未填写名称",
+  "ui.priceNameEditor.delete": "删除{{language}}名称",
+  "ui.holidayPresets.newYear": "元旦",
+  "ui.holidayPresets.mlk": "马丁·路德·金纪念日",
+  "ui.holidayPresets.washington": "华盛顿诞辰日",
+  "ui.holidayPresets.memorial": "阵亡将士纪念日",
+  "ui.holidayPresets.juneteenth": "六月节",
+  "ui.holidayPresets.independence": "美国独立日",
+  "ui.holidayPresets.labor": "美国劳动节",
+  "ui.holidayPresets.columbus": "哥伦布日",
+  "ui.holidayPresets.veterans": "退伍军人节",
+  "ui.holidayPresets.thanksgiving": "感恩节",
+  "ui.holidayPresets.christmas": "圣诞节",
+  "ui.holidayPresets.hint": "美国节假日预设使用实际日期，不含补休日期。请仅勾选需要收取节假日费用的日期。",
+  "ui.holidayPresets.year": "年份",
+  "ui.holidayPresets.custom": "添加其他日期",
+  "ui.holidayPresets.selected": "已选日期"
 }

@@ -24,12 +24,15 @@ test('administrator edits source pricing, packages and holidays with persisted b
   await page.getByRole('button', { name: 'Add price', exact: true }).click();
   const dialog = page.getByRole('dialog');
   await dialog.getByLabel('English', { exact: true }).fill('[TEST] Thirty days');
+  await dialog.getByLabel('English', { exact: true }).press('Enter');
   await dialog.getByRole('combobox', { name: 'Name language', exact: true }).click();
   await page.getByRole('option', { name: '简体中文', exact: true }).click();
   await dialog.getByLabel('简体中文', { exact: true }).fill('[测试] 三十天');
+  await dialog.getByLabel('简体中文', { exact: true }).press('Enter');
   await dialog.getByRole('combobox', { name: 'Name language', exact: true }).click();
   await page.getByRole('option', { name: 'Español', exact: true }).click();
   await dialog.getByLabel('Español', { exact: true }).fill('[TEST] Treinta días');
+  await dialog.getByLabel('Español', { exact: true }).press('Enter');
   await dialog.getByLabel('Price (USD)', { exact: true }).fill('1500.00');
   await dialog
     .getByRole('combobox', { name: 'Regular boarding band (optional)', exact: true })
@@ -43,8 +46,7 @@ test('administrator edits source pricing, packages and holidays with persisted b
   await page.getByRole('tab', { name: 'Boarding-day packages', exact: true }).click();
   await expect(page.locator('.admin-pricing')).toContainText('[TEST] Thirty days');
   await page.getByRole('button', { name: 'Holiday dates & surcharge', exact: true }).click();
-  await dialog.getByRole('combobox', { name: 'Holiday date', exact: true }).fill('2026-12-25');
-  await dialog.getByRole('button', { name: 'Add date', exact: true }).click();
+  await dialog.getByRole('checkbox', { name: 'Christmas Day 2026-12-25', exact: true }).check();
   await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page.locator('.admin-pricing')).toContainText('Configured holiday dates: 1');

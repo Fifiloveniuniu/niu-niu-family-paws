@@ -1,3 +1,7 @@
+## Calendar/dialog and pricing-entry follow-up — 2026-11-20
+
+Normal-calendar date headers must remain sticky inside their owning scrollport. Focused balance, validity-template and pricing dialogs keep title/actions visible with a scrolling form body; template lists adapt to cards on phones. Category translations are explicitly added with Enter and removed per language, retaining English/Chinese requirements and optional Spanish fallback. Holiday configuration offers named US actual-calendar-date presets with manual selection by year, preserves custom dates, and never automatically enables holidays or substitutes observed office weekdays. Existing pricing/date-only API schemas and cancellation draft/financial boundaries are unchanged.
+
 ## Price category name UX follow-up — 2026-11-20
 
 Use a language dropdown (or list) in Add/Edit price, with a focused field for the selected language. Preserve draft translations while switching, open in the interface language, make required/missing names and the customer-facing fallback clear, and retain English/Chinese/Spanish support on phone and desktop. Preserve existing validation and saved price data.

@@ -62,6 +62,9 @@ for (const [language, width, palette] of [
     for (const code of ['es', 'en', 'zh'] as const) {
       await choose(code);
       await editor.getByLabel(names[code], { exact: true }).fill(drafts[code]);
+      await editor.getByLabel(names[code], { exact: true }).press('Enter');
+      await expect(editor.locator('.price-name-list')).toContainText(drafts[code]);
+      await expect(editor.getByLabel(names[code], { exact: true })).toHaveValue('');
       await expect(editor.locator('.price-name-preview strong')).toHaveText(drafts[code]);
       if (code === 'zh') await expect(save).toBeEnabled();
       else await expect(save).toBeDisabled();
@@ -69,15 +72,16 @@ for (const [language, width, palette] of [
     await expect(editor.getByRole('status')).toContainText(t('ready'));
     for (const code of ['en', 'zh', 'es'] as const) {
       await choose(code);
-      await expect(editor.getByLabel(names[code], { exact: true })).toHaveValue(drafts[code]);
+      await expect(editor.getByLabel(names[code], { exact: true })).toHaveValue('');
     }
-    await editor.getByLabel('Español', { exact: true }).fill('');
+    await editor
+      .getByRole('button', { name: t('delete').replace('{{language}}', 'Español'), exact: true })
+      .click();
     await expect(save).toBeEnabled();
     await expect(editor.locator('.price-name-preview strong')).toHaveText(drafts.en);
-    await expect(editor).toContainText(t('fallback'));
     await editor.getByLabel('Español', { exact: true }).fill('  ');
-    await expect(editor.getByLabel('Español', { exact: true })).toHaveValue('');
-    await expect(editor.locator('.price-name-preview strong')).toHaveText(drafts.en);
+    await editor.getByLabel('Español', { exact: true }).press('Enter');
+    await expect(editor.locator('.price-name-list li')).toHaveCount(2);
     const fieldBox = (await editor.locator('input').boundingBox())!;
     expect(fieldBox.width).toBeGreaterThan(width < 640 ? 200 : 250);
     if (width > 640) {

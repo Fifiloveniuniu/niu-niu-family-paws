@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CustomSelect from './custom-select';
 import Icon from './icons';
+import IconButton from './icon-button';
 import { htmlLanguage, languageName, resolveLanguage, supportedLanguages, uiText } from './i18n';
 import { priceName } from './price-label';
 import type { PriceRate } from '../../../packages/pricing/calculations';
@@ -11,14 +12,20 @@ type NameLanguage = 'en' | 'zh' | 'es';
 export default function PriceNameEditor({
   rate,
   onChange,
+  onPendingChange,
 }: {
   rate: PriceRate;
   onChange: (patch: Partial<PriceRate>) => void;
+  onPendingChange: (pending: boolean) => void;
 }) {
   const { i18n } = useTranslation();
   const [language, setLanguage] = React.useState<NameLanguage>(() =>
     resolveLanguage(i18n.language),
   );
+  const [drafts, setDrafts] = React.useState({ en: '', zh: '', es: '' });
+  React.useEffect(() => {
+    onPendingChange(Object.values(drafts).some((value) => value.trim()));
+  }, [drafts, onPendingChange]);
   const id = React.useId();
   const t = (key: string, values: Record<string, unknown> = {}) =>
     uiText('ui.priceNameEditor.' + key, values);
@@ -71,23 +78,27 @@ export default function PriceNameEditor({
         </div>
         <input
           id={id}
-          value={names[language]}
+          value={drafts[language]}
           lang={htmlLanguage(language)}
           dir="auto"
           autoComplete="off"
           maxLength={160}
-          required={required}
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter' || event.nativeEvent.isComposing) return;
+            event.preventDefault();
+            const value = drafts[language].trim();
+            if (!value) return;
+            onChange({
+              [language === 'en' ? 'name' : language === 'zh' ? 'nameZh' : 'nameEs']: value,
+            });
+            setDrafts((current) => ({ ...current, [language]: '' }));
+          }}
           aria-describedby={
             id + '-hint ' + id + '-completion' + (language === 'es' ? ' ' + id + '-fallback' : '')
           }
-          onChange={(event) => {
-            const next = { ...names, [language]: event.target.value };
-            onChange({
-              name: next.en,
-              nameZh: next.zh,
-              nameEs: next.es.trim() ? next.es : undefined,
-            });
-          }}
+          onChange={(event) =>
+            setDrafts((current) => ({ ...current, [language]: event.target.value }))
+          }
         />
         {language === 'es' && (
           <p className="price-name-hint" id={id + '-fallback'}>
@@ -95,6 +106,33 @@ export default function PriceNameEditor({
           </p>
         )}
       </div>
+      <ul className="price-name-list" aria-label={t('title')}>
+        {supportedLanguages
+          .filter(({ code }) => names[code].trim())
+          .map(({ code, name, htmlLang }) => (
+            <li key={code}>
+              <span>
+                <small>{name}</small>
+                <strong lang={htmlLang} dir="auto">
+                  {names[code]}
+                </strong>
+              </span>
+              <IconButton
+                type="button"
+                title={t('delete', { language: name })}
+                aria-label={t('delete', { language: name })}
+                onClick={() =>
+                  onChange({
+                    [code === 'en' ? 'name' : code === 'zh' ? 'nameZh' : 'nameEs']:
+                      code === 'es' ? undefined : '',
+                  })
+                }
+              >
+                <Icon name="close" />
+              </IconButton>
+            </li>
+          ))}
+      </ul>
       <div id={id + '-completion'} className="price-name-completion" role="status">
         <span>
           <Icon name={missing.length ? 'edit' : 'check'} />

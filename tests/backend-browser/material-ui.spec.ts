@@ -42,6 +42,8 @@ for (const width of [390, 1440])
         await opener.click();
         const dialog = page.locator('dialog.app-dialog[open]').last();
         await expect(dialog).toBeVisible();
+        // Keep the pointer off newly positioned actions before checking resting colors.
+        await page.mouse.move(0, 0);
         const bounds = (await dialog.boundingBox())!;
         expect(bounds.x).toBeGreaterThanOrEqual(8);
         expect(bounds.y).toBeGreaterThanOrEqual(8);
@@ -84,8 +86,8 @@ for (const width of [390, 1440])
             probe.remove();
             return result;
           });
-          expect(colors.background).toBe(colors.expectedBackground);
-          expect(colors.text).toBe(colors.expectedText);
+          await expect(primary).toHaveCSS('background-color', colors.expectedBackground);
+          await expect(primary).toHaveCSS('color', colors.expectedText);
           expect(colors.opacity).toBe('1');
           // Check actual text contrast rather than a particular palette hex value.
           const contrast = await primary.evaluate((node) => {

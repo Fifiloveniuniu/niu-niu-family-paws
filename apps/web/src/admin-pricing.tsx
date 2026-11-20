@@ -1,3 +1,4 @@
+import { holidayPresets } from './holiday-presets';
 import PriceNameEditor from './price-name-editor';
 import { priceName } from './price-label';
 import Button from './button';
@@ -63,8 +64,16 @@ function Editor({
   const [maximum, setMaximum] = React.useState(
     existing ? (existing.maxCents / 100).toFixed(2) : '',
   );
+  const [pendingName, setPendingName] = React.useState(false);
   const [dates, setDates] = React.useState(config.holidays);
   const [date, setDate] = React.useState('');
+  const [year, setYear] = React.useState(new Date().getFullYear());
+  const presets = holidayPresets(year);
+  const holidayText = (key: string) => uiText('ui.holidayPresets.' + key);
+  const holidayName = (day: string) => {
+    const preset = holidayPresets(Number(day.slice(0, 4))).find((item) => item.date === day);
+    return preset ? holidayText(preset.key) : t('date');
+  };
   const [percent, setPercent] = React.useState(config.holidayPercent);
   const [saving, setSaving] = React.useState(false),
     [uncertain, setUncertain] = React.useState(false),
@@ -72,13 +81,15 @@ function Editor({
   const operation = React.useRef(crypto.randomUUID()),
     form = React.useRef<HTMLFormElement>(null);
   const baseline = React.useRef(JSON.stringify([rate, minimum, maximum, dates, percent]));
-  const dirty = JSON.stringify([rate, minimum, maximum, dates, percent]) !== baseline.current;
+  const dirty =
+    pendingName || JSON.stringify([rate, minimum, maximum, dates, percent]) !== baseline.current;
   const blocked = saving || uncertain;
   const min = moneyCents(minimum),
     max = moneyCents(maximum);
   const valid = holidays
     ? Number.isInteger(percent) && percent >= 0 && percent <= 100
-    : !!rate.name.trim() &&
+    : !pendingName &&
+      !!rate.name.trim() &&
       !!rate.nameZh.trim() &&
       min !== null &&
       (kind !== 'boarding' ||
@@ -137,7 +148,9 @@ function Editor({
   return (
     <Modal
       title={t(holidays ? 'holidays' : existing ? 'edit' : 'add')}
-      className="pricing-editor-dialog"
+      className={
+        'pricing-editor-dialog workflow-dialog' + (holidays ? ' holiday-editor-dialog' : '')
+      }
       onClose={close}
       disabled={blocked}
     >
@@ -149,204 +162,258 @@ function Editor({
         <UnsavedChanges active={dirty || blocked} />
         {error && <p role="alert">{t(error)}</p>}
         {uncertain && <p role="alert">{uiText('ui.workspace.uncertain')}</p>}
-        <fieldset disabled={blocked}>
-          {holidays ? (
-            <>
-              <label>
-                {t('holidayPercent')}
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="1"
-                  required
-                  value={percent}
-                  onChange={(event) => setPercent(Number(event.target.value))}
-                />
-              </label>
-              <p>{t('holidayHint')}</p>
-              <div className="workspace-field-pair">
+        <div className="workflow-form-body">
+          <fieldset disabled={blocked}>
+            {holidays ? (
+              <>
                 <label>
-                  {t('date')}
-                  <CustomDateInput value={date} onChange={setDate} />
-                </label>
-                <Button
-                  icon="plus"
-                  type="button"
-                  variant="secondary"
-                  disabled={!date || dates.includes(date)}
-                  onClick={() => {
-                    setDates([...dates, date].sort());
-                    setDate('');
-                  }}
-                >
-                  {t('addDate')}
-                </Button>
-              </div>
-              <ul>
-                {dates.map((day) => (
-                  <li key={day}>
-                    {day}{' '}
-                    <IconButton
-                      type="button"
-
-                      aria-label={t('removeDate') + ': ' + day}
-                      title={t('removeDate')}
-                      onClick={() => setDates(dates.filter((value) => value !== day))}
-                    >
-                      <Icon name="close" />
-                    </IconButton>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <>
-              <PriceNameEditor rate={rate} onChange={patch} />
-              <label>
-                {t('species')}
-                <CustomSelect
-                  value={rate.species}
-                  onChange={(event) =>
-                    patch({
-                      species: event.target.value as PriceRate['species'],
-                      comparisonRateId: null,
-                      comparisonWeightLb: null,
-                    })
-                  }
-                >
-                  {['dog', 'cat', 'rabbit'].map((species) => (
-                    <option key={species} value={species}>
-                      {speciesText(species)}
-                    </option>
-                  ))}
-                </CustomSelect>
-              </label>
-              {kind === 'boarding' && (
-                <div className="workspace-field-pair">
-                  <label>
-                    {t('minWeight')}
-                    <input
-                      type="number"
-                      step="0.000001"
-                      min="0"
-                      max="10000"
-                      required
-                      value={rate.minWeightLb ?? ''}
-                      onChange={(event) => patch({ minWeightLb: number(event.target.value) })}
-                    />
-                  </label>
-                  <label>
-                    {t('maxWeight')}
-                    <input
-                      type="number"
-                      step="0.000001"
-                      min="0"
-                      max="10000"
-                      required
-                      value={rate.maxWeightLb ?? ''}
-                      onChange={(event) => patch({ maxWeightLb: number(event.target.value) })}
-                    />
-                  </label>
-                </div>
-              )}
-              <div className="workspace-field-pair">
-                <label>
-                  {t(kind === 'boarding' ? 'minPrice' : 'price')}
+                  {t('holidayPercent')}
                   <input
-                    inputMode="decimal"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
                     required
-                    value={minimum}
-                    onChange={(event) => setMinimum(event.target.value)}
+                    value={percent}
+                    onChange={(event) => setPercent(Number(event.target.value))}
                   />
                 </label>
+                <p>{t('holidayHint')}</p>
+                <p className="workspace-field-note">{holidayText('hint')}</p>
+                <label>
+                  {holidayText('year')}
+                  <CustomSelect
+                    value={String(year)}
+                    onChange={(event) => setYear(Number(event.target.value))}
+                  >
+                    {Array.from(
+                      new Set([
+                        new Date().getFullYear() - 1,
+                        new Date().getFullYear(),
+                        new Date().getFullYear() + 1,
+                        new Date().getFullYear() + 2,
+                        ...dates.map((day) => Number(day.slice(0, 4))),
+                      ]),
+                    )
+                      .sort()
+                      .map((value) => (
+                        <option key={value} value={value}>
+                          {value}
+                        </option>
+                      ))}
+                  </CustomSelect>
+                </label>
+                <div className="holiday-preset-list">
+                  {presets.map((item) => (
+                    <label key={item.date}>
+                      <input
+                        type="checkbox"
+                        checked={dates.includes(item.date)}
+                        onChange={(event) =>
+                          setDates(
+                            event.target.checked
+                              ? [...dates, item.date].sort()
+                              : dates.filter((day) => day !== item.date),
+                          )
+                        }
+                      />
+                      <span>
+                        <strong>{holidayText(item.key)}</strong>
+                        <time dateTime={item.date}>{item.date}</time>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <details className="holiday-custom-date">
+                  <summary>{holidayText('custom')}</summary>
+                  <div className="workspace-field-pair">
+                    <label>
+                      {t('date')}
+                      <CustomDateInput value={date} onChange={setDate} />
+                    </label>
+                    <Button
+                      icon="plus"
+                      type="button"
+                      variant="secondary"
+                      disabled={!date || dates.includes(date)}
+                      onClick={() => {
+                        setDates([...dates, date].sort());
+                        setDate('');
+                      }}
+                    >
+                      {t('addDate')}
+                    </Button>
+                  </div>
+                </details>
+                <h3>{holidayText('selected')}</h3>
+                <ul className="holiday-selected-list">
+                  {dates.map((day) => (
+                    <li key={day}>
+                      <span>
+                        <strong>{holidayName(day)}</strong>
+                        <time dateTime={day}>{day}</time>
+                      </span>
+                      <IconButton
+                        type="button"
+
+                        aria-label={t('removeDate') + ': ' + day}
+                        title={t('removeDate')}
+                        onClick={() => setDates(dates.filter((value) => value !== day))}
+                      >
+                        <Icon name="close" />
+                      </IconButton>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <>
+                <PriceNameEditor rate={rate} onChange={patch} onPendingChange={setPendingName} />
+                <label>
+                  {t('species')}
+                  <CustomSelect
+                    value={rate.species}
+                    onChange={(event) =>
+                      patch({
+                        species: event.target.value as PriceRate['species'],
+                        comparisonRateId: null,
+                        comparisonWeightLb: null,
+                      })
+                    }
+                  >
+                    {['dog', 'cat', 'rabbit'].map((species) => (
+                      <option key={species} value={species}>
+                        {speciesText(species)}
+                      </option>
+                    ))}
+                  </CustomSelect>
+                </label>
                 {kind === 'boarding' && (
+                  <div className="workspace-field-pair">
+                    <label>
+                      {t('minWeight')}
+                      <input
+                        type="number"
+                        step="0.000001"
+                        min="0"
+                        max="10000"
+                        required
+                        value={rate.minWeightLb ?? ''}
+                        onChange={(event) => patch({ minWeightLb: number(event.target.value) })}
+                      />
+                    </label>
+                    <label>
+                      {t('maxWeight')}
+                      <input
+                        type="number"
+                        step="0.000001"
+                        min="0"
+                        max="10000"
+                        required
+                        value={rate.maxWeightLb ?? ''}
+                        onChange={(event) => patch({ maxWeightLb: number(event.target.value) })}
+                      />
+                    </label>
+                  </div>
+                )}
+                <div className="workspace-field-pair">
                   <label>
-                    {t('maxPrice')}
+                    {t(kind === 'boarding' ? 'minPrice' : 'price')}
                     <input
                       inputMode="decimal"
                       required
-                      value={maximum}
-                      onChange={(event) => setMaximum(event.target.value)}
+                      value={minimum}
+                      onChange={(event) => setMinimum(event.target.value)}
                     />
                   </label>
-                )}
-              </div>
-              {kind === 'package' && (
-                <>
-                  <label>
-                    {t('days')}
-                    <input
-                      type="number"
-                      min="1"
-                      max="10000"
-                      step="1"
-                      required
-                      value={rate.days ?? ''}
-                      onChange={(event) => patch({ days: number(event.target.value) })}
-                    />
-                  </label>
-                  <label>
-                    {t('comparisonRate')}
-                    <CustomSelect
-                      value={rate.comparisonRateId ?? ''}
-                      onChange={(event) =>
-                        patch({
-                          comparisonRateId: event.target.value || null,
-                          comparisonWeightLb: event.target.value ? rate.comparisonWeightLb : null,
-                        })
-                      }
-                    >
-                      <option value="">{uiText('common.notAvailable')}</option>
-                      {config.rates
-                        .filter(
-                          (row) =>
-                            row.active && row.kind === 'boarding' && row.species === rate.species,
-                        )
-                        .map((row) => (
-                          <option key={row.id} value={row.id}>
-                            {priceName(row, i18n.language)}
-                          </option>
-                        ))}
-                    </CustomSelect>
-                  </label>
-                  {rate.comparisonRateId && (
+                  {kind === 'boarding' && (
                     <label>
-                      {t('comparisonWeight')}
+                      {t('maxPrice')}
                       <input
-                        type="number"
-                        min="0"
-                        max="10000"
-                        step="0.000001"
+                        inputMode="decimal"
                         required
-                        value={rate.comparisonWeightLb ?? ''}
-                        onChange={(event) =>
-                          patch({ comparisonWeightLb: number(event.target.value) })
-                        }
+                        value={maximum}
+                        onChange={(event) => setMaximum(event.target.value)}
                       />
                     </label>
                   )}
-                  <p>{t('comparisonHint')}</p>
-                </>
-              )}
-              <label>
-                {t('status')}
-                <CustomSelect
-                  value={rate.active ? 'active' : 'archived'}
-                  onChange={(event) => patch({ active: event.target.value === 'active' })}
-                >
-                  <option value="active">{t('active')}</option>
-                  <option value="archived">{t('archived')}</option>
-                </CustomSelect>
-              </label>
-              {rate.source && (
-                <p>
-                  {t('source')}: {rate.source}
-                </p>
-              )}
-            </>
-          )}
-        </fieldset>
+                </div>
+                {kind === 'package' && (
+                  <>
+                    <label>
+                      {t('days')}
+                      <input
+                        type="number"
+                        min="1"
+                        max="10000"
+                        step="1"
+                        required
+                        value={rate.days ?? ''}
+                        onChange={(event) => patch({ days: number(event.target.value) })}
+                      />
+                    </label>
+                    <label>
+                      {t('comparisonRate')}
+                      <CustomSelect
+                        value={rate.comparisonRateId ?? ''}
+                        onChange={(event) =>
+                          patch({
+                            comparisonRateId: event.target.value || null,
+                            comparisonWeightLb: event.target.value ? rate.comparisonWeightLb : null,
+                          })
+                        }
+                      >
+                        <option value="">{uiText('common.notAvailable')}</option>
+                        {config.rates
+                          .filter(
+                            (row) =>
+                              row.active && row.kind === 'boarding' && row.species === rate.species,
+                          )
+                          .map((row) => (
+                            <option key={row.id} value={row.id}>
+                              {priceName(row, i18n.language)}
+                            </option>
+                          ))}
+                      </CustomSelect>
+                    </label>
+                    {rate.comparisonRateId && (
+                      <label>
+                        {t('comparisonWeight')}
+                        <input
+                          type="number"
+                          min="0"
+                          max="10000"
+                          step="0.000001"
+                          required
+                          value={rate.comparisonWeightLb ?? ''}
+                          onChange={(event) =>
+                            patch({ comparisonWeightLb: number(event.target.value) })
+                          }
+                        />
+                      </label>
+                    )}
+                    <p>{t('comparisonHint')}</p>
+                  </>
+                )}
+                <label>
+                  {t('status')}
+                  <CustomSelect
+                    value={rate.active ? 'active' : 'archived'}
+                    onChange={(event) => patch({ active: event.target.value === 'active' })}
+                  >
+                    <option value="active">{t('active')}</option>
+                    <option value="archived">{t('archived')}</option>
+                  </CustomSelect>
+                </label>
+                {rate.source && (
+                  <p>
+                    {t('source')}: {rate.source}
+                  </p>
+                )}
+              </>
+            )}
+          </fieldset>
+        </div>
         <p>{t('historyHint')}</p>
         <div className="portal-actions">
           <Button
