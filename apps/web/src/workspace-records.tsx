@@ -127,10 +127,14 @@ export function CustomerEditor({
           </p>
         </fieldset>
         <div className="portal-actions">
-          <Button variant="primary" disabled={saving || error === 'conflict' || error === 'denied'}>
+          <Button
+            icon="check"
+            variant="primary"
+            disabled={saving || error === 'conflict' || error === 'denied'}
+          >
             {t(saving ? 'saving' : uncertain ? 'retry' : 'save')}
           </Button>
-          <Button variant="secondary" type="button" onClick={close} disabled={blocked}>
+          <Button icon="close" variant="secondary" type="button" onClick={close} disabled={blocked}>
             {t('cancel')}
           </Button>
         </div>
@@ -205,7 +209,7 @@ export function BookingDetails({
                 <Button variant="primary" onClick={() => onAction('check_in')}>
                   {t('checkIn')}
                 </Button>
-                <Button variant="secondary" onClick={() => onAction('cancel')}>
+                <Button icon="close" variant="secondary" onClick={() => onAction('cancel')}>
                   {t('cancelPlan')}
                 </Button>
               </>
@@ -323,12 +327,13 @@ export function BookingAction({
         )}
         <div className="portal-actions">
           <Button
+            icon="check"
             variant="primary"
             disabled={!valid || saving || error === 'conflict' || error === 'denied'}
           >
             {t(saving ? 'saving' : uncertain ? 'retry' : 'save')}
           </Button>
-          <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
+          <Button icon="close" variant="secondary" type="button" disabled={blocked} onClick={close}>
             {t('cancel')}
           </Button>
         </div>

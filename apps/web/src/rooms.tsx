@@ -155,6 +155,7 @@ export default function Rooms({
         <div className="customer-heading">
           <h4>{label('title')}</h4>
           <Button
+            icon="plus"
             type="button"
             variant="secondary"
             disabled={!addressReady || blocked}
@@ -169,7 +170,7 @@ export default function Rooms({
         {error && !editor && (
           <>
             <p role="alert">{label(error)}</p>
-            <Button variant="secondary" onClick={() => void load()}>
+            <Button icon="reset" variant="secondary" onClick={() => void load()}>
               {label('retry')}
             </Button>
           </>
@@ -211,7 +212,7 @@ export default function Rooms({
             <p role="alert">
               {!addressReady ? uiText('ui.houses.addressMissing') : label(error || 'empty')}
             </p>
-            <Button variant="secondary" onClick={() => void load()}>
+            <Button icon="reset" variant="secondary" onClick={() => void load()}>
               {label('retry')}
             </Button>
           </>
@@ -278,13 +279,20 @@ export default function Rooms({
             </fieldset>
             <div className="portal-actions">
               <Button
+                icon="check"
                 type="submit"
                 variant="primary"
                 disabled={saving || error === 'conflict' || error === 'denied'}
               >
                 {label(saving ? 'saving' : uncertain ? 'retry' : 'save')}
               </Button>
-              <Button type="button" variant="secondary" disabled={blocked} onClick={close}>
+              <Button
+                icon="close"
+                type="button"
+                variant="secondary"
+                disabled={blocked}
+                onClick={close}
+              >
                 {label('cancel')}
               </Button>
             </div>

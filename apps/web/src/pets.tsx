@@ -61,7 +61,7 @@ function PetPhoto({ pet }: { pet: Pet }) {
       ) : failed ? (
         <div>
           <p>{labels.photoError}</p>
-          <Button variant="secondary" onClick={() => setRetry((value) => value + 1)}>
+          <Button icon="reset" variant="secondary" onClick={() => setRetry((value) => value + 1)}>
             {labels.photoRetry}
           </Button>
         </div>
@@ -227,7 +227,7 @@ export default function Pets({
     <section className="pets-section" aria-labelledby={headingId}>
       <div className="customer-heading">
         <h3 id={headingId}>{title ?? labels.own}</h3>
-        <Button variant="primary" disabled={blocked || loading} onClick={() => open()}>
+        <Button icon="plus" variant="primary" disabled={blocked || loading} onClick={() => open()}>
           {labels.add}
         </Button>
       </div>
@@ -327,6 +327,7 @@ export default function Pets({
             )}
             <div className="portal-actions">
               <Button
+                icon="check"
                 variant="primary"
                 type="submit"
                 disabled={
@@ -341,6 +342,7 @@ export default function Pets({
                 {saving ? labels.saving : uncertain ? labels.retry : labels.save}
               </Button>
               <Button
+                icon="close"
                 variant="secondary"
                 type="button"
                 disabled={blocked}
@@ -422,7 +424,12 @@ export default function Pets({
       {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && (
         <div className="portal-actions">
           {(error === 'error' || error === 'conflict') && !uncertain && (
-            <Button variant="secondary" disabled={blocked || loading} onClick={() => void load()}>
+            <Button
+              icon="reset"
+              variant="secondary"
+              disabled={blocked || loading}
+              onClick={() => void load()}
+            >
               {labels.reload}
             </Button>
           )}
@@ -529,7 +536,7 @@ export function PetSearch({
             onChange={(event) => setSearch(event.target.value)}
           />
         </label>
-        <Button variant="secondary" disabled={loading || !search.trim()}>
+        <Button icon="search" variant="secondary" disabled={loading || !search.trim()}>
           {labels.search}
         </Button>
       </form>

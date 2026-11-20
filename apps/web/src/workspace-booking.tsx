@@ -551,7 +551,12 @@ export default function WorkspaceBooking({
           </div>
           {loading && <p role="status">{t('loading')}</p>}
           {!loading && error === 'loadError' && (
-            <Button type="button" variant="secondary" onClick={() => void loadAvailability()}>
+            <Button
+              icon="reset"
+              type="button"
+              variant="secondary"
+              onClick={() => void loadAvailability()}
+            >
               {t('retry')}
             </Button>
           )}

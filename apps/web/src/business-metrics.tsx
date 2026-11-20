@@ -166,7 +166,7 @@ export default function BusinessMetrics({
       {error && (
         <div role="alert" className="business-metrics-error">
           <p>{text('error')}</p>
-          <Button variant="secondary" onClick={() => setRevision((v) => v + 1)}>
+          <Button icon="reset" variant="secondary" onClick={() => setRevision((v) => v + 1)}>
             {text('retry')}
           </Button>
         </div>

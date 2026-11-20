@@ -210,13 +210,14 @@ export function BalanceEditor({
         </fieldset>
         <div className="portal-actions">
           <Button
+            icon="check"
             variant="primary"
             type="submit"
             disabled={saving || !valid || error === 'conflict' || error === 'denied'}
           >
             {t(saving ? 'saving' : uncertain ? 'retry' : 'save')}
           </Button>
-          <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
+          <Button icon="close" variant="secondary" type="button" disabled={blocked} onClick={close}>
             {t('cancel')}
           </Button>
         </div>
@@ -591,7 +592,7 @@ export default function WorkspaceBalances({
         {error && (
           <p role="alert">
             {t('loadError')}{' '}
-            <Button variant="secondary" onClick={history.reload}>
+            <Button icon="reset" variant="secondary" onClick={history.reload}>
               {t('retry')}
             </Button>
           </p>

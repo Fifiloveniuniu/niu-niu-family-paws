@@ -246,6 +246,7 @@ export default function SavedWorkspace({
               <div className="workspace-context" role="status">
                 <strong>{t('viewingAs', { name: data.customer.name })}</strong>
                 <Button
+                  icon="chevron-left"
                   variant="secondary"
                   onClick={() =>
                     navigate(
@@ -286,7 +287,7 @@ export default function SavedWorkspace({
                           : 'loadError',
                       )}
                     </p>
-                    <Button variant="secondary" onClick={() => void refresh(true)}>
+                    <Button icon="reset" variant="secondary" onClick={() => void refresh(true)}>
                       {t('retry')}
                     </Button>
                     <a href="/app/calendar/">{t('resetView')}</a>

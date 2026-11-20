@@ -164,7 +164,7 @@ export default function Houses({
       <div hidden={embedded}>
         <div className="customer-heading">
           <h2 id={fieldId + '-title'}>{labels.title}</h2>
-          <Button variant="primary" disabled={blocked} onClick={() => open()}>
+          <Button icon="plus" variant="primary" disabled={blocked} onClick={() => open()}>
             {labels.add}
           </Button>
         </div>
@@ -232,7 +232,7 @@ export default function Houses({
             ))}
         </ul>
         {error === 'error' && !editor && (
-          <Button variant="secondary" disabled={loading} onClick={() => void load()}>
+          <Button icon="reset" variant="secondary" disabled={loading} onClick={() => void load()}>
             {labels.retry}
           </Button>
         )}
@@ -244,7 +244,7 @@ export default function Houses({
         ) : (
           <>
             <p role="alert">{error ? labels[error] : labels.empty}</p>
-            <Button variant="secondary" onClick={() => void load()}>
+            <Button icon="reset" variant="secondary" onClick={() => void load()}>
               {labels.retry}
             </Button>
           </>
@@ -309,13 +309,20 @@ export default function Houses({
             </fieldset>
             <div className="portal-actions">
               <Button
+                icon="check"
                 variant="primary"
                 type="submit"
                 disabled={saving || error === 'conflict' || error === 'denied'}
               >
                 {saving ? labels.saving : uncertain ? labels.retry : labels.save}
               </Button>
-              <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
+              <Button
+                icon="close"
+                variant="secondary"
+                type="button"
+                disabled={blocked}
+                onClick={close}
+              >
                 {labels.cancel}
               </Button>
             </div>

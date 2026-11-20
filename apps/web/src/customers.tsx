@@ -295,7 +295,7 @@ export default function Customers({
         <div>
           <h2 id="customers-title">{labels.title}</h2>
         </div>
-        <Button variant="primary" disabled={saving || uncertain} onClick={() => open()}>
+        <Button icon="plus" variant="primary" disabled={saving || uncertain} onClick={() => open()}>
           {labels.add}
         </Button>
       </div>
@@ -360,7 +360,7 @@ export default function Customers({
         {ownError && (
           <p role="alert">
             {uiText('ui.customers.couldNotLoadYourProfileTryAgain')}
-            <Button variant="secondary" onClick={() => void setOwnershipFilter(true)}>
+            <Button icon="reset" variant="secondary" onClick={() => void setOwnershipFilter(true)}>
               {labels.reload}
             </Button>
           </p>
@@ -469,6 +469,7 @@ export default function Customers({
                 </fieldset>
                 <div className="portal-actions">
                   <Button
+                    icon="check"
                     variant="primary"
                     disabled={saving || error === 'conflict' || error === 'forbidden'}
                     type="submit"
@@ -476,6 +477,7 @@ export default function Customers({
                     {saving ? labels.saving : uncertain ? labels.retry : labels.save}
                   </Button>
                   <Button
+                    icon="close"
                     variant="secondary"
                     type="button"
                     disabled={saving || uncertain}
@@ -503,7 +505,12 @@ export default function Customers({
                   : ''}
             </p>
             {(error === 'error' || error === 'conflict') && !uncertain && (
-              <Button variant="secondary" disabled={loading || saving} onClick={() => void load()}>
+              <Button
+                icon="reset"
+                variant="secondary"
+                disabled={loading || saving}
+                onClick={() => void load()}
+              >
                 {labels.reload}
               </Button>
             )}

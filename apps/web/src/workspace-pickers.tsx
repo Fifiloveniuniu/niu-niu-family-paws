@@ -104,7 +104,7 @@ export function CustomerPicker({
         moreLoading={choices.loading}
       />
       {choices.error && (
-        <Button type="button" variant="secondary" onClick={choices.retry}>
+        <Button icon="reset" type="button" variant="secondary" onClick={choices.retry}>
           {uiText('ui.workspace.retry')}
         </Button>
       )}
@@ -162,7 +162,7 @@ export function PetPicker({
         moreLoading={choices.loading}
       />
       {choices.error && (
-        <Button type="button" variant="secondary" onClick={choices.retry}>
+        <Button icon="reset" type="button" variant="secondary" onClick={choices.retry}>
           {uiText('ui.workspace.retry')}
         </Button>
       )}

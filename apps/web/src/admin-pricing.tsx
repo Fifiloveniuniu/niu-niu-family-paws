@@ -168,6 +168,7 @@ function Editor({
                   <CustomDateInput value={date} onChange={setDate} />
                 </label>
                 <Button
+                  icon="plus"
                   type="button"
                   variant="secondary"
                   disabled={!date || dates.includes(date)}
@@ -363,12 +364,13 @@ function Editor({
         <p>{t('historyHint')}</p>
         <div className="portal-actions">
           <Button
+            icon="check"
             variant="primary"
             disabled={saving || !valid || error === 'conflict' || error === 'denied'}
           >
             {uiText('ui.workspace.' + (saving ? 'saving' : uncertain ? 'retry' : 'save'))}
           </Button>
-          <Button type="button" variant="secondary" disabled={blocked} onClick={close}>
+          <Button icon="close" type="button" variant="secondary" disabled={blocked} onClick={close}>
             {uiText('ui.workspace.cancel')}
           </Button>
         </div>
@@ -418,7 +420,7 @@ export default function AdminPricing() {
         <p role="alert">
           {t(error)}{' '}
           {error !== 'denied' && (
-            <Button variant="secondary" onClick={reload}>
+            <Button icon="reset" variant="secondary" onClick={reload}>
               {uiText('ui.workspace.retry')}
             </Button>
           )}
@@ -436,10 +438,14 @@ export default function AdminPricing() {
                 label: t(value),
               }))}
             />
-            <Button variant="primary" onClick={() => setEditor({})}>
+            <Button icon="plus" variant="primary" onClick={() => setEditor({})}>
               {t('add')}
             </Button>
-            <Button variant="secondary" onClick={() => setEditor({ holidays: true })}>
+            <Button
+              icon="calendar"
+              variant="secondary"
+              onClick={() => setEditor({ holidays: true })}
+            >
               {t('holidays')}
             </Button>
           </div>
