@@ -156,6 +156,7 @@ await db.doc(`houses/${hid}/rooms/${rid}`).set({
 });
 await db.doc('employeeAssignments/' + employee.uid).set({ houseIds: [hid], version: 1 });
 api.get('/__test-fixture', async () => ({
+  customerCount: (await db.collection('customers').count().get()).data().count,
   administrator: await identity(true, true),
   owner,
   employee,

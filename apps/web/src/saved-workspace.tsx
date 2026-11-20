@@ -215,15 +215,11 @@ export default function SavedWorkspace({
           navigation={
             <nav className="app-header-nav" aria-label={uiText('ui.houseCalendar.workspace')}>
               {[
+                ...(admin && !scope ? [['/app/metrics/', 'businessMetrics', 'metrics']] : []),
                 ['/app/calendar/', 'calendar', 'calendar'],
                 ['/app/balances/', 'balances', 'balance'],
                 ['/app/customers/', data?.customer || !admin ? 'pets' : 'customers', 'customers'],
-                ...(admin && !scope
-                  ? [
-                      ['/app/pricing/', 'pricing', 'balance'],
-                      ['/app/metrics/', 'businessMetrics', 'metrics'],
-                    ]
-                  : []),
+                ...(admin && !scope ? [['/app/pricing/', 'pricing', 'balance']] : []),
               ].map(([path, label, icon]) => (
                 <a
                   key={path}

@@ -6,6 +6,9 @@ test('business metrics require current administrator access and a bounded explic
   let role = 'admin',
     calls = 0;
   const summary = {
+    series: [],
+    serviceUsage: [],
+    revenueAvailable: false,
     from: '2030-11-01T00:00:00.000Z',
     through: '2030-12-01T00:00:00.000Z',
     generatedAt: '2030-11-15T00:00:00.000Z',
@@ -75,5 +78,15 @@ test('business metrics range accepts a leap year and rejects a longer query', ()
   );
   assert.throws(() =>
     metricsRange({ from: '2028-01-01T00:00:00Z', through: '2029-01-02T00:00:00Z' }),
+  );
+});
+
+test('metrics rejects invalid reporting zones', () => {
+  assert.throws(() =>
+    metricsRange({
+      from: '2030-11-01T00:00:00Z',
+      through: '2030-12-01T00:00:00Z',
+      timeZone: 'not/a-zone',
+    }),
   );
 });

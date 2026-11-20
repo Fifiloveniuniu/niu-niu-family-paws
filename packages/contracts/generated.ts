@@ -17,6 +17,7 @@ export interface paths {
                 query: {
                     from: string;
                     through: string;
+                    timeZone?: string;
                 };
                 header?: never;
                 path?: never;
@@ -1273,6 +1274,7 @@ export interface components {
             from: string;
             /** Format: date-time */
             through: string;
+            timeZone?: string;
         };
         BusinessMetrics: {
             customers: number;
@@ -1290,6 +1292,25 @@ export interface components {
             through: string;
             /** Format: date-time */
             generatedAt: string;
+            series: components["schemas"]["MetricsPoint"][];
+            serviceUsage: {
+                /** @enum {string} */
+                species: "dog" | "cat" | "rabbit";
+                stays: number;
+            }[];
+            /** @enum {boolean} */
+            revenueAvailable: false;
+        };
+        MetricsPoint: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            through: string;
+            bookings: number;
+            newCustomers: number;
+            balanceChange: number;
+            /** @enum {integer|null} */
+            revenueCents: null;
         };
         WorkspaceEventQuery: {
             /** Format: uuid */

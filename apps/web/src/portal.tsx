@@ -119,7 +119,11 @@ export default function Portal({
       const target = safeReturnTo(new URLSearchParams(location.search).get('returnTo'));
       navigate(
         target ||
-          (['admin', 'customer'].includes(access) ? '/app/calendar/' : '/app/account/profile/'),
+          (access === 'admin'
+            ? '/app/metrics/'
+            : access === 'customer'
+              ? '/app/calendar/'
+              : '/app/account/profile/'),
         true,
       );
     }
