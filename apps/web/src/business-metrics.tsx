@@ -285,6 +285,7 @@ export default function BusinessMetrics({
           />
           <MetricChart
             id="handoffs-trend"
+            wrapLabels
             dimensionLabel={text('handoffType')}
             total={data ? data.actualArrivals + data.actualPickups : undefined}
             title={text('handoffsChart')}

@@ -1,3 +1,9 @@
+## Phone dashboard readability follow-up — 2026-11-19
+
+Full date values now remain visible on 320px/390px phones in every theme: date controls stack before their text can clip. Handoff category labels use two lines on narrow graphs so adjacent captions stay distinct. Regression checks measure date text against its actual available input width and verify wrapped SVG labels. All 72 local Chrome journeys pass, including the six dashboard cases; read-only populated localhost English/Chinese desktop/phone walkthroughs also pass. Review images: docs/review/dashboard-phone-2026-11-19.
+
+Main-only automatic release is merged through PR #170 at 2b30a83. PRs have no GitHub test/deployment runs; local validation precedes signed merging, and main validation gates the automatic production release. The phone fix must reach main and its automatic deployment must be verified before claiming the final hosted result. Real business records remain separate from explicitly labeled local-only presentation samples; financial booking/cancellation automation is still not activated.
+
 ## Main-only validation and automatic deployment — 2026-11-19
 
 Latest owner instruction overrides earlier deferred-deployment and PR-test policies: **GitHub runs no PR tests. After a signed PR merges into main, validate main and automatically deploy on success. Never deploy a PR or feature branch.** Local checks and actual localhost walkthroughs still precede merging. Dashboard PR #169 was merged at GitHub-verified 6f13120 and its main validation succeeded; its additional narrow-phone date/axis readability fix is preserved in the primary worktree for the next focused PR.

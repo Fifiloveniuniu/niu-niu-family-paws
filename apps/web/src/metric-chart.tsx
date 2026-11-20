@@ -16,6 +16,7 @@ export default function MetricChart({
   total,
   summaryUnit,
   dimensionLabel,
+  wrapLabels = false,
 }: {
   id: string;
   title: string;
@@ -29,6 +30,7 @@ export default function MetricChart({
   total?: number;
   summaryUnit?: string;
   dimensionLabel?: string;
+  wrapLabels?: boolean;
 }) {
   const { i18n } = useTranslation();
   const plot = React.useRef<HTMLDivElement>(null);
@@ -78,6 +80,9 @@ export default function MetricChart({
         }).format(value)
       : values.format(value);
   const aggregate = total ?? points.reduce((sum, point) => sum + point.value, 0);
+  const stackedLabels = wrapLabels && width < 400;
+  const splitLabel = (label: string) =>
+    label.includes(' ') ? label.split(' ') : [label.slice(0, 2), label.slice(2)];
   const zero = points.length > 0 && points.every((p) => p.value === 0);
   return (
     <figure className="metric-chart" aria-labelledby={id + '-title'} aria-busy={loading}>
@@ -110,7 +115,7 @@ export default function MetricChart({
       </div>
       <div className="metric-chart-plot" ref={plot}>
         <svg
-          viewBox={`0 0 ${width} 220`}
+          viewBox={`0 0 ${width} ${stackedLabels ? 238 : 220}`}
           role="img"
           aria-labelledby={id + '-title ' + id + '-description'}
         >
@@ -222,9 +227,15 @@ export default function MetricChart({
                               : 'middle'
                       }
                     >
-                      {point.shortLabel.length > 14
-                        ? point.shortLabel.slice(0, 12) + '…'
-                        : point.shortLabel}
+                      {stackedLabels
+                        ? splitLabel(point.shortLabel).map((part, line) => (
+                            <tspan key={line} x={x(i)} dy={line ? 14 : 0}>
+                              {part}
+                            </tspan>
+                          ))
+                        : point.shortLabel.length > 14
+                          ? point.shortLabel.slice(0, 12) + '…'
+                          : point.shortLabel}
                     </text>
                   )}
                 </g>
