@@ -31,14 +31,17 @@ for (const [lang, width] of [
       await expect(trigger).toHaveAttribute('aria-expanded', 'false');
     }
     await trigger.click();
-    await expect(popup).toBeVisible();
-    await popup.locator('.popup-close').click();
+    const modal = page.locator('dialog.pet-details-dialog');
+    await expect(modal).toBeVisible();
+    await expect(modal.locator('.workspace-avatar')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(modal).toHaveCount(0);
     await expect(trigger).toBeFocused();
     await expect(popup).toHaveCount(0);
     await trigger.click();
-    await expect(popup).toBeVisible();
+    await expect(modal).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(popup).toHaveCount(0);
+    await expect(modal).toHaveCount(0);
     await expect(trigger).toBeFocused();
   });
 }

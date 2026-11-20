@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { FieldPath, type Firestore } from 'firebase-admin/firestore';
+import { FieldPath, Filter, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
 import type { components } from '../../../packages/contracts/generated.ts';
 import { projectRoom } from './rooms.ts';
@@ -25,6 +25,13 @@ export interface WorkspaceStore {
     options?: { pageSize?: string; petId?: string },
   ): Promise<WorkspacePets>;
   locations(identity: Identity): Promise<WorkspaceLocations>;
+  busy(
+    identity: Identity,
+    input: { customerId?: string; from: string; through: string; cursor?: string },
+  ): Promise<{
+    items: { houseId: string; roomId: string; from: string; through: string }[];
+    nextCursor: string | null;
+  }>;
 }
 export function workspaceStore(database: Firestore): WorkspaceStore {
   async function scope(
@@ -119,16 +126,6 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
           const pet = await tx.get(database.doc(`customers/${customer!.id}/pets/${input.petId}`));
           if (!pet.exists) throw new PetMissing();
         }
-        let query: FirebaseFirestore.Query = database.collection('balanceOperations');
-        if (customer) query = query.where('customerId', '==', customer.id);
-        if (input.petId) query = query.where('petId', '==', input.petId);
-        if (input.kind) query = query.where('kind', '==', input.kind);
-        if (from) query = query.where('at', '>=', from);
-        if (through) query = query.where('at', '<', through);
-        query = query
-          .orderBy('at', 'desc')
-          .orderBy(FieldPath.documentId(), 'desc')
-          .limit(size + 1);
         const binding = createHash('sha256')
           .update(
             JSON.stringify([
@@ -141,32 +138,92 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
             ]),
           )
           .digest('hex');
+        let anchor: { at: string; id: string; source: string } | null = null;
         if (input.cursor) {
           try {
-            const anchor = JSON.parse(Buffer.from(input.cursor, 'base64url').toString());
+            const value = JSON.parse(Buffer.from(input.cursor, 'base64url').toString());
             if (
-              anchor.binding !== binding ||
-              typeof anchor.id !== 'string' ||
-              !/^[a-f0-9-]{36}$/i.test(anchor.id) ||
-              typeof anchor.at !== 'string' ||
-              timestamp(anchor.at) !== anchor.at
+              value.binding !== binding ||
+              typeof value.id !== 'string' ||
+              !/^[a-f0-9-]{36}$/i.test(value.id) ||
+              typeof value.at !== 'string' ||
+              timestamp(value.at) !== value.at ||
+              !['balanceOperations', 'bookingOperations'].includes(value.source)
             )
-              throw new Error();
-            query = query.startAfter(anchor.at, database.doc('balanceOperations/' + anchor.id));
+              throw Error();
+            anchor = value;
           } catch {
             throw new PetInvalid();
           }
         }
-        const operations = await tx.get(query);
-        const docs = operations.docs.slice(0, size);
+        const isBookingKind = input.kind === 'booking' || input.kind === 'cancelled';
+        function ordered(collection: string, booking: boolean) {
+          let query: FirebaseFirestore.Query = database.collection(collection);
+          if (customer)
+            query = query.where(booking ? 'result.customerId' : 'customerId', '==', customer.id);
+          if (input.petId)
+            query = query.where(booking ? 'result.petId' : 'petId', '==', input.petId);
+          if (input.kind)
+            query = booking
+              ? input.kind === 'cancelled'
+                ? query.where('result.status', '==', 'cancelled')
+                : query.where('result.status', 'in', ['planned', 'in_care', 'completed'])
+              : query.where('kind', '==', input.kind);
+          if (from) query = query.where('at', '>=', from);
+          if (through) query = query.where('at', '<', through);
+          query = query.orderBy('at', 'desc').orderBy(FieldPath.documentId(), 'desc');
+          if (anchor) query = query.startAt(anchor.at, database.doc(collection + '/' + anchor.id));
+          return query.limit(size + 2);
+        }
+        const [balances, bookings] = await Promise.all([
+          isBookingKind ? Promise.resolve(null) : tx.get(ordered('balanceOperations', false)),
+          input.kind && !isBookingKind
+            ? Promise.resolve(null)
+            : tx.get(ordered('bookingOperations', true)),
+        ]);
+        const combined = [
+          ...(balances?.docs ?? []).map((doc) => ({ doc, booking: false })),
+          ...(bookings?.docs ?? []).map((doc) => ({ doc, booking: true })),
+        ]
+          .filter(
+            ({ doc, booking }) =>
+              !anchor ||
+              doc.data().at < anchor.at ||
+              (doc.data().at === anchor.at &&
+                (doc.id < anchor.id ||
+                  (doc.id === anchor.id &&
+                    (booking ? 'bookingOperations' : 'balanceOperations') < anchor.source))),
+          )
+          .sort(
+            (a, b) =>
+              b.doc.data().at.localeCompare(a.doc.data().at) ||
+              b.doc.id.localeCompare(a.doc.id) ||
+              Number(b.booking) - Number(a.booking),
+          );
+        const selected = combined.slice(0, size);
+        const docs = selected.map(({ doc, booking }) => ({
+          id: doc.id,
+          data: () =>
+            booking
+              ? {
+                  ...doc.data(),
+                  customerId: doc.data().result.customerId,
+                  petId: doc.data().result.petId,
+                }
+              : doc.data(),
+        }));
         if (!docs.length) return { items: [], nextCursor: null };
-        const eventDocs = await tx.getAll(
-          ...docs.map((doc) =>
-            database.doc(
-              `customers/${doc.data().customerId}/pets/${doc.data().petId}/balances/boarding/events/${doc.id}`,
-            ),
-          ),
-        );
+        const balanceDocs = selected.filter((item) => !item.booking);
+        const eventDocs = balanceDocs.length
+          ? await tx.getAll(
+              ...balanceDocs.map(({ doc }) =>
+                database.doc(
+                  `customers/${doc.data().customerId}/pets/${doc.data().petId}/balances/boarding/events/${doc.id}`,
+                ),
+              ),
+            )
+          : [];
+        const events = new Map(eventDocs.map((doc) => [doc.id, doc]));
         const customerRefs = [...new Set(docs.map((doc) => doc.data().customerId as string))].map(
           (id) => database.doc('customers/' + id),
         );
@@ -196,23 +253,110 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
         const items = docs.map((doc, index) => {
           const owner = customers.get(doc.data().customerId),
             pet = pets.get(`customers/${doc.data().customerId}/pets/${doc.data().petId}`);
-          if (!owner || !pet || !eventDocs[index].exists) throw new PetMissing();
-          return {
-            customer: owner,
-            pet,
-            event: projectBoardingEvent(eventDocs[index].data()!, identity.admin === true),
-          };
+          if (!owner || !pet) throw new PetMissing();
+          let event: components['schemas']['WorkspaceActivityEvent'];
+          if (selected[index].booking) {
+            const operation = doc.data(),
+              booking = operation.result;
+            event = {
+              id: doc.id,
+              customerId: booking.customerId,
+              petId: booking.petId,
+              version: booking.version,
+              at: operation.at,
+              delta: 0,
+              daysAfter: null,
+              validFrom: booking.arrival.slice(0, 10),
+              validThrough: booking.pickup.slice(0, 10),
+              reason: '',
+              kind: booking.status === 'cancelled' ? 'cancelled' : 'booking',
+              bookingId: booking.id,
+              arrival: booking.arrival,
+              pickup: booking.pickup,
+              ...(identity.admin === true ? { actor: operation.actor } : {}),
+            };
+          } else {
+            const saved = events.get(doc.id);
+            if (!saved?.exists) throw new PetMissing();
+            event = projectBoardingEvent(saved.data()!, identity.admin === true);
+          }
+          return { customer: owner, pet, event };
         });
         const last = docs.at(-1)!;
         return {
           items,
           nextCursor:
-            operations.size > size
-              ? Buffer.from(JSON.stringify({ at: last.data().at, id: last.id, binding })).toString(
-                  'base64url',
-                )
+            combined.length > size
+              ? Buffer.from(
+                  JSON.stringify({
+                    at: last.data().at,
+                    id: last.id,
+                    source: selected.at(-1)!.booking ? 'bookingOperations' : 'balanceOperations',
+                    binding,
+                  }),
+                ).toString('base64url')
               : null,
         };
+      });
+    },
+    async busy(identity, input) {
+      const from = timestamp(input.from),
+        through = timestamp(input.through);
+      if (through <= from || Date.parse(through) - Date.parse(from) > 366 * 86400000)
+        throw new PetInvalid();
+      return database.runTransaction(async (tx) => {
+        const customer = await scope(tx, identity, input.customerId);
+        if (!customer) throw new PetAccess();
+        let query = database
+          .collection('bookings')
+          .where(
+            Filter.or(
+              Filter.and(
+                Filter.where('occupancyFrom', '<', through),
+                Filter.where('occupancyThrough', '>', from),
+              ),
+              Filter.where('status', '==', 'in_care'),
+            ),
+          )
+          .orderBy('occupancyFrom')
+          .orderBy('occupancyThrough')
+          .orderBy(FieldPath.documentId())
+          .limit(101);
+        if (input.cursor) {
+          const anchor = await tx.get(database.doc('bookings/' + input.cursor));
+          if (!anchor.exists) throw new PetInvalid();
+          query = query.startAfter(
+            anchor.data()!.occupancyFrom,
+            anchor.data()!.occupancyThrough,
+            input.cursor,
+          );
+        }
+        const result = await tx.get(query),
+          docs = result.docs.slice(0, 100);
+        const items = docs
+          .filter(
+            (doc) =>
+              doc.data().customerId !== customer.id &&
+              ['planned', 'in_care'].includes(doc.data().status),
+          )
+          .map((doc) => {
+            const booking = doc.data();
+            return {
+              houseId: booking.houseId,
+              roomId: booking.roomId,
+              from: new Date(
+                Math.max(Date.parse(from), Date.parse(booking.occupancyFrom)),
+              ).toISOString(),
+              through:
+                booking.status === 'in_care' && Date.parse(booking.pickup) < Date.now()
+                  ? through
+                  : new Date(
+                      Math.min(Date.parse(through), Date.parse(booking.occupancyThrough)),
+                    ).toISOString(),
+            };
+          })
+          .filter((span) => span.through > span.from);
+        return { items, nextCursor: result.size > 100 ? docs.at(-1)!.id : null };
       });
     },
     async locations(identity) {
@@ -276,6 +420,25 @@ export function workspaceRoutes(api: FastifyInstance, store: WorkspaceStore) {
     '/workspace/events',
     { schema: { querystring: spec.components.schemas.WorkspaceEventQuery } },
     (request) => store.events(requestIdentity(request), request.query),
+  );
+  api.get<{ Querystring: { customerId?: string; from: string; through: string; cursor?: string } }>(
+    '/workspace/busy',
+    {
+      schema: {
+        querystring: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['from', 'through'],
+          properties: {
+            customerId: uuidSchema,
+            from: { type: 'string', format: 'date-time' },
+            through: { type: 'string', format: 'date-time' },
+            cursor: uuidSchema,
+          },
+        },
+      },
+    },
+    (request) => store.busy(requestIdentity(request), request.query),
   );
   api.get('/workspace/locations', { schema: { querystring: emptyObjectSchema } }, (request) =>
     store.locations(requestIdentity(request)),

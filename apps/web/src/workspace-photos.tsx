@@ -1,3 +1,4 @@
+import PetDetails from './pet-details';
 import IconButton from './icon-button';
 import React from 'react';
 import { createPortal } from 'react-dom';
@@ -154,6 +155,7 @@ export function PetInfo({
   const t = useWorkspaceText();
   const { i18n } = useTranslation();
   const [open, setOpen] = useDropdownState(false);
+  const [details, setDetails] = React.useState(false);
   const [portal, setPortal] = React.useState<HTMLElement | null>(null);
   const root = React.useRef<HTMLSpanElement>(null),
     trigger = React.useRef<HTMLButtonElement>(null),
@@ -242,13 +244,22 @@ export function PetInfo({
         aria-controls={open ? id : undefined}
         onFocus={enter}
         onClick={() => {
-          dismissed.current = false;
-          enter();
+          dismiss();
+          setDetails(true);
         }}
       >
         <WorkspaceAvatar row={row} />
       </button>
+      {details && (
+        <PetDetails
+          customerId={row.customer.id}
+          petId={row.pet.id}
+          name={row.pet.name}
+          onClose={() => setDetails(false)}
+        />
+      )}
       {open &&
+        !details &&
         portal &&
         createPortal(
           <div
