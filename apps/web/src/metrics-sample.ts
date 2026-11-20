@@ -1,6 +1,6 @@
 import type { components } from '../../../packages/contracts/generated';
 import { metricIntervals } from '../../../packages/metrics/intervals.ts';
-import { shiftDay, zonedValue } from './wall-time.ts';
+import { shiftDay } from './wall-time.ts';
 type Metrics = components['schemas']['BusinessMetrics'];
 export type DashboardMetrics = Omit<Metrics, 'series' | 'revenueAvailable'> & {
   revenueAvailable: boolean;
@@ -14,7 +14,8 @@ export function sampleMetrics(
   zone: string,
   now = Date.now(),
 ): DashboardMetrics {
-  const today = zonedValue(new Date(now).toISOString(), zone).slice(0, 10);
+  // Fixed UTC event dates keep the underlying example records independent of reporting zone.
+  const today = new Date(now).toISOString().slice(0, 10);
   const daily = (day: string) => {
     const seed = [...day].reduce((n, char) => (n * 31 + char.charCodeAt(0)) >>> 0, 17);
     const bookings = seed % 5;
@@ -39,11 +40,10 @@ export function sampleMetrics(
   const usage = { dog: 0, cat: 0, rabbit: 0 };
   const series = metricIntervals(from, through, zone).map((range) => {
     const point = { ...range, bookings: 0, newCustomers: 0, balanceChange: 0, revenueCents: 0 };
-    const last = zonedValue(new Date(Date.parse(range.through) - 1).toISOString(), zone).slice(
-      0,
-      10,
-    );
-    for (let day = zonedValue(range.from, zone).slice(0, 10); day <= last; day = shiftDay(day, 1)) {
+    const last = new Date(Date.parse(range.through) - 1).toISOString().slice(0, 10);
+    for (let day = range.from.slice(0, 10); day <= last; day = shiftDay(day, 1)) {
+      const at = day + 'T00:00:00.000Z';
+      if (at < range.from || at >= range.through) continue;
       const value = daily(day);
       point.bookings += value.bookings;
       point.newCustomers += value.newCustomers;
