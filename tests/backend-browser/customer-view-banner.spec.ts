@@ -6,7 +6,7 @@ for (const [language, width] of [
   test(`customer context stays named and can return to admin (${language}, ${width})`, async ({
     page,
     request,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize({ width, height: 1000 });
     const fixture = await (await request.get('/__test-fixture')).json();
     await page.goto(`/app/calendar/?lang=${language}&asCustomer=${fixture.cid}`);
@@ -26,6 +26,10 @@ for (const [language, width] of [
       exact: true,
     });
     await expect(back).toBeVisible();
+    await page.screenshot({
+      path: testInfo.outputPath('customer-view-banner.png'),
+      fullPage: true,
+    });
     // A failing read must not remove the escape hatch or replace the known customer's name.
     await page.route('**/api/workspace/pets?**', (route) =>
       route.fulfill({ status: 503, json: { code: 'unavailable' } }),
