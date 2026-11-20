@@ -78,6 +78,7 @@ export default function ApiConnection({
                 <>
                   <p>{uiText('ui.apiConnection.weCanTReachTheServerRightNowCheck')}</p>
                   <Button
+                    icon="reset"
                     variant="primary"
                     onClick={() => {
                       setStatus('checking');

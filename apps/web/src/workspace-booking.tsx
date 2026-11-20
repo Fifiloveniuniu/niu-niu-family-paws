@@ -766,22 +766,33 @@ export default function WorkspaceBooking({
           <p className="hc-review-note">{t(data.admin ? 'unbilled' : 'customerBookingPending')}</p>
         </section>
         <footer className="hc-wizard-footer">
-          <button type="button" className="hc-manage" disabled={blocked} onClick={close}>
+          <Button
+            icon="close"
+            variant="secondary"
+            type="button"
+            className="hc-manage"
+            disabled={blocked}
+            onClick={close}
+          >
             {t('cancel')}
-          </button>
+          </Button>
           <div>
             {step > 1 && (
-              <button
+              <Button
+                icon="chevron-left"
+                variant="secondary"
                 type="button"
                 className="hc-manage"
                 disabled={blocked}
                 onClick={() => setStep((value) => value - 1)}
               >
                 {t('back')}
-              </button>
+              </Button>
             )}
             {step < 3 ? (
-              <button
+              <Button
+                icon="chevron-right"
+                variant="primary"
                 type="button"
                 className="hc-apply"
                 disabled={blocked || loading || (step === 1 ? !valid : !chosen)}
@@ -794,15 +805,17 @@ export default function WorkspaceBooking({
                 }}
               >
                 {t(step === 1 ? 'chooseRoom' : 'reviewBooking')}
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant="primary"
+                icon="check"
                 type="submit"
                 className="hc-apply"
                 disabled={saving || stale || !data.admin || !chosen || !valid}
               >
                 {t(saving ? 'saving' : uncertain ? 'retry' : 'confirmPlan')}
-              </button>
+              </Button>
             )}
           </div>
         </footer>

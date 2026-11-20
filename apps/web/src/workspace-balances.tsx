@@ -439,10 +439,15 @@ export default function WorkspaceBalances({
             >
               <Icon name="calendar" />
             </IconButton>
-            <button className="hc-apply" disabled={false} onClick={() => onAdjust(undefined)}>
+            <Button
+              variant="primary"
+              className="hc-apply"
+              disabled={false}
+              onClick={() => onAdjust(undefined)}
+            >
               <Icon name="plus" />
               {t('addBalance')}
-            </button>
+            </Button>
           </div>
         )}
       </div>

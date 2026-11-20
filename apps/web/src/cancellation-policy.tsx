@@ -1,3 +1,4 @@
+import Button from './button';
 import { ApiError } from './api-client';
 import { uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
@@ -97,7 +98,8 @@ export default function CancellationPolicyPage({
   return (
     <section className="hc-finance-page">
       <div className="hc-page-toolbar">
-        <button
+        <Button
+          variant="primary"
           className="hc-apply"
           onClick={() => {
             setDraft(policy);
@@ -109,7 +111,7 @@ export default function CancellationPolicyPage({
         >
           <Icon name="edit" />
           {uiText('ui.cancellationPolicy.editPolicy')}
-        </button>
+        </Button>
       </div>
       <div className="hc-policy-summary">
         <div>
@@ -268,10 +270,23 @@ export default function CancellationPolicyPage({
               </label>
             </fieldset>
             <div className="hc-settings-actions">
-              <button type="button" className="hc-manage" disabled={blocked} onClick={close}>
+              <Button
+                icon="close"
+                variant="secondary"
+                type="button"
+                className="hc-manage"
+                disabled={blocked}
+                onClick={close}
+              >
                 {uiText('ui.cancellationPolicy.cancel')}
-              </button>
-              <button className="hc-apply" type="submit" disabled={saving || stale}>
+              </Button>
+              <Button
+                variant="primary"
+                icon="check"
+                className="hc-apply"
+                type="submit"
+                disabled={saving || stale}
+              >
                 {uiText(
                   saving
                     ? 'ui.workspace.saving'
@@ -279,7 +294,7 @@ export default function CancellationPolicyPage({
                       ? 'ui.workspace.retry'
                       : 'ui.cancellationPolicy.savePolicyDraft',
                 )}
-              </button>
+              </Button>
             </div>
           </form>
         </Modal>

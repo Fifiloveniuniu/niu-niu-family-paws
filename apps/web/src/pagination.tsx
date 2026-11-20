@@ -119,7 +119,7 @@ export function Pagination({
             {t('retry')}
           </Button>
           {page.index > 0 && (
-            <Button variant="secondary" onClick={page.reset}>
+            <Button icon="chevron-left" variant="secondary" onClick={page.reset}>
               {t('first')}
             </Button>
           )}

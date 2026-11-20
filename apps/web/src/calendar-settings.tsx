@@ -1,3 +1,4 @@
+import Button from './button';
 import { uiText } from './i18n.ts';
 import React from 'react';
 import CustomAutocomplete from './custom-autocomplete';
@@ -164,12 +165,18 @@ export default function CalendarSettingsDialog({
           </div>
         )}
         <div className="hc-settings-actions">
-          <button className="hc-apply" type="submit">
+          <Button variant="primary" icon="check" className="hc-apply" type="submit">
             {uiText('ui.calendarSettings.applyChanges')}
-          </button>
-          <button className="hc-manage" type="button" onClick={close}>
+          </Button>
+          <Button
+            icon="close"
+            variant="secondary"
+            className="hc-manage"
+            type="button"
+            onClick={close}
+          >
             {uiText('ui.calendarSettings.cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

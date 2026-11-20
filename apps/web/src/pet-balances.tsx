@@ -1,3 +1,4 @@
+import Button from './button';
 import CustomDateInput from './custom-date-input';
 import { localeFor, uiText } from './i18n.ts';
 import CustomSelect from './custom-select';
@@ -280,9 +281,15 @@ export default function PetBalances({
                 placeholder={uiText('ui.petBalances.nameThisDateRange')}
               />
             </label>
-            <button type="button" className="hc-manage" onClick={saveTemplate}>
+            <Button
+              icon="check"
+              variant="secondary"
+              type="button"
+              className="hc-manage"
+              onClick={saveTemplate}
+            >
               {uiText('ui.petBalances.saveTemplate')}
-            </button>
+            </Button>
           </div>
         </details>
         <p className="hc-balance-preview">
@@ -290,14 +297,20 @@ export default function PetBalances({
         </p>
       </details>
       <div className="hc-settings-actions">
-        <button className="hc-manage" type="button" onClick={closeEditor}>
+        <Button
+          icon="close"
+          variant="secondary"
+          className="hc-manage"
+          type="button"
+          onClick={closeEditor}
+        >
           {uiText('ui.petBalances.cancel')}
-        </button>
-        <button className="hc-apply" type="submit">
+        </Button>
+        <Button variant="primary" icon="check" className="hc-apply" type="submit">
           {mode === 'remove'
             ? uiText('ui.petBalances.saveAdjustment')
             : uiText('ui.petBalances.addBalance')}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -419,9 +432,9 @@ export default function PetBalances({
             </div>
             {summaryOnly && <CalendarProfileLink name={pet} />}
             {(!editing || embedded) && (
-              <button className="hc-apply" onClick={open}>
+              <Button icon="plus" variant="primary" className="hc-apply" onClick={open}>
                 {uiText('ui.petBalances.addBalance')}
-              </button>
+              </Button>
             )}
           </div>
 

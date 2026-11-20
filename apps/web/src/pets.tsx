@@ -564,7 +564,7 @@ export function PetSearch({
               </p>
               {customer.loginEmail && <p>{customer.loginEmail}</p>}
             </div>
-            <Button variant="secondary" onClick={() => onChoose(customer)}>
+            <Button icon="customers" variant="secondary" onClick={() => onChoose(customer)}>
               {labels.manage}
             </Button>
           </li>
@@ -572,6 +572,7 @@ export function PetSearch({
       </ul>
       {page?.nextCursor && (
         <Button
+          icon="chevron-down"
           variant="secondary"
           disabled={loading}
           onClick={() => void load(active, page.nextCursor!)}

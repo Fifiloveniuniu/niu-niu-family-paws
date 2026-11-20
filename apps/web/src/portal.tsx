@@ -276,7 +276,12 @@ export default function Portal({
           ) : access === 'signed-out' ? (
             <>
               <p>{labels.intro}</p>
-              <Button variant="primary" disabled={busy} onClick={() => void run(login)}>
+              <Button
+                icon="account"
+                variant="primary"
+                disabled={busy}
+                onClick={() => void run(login)}
+              >
                 {busy ? labels.busy : labels.login}
               </Button>
             </>

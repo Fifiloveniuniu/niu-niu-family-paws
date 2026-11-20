@@ -1,3 +1,4 @@
+import Button from './button';
 import SearchInput from './search-input';
 import IconButton from './icon-button';
 import SegmentedTabs from './segmented-tabs';
@@ -313,10 +314,15 @@ export default function WorkspaceCalendar({
             {timeZoneControl}
           </div>
           <div className="calendar-toolbar-actions">
-            <button className="hc-apply" disabled={!data.rows.length} onClick={() => onAdd()}>
+            <Button
+              variant="primary"
+              className="hc-apply"
+              disabled={!data.rows.length}
+              onClick={() => onAdd()}
+            >
               <Icon name="plus" />
               {t(data.admin ? 'addBooking' : 'availability')}
-            </button>
+            </Button>
           </div>
         </div>
         {loading && <p role="status">{t('loading')}</p>}

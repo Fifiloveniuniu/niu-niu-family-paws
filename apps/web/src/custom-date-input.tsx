@@ -1,3 +1,4 @@
+import Button from './button';
 import Icon from './icons';
 import React from 'react';
 import { createPortal } from 'react-dom';
@@ -465,14 +466,16 @@ export default function CustomDateInput({
                     onChange={(event) => setMinute(event.target.value.replace(/\D/g, ''))}
                   />
                 </label>
-                <button
+                <Button
+                  icon="check"
+                  variant="primary"
                   type="button"
                   aria-label={uiText('ui.datePicker.applyDateTime')}
                   disabled={!timeValue || !bounded(timeValue)}
                   onClick={() => timeValue && commit(timeValue)}
                 >
                   {uiText('ui.datePicker.apply')}
-                </button>
+                </Button>
               </div>
             )}
             <div className="custom-date-footer">
