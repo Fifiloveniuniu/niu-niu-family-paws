@@ -1222,6 +1222,7 @@
 .calendar-filter-groups fieldset:first-child {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+.saved-workspace .calendar-filter-groups fieldset:first-child > label:first-of-type,
 .saved-workspace .calendar-filter-groups fieldset > label,
 .saved-workspace .calendar-filter-groups fieldset > .workspace-search {
   grid-column: auto;
