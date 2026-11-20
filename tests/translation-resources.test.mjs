@@ -4,6 +4,9 @@ import { readFile, readdir } from 'node:fs/promises';
 const english = JSON.parse(
   await readFile(new URL('../apps/web/src/locales/en.json', import.meta.url), 'utf8'),
 );
+const spanish = JSON.parse(
+  await readFile(new URL('../apps/web/src/locales/es.json', import.meta.url), 'utf8'),
+);
 const chinese = JSON.parse(
   await readFile(new URL('../apps/web/src/locales/zh.json', import.meta.url), 'utf8'),
 );
@@ -24,6 +27,11 @@ function variables(value, path = '') {
 }
 test('locale resources cover the same keys, structures and interpolation values', () => {
   assert.deepEqual(shape(chinese), shape(english));
+  assert.deepEqual(shape(spanish), shape(english));
+  assert.deepEqual(
+    variables(spanish).sort(([a], [b]) => a.localeCompare(b)),
+    variables(english).sort(([a], [b]) => a.localeCompare(b)),
+  );
   assert.deepEqual(
     variables(chinese).sort(([a], [b]) => a.localeCompare(b)),
     variables(english).sort(([a], [b]) => a.localeCompare(b)),

@@ -1,14 +1,16 @@
 import i18n from 'i18next';
 import en from './locales/en.json' with { type: 'json' };
 import zh from './locales/zh.json' with { type: 'json' };
+import es from './locales/es.json' with { type: 'json' };
 
 export type Language = string;
 export const supportedLanguages = [
   { code: 'en', name: 'English', locale: 'en-US', htmlLang: 'en' },
   { code: 'zh', name: '简体中文', locale: 'zh-CN', htmlLang: 'zh-Hans' },
+  { code: 'es', name: 'Español', locale: 'es-US', htmlLang: 'es' },
 ] as const;
 export const englishCatalog = en;
-export const catalogs = { en, zh };
+export const catalogs = { en, zh, es };
 export function resolveLanguage(language?: string | null) {
   return supportedLanguages.find((item) => item.code === language)?.code ?? 'en';
 }

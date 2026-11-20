@@ -1919,3 +1919,59 @@ header.marketing-header nav {
     padding: 12px 8px;
   }
 }
+
+.public-source-prices > section {
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid #d9e1d4;
+  border-radius: 24px;
+  background: #fffdf7;
+  box-shadow: 0 8px 28px #183d2910;
+}
+.public-source-prices > section > h2 {
+  margin-top: 0;
+  text-align: left;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+.public-source-prices th {
+  color: #536451;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.public-source-prices td:nth-child(2) {
+  color: #21452d;
+  font-weight: 700;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+.public-source-prices th:not(:first-child),
+.public-source-prices td:not(:first-child) {
+  text-align: right;
+}
+.public-source-prices tbody tr:last-child td {
+  border-bottom: 0;
+}
+.public-source-prices > section > p {
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #536451;
+}
+.booking-cost dt small {
+  display: block;
+  font-weight: 400;
+}
+.public-source-prices {
+  min-width: 0;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+}
+.public-source-prices > section {
+  min-width: 0;
+}
+.public-price-scroll {
+  max-width: 100%;
+  min-width: 0;
+}
+.public-source-prices table {
+  min-width: 360px;
+}

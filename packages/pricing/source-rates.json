@@ -13,7 +13,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price1.jpg"
+    "source": "price1.jpg",
+    "nameEs": "0–8 libras"
   },
   {
     "id": "052f82a3-0a25-5474-b91c-aa7928c210b5",
@@ -29,7 +30,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price1.jpg"
+    "source": "price1.jpg",
+    "nameEs": "8–15 libras"
   },
   {
     "id": "32b51b7e-4630-5391-bd6a-bbd2473ed56d",
@@ -45,7 +47,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price1.jpg"
+    "source": "price1.jpg",
+    "nameEs": "16–35 libras"
   },
   {
     "id": "1a6c4632-d0f7-56be-9767-05a903565ddd",
@@ -61,7 +64,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price1.jpg"
+    "source": "price1.jpg",
+    "nameEs": "36–55 libras"
   },
   {
     "id": "52de17e8-097d-5999-b73b-d1bdc7f9bf23",
@@ -77,7 +81,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price1.jpg"
+    "source": "price1.jpg",
+    "nameEs": "56–75 libras"
   },
   {
     "id": "fe11457c-7a87-5ac6-8d4d-470d9e3b2936",
@@ -93,7 +98,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price1.jpg"
+    "source": "price1.jpg",
+    "nameEs": "76–85 libras"
   },
   {
     "id": "4022c355-b507-5496-a052-0594938ce805",
@@ -109,7 +115,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Perro pequeño (<20 lb)"
   },
   {
     "id": "2514c1b5-78a6-5901-9cbb-376e2fca5fa2",
@@ -125,7 +132,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Perro mediano (<45 lb)"
   },
   {
     "id": "2ccab708-d3ca-5e67-b761-451b38843f85",
@@ -141,7 +149,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Perro grande · pelo corto (<65 lb)"
   },
   {
     "id": "85f8d53f-10d7-5cd4-84ba-6bf091280278",
@@ -157,7 +166,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Perro grande · pelo largo (<65 lb)"
   },
   {
     "id": "42e7c6c5-e8ae-5748-b957-577b7820d153",
@@ -173,7 +183,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Perro extragrande · pelo corto (>65 lb)"
   },
   {
     "id": "83ae8c71-3896-531a-b2b5-e70ad8257c11",
@@ -189,7 +200,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Perro extragrande · pelo largo / doble capa (>65 lb)"
   },
   {
     "id": "3f033765-85dd-5a16-be8f-b0b70397068e",
@@ -205,7 +217,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price2.jpg"
+    "source": "price2.jpg",
+    "nameEs": "Doble capa · +30 USD"
   },
   {
     "id": "4202068d-cc83-5b0b-9073-4613593e3253",
@@ -221,7 +234,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro mini · pelo liso / ondulado (<10 lb)"
   },
   {
     "id": "e76fa86b-f263-5524-9614-ccf4f9d01e64",
@@ -237,7 +251,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro mini · doodle / pelo rizado (<10 lb)"
   },
   {
     "id": "037d9efb-1003-57cd-bce7-5eb87aa63dc7",
@@ -253,7 +268,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro pequeño · pelo liso / ondulado (<20 lb)"
   },
   {
     "id": "e3888535-f1c8-5304-9cd3-99a6324276d2",
@@ -269,7 +285,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro pequeño · doodle / pelo rizado (<20 lb)"
   },
   {
     "id": "81ce0c19-229e-5d54-815b-d80cb23f56ab",
@@ -285,7 +302,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro mediano · pelo liso / ondulado (<40 lb)"
   },
   {
     "id": "4ce46521-d748-5d07-9b59-7ad9bde520e8",
@@ -301,7 +319,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro mediano · doodle / pelo rizado (<40 lb)"
   },
   {
     "id": "4e2c234a-0dab-5fdf-9ff9-227f37bd6230",
@@ -317,7 +336,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro grande · pelo liso / ondulado (<60 lb)"
   },
   {
     "id": "b505918b-b8b2-5d6c-a146-9468ec19c79e",
@@ -333,7 +353,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro grande · doodle / pelo rizado (<60 lb)"
   },
   {
     "id": "ddc96194-7a89-552b-9d9d-a22e3a1085a3",
@@ -349,7 +370,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price3.jpg"
+    "source": "price3.jpg",
+    "nameEs": "Perro extragrande · doodle / pelo rizado (>60 lb)"
   },
   {
     "id": "09a259ea-46dd-5a52-a975-b066fcea4a68",
@@ -365,7 +387,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Baño de limpieza general (pelo corto)"
   },
   {
     "id": "60283c46-634c-5775-92bc-2baf9c113578",
@@ -381,7 +404,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Baño de limpieza profunda (pelo corto)"
   },
   {
     "id": "6f8f1996-7abc-561c-b2a3-4e96a9105ca9",
@@ -397,7 +421,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Baño de limpieza general (pelo largo)"
   },
   {
     "id": "9206d651-153f-57e2-a426-de9b26654614",
@@ -413,7 +438,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Baño de limpieza profunda (pelo largo)"
   },
   {
     "id": "5d3c0757-32b6-5dc0-9aa6-784b3164d156",
@@ -429,7 +455,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Corte de pelo completo"
   },
   {
     "id": "22e5d125-594d-56d2-8647-2328b97200c5",
@@ -445,7 +472,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Desenredado y eliminación de pelo suelto (pelo corto; 20 min)"
   },
   {
     "id": "f0bf7678-4ddc-5b8c-a669-64ba39484f6c",
@@ -461,7 +489,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Desenredado y eliminación de pelo suelto (pelo largo; 30 min)"
   },
   {
     "id": "90ff25c3-af22-57b3-8e45-d36b6cd48b2f",
@@ -477,7 +506,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Recorte higiénico y del vientre"
   },
   {
     "id": "1483dd3b-7831-57e6-9b97-91df9a18bad6",
@@ -493,7 +523,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Recorte higiénico y de almohadillas"
   },
   {
     "id": "b9692949-733c-5a75-a4fd-746e5669d3f5",
@@ -509,7 +540,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Tratamiento antipulgas sin receta"
   },
   {
     "id": "5f181dd5-c837-5ca0-ad88-a10fd34e194a",
@@ -525,7 +557,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Cepillado de dientes"
   },
   {
     "id": "77f9365b-2f10-5567-9d7d-02d44c428e22",
@@ -541,7 +574,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Limpieza de oídos (retirada de cera acumulada)"
   },
   {
     "id": "b68d242d-fb75-5c38-8cc6-f0b4706fc679",
@@ -557,7 +591,8 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Tratamiento desengrasante (lomo)"
   },
   {
     "id": "c351baec-4f58-5e52-a0d4-71f5faf402d5",
@@ -573,6 +608,7 @@
     "comparisonRateId": null,
     "comparisonWeightLb": null,
     "active": true,
-    "source": "price4.jpg"
+    "source": "price4.jpg",
+    "nameEs": "Tratamiento desengrasante (cuerpo completo)"
   }
 ]

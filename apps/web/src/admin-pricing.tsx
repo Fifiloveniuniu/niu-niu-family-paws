@@ -1,10 +1,11 @@
+import { priceName } from './price-label';
 import Button from './button';
 import IconButton from './icon-button';
 import SegmentedTabs from './segmented-tabs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiJson, ApiError } from './api-client';
-import { uiText, localeFor, speciesText } from './i18n.ts';
+import { uiText, localeFor, speciesText, languageName } from './i18n.ts';
 import Modal from './modal';
 import Icon from './icons';
 import CustomSelect from './custom-select';
@@ -199,24 +200,36 @@ function Editor({
             </>
           ) : (
             <>
-              <label>
-                {t('name')}
-                <input
-                  required
-                  maxLength={160}
-                  value={rate.name}
-                  onChange={(event) => patch({ name: event.target.value })}
-                />
-              </label>
-              <label>
-                {t('nameZh')}
-                <input
-                  required
-                  maxLength={160}
-                  value={rate.nameZh}
-                  onChange={(event) => patch({ nameZh: event.target.value })}
-                />
-              </label>
+              <fieldset className="price-language-labels">
+                <legend>{uiText('ui.pricingAdmin.labels')}</legend>
+                <p>{uiText('ui.bookingCost.labelsHint')}</p>{' '}
+                <label>
+                  {languageName('en')}
+                  <input
+                    required
+                    maxLength={160}
+                    value={rate.name}
+                    onChange={(event) => patch({ name: event.target.value })}
+                  />
+                </label>
+                <label>
+                  {languageName('zh')}
+                  <input
+                    required
+                    maxLength={160}
+                    value={rate.nameZh}
+                    onChange={(event) => patch({ nameZh: event.target.value })}
+                  />
+                </label>
+                <label>
+                  {languageName('es')}
+                  <input
+                    maxLength={160}
+                    value={rate.nameEs ?? ''}
+                    onChange={(event) => patch({ nameEs: event.target.value || undefined })}
+                  />
+                </label>
+              </fieldset>
               <label>
                 {t('species')}
                 <CustomSelect
@@ -319,7 +332,7 @@ function Editor({
                         )
                         .map((row) => (
                           <option key={row.id} value={row.id}>
-                            {i18n.language === 'zh' ? row.nameZh : row.name}
+                            {priceName(row, i18n.language)}
                           </option>
                         ))}
                     </CustomSelect>
@@ -473,7 +486,7 @@ export default function AdminPricing() {
                     return (
                       <tr key={rate.id}>
                         <td>
-                          {i18n.language === 'zh' ? rate.nameZh : rate.name}
+                          {priceName(rate, i18n.language)}
                           {rate.days && (
                             <small>
                               {' '}
@@ -496,9 +509,7 @@ export default function AdminPricing() {
                         <td>
                           <IconButton
                             title={t('edit')}
-                            aria-label={
-                              t('edit') + ': ' + (i18n.language === 'zh' ? rate.nameZh : rate.name)
-                            }
+                            aria-label={t('edit') + ': ' + priceName(rate, i18n.language)}
                             onClick={() => setEditor({ existing: rate })}
                           >
                             <Icon name="edit" />

@@ -1672,6 +1672,7 @@ export interface components {
             comparisonWeightLb: number | null;
             active: boolean;
             source: string;
+            nameEs?: string;
         };
         PricingConfig: {
             rates: components["schemas"]["PriceRate"][];

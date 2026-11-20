@@ -622,6 +622,11 @@
           "source": {
             "type": "string",
             "maxLength": 120
+          },
+          "nameEs": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
           }
         }
       },
