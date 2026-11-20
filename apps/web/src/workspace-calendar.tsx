@@ -88,6 +88,8 @@ export default function WorkspaceCalendar({
   onAddress,
   onManage,
   loading,
+  filterZone,
+  filterCustomer,
 }: {
   data: WorkspaceData;
   scope?: string;
@@ -99,9 +101,12 @@ export default function WorkspaceCalendar({
   onAddress: (house: LocationRow['house']) => void;
   onManage: (target: { houseId: string; roomId?: string; addRoom?: boolean }) => void;
   loading: boolean;
+  filterZone?: React.ReactNode;
+  filterCustomer?: React.ReactNode;
 }) {
   const t = useWorkspaceText();
   const { i18n } = useTranslation();
+  const [filtersOpen, setFiltersOpen] = React.useState(true);
   const [now, setNow] = React.useState(Date.now());
   React.useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 30000);
@@ -160,339 +165,396 @@ export default function WorkspaceCalendar({
   };
   return (
     <section className="hc-calendar-workspace saved-calendar" aria-label={t('calendar')}>
-      <section className="workspace-filters" aria-label={uiText('ui.houseCalendar.filters')}>
-        <label>
-          {t('house')}
-          <CustomSelect
-            value={house}
-            onChange={(event) => onQuery({ house: event.target.value, room: '' })}
-          >
-            <option value="">{t('allHouses')}</option>
-            {data.locations.map((item) => (
-              <option key={item.house.id} value={item.house.id}>
-                {item.house.name}
-              </option>
-            ))}
-          </CustomSelect>
-        </label>
-        <label>
-          {t('room')}
-          <CustomSelect value={room} onChange={(event) => onQuery({ room: event.target.value })}>
-            <option value="">{t('allRooms')}</option>
-            {data.locations
-              .filter((item) => !house || item.house.id === house)
-              .flatMap((item) =>
-                item.rooms.map((candidate) => (
-                  <option
-                    key={roomKey(item.house.id, candidate.id)}
-                    value={roomKey(item.house.id, candidate.id)}
-                  >
-                    {item.house.name} · {candidate.name}
-                  </option>
-                )),
+      <section className="calendar-filter-panel" aria-label={uiText('ui.houseCalendar.filters')}>
+        <div className="calendar-filter-heading">
+          <h2>
+            <Icon name="search" />
+            {uiText('ui.calendarFilters.title')}
+          </h2>{' '}
+          <div className="calendar-filter-actions">
+            <button
+              className="icon-button"
+              title={t('clearFilters')}
+              aria-label={t('clearFilters')}
+              disabled={!filtered}
+              onClick={() => onQuery({ house: '', room: '', species: '', status: '', q: '' })}
+            >
+              <Icon name="reset" />
+            </button>
+            <button
+              type="button"
+              className="icon-button"
+              title={uiText(filtersOpen ? 'ui.calendarFilters.hide' : 'ui.calendarFilters.show')}
+              aria-label={uiText(
+                filtersOpen ? 'ui.calendarFilters.hide' : 'ui.calendarFilters.show',
               )}
-          </CustomSelect>
-        </label>
-        <label>
-          {t('type')}
-          <CustomSelect
-            renderChoice={petTypeChoice}
-            value={type}
-            onChange={(event) => onQuery({ species: event.target.value })}
-          >
-            <option value="">{t('allTypes')}</option>
-            {['dog', 'cat', 'rabbit'].map((species) => (
-              <option key={species} value={species}>
-                {speciesText(species)}
-              </option>
-            ))}
-          </CustomSelect>
-        </label>
-        <label>
-          {t('status')}
-          <CustomSelect
-            value={status}
-            onChange={(event) => onQuery({ status: event.target.value })}
-          >
-            <option value="">{t('allStatuses')}</option>
-            {['planned', 'in_care', 'overdue', 'completed', 'cancelled'].map((value) => (
-              <option key={value} value={value}>
-                {t(value)}
-              </option>
-            ))}
-          </CustomSelect>
-        </label>
-        <label className="workspace-search">
-          {t('searchPets')}
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => onQuery({ q: event.target.value })}
-          />
-        </label>
-        <button
-          className="icon-button"
-          title={t('clearFilters')}
-          aria-label={t('clearFilters')}
-          disabled={!filtered}
-          onClick={() => onQuery({ house: '', room: '', species: '', status: '', q: '' })}
-        >
-          <Icon name="reset" />
-        </button>
-      </section>
-      <div className="hc-toolbar">
-        <div className="hc-range">
-          <button type="button" aria-label={t('previous')} onClick={() => shift(-1)}>
-            <Icon name="chevron-left" />
-          </button>
-          <button type="button" onClick={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}>
-            {t('today')}
-          </button>
-          <button type="button" aria-label={t('next')} onClick={() => shift(1)}>
-            <Icon name="chevron-right" />
-          </button>
-          <h2>{title}</h2>
-        </div>
-        <div className="workspace-range-controls">
-          {data.admin && !scope && (
-            <a
-              className="icon-button"
-              href="/app/operations/"
-              title={uiText('ui.operations.title')}
-              aria-label={uiText('ui.operations.title')}
+              aria-expanded={filtersOpen}
+              aria-controls="calendar-filter-fields"
+              onClick={() => setFiltersOpen((v) => !v)}
             >
-              <Icon name="calendar" />
-            </a>
-          )}
-          {data.admin && (
-            <a
-              className="icon-button"
-              href="/app/settings/locations/"
-              title={t('manageLocations')}
-              aria-label={t('manageLocations')}
-            >
-              <Icon name="settings" />
-            </a>
-          )}
-          <CustomDateInput
-            aria-label={t('period')}
-            value={range.date}
-            timeZone={range.zone}
-            onChange={(value) => {
-              if (parseWallInput(value, false)) onQuery({ date: value });
-            }}
-          />
-          <div className="hc-scales" role="tablist" aria-label={t('calendarView')}>
-            {(['day', 'week', 'month', 'year'] as const).map((view) => (
-              <button
-                key={view}
-                type="button"
-                role="tab"
-                aria-selected={range.view === view}
-                onClick={() => onQuery({ view })}
-              >
-                {t(view)}
-              </button>
-            ))}
+              <Icon name="chevron-down" className={filtersOpen ? 'filter-chevron-open' : ''} />
+            </button>
           </div>
         </div>
-      </div>
-      {loading && <p role="status">{t('loading')}</p>}
-      <CalendarViewport
-        className="hc-scroll"
-        label={t('timeline')}
-        hint={uiText('ui.calendarTimeline.panHint')}
-      >
-        <CalendarFrame
-          className="hc-calendar saved-calendar-grid"
-          ticks={range.ticks}
-          timeline={range}
-          view={range.view}
-          role="tabpanel"
-          aria-label={t(range.view)}
+        <div
+          id="calendar-filter-fields"
+          className="workspace-filters calendar-filter-groups"
+          hidden={!filtersOpen}
         >
-          <CalendarAxis {...range} label={t('houseRoomPet')} locale={locale} className="hc-axis" />
-          {position(now) >= 0 && position(now) < 100 && (
-            <div
-              className="workspace-now-marker"
-              data-label-align={position(now) > 85 ? 'end' : 'start'}
-              style={{
-                left: `calc(var(--label) + (100% - var(--label)) * ${position(now) / 100})`,
-              }}
-              aria-label={t('now')}
+          <fieldset>
+            <legend>{uiText('ui.calendarFilters.people')}</legend>
+            {filterCustomer}{' '}
+            <label className="workspace-search">
+              {t('searchPets')}
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => onQuery({ q: event.target.value })}
+              />
+            </label>
+            <label>
+              {t('type')}
+              <CustomSelect
+                renderChoice={petTypeChoice}
+                value={type}
+                onChange={(event) => onQuery({ species: event.target.value })}
+              >
+                <option value="">{t('allTypes')}</option>
+                {['dog', 'cat', 'rabbit'].map((species) => (
+                  <option key={species} value={species}>
+                    {speciesText(species)}
+                  </option>
+                ))}
+              </CustomSelect>
+            </label>
+            <label>
+              {t('status')}
+              <CustomSelect
+                value={status}
+                onChange={(event) => onQuery({ status: event.target.value })}
+              >
+                <option value="">{t('allStatuses')}</option>
+                {['planned', 'in_care', 'overdue', 'completed', 'cancelled'].map((value) => (
+                  <option key={value} value={value}>
+                    {t(value)}
+                  </option>
+                ))}
+              </CustomSelect>
+            </label>
+          </fieldset>
+          <fieldset>
+            <legend>{uiText('ui.calendarFilters.location')}</legend>{' '}
+            <label>
+              {t('house')}
+              <CustomSelect
+                value={house}
+                onChange={(event) => onQuery({ house: event.target.value, room: '' })}
+              >
+                <option value="">{t('allHouses')}</option>
+                {data.locations.map((item) => (
+                  <option key={item.house.id} value={item.house.id}>
+                    {item.house.name}
+                  </option>
+                ))}
+              </CustomSelect>
+            </label>
+            <label>
+              {t('room')}
+              <CustomSelect
+                value={room}
+                onChange={(event) => onQuery({ room: event.target.value })}
+              >
+                <option value="">{t('allRooms')}</option>
+                {data.locations
+                  .filter((item) => !house || item.house.id === house)
+                  .flatMap((item) =>
+                    item.rooms.map((candidate) => (
+                      <option
+                        key={roomKey(item.house.id, candidate.id)}
+                        value={roomKey(item.house.id, candidate.id)}
+                      >
+                        {item.house.name} · {candidate.name}
+                      </option>
+                    )),
+                  )}
+              </CustomSelect>
+            </label>
+            {filterZone}
+          </fieldset>
+        </div>
+      </section>
+      <section className="calendar-results" aria-label={t('calendar')}>
+        <div className="hc-toolbar">
+          <div className="hc-range">
+            <button type="button" aria-label={t('previous')} onClick={() => shift(-1)}>
+              <Icon name="chevron-left" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}
             >
-              <span>
-                {t('now')}{' '}
-                <time dateTime={new Date(now).toISOString()}>
-                  {new Intl.DateTimeFormat(locale, {
-                    timeZone: range.zone,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }).format(new Date(now))}
-                </time>
-              </span>
-            </div>
-          )}
-          {locations.map((item) => (
-            <React.Fragment key={item.house.id}>
-              <div className="hc-house">
+              {t('today')}
+            </button>
+            <button type="button" aria-label={t('next')} onClick={() => shift(1)}>
+              <Icon name="chevron-right" />
+            </button>
+            <h2>{title}</h2>
+          </div>
+          <div className="workspace-range-controls">
+            <button className="hc-apply" disabled={!data.rows.length} onClick={() => onAdd()}>
+              <Icon name="plus" />
+              {t(data.admin ? 'addBooking' : 'availability')}
+            </button>
+            {data.admin && !scope && (
+              <a
+                className="icon-button"
+                href="/app/operations/"
+                title={uiText('ui.operations.title')}
+                aria-label={uiText('ui.operations.title')}
+              >
+                <Icon name="calendar" />
+              </a>
+            )}
+            {data.admin && (
+              <a
+                className="icon-button"
+                href="/app/settings/locations/"
+                title={t('manageLocations')}
+                aria-label={t('manageLocations')}
+              >
+                <Icon name="settings" />
+              </a>
+            )}
+            <CustomDateInput
+              aria-label={t('period')}
+              value={range.date}
+              timeZone={range.zone}
+              onChange={(value) => {
+                if (parseWallInput(value, false)) onQuery({ date: value });
+              }}
+            />
+            <div className="hc-scales" role="tablist" aria-label={t('calendarView')}>
+              {(['day', 'week', 'month', 'year'] as const).map((view) => (
                 <button
+                  key={view}
                   type="button"
-                  className="workspace-house-address"
-                  title={t('viewAddress')}
-                  aria-label={`${t('viewAddress')}: ${item.house.name}`}
-                  onClick={() => onAddress(item.house)}
+                  role="tab"
+                  aria-selected={range.view === view}
+                  onClick={() => onQuery({ view })}
                 >
-                  <LocationLabel kind="house" name={item.house.name} />
+                  {t(view)}
                 </button>
-                {item.house.timezone !== range.zone && (
-                  <small>{item.house.timezone || uiText('common.notAvailable')}</small>
-                )}
-                <div className="workspace-row-actions">
-                  {data.admin && (
-                    <button
-                      type="button"
-                      className="hc-settings"
-                      title={uiValue('ui.houses.labels', i18n.language).edit}
-                      aria-label={
-                        uiValue('ui.houses.labels', i18n.language).edit + ': ' + item.house.name
-                      }
-                      onClick={() => onManage({ houseId: item.house.id })}
-                    >
-                      <Icon name="settings" />
-                    </button>
-                  )}
-                  {data.admin && (
-                    <button
-                      className="hc-settings"
-                      type="button"
-                      title={
-                        item.house.address?.trim()
-                          ? uiText('ui.rooms.add')
-                          : uiText('ui.houses.addressMissing')
-                      }
-                      aria-label={`${uiText('ui.rooms.add')}: ${item.house.name}`}
-                      disabled={!item.house.address?.trim()}
-                      onClick={() => onManage({ houseId: item.house.id, addRoom: true })}
-                    >
-                      <Icon name="plus" />
-                    </button>
-                  )}
-                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {loading && <p role="status">{t('loading')}</p>}
+        <CalendarViewport
+          className="hc-scroll"
+          label={t('timeline')}
+          hint={uiText('ui.calendarTimeline.panHint')}
+        >
+          <CalendarFrame
+            className="hc-calendar saved-calendar-grid"
+            ticks={range.ticks}
+            timeline={range}
+            view={range.view}
+            role="tabpanel"
+            aria-label={t(range.view)}
+          >
+            <CalendarAxis
+              {...range}
+              label={t('houseRoomPet')}
+              locale={locale}
+              className="hc-axis"
+            />
+            {position(now) >= 0 && position(now) < 100 && (
+              <div
+                className="workspace-now-marker"
+                data-label-align={position(now) > 85 ? 'end' : 'start'}
+                style={{
+                  left: `calc(var(--label) + (100% - var(--label)) * ${position(now) / 100})`,
+                }}
+                aria-label={t('now')}
+              >
+                <span>
+                  {t('now')}{' '}
+                  <time dateTime={new Date(now).toISOString()}>
+                    {new Intl.DateTimeFormat(locale, {
+                      timeZone: range.zone,
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }).format(new Date(now))}
+                  </time>
+                </span>
               </div>
-              {item.rooms
-                .filter((candidate) => !room || roomKey(item.house.id, candidate.id) === room)
-                .map((candidate) => {
-                  const stays = visible.filter(
-                    (b) => b.houseId === item.house.id && b.roomId === candidate.id,
-                  );
-                  const groups = new Map<string, Booking[]>();
-                  for (const stay of stays) {
-                    const key = petKey(stay.customerId, stay.petId);
-                    groups.set(key, [...(groups.get(key) ?? []), stay]);
-                  }
-                  return (
-                    <React.Fragment key={candidate.id}>
-                      <div className="hc-room" data-room-id={candidate.id}>
-                        <LocationLabel kind="room" name={candidate.name} />
-                        <small>
-                          {data.admin
-                            ? `${t('capacity')} ${Number.isFinite(candidate.capacity) && candidate.capacity > 0 ? candidate.capacity : uiText('common.notAvailable')}`
-                            : ''}
-                        </small>
-                        <div className="workspace-row-actions">
-                          {data.admin && (
+            )}
+            {locations.map((item) => (
+              <React.Fragment key={item.house.id}>
+                <div className="hc-house">
+                  <button
+                    type="button"
+                    className="workspace-house-address"
+                    title={t('viewAddress')}
+                    aria-label={`${t('viewAddress')}: ${item.house.name}`}
+                    onClick={() => onAddress(item.house)}
+                  >
+                    <LocationLabel kind="house" name={item.house.name} />
+                  </button>
+                  {item.house.timezone !== range.zone && (
+                    <small>{item.house.timezone || uiText('common.notAvailable')}</small>
+                  )}
+                  <div className="workspace-row-actions">
+                    {data.admin && (
+                      <button
+                        type="button"
+                        className="hc-settings"
+                        title={uiValue('ui.houses.labels', i18n.language).edit}
+                        aria-label={
+                          uiValue('ui.houses.labels', i18n.language).edit + ': ' + item.house.name
+                        }
+                        onClick={() => onManage({ houseId: item.house.id })}
+                      >
+                        <Icon name="settings" />
+                      </button>
+                    )}
+                    {data.admin && (
+                      <button
+                        className="hc-settings"
+                        type="button"
+                        title={
+                          item.house.address?.trim()
+                            ? uiText('ui.rooms.add')
+                            : uiText('ui.houses.addressMissing')
+                        }
+                        aria-label={`${uiText('ui.rooms.add')}: ${item.house.name}`}
+                        disabled={!item.house.address?.trim()}
+                        onClick={() => onManage({ houseId: item.house.id, addRoom: true })}
+                      >
+                        <Icon name="plus" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {item.rooms
+                  .filter((candidate) => !room || roomKey(item.house.id, candidate.id) === room)
+                  .map((candidate) => {
+                    const stays = visible.filter(
+                      (b) => b.houseId === item.house.id && b.roomId === candidate.id,
+                    );
+                    const groups = new Map<string, Booking[]>();
+                    for (const stay of stays) {
+                      const key = petKey(stay.customerId, stay.petId);
+                      groups.set(key, [...(groups.get(key) ?? []), stay]);
+                    }
+                    return (
+                      <React.Fragment key={candidate.id}>
+                        <div className="hc-room" data-room-id={candidate.id}>
+                          <LocationLabel kind="room" name={candidate.name} />
+                          <small>
+                            {data.admin
+                              ? `${t('capacity')} ${Number.isFinite(candidate.capacity) && candidate.capacity > 0 ? candidate.capacity : uiText('common.notAvailable')}`
+                              : ''}
+                          </small>
+                          <div className="workspace-row-actions">
+                            {data.admin && (
+                              <button
+                                type="button"
+                                className="hc-settings"
+                                title={uiText('ui.rooms.edit')}
+                                aria-label={uiText('ui.rooms.edit') + ': ' + candidate.name}
+                                onClick={() =>
+                                  onManage({ houseId: item.house.id, roomId: candidate.id })
+                                }
+                              >
+                                <Icon name="settings" />
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="hc-settings"
-                              title={uiText('ui.rooms.edit')}
-                              aria-label={uiText('ui.rooms.edit') + ': ' + candidate.name}
+                              title={t('addBooking')}
+                              aria-label={`${t('addBooking')}: ${item.house.name} · ${candidate.name}`}
                               onClick={() =>
-                                onManage({ houseId: item.house.id, roomId: candidate.id })
+                                onAdd({ houseId: item.house.id, roomId: candidate.id })
                               }
                             >
-                              <Icon name="settings" />
+                              <Icon name="plus" />
                             </button>
-                          )}
-                          <button
-                            type="button"
-                            className="hc-settings"
-                            title={t('addBooking')}
-                            aria-label={`${t('addBooking')}: ${item.house.name} · ${candidate.name}`}
-                            onClick={() => onAdd({ houseId: item.house.id, roomId: candidate.id })}
-                          >
-                            <Icon name="plus" />
-                          </button>
-                        </div>
-                      </div>
-                      {!groups.size && (
-                        <div className="hc-pet saved-empty-room">
-                          <div className="hc-label">{t('emptyBookings')}</div>
-                          <CalendarTrack {...range} className="hc-track" />
-                        </div>
-                      )}
-                      {[...groups].map(([key, bookings]) => {
-                        const row = rows.get(key)!;
-                        const current = bookings.find((b) => b.status === 'in_care') ?? bookings[0];
-                        return (
-                          <div className="hc-pet" data-room-id={candidate.id} key={key}>
-                            <div className="hc-label">
-                              <PetInfo
-                                row={row}
-                                scope={scope}
-                                status={t(bookingStatus(current, now))}
-                                location={`${item.house.name} · ${candidate.name}`}
-                              />
-                              <div>
-                                <strong title={row.pet.name}>{row.pet.name}</strong>
-                                <small>{row.pet.species ? speciesText(row.pet.species) : ''}</small>
-                              </div>
-                            </div>
-                            <CalendarTrack {...range} className="hc-track">
-                              {bookings.map((booking) => {
-                                const start = Date.parse(booking.occupancyFrom),
-                                  end =
-                                    bookingStatus(booking, now) === 'overdue'
-                                      ? Date.parse(range.through)
-                                      : Date.parse(booking.occupancyThrough);
-                                const span = timelineSpan(start, end, range.from, range.through);
-                                if (!span) return null;
-                                const description = new Intl.DateTimeFormat(locale, {
-                                  timeZone: booking.timezone,
-                                  dateStyle: 'medium',
-                                  timeStyle: 'short',
-                                });
-                                const label = `${row.pet.name} · ${description.format(new Date(booking.arrival))} – ${description.format(new Date(booking.pickup))} · ${t(bookingStatus(booking, now))}`;
-                                return (
-                                  <button
-                                    key={booking.id}
-                                    type="button"
-                                    className={`hc-stay ${booking.status === 'in_care' ? 'in' : booking.status === 'planned' ? 'upcoming' : 'out'} ${bookingStatus(booking, now) === 'overdue' ? 'overdue' : ''} ${booking.status === 'cancelled' ? 'cancelled' : ''}`}
-                                    style={span}
-                                    title={label}
-                                    aria-label={label}
-                                    onClick={() => onBooking(booking.id)}
-                                  >
-                                    <span>
-                                      {t(bookingStatus(booking, now))} ·{' '}
-                                      {dtf.format(new Date(booking.arrival))} –{' '}
-                                      {dtf.format(new Date(booking.pickup))}
-                                    </span>
-                                  </button>
-                                );
-                              })}
-                            </CalendarTrack>
                           </div>
-                        );
-                      })}
-                    </React.Fragment>
-                  );
-                })}
-            </React.Fragment>
-          ))}
-        </CalendarFrame>
-      </CalendarViewport>
-      {!locations.length && !loading && <p className="hc-empty">{t('noRooms')}</p>}
+                        </div>
+                        {!groups.size && (
+                          <div className="hc-pet saved-empty-room">
+                            <div className="hc-label">{t('emptyBookings')}</div>
+                            <CalendarTrack {...range} className="hc-track" />
+                          </div>
+                        )}
+                        {[...groups].map(([key, bookings]) => {
+                          const row = rows.get(key)!;
+                          const current =
+                            bookings.find((b) => b.status === 'in_care') ?? bookings[0];
+                          return (
+                            <div className="hc-pet" data-room-id={candidate.id} key={key}>
+                              <div className="hc-label">
+                                <PetInfo
+                                  row={row}
+                                  scope={scope}
+                                  status={t(bookingStatus(current, now))}
+                                  location={`${item.house.name} · ${candidate.name}`}
+                                />
+                                <div>
+                                  <strong title={row.pet.name}>{row.pet.name}</strong>
+                                  <small>
+                                    {row.pet.species ? speciesText(row.pet.species) : ''}
+                                  </small>
+                                </div>
+                              </div>
+                              <CalendarTrack {...range} className="hc-track">
+                                {bookings.map((booking) => {
+                                  const start = Date.parse(booking.occupancyFrom),
+                                    end =
+                                      bookingStatus(booking, now) === 'overdue'
+                                        ? Date.parse(range.through)
+                                        : Date.parse(booking.occupancyThrough);
+                                  const span = timelineSpan(start, end, range.from, range.through);
+                                  if (!span) return null;
+                                  const description = new Intl.DateTimeFormat(locale, {
+                                    timeZone: booking.timezone,
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short',
+                                  });
+                                  const label = `${row.pet.name} · ${description.format(new Date(booking.arrival))} – ${description.format(new Date(booking.pickup))} · ${t(bookingStatus(booking, now))}`;
+                                  return (
+                                    <button
+                                      key={booking.id}
+                                      type="button"
+                                      className={`hc-stay ${booking.status === 'in_care' ? 'in' : booking.status === 'planned' ? 'upcoming' : 'out'} ${bookingStatus(booking, now) === 'overdue' ? 'overdue' : ''} ${booking.status === 'cancelled' ? 'cancelled' : ''}`}
+                                      style={span}
+                                      title={label}
+                                      aria-label={label}
+                                      onClick={() => onBooking(booking.id)}
+                                    >
+                                      <span>
+                                        {t(bookingStatus(booking, now))} ·{' '}
+                                        {dtf.format(new Date(booking.arrival))} –{' '}
+                                        {dtf.format(new Date(booking.pickup))}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                              </CalendarTrack>
+                            </div>
+                          );
+                        })}
+                      </React.Fragment>
+                    );
+                  })}
+              </React.Fragment>
+            ))}
+          </CalendarFrame>
+        </CalendarViewport>
+        {!locations.length && !loading && <p className="hc-empty">{t('noRooms')}</p>}
+      </section>
     </section>
   );
 }

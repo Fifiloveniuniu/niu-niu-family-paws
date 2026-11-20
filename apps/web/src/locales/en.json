@@ -1325,5 +1325,11 @@
   "ui.metrics.revenue": "Revenue not available",
   "ui.metrics.revenueHint": "Payment collection is not active. Boarding-day balances and unbilled bookings are not revenue.",
   "ui.metrics.updated": "Updated",
-  "ui.workspace.businessMetrics": "Business metrics"
+  "ui.workspace.businessMetrics": "Business metrics",
+  "ui.calendarFilters.title": "Filters",
+  "ui.calendarFilters.people": "Customer & pet",
+  "ui.calendarFilters.location": "Location & timezone",
+  "ui.calendarFilters.view": "Status & timezone",
+  "ui.calendarFilters.hide": "Hide filters",
+  "ui.calendarFilters.show": "Show filters"
 }

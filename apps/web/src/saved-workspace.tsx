@@ -250,45 +250,6 @@ export default function SavedWorkspace({
         />
         <div className="hc-body">
           <main className="hc-content" id="main">
-            {view === 'calendar' && (
-              <div className="workspace-topbar">
-                <WorkspaceClock
-                  zone={zone}
-                  onChange={(nextZone) =>
-                    updateQuery({
-                      zone: nextZone,
-                      date:
-                        date === wallDateKey(wallNow(zone)) ? wallDateKey(wallNow(nextZone)) : date,
-                    })
-                  }
-                />
-                <div className="workspace-primary-actions">
-                  <button
-                    className="hc-apply"
-                    disabled={!data || !data.rows.length}
-                    onClick={() => setAdding(undefined)}
-                  >
-                    <Icon name="plus" />
-                    {t(admin ? 'addBooking' : 'availability')}
-                  </button>
-                </div>
-              </div>
-            )}
-            {data?.admin && !data.customer && view === 'calendar' && (
-              <div className="workspace-customer-filter">
-                <label>
-                  {t('customer')}
-                  <CustomerPicker
-                    label={t('allCustomers')}
-                    value=""
-                    initial={data.customers}
-                    onChange={(value) => {
-                      if (value) navigate(scopedUrl('/app/calendar/', value));
-                    }}
-                  />
-                </label>
-              </div>
-            )}
             {data?.admin && scope && data.customer && (
               <div className="workspace-context" role="status">
                 <strong>{t('viewingAs', { name: data.customer.name })}</strong>
@@ -402,6 +363,35 @@ export default function SavedWorkspace({
                         {view === 'calendar' &&
                           (range.valid ? (
                             <WorkspaceCalendar
+                              filterZone={
+                                <WorkspaceClock
+                                  zone={zone}
+                                  onChange={(nextZone) =>
+                                    updateQuery({
+                                      zone: nextZone,
+                                      date:
+                                        date === wallDateKey(wallNow(zone))
+                                          ? wallDateKey(wallNow(nextZone))
+                                          : date,
+                                    })
+                                  }
+                                />
+                              }
+                              filterCustomer={
+                                data.admin && !data.customer ? (
+                                  <label>
+                                    {t('customer')}
+                                    <CustomerPicker
+                                      label={t('allCustomers')}
+                                      value=""
+                                      initial={data.customers}
+                                      onChange={(value) => {
+                                        if (value) navigate(scopedUrl('/app/calendar/', value));
+                                      }}
+                                    />
+                                  </label>
+                                ) : undefined
+                              }
                               data={data}
                               scope={scope}
                               range={range}

@@ -158,8 +158,14 @@ export function PetInfo({
     trigger = React.useRef<HTMLButtonElement>(null),
     popup = React.useRef<HTMLDivElement>(null);
   const restoring = React.useRef(false);
+  // Dismissal must survive focus restoration and hover events caused by removing the portal.
+  const dismissed = React.useRef(false);
   const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const close = React.useCallback(() => setOpen(false), [setOpen]);
+  const dismiss = React.useCallback(() => {
+    dismissed.current = true;
+    close();
+  }, [close]);
   const id = React.useId();
   useAnchoredPopover({ open, close, root, anchor: trigger, popup, width: 340, maxHeight: 560 });
   React.useLayoutEffect(() => {
@@ -178,7 +184,7 @@ export function PetInfo({
     const escape = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || event.defaultPrevented) return;
       event.preventDefault();
-      close();
+      dismiss();
       if (
         popup.current?.contains(document.activeElement) ||
         root.current?.contains(document.activeElement)
@@ -187,13 +193,14 @@ export function PetInfo({
     };
     document.addEventListener('keydown', escape);
     return () => document.removeEventListener('keydown', escape);
-  }, [open, close]);
+  }, [open, dismiss]);
   const enter = () => {
-    if (restoring.current) return;
+    if (restoring.current || dismissed.current) return;
     clearTimeout(timer.current);
     setOpen(true);
   };
   const leave = () => {
+    dismissed.current = false;
     clearTimeout(timer.current);
     timer.current = setTimeout(() => {
       if (
@@ -208,13 +215,18 @@ export function PetInfo({
     <span
       ref={root}
       className="workspace-pet-info"
+      onBlur={(event) => {
+        const next = event.relatedTarget as Node | null;
+        if (!root.current?.contains(next) && !popup.current?.contains(next))
+          dismissed.current = false;
+      }}
       onMouseEnter={enter}
       onMouseLeave={leave}
       onKeyDown={(event) => {
         if (event.key === 'Escape' && open) {
           event.preventDefault();
           event.stopPropagation();
-          close();
+          dismiss();
           restoreFocus();
         }
       }}
@@ -228,7 +240,10 @@ export function PetInfo({
         aria-expanded={open}
         aria-controls={open ? id : undefined}
         onFocus={enter}
-        onClick={enter}
+        onClick={() => {
+          dismissed.current = false;
+          enter();
+        }}
       >
         <WorkspaceAvatar row={row} />
       </button>
@@ -250,7 +265,7 @@ export function PetInfo({
               type="button"
               aria-label={t('close')}
               onClick={() => {
-                close();
+                dismiss();
                 restoreFocus();
               }}
             >

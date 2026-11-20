@@ -1319,5 +1319,11 @@
   "ui.metrics.revenue": "暂无营收数据",
   "ui.metrics.revenueHint": "尚未启用收款。寄养天数余额与未计费预约不属于营收。",
   "ui.metrics.updated": "更新时间",
-  "ui.workspace.businessMetrics": "经营概况"
+  "ui.workspace.businessMetrics": "经营概况",
+  "ui.calendarFilters.title": "筛选",
+  "ui.calendarFilters.people": "客户与宠物",
+  "ui.calendarFilters.location": "房屋与时区",
+  "ui.calendarFilters.view": "状态与时区",
+  "ui.calendarFilters.hide": "收起筛选",
+  "ui.calendarFilters.show": "展开筛选"
 }
