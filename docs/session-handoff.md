@@ -1,3 +1,7 @@
+## Persistent customer-view banner — 2026-11-20
+
+Administrators viewing a customer now get a workspace-wide status banner below the app bar. It names the verified customer, explains that the administrator account remains signed in, and provides an icon + Return to admin action to Metrics without customer scope. The banner remains available during loading/error states; customer names are cached only in the mounted, actual-identity-keyed workspace and only for matching canonical IDs. Ordinary customer accounts never gain an administrator banner/action. Existing draft navigation guards still apply. Bilingual phone/desktop journeys exercise named context, failed reads and returning to admin. This is a focused gh stack layer; no authorization or identity impersonation semantics changed.
+
 ## Aligned Customers and Pricing controls — 2026-11-20
 
 Customer search fields and reset/Add customer actions now share a responsive toolbar with aligned input/action baselines. Hovered customer rows have rounded surfaces and divider spacing outside the hover area, without increasing the overall row rhythm. Pricing groups category controls separately from holiday/Add price actions; Add price is the rightmost action. Mobile layouts wrap deliberately. Bilingual desktop/phone checks verify baseline alignment, divider gaps, rightmost pricing action and overflow. This is a focused stack layer; Chrome runs only at batch submission.

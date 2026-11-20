@@ -1,3 +1,13 @@
+## Cleaner controls and customer-view banner — local, 2026-11-20
+
+Add balance, Add/Edit customer and Add price dialogs no longer have an extra border around their contents. Common actions have icons alongside their labels and react to hovering. Language menus match the selected app theme. Customers search and Add customer align together; row hover backgrounds leave space around dividers. Pricing keeps Holidays and Add price together, with Add price at the right.
+
+When viewing a customer as an administrator, the banner above the workspace shows the customer’s name. Choose Return to admin to leave that view and open Metrics. The banner stays available even if a page cannot load; you remain signed into your own administrator account.
+
+新增余额、新增／编辑客户和新增价格的弹窗已去除内容区多余边框。常用操作加入图标，并提供悬停反馈；语言菜单与所选主题一致。客户搜索与“新增客户”对齐，客户行悬停背景与分隔线之间留有间距；价格页面将节假日与新增价格放在一起，“新增价格”位于最右侧。
+
+管理员代客户查看时，页面上方横幅会显示客户姓名。点击“返回管理员视图”即可退出客户视角并打开指标页面；即使页面加载失败，仍可通过横幅返回。实际登录的始终是您自己的管理员账号。
+
 ## Booking date picker — local, 2026-11-20
 
 Choosing a day now closes the calendar and returns focus to the booking field. To change the time afterward, open the field again, edit hour/minute, then Apply. Changing the day keeps the existing time.

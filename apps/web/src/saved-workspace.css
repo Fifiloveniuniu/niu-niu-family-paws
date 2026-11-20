@@ -1250,3 +1250,38 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Customer context belongs to the whole workspace, including loading/error states. */
+.saved-workspace > .workspace-context {
+  position: sticky;
+  top: var(--marketing-header-height, 64px);
+  z-index: 19;
+  margin: 0;
+  padding: 10px clamp(16px, 3vw, 48px);
+  border-radius: 0;
+  border-inline: 0;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.workspace-context-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 220px;
+  overflow-wrap: anywhere;
+}
+.workspace-context-identity > div {
+  display: grid;
+  gap: 3px;
+}
+.workspace-context-identity small {
+  color: inherit;
+  font-size: 12px;
+}
+.saved-workspace > .workspace-context > .language {
+  flex: none;
+  margin-left: auto;
+}
