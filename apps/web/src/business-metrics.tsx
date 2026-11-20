@@ -1,8 +1,9 @@
+import MetricChart from './metric-chart';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { components } from '../../../packages/contracts/generated';
 import { apiJson } from './api-client';
-import { localeFor, uiText } from './i18n';
+import { localeFor, speciesText, uiText } from './i18n';
 import CustomDateInput from './custom-date-input';
 import CustomSelect from './custom-select';
 import Icon from './icons';
@@ -42,7 +43,7 @@ export default function BusinessMetrics({
     const abort = new AbortController();
     setState({ key, data: null, error: false });
     void apiJson<Metrics>(
-      '/business-metrics?' + new URLSearchParams({ from: start, through: end }),
+      '/business-metrics?' + new URLSearchParams({ from: start, through: end, timeZone: zone }),
       { signal: abort.signal },
     )
       .then((data) => {
@@ -74,6 +75,20 @@ export default function BusinessMetrics({
       </dl>
     );
   }
+  const dateFormat = new Intl.DateTimeFormat(localeFor(i18n.language), {
+    month: 'short',
+    day: 'numeric',
+    timeZone: zone,
+  });
+  const trend = (field: 'bookings' | 'newCustomers' | 'balanceChange') =>
+    (data?.series ?? []).map((point) => ({
+      label:
+        dateFormat.format(new Date(point.from)) +
+        ' – ' +
+        dateFormat.format(new Date(Date.parse(point.through) - 1)),
+      shortLabel: dateFormat.format(new Date(point.from)),
+      value: point[field],
+    }));
   return (
     <section className="business-metrics" aria-labelledby="business-metrics-title">
       <div className="business-metrics-heading">
@@ -147,16 +162,57 @@ export default function BusinessMetrics({
           </button>
         </div>
       )}
-      <section aria-labelledby="business-period-title" aria-busy={loading}>
-        <h2 id="business-period-title">{text('periodTitle')}</h2>
-        <p className="business-metrics-note">{text('periodHint')}</p>
-        {cards([
-          { key: 'scheduledArrivals', hint: 'scheduledHint' },
-          { key: 'actualArrivals', hint: 'actualArrivalHint' },
-          { key: 'scheduledPickups', hint: 'scheduledHint' },
-          { key: 'actualPickups', hint: 'actualPickupHint' },
-        ])}
-      </section>
+      {valid && !error && (
+        <section className="metrics-charts" aria-label={text('trends')}>
+          <MetricChart
+            id="revenue-trend"
+            title={text('revenueChart')}
+            hint={text('revenueChartHint')}
+            points={[]}
+            unit="USD"
+            unavailable
+            loading={loading}
+          />
+          <MetricChart
+            id="balance-trend"
+            title={text('balanceChart')}
+            hint={text('balanceChartHint')}
+            points={trend('balanceChange')}
+            unit={text('days')}
+            kind="bar"
+            loading={loading}
+          />
+          <MetricChart
+            id="bookings-trend"
+            title={text('bookingsChart')}
+            hint={text('scheduledHint')}
+            points={trend('bookings')}
+            unit={text('bookingUnit')}
+            loading={loading}
+          />
+          <MetricChart
+            id="customers-trend"
+            title={text('customersChart')}
+            hint={text('customersChartHint')}
+            points={trend('newCustomers')}
+            unit={text('customerUnit')}
+            loading={loading}
+          />
+          <MetricChart
+            id="services-trend"
+            title={text('servicesChart')}
+            hint={text('servicesChartHint')}
+            points={(data?.serviceUsage ?? []).map((item) => ({
+              label: speciesText(item.species),
+              shortLabel: speciesText(item.species),
+              value: item.stays,
+            }))}
+            unit={text('stayUnit')}
+            kind="bar"
+            loading={loading}
+          />
+        </section>
+      )}
       <section aria-labelledby="business-current-title" aria-busy={loading}>
         <div className="business-section-heading">
           <div>
@@ -164,10 +220,12 @@ export default function BusinessMetrics({
             <p className="business-metrics-note">{text('currentHint')}</p>
           </div>
           <a
-            className="language"
+            className="icon-button"
+            title={text('calendar')}
+            aria-label={text('calendar')}
             href={'/app/calendar/?' + new URLSearchParams({ zone, date: today })}
           >
-            {text('calendar')}
+            <Icon name="calendar" />
           </a>
         </div>
         {cards([
@@ -185,8 +243,13 @@ export default function BusinessMetrics({
         <strong data-metric="recordedDays">
           {data ? number.format(data.recordedDays) : '—'} <small>{text('days')}</small>
         </strong>
-        <a className="language" href="/app/balances/">
-          {text('balances')}
+        <a
+          className="icon-button"
+          title={text('balances')}
+          aria-label={text('balances')}
+          href="/app/balances/"
+        >
+          <Icon name="balance" />
         </a>
       </div>
       <div className="business-payment-note">

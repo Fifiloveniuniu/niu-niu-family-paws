@@ -55,7 +55,8 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
     .click();
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await page.getByRole('dialog').getByRole('combobox', { name: 'Customer', exact: true }).click();
-  await expect(page.getByRole('option')).toHaveCount(100);
+  expect(fixture.customerCount).toBeGreaterThanOrEqual(100);
+  await expect(page.getByRole('option')).toHaveCount(fixture.customerCount);
   await page.getByRole('option', { name: '[TEST] Alice', exact: true }).click();
   await page.getByRole('dialog').getByRole('combobox', { name: 'Pet type', exact: true }).click();
   await page.getByRole('option', { name: 'Dog', exact: true }).click();

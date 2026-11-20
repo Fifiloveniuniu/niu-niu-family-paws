@@ -183,3 +183,179 @@
   font-weight: 400;
   line-height: 1.5;
 }
+.metrics-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.metric-chart {
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+  background: var(--md-surface);
+}
+.metric-chart:last-child {
+  grid-column: 1/-1;
+}
+.metric-chart-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.business-metrics .metric-chart-heading h2 {
+  font-size: 16px;
+}
+.metric-chart-heading p {
+  max-width: 60ch;
+  margin: 6px 0 12px;
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+  line-height: 1.5;
+}
+.metric-chart-heading .icon-button {
+  flex: none;
+}
+.metric-chart-plot {
+  position: relative;
+}
+.metric-chart-plot > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.metric-chart-grid line {
+  stroke: var(--md-outline-variant);
+  stroke-dasharray: 3 5;
+}
+.metric-chart-grid text,
+.metric-chart-tick {
+  fill: var(--md-on-surface-variant);
+  font-size: 12px;
+  font-family: inherit;
+}
+.metric-chart-line {
+  fill: none;
+  stroke: var(--md-primary);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.metric-chart-dot {
+  fill: var(--md-surface);
+  stroke: var(--md-primary);
+  stroke-width: 2;
+}
+.metric-chart-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+.metric-chart-point:focus {
+  outline: none;
+}
+.metric-chart-point[aria-pressed='true'] .metric-chart-dot,
+.metric-chart-point:focus .metric-chart-dot {
+  fill: var(--md-primary);
+  stroke-width: 3;
+}
+.metric-chart-bar {
+  fill: var(--md-primary);
+  opacity: 0.8;
+  pointer-events: none;
+}
+.metric-chart-bar[data-negative='true'] {
+  fill: var(--md-on-surface-variant);
+}
+.metric-chart-point[aria-pressed='true'] .metric-chart-bar,
+.metric-chart-point:focus .metric-chart-bar {
+  opacity: 1;
+  stroke: var(--md-on-surface);
+  stroke-width: 2;
+}
+.metric-chart-zero {
+  stroke: var(--md-outline);
+  stroke-width: 1.5;
+}
+.metric-chart-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.metric-chart-selection strong {
+  color: var(--md-on-surface);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.metric-chart-selection small {
+  font-size: 12px;
+  font-weight: 400;
+}
+.metric-chart-placeholder {
+  position: absolute;
+  inset: 20px 10px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  color: var(--md-on-surface-variant);
+  background: var(--md-surface);
+}
+.metric-chart-placeholder strong {
+  font-size: 15px;
+  color: var(--md-on-surface);
+}
+.metric-chart-placeholder span {
+  font-size: 12px;
+  max-width: 40ch;
+  line-height: 1.5;
+}
+.metric-chart-empty {
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  margin-bottom: 0;
+}
+.metric-chart-data {
+  max-height: 240px;
+  overflow: auto;
+  margin-top: 16px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+.metric-chart-data table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.metric-chart-data :is(th, td) {
+  padding: 8px;
+  text-align: start;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+@media (max-width: 800px) {
+  .metrics-charts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .metric-chart {
+    padding: 16px;
+  }
+}
+
+.metric-chart-placeholder > svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  pointer-events: none;
+}
+.metric-chart-plot {
+  max-width: 650px;
+  margin-inline: auto;
+}

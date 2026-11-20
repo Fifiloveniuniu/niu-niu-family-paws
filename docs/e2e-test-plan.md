@@ -519,3 +519,16 @@ The four Material UI walkthroughs now check that both enabled and disabled prima
 ## Warm palette and location hierarchy — 2026-11-18
 
 The shared Material roles now use terracotta/peach/cream and warm neutrals, with independent green availability/completion. The existing color-pair and contrast assertions cover enabled/disabled actions and green availability versus requested-stay selection. House/room layout tests additionally assert localized kind captions, stronger/larger house titles, different house/room fills and room indentation in all four main-calendar views. Long-name and narrow-screen coverage still checks containment, no lane overlap and sticky-column hit testing after panning. Directory refresh now checks the intentional House prefix. All 31 backend journeys and 17 selected control/profile/routing journeys pass (48 distinct cases), along with production build, formatting and whitespace checks. Actual Chinese-phone/English-desktop screenshots were inspected. No owner browser, commits, PRs or deployment.
+
+
+## Local workspace polish validation — 2026-11-19
+
+79 units, 17 named Auth/Firestore integrations, API type check, build and formatting pass. New chart journeys seed explicitly labelled isolated customer/pet/credit/stay records, exercise nonzero aggregate graphs, keyboard/data-table access, exact Pricing tab-style reuse, icon names and grouped/collapsible filters in English desktop and Chinese phone. Shared fixture customer count is dynamic so complete-picker assertions remain exact after test-created customers. Theme icon checks locate Add booking semantically after its calendar-toolbar move.
+
+The 64-journey broad Chrome run passed 54, with six interrupted/time-sensitive journeys and four obsolete toolbar selectors failing. All 10 pass on focused recheck after the selector correction. This covers every current backend journey across the combined runs, rather than claiming one uninterrupted green run. Actual read-only localhost:4180 Chrome walkthroughs cover Metrics/Activity/Calendar/Customers in both languages/sizes; screenshots are in docs/review/workspace-polish-2026-11-19. No owner records were changed. No commits, pushes, PRs or deployment. Automatic booking charges/refunds remain unimplemented and are not claimed by the existing unbilled-plan cancellation tests.
+
+
+Calendar delivery follow-up: first CI passed 61/62 journeys but exposed a pet hover card reopening after Escape. Explicit dismissal now persists until a fresh interaction. Two bilingual regression journeys pass five repeated runs each; real populated localhost checks and both complete saved-workspace journeys pass. PR #166's revised CI passes all 64 journeys. With the two new Metrics chart journeys, the combined suite contains 66; consult the Metrics PR's final CI for its full-run result.
+
+
+Final integrated local validation passes **all 66 backend Chrome journeys in one uninterrupted 3.8-minute run** after the hover dismissal fix and Metrics chart integration. This supersedes the earlier interrupted-run coverage notes for the current source. The final Metrics PR's full CI remains required before merge.

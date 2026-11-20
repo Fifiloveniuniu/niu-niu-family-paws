@@ -153,7 +153,18 @@ export function buildApp(deps: {
             {
               schema: {
                 querystring: spec.components.schemas.BusinessMetricsQuery,
-                response: { 200: spec.components.schemas.BusinessMetrics },
+                response: {
+                  200: {
+                    ...spec.components.schemas.BusinessMetrics,
+                    properties: {
+                      ...spec.components.schemas.BusinessMetrics.properties,
+                      series: {
+                        ...spec.components.schemas.BusinessMetrics.properties.series,
+                        items: spec.components.schemas.MetricsPoint,
+                      },
+                    },
+                  },
+                },
               },
             },
             async (request) => deps.businessMetrics!.read(metricsRange(request.query)),

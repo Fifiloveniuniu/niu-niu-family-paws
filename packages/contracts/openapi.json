@@ -27,6 +27,11 @@
           "through": {
             "type": "string",
             "format": "date-time"
+          },
+          "timeZone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
           }
         }
       },
@@ -45,7 +50,10 @@
           "recordedDays",
           "from",
           "through",
-          "generatedAt"
+          "generatedAt",
+          "series",
+          "serviceUsage",
+          "revenueAvailable"
         ],
         "properties": {
           "customers": {
@@ -95,6 +103,85 @@
           "generatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "series": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "$ref": "#/components/schemas/MetricsPoint"
+            }
+          },
+          "serviceUsage": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "species",
+                "stays"
+              ],
+              "properties": {
+                "species": {
+                  "type": "string",
+                  "enum": [
+                    "dog",
+                    "cat",
+                    "rabbit"
+                  ]
+                },
+                "stays": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "revenueAvailable": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          }
+        }
+      },
+      "MetricsPoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "from",
+          "through",
+          "bookings",
+          "newCustomers",
+          "balanceChange",
+          "revenueCents"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "through": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookings": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "newCustomers": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "balanceChange": {
+            "type": "number"
+          },
+          "revenueCents": {
+            "type": "integer",
+            "nullable": true,
+            "enum": [
+              null
+            ]
           }
         }
       },
@@ -858,6 +945,16 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "timeZone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
             }
           }
         ],

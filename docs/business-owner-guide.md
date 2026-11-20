@@ -1,3 +1,17 @@
+## Metrics, Activity and calendar filters — local preview, 2026-11-19
+
+Open http://localhost:4180/app/metrics/ for the local preview. **Metrics** is the first administrator tab. Choose dates and timezone to view bookings, new customers, boarding-day changes and recorded boarding usage. Tap a graph point or use arrow keys; the table icon shows exact values. Revenue will appear only after payments are recorded. Day balances are not dollar revenue.
+
+**Balances** and **Activity** use the same tab style as Pricing. Activity shows each pet’s before/after day balance and the recorded reason. Icon buttons have labels on hover and work with screen readers. Calendar has separate **Customer & pet** and **Location & timezone** filters; collapse Filters to give the calendar more room on your phone.
+
+Booking/cancellation balance automation still needs the remaining financial rules. Staff plans currently remain unbilled. Source changes are being grouped into reviewed PRs; the hosted app is not updated yet.
+
+本地预览：http://localhost:4180/app/metrics/。“经营指标”现为管理员的第一个标签。选择日期及时区，可查看预约、新增客户、寄养天数变动及已记录的寄养使用情况。点击图表数据点或使用方向键，表格图标可查看准确数值。尚无已记录收款时，收入会明确显示不可用；寄养天数不是美元收入。
+
+“当前余额”和“变动记录”采用与价格管理一致的标签样式。变动记录显示宠物变动前后的天数及已记录原因。图标按钮带有提示及无障碍名称。日历筛选分为“客户与宠物”和“位置与时区”；手机可收起筛选，为日历留出空间。
+
+预约扣除天数及取消后恢复余额仍需确认剩余财务规则。当前员工计划仍明确不扣费。代码更新正在分组提交审核；线上应用尚未更新。
+
 ## Reviewing the refreshed workspace
 
 In Calendar, click **+** beside a house to add a room directly. Click the house name to see its saved address. A house needs its address completed before rooms can be added.

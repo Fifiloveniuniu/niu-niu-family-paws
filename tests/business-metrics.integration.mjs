@@ -18,7 +18,10 @@ test('aggregate metrics include every record and respect event dates, cancellati
   });
   const batch = db.batch();
   for (let i = 0; i < 110; i++) {
-    batch.set(db.doc('customers/c' + i), { name: '[TEST] Customer' });
+    batch.set(db.doc('customers/c' + i), {
+      name: '[TEST] Customer',
+      createdAt: '2030-11-01T00:00:00.000Z',
+    });
     batch.set(db.doc('customers/c' + i + '/pets/p'), { name: '[TEST] Pet' });
   }
   for (const [i, service, days] of [
@@ -43,15 +46,60 @@ test('aggregate metrics include every record and respect event dates, cancellati
   rows.forEach(([status, arrival, pickup, actualArrival, actualPickup], i) =>
     batch.set(db.doc('bookings/b' + i), {
       status,
+      species: ['dog', 'cat', 'rabbit'][i % 3],
       arrival: at(arrival),
       pickup: at(pickup),
       actualArrival: actualArrival && at(actualArrival),
       actualPickup: actualPickup && at(actualPickup),
     }),
   );
+  batch.set(db.doc('balanceOperations/initial'), {
+    at: at('2030-11-02'),
+    before: null,
+    after: { days: 5 },
+  });
+  batch.set(db.doc('balanceOperations/correction'), {
+    at: at('2030-11-08'),
+    before: { days: 5 },
+    after: { days: 2 },
+  });
+  batch.set(db.doc('balanceOperations/terms'), {
+    at: at('2030-11-09'),
+    before: { days: 2 },
+    after: { days: 2 },
+  });
+  batch.set(db.doc('balanceOperations/outside'), {
+    at: at('2030-12-01'),
+    before: { days: 2 },
+    after: { days: 100 },
+  });
   await batch.commit();
   const store = businessMetricsStore(db, () => Date.parse(at('2030-11-15')));
-  assert.deepEqual(await store.read({ from: at('2030-11-01'), through: at('2030-12-01') }), {
+  const { series, serviceUsage, revenueAvailable, ...summary } = await store.read({
+    from: at('2030-11-01'),
+    through: at('2030-12-01'),
+  });
+  assert.equal(revenueAvailable, false);
+  assert(series.length <= 12);
+  assert.equal(
+    series.reduce((n, p) => n + p.bookings, 0),
+    3,
+  );
+  assert.equal(
+    series.reduce((n, p) => n + p.newCustomers, 0),
+    110,
+  );
+  assert.equal(
+    series.reduce((n, p) => n + p.balanceChange, 0),
+    2,
+  );
+  assert(series.every((p) => p.revenueCents === null));
+  assert.deepEqual(serviceUsage, [
+    { species: 'dog', stays: 0 },
+    { species: 'cat', stays: 1 },
+    { species: 'rabbit', stays: 2 },
+  ]);
+  assert.deepEqual(summary, {
     from: at('2030-11-01'),
     through: at('2030-12-01'),
     generatedAt: at('2030-11-15'),
