@@ -1,3 +1,6 @@
+import Button from './button';
+import SearchInput from './search-input';
+import IconButton from './icon-button';
 import { Pagination } from './pagination';
 import { englishCatalog, uiText, uiValue, speciesText, localeFor } from './i18n.ts';
 import { ApiError, apiJson, apiBlob } from './api-client';
@@ -58,9 +61,9 @@ function PetPhoto({ pet }: { pet: Pet }) {
       ) : failed ? (
         <div>
           <p>{labels.photoError}</p>
-          <button className="language" onClick={() => setRetry((value) => value + 1)}>
+          <Button variant="secondary" onClick={() => setRetry((value) => value + 1)}>
             {labels.photoRetry}
-          </button>
+          </Button>
         </div>
       ) : (
         <span>{labels.loading}</span>
@@ -224,9 +227,9 @@ export default function Pets({
     <section className="pets-section" aria-labelledby={headingId}>
       <div className="customer-heading">
         <h3 id={headingId}>{title ?? labels.own}</h3>
-        <button className="button" disabled={blocked || loading} onClick={() => open()}>
+        <Button variant="primary" disabled={blocked || loading} onClick={() => open()}>
           {labels.add}
-        </button>
+        </Button>
       </div>
       <p className="customer-intro">{labels.intro}</p>
       {error && <p role="alert">{labels[error]}</p>}
@@ -323,8 +326,8 @@ export default function Pets({
               </>
             )}
             <div className="portal-actions">
-              <button
-                className="button"
+              <Button
+                variant="primary"
                 type="submit"
                 disabled={
                   saving ||
@@ -336,9 +339,9 @@ export default function Pets({
                 }
               >
                 {saving ? labels.saving : uncertain ? labels.retry : labels.save}
-              </button>
-              <button
-                className="language"
+              </Button>
+              <Button
+                variant="secondary"
                 type="button"
                 disabled={blocked}
                 onClick={() => {
@@ -349,7 +352,7 @@ export default function Pets({
                 }}
               >
                 {labels.cancel}
-              </button>
+              </Button>
             </div>
           </form>
         </Modal>
@@ -392,15 +395,14 @@ export default function Pets({
                 </p>
               )}
               <DemoBalanceLink customerId={pet.customerId} petId={pet.id} />
-              <button
-                className="icon-button"
+              <IconButton
                 title={labels.edit}
                 aria-label={`${labels.edit}: ${pet.name}`}
                 disabled={blocked}
                 onClick={() => open(pet)}
               >
                 <Icon name="edit" />
-              </button>
+              </IconButton>
             </div>
           </article>
         ))}
@@ -420,9 +422,9 @@ export default function Pets({
       {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && (
         <div className="portal-actions">
           {(error === 'error' || error === 'conflict') && !uncertain && (
-            <button className="language" disabled={blocked || loading} onClick={() => void load()}>
+            <Button variant="secondary" disabled={blocked || loading} onClick={() => void load()}>
               {labels.reload}
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -520,17 +522,16 @@ export function PetSearch({
       >
         <label>
           {labels.searchHint}
-          <input
-            type="search"
+          <SearchInput
             required
             maxLength={120}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
         </label>
-        <button className="language" disabled={loading || !search.trim()}>
+        <Button variant="secondary" disabled={loading || !search.trim()}>
           {labels.search}
-        </button>
+        </Button>
       </form>
       {error && <p role="alert">{labels.error}</p>}
       {loading && <p role="status">{labels.loading}</p>}
@@ -551,20 +552,20 @@ export function PetSearch({
               </p>
               {customer.loginEmail && <p>{customer.loginEmail}</p>}
             </div>
-            <button className="language" onClick={() => onChoose(customer)}>
+            <Button variant="secondary" onClick={() => onChoose(customer)}>
               {labels.manage}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
       {page?.nextCursor && (
-        <button
-          className="language"
+        <Button
+          variant="secondary"
           disabled={loading}
           onClick={() => void load(active, page.nextCursor!)}
         >
           {labels.more}
-        </button>
+        </Button>
       )}
     </div>
   );

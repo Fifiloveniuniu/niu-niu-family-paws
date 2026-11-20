@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
@@ -107,9 +108,9 @@ export default function EmployeeAssignments({ onClose }: { onClose: () => void }
             onChange={(event) => setEmail(event.target.value)}
           />
         </label>
-        <button className="language" disabled={blocked}>
+        <Button variant="secondary" disabled={blocked}>
           {t(loading ? 'loading' : 'find')}
-        </button>
+        </Button>
       </form>
       {employee && (
         <form ref={form} className="customer-form" onSubmit={(event) => void save(event)}>
@@ -161,8 +162,8 @@ export default function EmployeeAssignments({ onClose }: { onClose: () => void }
             {!houses.length && <p>{t('empty')}</p>}
           </fieldset>
           <p>{t('scope')}</p>
-          <button
-            className="button"
+          <Button
+            variant="primary"
             disabled={
               saving ||
               houseIds.length > 30 ||
@@ -171,7 +172,7 @@ export default function EmployeeAssignments({ onClose }: { onClose: () => void }
             }
           >
             {uiText('ui.workspace.' + (saving ? 'saving' : uncertain ? 'retry' : 'save'))}
-          </button>
+          </Button>
         </form>
       )}
     </Modal>

@@ -1,6 +1,7 @@
 import { localeFor, localizedText, publicText, uiText } from './i18n.ts';
 import { marketingPreview } from './marketing-preview';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
+import Modal from './modal';
 import { useTranslation } from 'react-i18next';
 import {
   usePublicMarketingContent,
@@ -30,16 +31,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
       ? actual.map((photo) => ({ ...photo, sample: false }))
       : suppliedPhotos.map((photo) => ({ ...photo, sample: false }));
   const [selected, setSelected] = useState<number | null>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const opener = useRef<HTMLElement | null>(null);
   const title = useId();
-  useEffect(() => {
-    if (selected !== null) dialog.current?.showModal();
-    else {
-      dialog.current?.close();
-      opener.current?.focus({ preventScroll: true });
-    }
-  }, [selected]);
   const close = () => {
     setSelected(null);
   };
@@ -66,10 +58,7 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
               aria-label={
                 uiText('ui.marketingGalleries.enlargePhoto') + publicText(photo.caption, lang)
               }
-              onClick={(event) => {
-                opener.current = event.currentTarget;
-                setSelected(index);
-              }}
+              onClick={() => setSelected(index)}
             >
               <img
                 src={photo.src}
@@ -94,32 +83,22 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
           </figure>
         ))}
       </div>
-      <dialog
-        ref={dialog}
-        className="photo-dialog"
-        aria-label={uiText('ui.marketingGalleries.photoViewer')}
-        onCancel={(event) => {
-          event.preventDefault();
-          close();
-        }}
-        onClose={close}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) close();
-        }}
-      >
-        {selected !== null && entries[selected] && (
+      {selected !== null && entries[selected] && (
+        <Modal
+          title={uiText('ui.marketingGalleries.photoViewer')}
+          className="photo-dialog"
+          onClose={close}
+          dismissOnBackdrop
+        >
           <div>
-            <button className="photo-close" onClick={close}>
-              {uiText('ui.marketingGalleries.close')} ×
-            </button>
             <img src={entries[selected].src} alt={publicText(entries[selected].alt, lang)} />
             <p>
               {publicText(entries[selected].caption, lang)}
               {entries[selected].sample ? uiText('ui.marketingGalleries.stockPhoto') : ''}
             </p>
           </div>
-        )}
-      </dialog>
+        </Modal>
+      )}
     </section>
   );
 }

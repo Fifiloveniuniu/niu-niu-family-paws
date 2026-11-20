@@ -9,6 +9,12 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 - Preserve working features, English/Simplified Chinese support, and mobile/desktop usability in every release.
 - Do not invent business contact details, pricing, photos, testimonials, or unresolved service rules.
 
+# Current validation and stacked delivery — 2026-11-20
+
+- Run Playwright only in headless Chrome. Reserve Chrome regression runs for opening/submitting PRs, not after every intermediate edit.
+- Batch multiple work items with the `gh stack` CLI; keep each PR focused and enable automatic merging while respecting branch protections and verified signatures. This supersedes the earlier one-PR-at-a-time delivery instructions below. The stack ultimately targets `main`; use stack dependencies as needed.
+- Use local build/unit/API/format checks during development. Run the Chrome regression at the PR submission boundary.
+
 # Pull requests
 
 - Owner instruction (2026-11-17): do not push commits or open pull requests between 9:00 AM and 5:00 PM PST (UTC-08:00). Continue local development and validation during this window; defer pushes and PR creation until outside it.

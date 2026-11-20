@@ -1,3 +1,4 @@
+import IconButton from './icon-button';
 import React from 'react';
 import Icon from './icons';
 import { localeFor, uiText } from './i18n';
@@ -92,9 +93,9 @@ export default function MetricChart({
           <p>{hint}</p>
           {sample && <span className="metric-sample-label">{text('sampleData')}</span>}
         </div>
-        <button
+        <IconButton
           type="button"
-          className="icon-button"
+
           aria-label={text('viewData') + ': ' + title}
           title={text('viewData')}
           aria-expanded={table}
@@ -103,7 +104,7 @@ export default function MetricChart({
           onClick={() => setTable((v) => !v)}
         >
           <Icon name="menu" />
-        </button>
+        </IconButton>
       </div>
       <div className="metric-chart-total">
         <strong>{unavailable || loading ? '—' : headline(aggregate)}</strong>

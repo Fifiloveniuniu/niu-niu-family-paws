@@ -1,3 +1,5 @@
+import Button from './button';
+import IconButton from './icon-button';
 import EmployeeOperations from './employee-operations';
 import { englishCatalog, localeFor, type Language, uiText, uiValue } from './i18n.ts';
 import { useDropdownState } from './dropdown-state';
@@ -296,9 +298,9 @@ export default function Portal({
           ) : access === 'signed-out' ? (
             <>
               <p>{labels.intro}</p>
-              <button className="button" disabled={busy} onClick={() => void run(login)}>
+              <Button variant="primary" disabled={busy} onClick={() => void run(login)}>
                 {busy ? labels.busy : labels.login}
-              </button>
+              </Button>
             </>
           ) : (
             <>
@@ -334,16 +336,15 @@ export default function Portal({
                   </a>
                 )}
                 {access === 'denied' && (
-                  <button
-                    className="language"
+                  <Button
+                    variant="secondary"
                     disabled={busy}
                     onClick={() => void run(() => verify(auth.currentUser, true))}
                   >
                     {labels.refresh}
-                  </button>
+                  </Button>
                 )}
-                <button
-                  className="icon-button"
+                <IconButton
                   aria-label={labels.logout}
                   title={labels.logout}
                   disabled={busy}
@@ -352,7 +353,7 @@ export default function Portal({
                   }}
                 >
                   <Icon name="logout" />
-                </button>
+                </IconButton>
               </div>
             </>
           )}

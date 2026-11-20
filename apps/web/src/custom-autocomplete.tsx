@@ -1,3 +1,4 @@
+import Button from './button';
 import Icon from './icons';
 import React from 'react';
 import { createPortal } from 'react-dom';
@@ -216,15 +217,15 @@ export default function CustomAutocomplete({
               )}
             </div>
             {onMore && (
-              <button
+              <Button
                 type="button"
-                className="language"
+                variant="secondary"
                 disabled={moreLoading}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => onMore()}
               >
                 {uiText(moreLoading ? 'ui.workspace.loading' : 'ui.pagination.moreChoices')}
-              </button>
+              </Button>
             )}
           </div>,
           portal,

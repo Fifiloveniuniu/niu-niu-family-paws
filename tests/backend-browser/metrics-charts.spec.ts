@@ -153,7 +153,7 @@ for (const [width, lang] of [
     await page.screenshot({ path: testInfo.outputPath('metrics.png'), fullPage: true });
     if (width > 800)
       await expect(page.locator('.app-header-nav a').first()).toHaveText(
-        lang === 'en' ? 'Metrics' : '经营指标',
+        lang === 'en' ? 'Metrics' : '指标',
       );
     await page.goto(`/app/balances/?lang=${lang}`);
     await expect(page.locator('#balances-panel tbody tr').first()).toBeVisible();
@@ -181,12 +181,28 @@ for (const [width, lang] of [
     await page.goto(`/app/calendar/?lang=${lang}`);
     await expect(page.locator('.saved-calendar-grid')).toBeVisible();
     await expect(page.locator('.calendar-filter-panel fieldset')).toHaveCount(2);
+    await expect(page.locator('.calendar-filter-panel .workspace-clock')).toHaveCount(0);
+    await expect(page.locator('.calendar-results .workspace-clock')).toBeVisible();
+    if (width >= 1200) {
+      const centers = await page.locator('.calendar-results .hc-toolbar').evaluate((toolbar) => {
+        const controls = toolbar.querySelectorAll(
+          '.hc-range, .workspace-clock, .calendar-toolbar-actions > button, .calendar-toolbar-actions > a, .workspace-range-controls > .custom-date-input, .workspace-range-controls > .shared-tabs',
+        );
+        return [...controls].map((node) => {
+          const rect = node.getBoundingClientRect();
+          return rect.top + rect.height / 2;
+        });
+      });
+      expect(Math.max(...centers) - Math.min(...centers)).toBeLessThan(2);
+    }
+
     await expect(page.locator('.calendar-results .saved-calendar-grid')).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('calendar-filters.png'), fullPage: true });
     await page
       .getByRole('button', { name: lang === 'en' ? 'Hide filters' : '收起筛选', exact: true })
       .click();
     await expect(page.locator('#calendar-filter-fields')).toBeHidden();
+    await expect(page.locator('.calendar-results .workspace-clock')).toBeVisible();
     await expect(page.locator('.calendar-results')).toBeVisible();
     await page
       .getByRole('button', { name: lang === 'en' ? 'Show filters' : '展开筛选', exact: true })

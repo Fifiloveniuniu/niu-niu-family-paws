@@ -55,11 +55,12 @@ for (const theme of themes) {
         .evaluate((node) => getComputedStyle(node).getPropertyValue('--ui-option-radius').trim()),
     );
     await page.keyboard.press('Escape');
-    const date = page.locator('.workspace-range-controls .custom-date-toggle').first();
+    await page.goto('/app/metrics/?lang=en');
+    const date = page.locator('.business-period-fields .custom-date-toggle').first();
     await date.click();
     await assertSurface('.custom-date-options:visible');
     await page.keyboard.press('Escape');
-    const period = page.locator('.workspace-range-controls .custom-date-field > input').first();
+    const period = page.locator('.business-period-fields .custom-date-field > input').first();
     const currentPeriod = await period.getAttribute('data-value');
     await period.fill('2026-02-29');
     await expect(period).toHaveAttribute('aria-invalid', 'true');
@@ -68,6 +69,7 @@ for (const theme of themes) {
     await expect(period).not.toHaveAttribute('aria-invalid', 'true');
     await expectReadableText(page);
     await expectReadableText(page, '.marketing-header');
+    await page.goto('/app/calendar/?lang=en');
     const family = theme.id === 'google' ? 'google' : theme.id === 'apple' ? 'apple' : 'microsoft';
     await expect(
       page.getByRole('button', { name: 'Add booking', exact: true }).locator(`.icon-${family}`),

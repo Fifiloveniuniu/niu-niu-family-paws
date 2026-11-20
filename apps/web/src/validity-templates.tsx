@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { uiText } from './i18n.ts';
@@ -73,9 +74,9 @@ export function TemplatePicker({
       {error && (
         <p role="alert">
           {t('loadError')}{' '}
-          <button type="button" className="language" onClick={reload}>
+          <Button type="button" variant="secondary" onClick={reload}>
             {t('retry')}
-          </button>
+          </Button>
         </p>
       )}
     </div>
@@ -188,8 +189,8 @@ function TemplateEditor({
           <p className="workspace-field-note">{t('copyHint')}</p>
         </fieldset>
         <div className="portal-actions">
-          <button
-            className="button"
+          <Button
+            variant="primary"
             disabled={saving || !valid || error === 'conflict' || error === 'denied'}
           >
             {uiText(
@@ -199,10 +200,10 @@ function TemplateEditor({
                   ? 'ui.workspace.retry'
                   : 'ui.workspace.save',
             )}
-          </button>
-          <button type="button" className="language" disabled={blocked} onClick={close}>
+          </Button>
+          <Button type="button" variant="secondary" disabled={blocked} onClick={close}>
             {uiText('ui.workspace.cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>
@@ -226,16 +227,16 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
   return (
     <Modal title={t('title')} onClose={onClose}>
       <p>{t('intro')}</p>
-      <button className="button" onClick={() => setEditing(undefined)}>
+      <Button variant="primary" onClick={() => setEditing(undefined)}>
         {t('add')}
-      </button>
+      </Button>
       {loading && <p role="status">{uiText('ui.workspace.loading')}</p>}
       {error && (
         <p role="alert">
           {t('loadError')}{' '}
-          <button className="language" onClick={reload}>
+          <Button variant="secondary" onClick={reload}>
             {t('retry')}
-          </button>
+          </Button>
         </p>
       )}
       <div className="workspace-table-scroll">
@@ -257,13 +258,13 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
                 <td>{item.validThrough}</td>
                 <td>{t(item.active ? 'active' : 'archived')}</td>
                 <td>
-                  <button
-                    className="language"
+                  <Button
+                    variant="secondary"
                     aria-label={t('edit') + ': ' + item.name}
                     onClick={() => setEditing(item)}
                   >
                     {t('edit')}
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}

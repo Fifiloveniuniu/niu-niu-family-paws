@@ -1,3 +1,4 @@
+import IconButton from './icon-button';
 import { uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +10,7 @@ function NativeModal({
   disabled = false,
   className = '',
   header,
+  dismissOnBackdrop = false,
 }: {
   title: string;
   children: React.ReactNode;
@@ -16,6 +18,7 @@ function NativeModal({
   disabled?: boolean;
   className?: string;
   header?: React.ReactNode;
+  dismissOnBackdrop?: boolean;
 }) {
   const ref = React.useRef<HTMLDialogElement>(null);
   const id = React.useId();
@@ -39,8 +42,7 @@ function NativeModal({
   const heading = (
     <div className="dialog-heading">
       <h2 id={id}>{title}</h2>
-      <button
-        className="icon-button"
+      <IconButton
         type="button"
         aria-label={uiText('ui.modal.close', {}, i18n.language)}
         title={uiText('ui.modal.close', {}, i18n.language)}
@@ -48,7 +50,7 @@ function NativeModal({
         onClick={onClose}
       >
         <Icon name="close" />
-      </button>
+      </IconButton>
     </div>
   );
   return (
@@ -56,6 +58,9 @@ function NativeModal({
       ref={ref}
       className={'app-dialog ' + className}
       aria-labelledby={id}
+      onClick={(event) => {
+        if (dismissOnBackdrop && !disabled && event.target === event.currentTarget) onClose();
+      }}
       onKeyDown={(event) => {
         if (event.key !== 'Tab') return;
         const nodes = [

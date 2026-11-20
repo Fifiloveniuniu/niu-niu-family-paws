@@ -1,3 +1,4 @@
+import Button from './button';
 import './house-calendar.css';
 import './workspace.css';
 import './saved-workspace.css';
@@ -205,15 +206,15 @@ function ActionEditor({
           <p>{t('auditHint')}</p>
         </fieldset>
         <div className="portal-actions">
-          <button
-            className="button"
+          <Button
+            variant="primary"
             disabled={!valid || saving || error === 'conflict' || error === 'denied'}
           >
             {uiText('ui.workspace.' + (saving ? 'saving' : uncertain ? 'retry' : 'save'))}
-          </button>
-          <button className="language" type="button" disabled={blocked} onClick={close}>
+          </Button>
+          <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
             {uiText('ui.workspace.cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>
@@ -331,9 +332,9 @@ export default function EmployeeOperations({
             {error && (
               <p role="alert">
                 {t('error')}{' '}
-                <button className="language" onClick={reload}>
+                <Button variant="secondary" onClick={reload}>
                   {uiText('ui.workspace.retry')}
-                </button>
+                </Button>
               </p>
             )}
             {!loading && !error && !houses.length && <p>{t('noAssignments')}</p>}
@@ -361,9 +362,9 @@ export default function EmployeeOperations({
                       onChange={(value) => updateQuery({ date: value })}
                     />
                   </label>
-                  <button className="language" onClick={reload}>
+                  <Button variant="secondary" onClick={reload}>
                     {uiText('ui.operations.refresh')}
-                  </button>
+                  </Button>
                 </div>
                 {house && (
                   <p>
@@ -402,36 +403,36 @@ export default function EmployeeOperations({
                       </dl>
                       <div className="portal-actions">
                         {row.booking.status === 'planned' && (
-                          <button
-                            className="button"
+                          <Button
+                            variant="primary"
                             onClick={() => setEditor({ row, mode: 'check_in' })}
                           >
                             {t('check_in')}
-                          </button>
+                          </Button>
                         )}
                         {row.booking.status === 'in_care' && (
                           <>
-                            <button
-                              className="button"
+                            <Button
+                              variant="primary"
                               onClick={() => setEditor({ row, mode: 'check_out' })}
                             >
                               {t('check_out')}
-                            </button>
-                            <button
-                              className="language"
+                            </Button>
+                            <Button
+                              variant="secondary"
                               onClick={() => setEditor({ row, mode: 'verify' })}
                             >
                               {t('verify')}
-                            </button>
+                            </Button>
                           </>
                         )}
                         {row.booking.actualArrival && (
-                          <button
-                            className="language"
+                          <Button
+                            variant="secondary"
                             onClick={() => setEditor({ row, mode: 'correct' })}
                           >
                             {t('correct')}
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </article>

@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import CustomAutocomplete from './custom-autocomplete';
 import { apiJson } from './api-client';
@@ -103,9 +104,9 @@ export function CustomerPicker({
         moreLoading={choices.loading}
       />
       {choices.error && (
-        <button type="button" className="language" onClick={choices.retry}>
+        <Button type="button" variant="secondary" onClick={choices.retry}>
           {uiText('ui.workspace.retry')}
-        </button>
+        </Button>
       )}
     </>
   );
@@ -161,9 +162,9 @@ export function PetPicker({
         moreLoading={choices.loading}
       />
       {choices.error && (
-        <button type="button" className="language" onClick={choices.retry}>
+        <Button type="button" variant="secondary" onClick={choices.retry}>
           {uiText('ui.workspace.retry')}
-        </button>
+        </Button>
       )}
     </>
   );

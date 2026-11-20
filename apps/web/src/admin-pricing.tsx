@@ -1,3 +1,6 @@
+import Button from './button';
+import IconButton from './icon-button';
+import SegmentedTabs from './segmented-tabs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiJson, ApiError } from './api-client';
@@ -164,9 +167,9 @@ function Editor({
                   {t('date')}
                   <CustomDateInput value={date} onChange={setDate} />
                 </label>
-                <button
+                <Button
                   type="button"
-                  className="language"
+                  variant="secondary"
                   disabled={!date || dates.includes(date)}
                   onClick={() => {
                     setDates([...dates, date].sort());
@@ -174,21 +177,21 @@ function Editor({
                   }}
                 >
                   {t('addDate')}
-                </button>
+                </Button>
               </div>
               <ul>
                 {dates.map((day) => (
                   <li key={day}>
                     {day}{' '}
-                    <button
+                    <IconButton
                       type="button"
-                      className="icon-button"
+
                       aria-label={t('removeDate') + ': ' + day}
                       title={t('removeDate')}
                       onClick={() => setDates(dates.filter((value) => value !== day))}
                     >
                       <Icon name="close" />
-                    </button>
+                    </IconButton>
                   </li>
                 ))}
               </ul>
@@ -359,15 +362,15 @@ function Editor({
         </fieldset>
         <p>{t('historyHint')}</p>
         <div className="portal-actions">
-          <button
-            className="button"
+          <Button
+            variant="primary"
             disabled={saving || !valid || error === 'conflict' || error === 'denied'}
           >
             {uiText('ui.workspace.' + (saving ? 'saving' : uncertain ? 'retry' : 'save'))}
-          </button>
-          <button type="button" className="language" disabled={blocked} onClick={close}>
+          </Button>
+          <Button type="button" variant="secondary" disabled={blocked} onClick={close}>
             {uiText('ui.workspace.cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>
@@ -415,33 +418,30 @@ export default function AdminPricing() {
         <p role="alert">
           {t(error)}{' '}
           {error !== 'denied' && (
-            <button className="language" onClick={reload}>
+            <Button variant="secondary" onClick={reload}>
               {uiText('ui.workspace.retry')}
-            </button>
+            </Button>
           )}
         </p>
       )}
       {config && (
         <>
           <div className="workspace-section-actions">
-            <div className="hc-scales" role="tablist" aria-label={t('categories')}>
-              {(['boarding', 'package', 'service', 'addon'] as const).map((value) => (
-                <button
-                  role="tab"
-                  aria-selected={kind === value}
-                  key={value}
-                  onClick={() => setKind(value)}
-                >
-                  {t(value)}
-                </button>
-              ))}
-            </div>
-            <button className="button" onClick={() => setEditor({})}>
+            <SegmentedTabs
+              label={t('categories')}
+              value={kind}
+              onChange={setKind}
+              items={(['boarding', 'package', 'service', 'addon'] as const).map((value) => ({
+                value,
+                label: t(value),
+              }))}
+            />
+            <Button variant="primary" onClick={() => setEditor({})}>
               {t('add')}
-            </button>
-            <button className="language" onClick={() => setEditor({ holidays: true })}>
+            </Button>
+            <Button variant="secondary" onClick={() => setEditor({ holidays: true })}>
               {t('holidays')}
-            </button>
+            </Button>
           </div>
           <p>
             {t('holidaySummary')}: {config.holidays.length} · {config.holidayPercent}%
@@ -486,8 +486,7 @@ export default function AdminPricing() {
                         )}
                         <td>{t(rate.active ? 'active' : 'archived')}</td>
                         <td>
-                          <button
-                            className="icon-button"
+                          <IconButton
                             title={t('edit')}
                             aria-label={
                               t('edit') + ': ' + (i18n.language === 'zh' ? rate.nameZh : rate.name)
@@ -495,7 +494,7 @@ export default function AdminPricing() {
                             onClick={() => setEditor({ existing: rate })}
                           >
                             <Icon name="edit" />
-                          </button>
+                          </IconButton>
                         </td>
                       </tr>
                     );

@@ -1,3 +1,5 @@
+import Button from './button';
+import IconButton from './icon-button';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { uiText } from './i18n.ts';
@@ -13,16 +15,16 @@ export default function AppearanceControl() {
   const value = useAppearance();
   return (
     <>
-      <button
+      <IconButton
         type="button"
-        className="icon-button appearance-trigger"
+        className="appearance-trigger"
         title={t('title')}
         aria-label={t('title')}
         onClick={() => setOpen(true)}
       >
         <Icon name="palette" />
         <span className="appearance-trigger-label">{t('title')}</span>
-      </button>
+      </IconButton>
       {open && (
         <Modal title={t('title')} className="appearance-dialog" onClose={() => setOpen(false)}>
           <p className="appearance-scope">{t(value.memoryOnly ? 'memoryOnly' : 'scope')}</p>
@@ -94,12 +96,12 @@ export default function AppearanceControl() {
             </a>
           </p>
           <div className="appearance-actions">
-            <button type="button" className="language" onClick={resetAppearance}>
+            <Button type="button" variant="secondary" onClick={resetAppearance}>
               {t('reset')}
-            </button>
-            <button type="button" className="button" onClick={() => setOpen(false)}>
+            </Button>
+            <Button type="button" variant="primary" onClick={() => setOpen(false)}>
               {t('done')}
-            </button>
+            </Button>
           </div>
         </Modal>
       )}

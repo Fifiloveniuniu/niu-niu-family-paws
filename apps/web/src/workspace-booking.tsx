@@ -1,3 +1,5 @@
+import Button from './button';
+import IconButton from './icon-button';
 import Icon from './icons';
 import LocationLabel from './location-label';
 import { CalendarAxis, CalendarTrack, CalendarFrame, CalendarViewport } from './calendar-timeline';
@@ -517,9 +519,9 @@ export default function WorkspaceBooking({
             <p>{t('availabilityHint')}</p>
           </div>
           <div className="workspace-availability-navigation">
-            <button
+            <IconButton
               type="button"
-              className="icon-button"
+
               aria-label={t('previousWeek')}
               disabled={loading || blocked}
               onClick={() => {
@@ -528,15 +530,15 @@ export default function WorkspaceBooking({
               }}
             >
               <Icon name="chevron-left" />
-            </button>
+            </IconButton>
             <span>
               {available
                 ? timelineRangeLabel(available.from, available.through, zone, locale)
                 : uiText('common.notAvailable')}
             </span>
-            <button
+            <IconButton
               type="button"
-              className="icon-button"
+
               aria-label={t('nextWeek')}
               disabled={loading || blocked}
               onClick={() => {
@@ -545,13 +547,13 @@ export default function WorkspaceBooking({
               }}
             >
               <Icon name="chevron-right" />
-            </button>
+            </IconButton>
           </div>
           {loading && <p role="status">{t('loading')}</p>}
           {!loading && error === 'loadError' && (
-            <button type="button" className="language" onClick={() => void loadAvailability()}>
+            <Button type="button" variant="secondary" onClick={() => void loadAvailability()}>
               {t('retry')}
-            </button>
+            </Button>
           )}
           <ul className="booking-calendar-legend" aria-label={t('calendarLegend')}>
             <li>

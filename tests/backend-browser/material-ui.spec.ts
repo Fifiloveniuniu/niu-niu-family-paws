@@ -126,14 +126,11 @@ for (const width of [390, 1440])
         await expect(dialog).toHaveCount(0);
         await expect(opener).toBeFocused();
       };
-      await expect(page.locator('.workspace-range-controls > .icon-button').first()).toHaveCSS(
+      await expect(page.locator('.calendar-toolbar-actions > .icon-button').first()).toHaveCSS(
         'width',
         '44px',
       );
-      await expect(page.locator('.workspace-range-controls .custom-date-field > input')).toHaveCSS(
-        'min-height',
-        '44px',
-      );
+      await expect(page.locator('.calendar-time-controls .custom-date-input')).toHaveCount(0);
       await capture('calendar');
       await inspectDialog(
         page.getByRole('button', { name: t('ui.workspace.addBooking'), exact: true }),

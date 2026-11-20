@@ -1,3 +1,5 @@
+import Button from './button';
+import IconButton from './icon-button';
 import BusinessMetrics from './business-metrics';
 import EmployeeAssignments from './employee-assignments';
 import { CustomerPicker } from './workspace-pickers';
@@ -249,8 +251,8 @@ export default function SavedWorkspace({
             {data?.admin && scope && data.customer && (
               <div className="workspace-context" role="status">
                 <strong>{t('viewingAs', { name: data.customer.name })}</strong>
-                <button
-                  className="language"
+                <Button
+                  variant="secondary"
                   onClick={() =>
                     navigate(
                       view === 'balances'
@@ -262,7 +264,7 @@ export default function SavedWorkspace({
                   }
                 >
                   {t('exitView')}
-                </button>
+                </Button>
               </div>
             )}
             {notice && <p role="status">{notice}</p>}
@@ -290,9 +292,9 @@ export default function SavedWorkspace({
                           : 'loadError',
                       )}
                     </p>
-                    <button className="language" onClick={() => void refresh(true)}>
+                    <Button variant="secondary" onClick={() => void refresh(true)}>
                       {t('retry')}
-                    </button>
+                    </Button>
                     <a href="/app/calendar/">{t('resetView')}</a>
                   </div>
                 )}
@@ -333,8 +335,7 @@ export default function SavedWorkspace({
                                         .join(' · ') || uiText('common.notAvailable')}
                                     </p>
                                   </div>
-                                  <button
-                                    className="icon-button"
+                                  <IconButton
                                     title={t(data.admin ? 'editCustomer' : 'editProfile')}
                                     aria-label={t(data.admin ? 'editCustomer' : 'editProfile')}
                                     onClick={() =>
@@ -342,7 +343,7 @@ export default function SavedWorkspace({
                                     }
                                   >
                                     <Icon name="edit" />
-                                  </button>
+                                  </IconButton>
                                 </div>
                                 <Pets
                                   customerId={data.customer.id}
@@ -359,7 +360,7 @@ export default function SavedWorkspace({
                         {view === 'calendar' &&
                           (range.valid ? (
                             <WorkspaceCalendar
-                              filterZone={
+                              timeZoneControl={
                                 <WorkspaceClock
                                   zone={zone}
                                   onChange={(nextZone) =>
@@ -431,12 +432,12 @@ export default function SavedWorkspace({
                               <section className="workspace-settings">
                                 <div className="customer-heading">
                                   <h2>{t('manageLocations')}</h2>
-                                  <button
-                                    className="language"
+                                  <Button
+                                    variant="secondary"
                                     onClick={() => setEmployeeAssignments(true)}
                                   >
                                     {uiText('ui.employeeAssignments.title')}
-                                  </button>
+                                  </Button>
                                   <a className="language" href="/app/settings/cancellation/">
                                     {uiText('ui.houseCalendar.cancellationPolicy')}
                                   </a>

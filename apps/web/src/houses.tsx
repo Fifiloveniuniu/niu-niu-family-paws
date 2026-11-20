@@ -1,3 +1,5 @@
+import Button from './button';
+import IconButton from './icon-button';
 import LocationLabel from './location-label';
 import { englishCatalog, uiText, uiValue } from './i18n.ts';
 import CustomSelect from './custom-select';
@@ -165,9 +167,9 @@ export default function Houses({
       <div hidden={embedded}>
         <div className="customer-heading">
           <h2 id={fieldId + '-title'}>{labels.title}</h2>
-          <button className="button" disabled={blocked} onClick={() => open()}>
+          <Button variant="primary" disabled={blocked} onClick={() => open()}>
             {labels.add}
-          </button>
+          </Button>
         </div>
         <p className="customer-intro">{labels.intro}</p>
         {saved && <p role="status">{labels.saved}</p>}
@@ -232,22 +234,21 @@ export default function Houses({
                     onChanged={onChanged}
                   />
                 </div>
-                <button
-                  className="icon-button"
+                <IconButton
                   title={labels.edit}
                   aria-label={`${labels.edit}: ${house.name}`}
                   disabled={blocked}
                   onClick={() => open(house)}
                 >
                   <Icon name="edit" />
-                </button>
+                </IconButton>
               </li>
             ))}
         </ul>
         {error === 'error' && !editor && (
-          <button className="language" disabled={loading} onClick={() => void load()}>
+          <Button variant="secondary" disabled={loading} onClick={() => void load()}>
             {labels.retry}
-          </button>
+          </Button>
         )}
       </div>
       {embedded &&
@@ -257,9 +258,9 @@ export default function Houses({
         ) : (
           <>
             <p role="alert">{error ? labels[error] : labels.empty}</p>
-            <button className="language" onClick={() => void load()}>
+            <Button variant="secondary" onClick={() => void load()}>
               {labels.retry}
-            </button>
+            </Button>
           </>
         ))}
       {editor && (
@@ -321,16 +322,16 @@ export default function Houses({
               </p>
             </fieldset>
             <div className="portal-actions">
-              <button
-                className="button"
+              <Button
+                variant="primary"
                 type="submit"
                 disabled={saving || error === 'conflict' || error === 'denied'}
               >
                 {saving ? labels.saving : uncertain ? labels.retry : labels.save}
-              </button>
-              <button className="language" type="button" disabled={blocked} onClick={close}>
+              </Button>
+              <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
                 {labels.cancel}
-              </button>
+              </Button>
             </div>
           </form>
         </Modal>

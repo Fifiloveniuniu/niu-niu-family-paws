@@ -1,3 +1,4 @@
+import Button from './button';
 import { uiText } from './i18n.ts';
 import React from 'react';
 import { createPortal } from 'react-dom';
@@ -84,11 +85,11 @@ export default function SiteAccountLink() {
               ✿
             </span>
             <p>{uiText('ui.siteAccountLink.yourLittleWorldOfCareAllInOnePlace')}</p>
-            <button className="button" disabled={busy} onClick={() => void signIn()}>
+            <Button variant="primary" disabled={busy} onClick={() => void signIn()}>
               {busy
                 ? uiText('ui.siteAccountLink.signingIn')
                 : uiText('ui.siteAccountLink.continueWithGoogle')}
-            </button>
+            </Button>
             <p className="sign-in-note">
               {uiText('ui.siteAccountLink.oneSecureSignInForPetFamiliesAndOur')}
             </p>

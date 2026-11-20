@@ -58,13 +58,10 @@ export default function Icon({
       {['google', 'apple', 'microsoft'].map((family) => (
         <g key={family} className={'icon-family icon-' + family} data-icon-family={family}>
           <g
-            transform={
-              family === 'google'
-                ? 'translate(0 24) scale(.025)'
-                : family === 'microsoft'
-                  ? 'scale(1.5)'
-                  : undefined
-            }
+            transform={(() => {
+              const [x, y, width, height] = families[family][name].viewBox.split(/\s+/).map(Number);
+              return `scale(${24 / width} ${24 / height}) translate(${-x} ${-y})`;
+            })()}
           >
             {families[family][name].shapes.map((shape, index) =>
               React.createElement(shape.tag, { ...shape.attrs, key: index }),

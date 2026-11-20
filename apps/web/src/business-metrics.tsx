@@ -1,5 +1,8 @@
-import MetricChart from './metric-chart';
 import { sampleMetrics } from './metrics-sample';
+import SegmentedTabs from './segmented-tabs';
+import Button from './button';
+import IconButton from './icon-button';
+import MetricChart from './metric-chart';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { components } from '../../../packages/contracts/generated';
@@ -108,15 +111,14 @@ export default function BusinessMetrics({
           <h1 id="business-metrics-title">{text('title')}</h1>
           <p>{text('intro')}</p>
         </div>
-        <button
-          className="icon-button"
+        <IconButton
           aria-label={text('refresh')}
           title={text('refresh')}
           disabled={loading}
           onClick={() => setRevision((v) => v + 1)}
         >
           <Icon name="reset" />
-        </button>
+        </IconButton>
       </div>
       {sampleAvailable && (
         <div className="metrics-data-source">
@@ -142,20 +144,24 @@ export default function BusinessMetrics({
         </div>
       )}
       <div className="business-period">
-        <div className="business-period-presets hc-scales" role="group" aria-label={text('period')}>
-          {[7, 30, 90].map((days) => (
-            <button
-              type="button"
-              className="language"
-              key={days}
-              aria-label={uiText('ui.metrics.lastDays', { count: days })}
-              aria-pressed={through === today && from === shiftDay(today, 1 - days)}
-              onClick={() => updateQuery({ from: shiftDay(today, 1 - days), through: today })}
-            >
-              {uiText('ui.metrics.rangeDays', { count: days })}
-            </button>
-          ))}
-        </div>
+        <SegmentedTabs
+          className="business-period-presets"
+          mode="buttons"
+          label={text('period')}
+          value={
+            through === today
+              ? [7, 30, 90].find((days) => from === shiftDay(today, 1 - days))?.toString()
+              : undefined
+          }
+          onChange={(value) =>
+            updateQuery({ from: shiftDay(today, 1 - Number(value)), through: today })
+          }
+          items={[7, 30, 90].map((days) => ({
+            value: String(days),
+            label: uiText('ui.metrics.rangeDays', { count: days }),
+            ariaLabel: uiText('ui.metrics.lastDays', { count: days }),
+          }))}
+        />
         <div className="business-period-fields">
           <label>
             {text('from')}
@@ -193,9 +199,9 @@ export default function BusinessMetrics({
       {error && (
         <div role="alert" className="business-metrics-error">
           <p>{text('error')}</p>
-          <button className="language" onClick={() => setRevision((v) => v + 1)}>
+          <Button variant="secondary" onClick={() => setRevision((v) => v + 1)}>
             {text('retry')}
-          </button>
+          </Button>
         </div>
       )}
       <section aria-labelledby="business-current-title" aria-busy={loading}>

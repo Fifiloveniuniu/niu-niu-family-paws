@@ -1,3 +1,6 @@
+import Button from './button';
+import SearchInput from './search-input';
+import IconButton from './icon-button';
 import './customer-workspace.css';
 import { Pagination } from './pagination';
 import { withoutLanguage } from './language-url.ts';
@@ -292,22 +295,21 @@ export default function Customers({
         <div>
           <h2 id="customers-title">{labels.title}</h2>
         </div>
-        <button className="button" disabled={saving || uncertain} onClick={() => open()}>
+        <Button variant="primary" disabled={saving || uncertain} onClick={() => open()}>
           {labels.add}
-        </button>
+        </Button>
       </div>
       <p className="customer-workspace-intro">{uiText('ui.customerView.intro')}</p>
       <section className="customer-filters" aria-label={uiText('ui.customers.customerFilters')}>
         <div className="hc-filters-heading">
           <span className="sr-only">{uiText('ui.customers.filters')}</span>
-          <button
-            className="icon-button"
+          <IconButton
             title={uiText('ui.customers.clearCustomerFilters')}
             aria-label={uiText('ui.customers.clearCustomerFilters')}
             onClick={resetFilters}
           >
             <Icon name="reset" />
-          </button>
+          </IconButton>
         </div>
         <div className="customer-filter-fields">
           <form
@@ -322,23 +324,22 @@ export default function Customers({
           >
             <label htmlFor="customer-search">{labels.searchHint}</label>
             <div className="portal-actions">
-              <input
+              <SearchInput
                 id="customer-search"
-                type="search"
+
                 placeholder={uiText('ui.customerView.search')}
                 maxLength={254}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
-              <button
-                className="icon-button"
+              <IconButton
                 title={labels.search}
                 aria-label={labels.search}
                 disabled={loading || saving}
                 type="submit"
               >
                 <Icon name="search" />
-              </button>
+              </IconButton>
             </div>
           </form>
           <PetSearch
@@ -359,9 +360,9 @@ export default function Customers({
         {ownError && (
           <p role="alert">
             {uiText('ui.customers.couldNotLoadYourProfileTryAgain')}
-            <button className="language" onClick={() => void setOwnershipFilter(true)}>
+            <Button variant="secondary" onClick={() => void setOwnershipFilter(true)}>
               {labels.reload}
-            </button>
+            </Button>
           </p>
         )}
         {onlyMine && !ownLoading && !ownError && !ownCustomer && (
@@ -467,15 +468,15 @@ export default function Customers({
                   </label>
                 </fieldset>
                 <div className="portal-actions">
-                  <button
-                    className="button"
+                  <Button
+                    variant="primary"
                     disabled={saving || error === 'conflict' || error === 'forbidden'}
                     type="submit"
                   >
                     {saving ? labels.saving : uncertain ? labels.retry : labels.save}
-                  </button>
-                  <button
-                    className="language"
+                  </Button>
+                  <Button
+                    variant="secondary"
                     type="button"
                     disabled={saving || uncertain}
                     onClick={() => {
@@ -486,7 +487,7 @@ export default function Customers({
                     }}
                   >
                     {labels.cancel}
-                  </button>
+                  </Button>
                 </div>
               </form>
             </Modal>
@@ -502,9 +503,9 @@ export default function Customers({
                   : ''}
             </p>
             {(error === 'error' || error === 'conflict') && !uncertain && (
-              <button className="language" disabled={loading || saving} onClick={() => void load()}>
+              <Button variant="secondary" disabled={loading || saving} onClick={() => void load()}>
                 {labels.reload}
-              </button>
+              </Button>
             )}
           </div>
           <ul className="customer-list">
@@ -544,34 +545,31 @@ export default function Customers({
                 </div>
                 <div className="customer-row-actions">
                   {onViewAs && (
-                    <button
-                      className="icon-button"
+                    <IconButton
                       type="button"
                       title={uiText('ui.workspace.viewAs')}
                       aria-label={`${uiText('ui.workspace.viewAs')}: ${customer.name}`}
                       onClick={() => onViewAs(customer)}
                     >
                       <Icon name="account" />
-                    </button>
+                    </IconButton>
                   )}
-                  <button
-                    className="icon-button"
+                  <IconButton
                     title={labels.edit}
                     aria-label={`${labels.edit}: ${customer.name}`}
                     disabled={saving || uncertain}
                     onClick={() => open(customer)}
                   >
                     <Icon name="edit" />
-                  </button>
+                  </IconButton>
                   {!customer.loginEmail && (
-                    <button
-                      className="icon-button"
+                    <IconButton
                       title={uiText('ui.customers.linkGoogleAccount')}
                       aria-label={`${uiText('ui.customers.linkGoogleAccount')}: ${customer.name}`}
                       onClick={() => setLinkCustomer(customer.id)}
                     >
                       <Icon name="link" />
-                    </button>
+                    </IconButton>
                   )}
                 </div>
               </li>
