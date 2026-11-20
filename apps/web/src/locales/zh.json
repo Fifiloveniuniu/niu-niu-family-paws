@@ -1325,5 +1325,7 @@
   "ui.calendarFilters.location": "房屋与时区",
   "ui.calendarFilters.view": "状态与时区",
   "ui.calendarFilters.hide": "收起筛选",
-  "ui.calendarFilters.show": "展开筛选"
+  "ui.calendarFilters.show": "展开筛选",
+  "ui.balanceView.netChange": "净变动",
+  "ui.balanceView.balanceTransition": "变动前 → 后"
 }
