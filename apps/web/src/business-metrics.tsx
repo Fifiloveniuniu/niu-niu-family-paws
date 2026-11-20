@@ -1,4 +1,5 @@
 import MetricChart from './metric-chart';
+import { sampleMetrics } from './metrics-sample';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { components } from '../../../packages/contracts/generated';
@@ -37,9 +38,14 @@ export default function BusinessMetrics({
     data: null,
     error: false,
   });
+  const sampleAvailable = import.meta.env.DEV && import.meta.env.MODE === 'test';
+  const sample =
+    sampleAvailable &&
+    (search.get('data') === 'sample' ||
+      (!search.has('data') && import.meta.env.VITE_LOCAL_SAMPLE_METRICS === 'true'));
   const key = from + ':' + through + ':' + zone + ':' + revision;
   React.useEffect(() => {
-    if (!valid || !start || !end) return;
+    if (sample || !valid || !start || !end) return;
     const abort = new AbortController();
     setState({ key, data: null, error: false });
     void apiJson<Metrics>(
@@ -53,9 +59,13 @@ export default function BusinessMetrics({
         if (!abort.signal.aborted) setState({ key, data: null, error: true });
       });
     return () => abort.abort();
-  }, [key, valid, start, end]);
-  const data = valid && state.key === key ? state.data : null,
-    error = valid && state.key === key && state.error,
+  }, [key, valid, start, end, sample]);
+  const preview = React.useMemo(
+    () => (sample && valid && start && end ? sampleMetrics(start, end, zone) : null),
+    [sample, valid, start, end, zone, revision],
+  );
+  const data = preview ?? (valid && state.key === key ? state.data : null),
+    error = !sample && valid && state.key === key && state.error,
     loading = valid && !data && !error;
   const number = new Intl.NumberFormat(localeFor(i18n.language));
   const zones = React.useMemo(
@@ -69,7 +79,9 @@ export default function BusinessMetrics({
           <div className="business-metric" key={item.key} data-metric={item.key}>
             <dt>{text(item.key)}</dt>
             <dd>{data ? number.format(data[item.key] as number) : '—'}</dd>
-            <dd className="business-metric-hint">{text(item.hint)}</dd>
+            <dd className="business-metric-hint" title={text(item.hint)}>
+              {text(item.key === 'recordedDays' ? 'recordedShort' : item.hint)}
+            </dd>
           </div>
         ))}
       </dl>
@@ -106,17 +118,41 @@ export default function BusinessMetrics({
           <Icon name="reset" />
         </button>
       </div>
+      {sampleAvailable && (
+        <div className="metrics-data-source">
+          <div className="hc-scales" role="group" aria-label={text('dataSource')}>
+            <button
+              type="button"
+              className="language"
+              aria-pressed={!sample}
+              onClick={() => updateQuery({ data: 'saved' })}
+            >
+              {text('savedData')}
+            </button>
+            <button
+              type="button"
+              className="language"
+              aria-pressed={sample}
+              onClick={() => updateQuery({ data: 'sample' })}
+            >
+              {text('sampleData')}
+            </button>
+          </div>
+          {sample && <p role="status">{text('sampleHint')}</p>}
+        </div>
+      )}
       <div className="business-period">
-        <div className="business-period-presets" role="group" aria-label={text('period')}>
+        <div className="business-period-presets hc-scales" role="group" aria-label={text('period')}>
           {[7, 30, 90].map((days) => (
             <button
               type="button"
               className="language"
               key={days}
+              aria-label={uiText('ui.metrics.lastDays', { count: days })}
               aria-pressed={through === today && from === shiftDay(today, 1 - days)}
               onClick={() => updateQuery({ from: shiftDay(today, 1 - days), through: today })}
             >
-              {uiText('ui.metrics.lastDays', { count: days })}
+              {uiText('ui.metrics.rangeDays', { count: days })}
             </button>
           ))}
         </div>
@@ -162,57 +198,6 @@ export default function BusinessMetrics({
           </button>
         </div>
       )}
-      {valid && !error && (
-        <section className="metrics-charts" aria-label={text('trends')}>
-          <MetricChart
-            id="revenue-trend"
-            title={text('revenueChart')}
-            hint={text('revenueChartHint')}
-            points={[]}
-            unit="USD"
-            unavailable
-            loading={loading}
-          />
-          <MetricChart
-            id="balance-trend"
-            title={text('balanceChart')}
-            hint={text('balanceChartHint')}
-            points={trend('balanceChange')}
-            unit={text('days')}
-            kind="bar"
-            loading={loading}
-          />
-          <MetricChart
-            id="bookings-trend"
-            title={text('bookingsChart')}
-            hint={text('scheduledHint')}
-            points={trend('bookings')}
-            unit={text('bookingUnit')}
-            loading={loading}
-          />
-          <MetricChart
-            id="customers-trend"
-            title={text('customersChart')}
-            hint={text('customersChartHint')}
-            points={trend('newCustomers')}
-            unit={text('customerUnit')}
-            loading={loading}
-          />
-          <MetricChart
-            id="services-trend"
-            title={text('servicesChart')}
-            hint={text('servicesChartHint')}
-            points={(data?.serviceUsage ?? []).map((item) => ({
-              label: speciesText(item.species),
-              shortLabel: speciesText(item.species),
-              value: item.stays,
-            }))}
-            unit={text('stayUnit')}
-            kind="bar"
-            loading={loading}
-          />
-        </section>
-      )}
       <section aria-labelledby="business-current-title" aria-busy={loading}>
         <div className="business-section-heading">
           <div>
@@ -233,32 +218,101 @@ export default function BusinessMetrics({
           { key: 'overdue', hint: 'overdueHint' },
           { key: 'customers', hint: 'customersHint' },
           { key: 'pets', hint: 'petsHint' },
+          { key: 'recordedDays', hint: 'recordedHint' },
         ])}
       </section>
-      <div className="business-recorded-days">
-        <div>
-          <h2>{text('recordedDays')}</h2>
-          <p>{text('recordedHint')}</p>
-        </div>
-        <strong data-metric="recordedDays">
-          {data ? number.format(data.recordedDays) : '—'} <small>{text('days')}</small>
-        </strong>
-        <a
-          className="icon-button"
-          title={text('balances')}
-          aria-label={text('balances')}
-          href="/app/balances/"
-        >
-          <Icon name="balance" />
-        </a>
-      </div>
-      <div className="business-payment-note">
-        <Icon name="balance" />
-        <div>
-          <h2>{text('revenue')}</h2>
-          <p>{text('revenueHint')}</p>
-        </div>
-      </div>
+      {valid && !error && (
+        <section className="metrics-charts" aria-label={text('trends')}>
+          <MetricChart
+            id="revenue-trend"
+            title={text('revenueChart')}
+            hint={text('revenueChartHint')}
+            points={(data?.series ?? []).map((point) => ({
+              label:
+                dateFormat.format(new Date(point.from)) +
+                ' – ' +
+                dateFormat.format(new Date(Date.parse(point.through) - 1)),
+              shortLabel: dateFormat.format(new Date(point.from)),
+              value: (point.revenueCents ?? 0) / 100,
+            }))}
+            unit="USD"
+            unavailable={!data?.revenueAvailable}
+            sample={sample}
+            loading={loading}
+          />
+          <MetricChart
+            id="balance-trend"
+            title={text('balanceChart')}
+            hint={text('balanceChartHint')}
+            points={trend('balanceChange')}
+            unit={text('days')}
+            kind="bar"
+            sample={sample}
+            loading={loading}
+          />
+          <MetricChart
+            id="bookings-trend"
+            title={text('bookingsChart')}
+            hint={text('scheduledHint')}
+            points={trend('bookings')}
+            unit={text('bookingUnit')}
+            sample={sample}
+            loading={loading}
+          />
+          <MetricChart
+            id="customers-trend"
+            title={text('customersChart')}
+            hint={text('customersChartHint')}
+            points={trend('newCustomers')}
+            unit={text('customerUnit')}
+            sample={sample}
+            loading={loading}
+          />
+          <MetricChart
+            id="services-trend"
+            dimensionLabel={uiText('ui.houseCalendar.petType')}
+            title={text('servicesChart')}
+            hint={text('servicesChartHint')}
+            points={(data?.serviceUsage ?? []).map((item) => ({
+              label: speciesText(item.species),
+              shortLabel: speciesText(item.species),
+              value: item.stays,
+            }))}
+            unit={text('stayUnit')}
+            kind="bar"
+            sample={sample}
+            loading={loading}
+          />
+          <MetricChart
+            id="handoffs-trend"
+            dimensionLabel={text('handoffType')}
+            total={data ? data.actualArrivals + data.actualPickups : undefined}
+            title={text('handoffsChart')}
+            hint={text('handoffsHint')}
+            points={
+              data
+                ? (
+                    [
+                      'scheduledArrivals',
+                      'actualArrivals',
+                      'scheduledPickups',
+                      'actualPickups',
+                    ] as const
+                  ).map((key) => ({
+                    label: text(key),
+                    shortLabel: text(key + 'Short'),
+                    value: data[key],
+                  }))
+                : []
+            }
+            unit={text('handoffsUnit')}
+            summaryUnit={text('handoffUnit')}
+            kind="bar"
+            sample={sample}
+            loading={loading}
+          />
+        </section>
+      )}
       {data && (
         <p className="business-metrics-updated">
           {text('updated')}{' '}

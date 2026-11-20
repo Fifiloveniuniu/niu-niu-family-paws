@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from './icons';
-import { uiText } from './i18n';
+import { localeFor, uiText } from './i18n';
+import { useTranslation } from 'react-i18next';
 type Point = { label: string; shortLabel: string; value: number };
 export default function MetricChart({
   id,
@@ -11,6 +12,10 @@ export default function MetricChart({
   kind = 'line',
   unavailable = false,
   loading = false,
+  sample = false,
+  total,
+  summaryUnit,
+  dimensionLabel,
 }: {
   id: string;
   title: string;
@@ -20,25 +25,59 @@ export default function MetricChart({
   kind?: 'line' | 'bar';
   unavailable?: boolean;
   loading?: boolean;
+  sample?: boolean;
+  total?: number;
+  summaryUnit?: string;
+  dimensionLabel?: string;
 }) {
-  const [active, setActive] = React.useState(0),
+  const { i18n } = useTranslation();
+  const plot = React.useRef<HTMLDivElement>(null);
+  const [width, setWidth] = React.useState(600);
+  React.useLayoutEffect(() => {
+    const node = plot.current;
+    if (!node) return;
+    const resize = new ResizeObserver(([entry]) =>
+      setWidth(Math.max(260, Math.min(600, entry.contentRect.width))),
+    );
+    resize.observe(node);
+    return () => resize.disconnect();
+  }, []);
+  const [active, setActive] = React.useState(-1),
     [table, setTable] = React.useState(false);
   const controls = React.useRef<(SVGGElement | null)[]>([]);
-  const selectedIndex = Math.min(active, Math.max(0, points.length - 1));
+  const selectedIndex =
+    active < 0 ? points.length - 1 : Math.min(active, Math.max(0, points.length - 1));
   const selected = points[selectedIndex];
   const text = (key: string) => uiText('ui.metrics.' + key);
   const min = Math.min(0, ...points.map((p) => p.value)),
     rawMax = Math.max(0, ...points.map((p) => p.value)),
-    max = rawMax === min ? min + 1 : rawMax;
+    step =
+      unit === text('days')
+        ? Math.max(0.5, Math.ceil(((rawMax - min || 1) / 3) * 2) / 2)
+        : Math.max(1, Math.ceil((rawMax - min || 1) / 3)),
+    max = min + step * 3;
   const left = 48,
-    right = 578,
+    right = width - 18,
     top = 18,
     bottom = 182;
   const x = (i: number) =>
-    points.length === 1 ? (left + right) / 2 : left + (i * (right - left)) / (points.length - 1);
+    kind === 'bar'
+      ? left + ((i + 0.5) * (right - left)) / points.length
+      : points.length === 1
+        ? (left + right) / 2
+        : left + (i * (right - left)) / (points.length - 1);
   const y = (value: number) => bottom - ((value - min) / (max - min)) * (bottom - top);
   const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i)},${y(p.value)}`).join(' ');
-  const values = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+  const values = new Intl.NumberFormat(localeFor(i18n.language), { maximumFractionDigits: 2 });
+  const headline = (value: number) =>
+    unit === 'USD'
+      ? new Intl.NumberFormat(localeFor(i18n.language), {
+          style: 'currency',
+          currency: 'USD',
+          maximumFractionDigits: 0,
+        }).format(value)
+      : values.format(value);
+  const aggregate = total ?? points.reduce((sum, point) => sum + point.value, 0);
   const zero = points.length > 0 && points.every((p) => p.value === 0);
   return (
     <figure className="metric-chart" aria-labelledby={id + '-title'} aria-busy={loading}>
@@ -46,6 +85,7 @@ export default function MetricChart({
         <div>
           <h2 id={id + '-title'}>{title}</h2>
           <p>{hint}</p>
+          {sample && <span className="metric-sample-label">{text('sampleData')}</span>}
         </div>
         <button
           type="button"
@@ -60,9 +100,17 @@ export default function MetricChart({
           <Icon name="menu" />
         </button>
       </div>
-      <div className="metric-chart-plot">
+      <div className="metric-chart-total">
+        <strong>{unavailable || loading ? '—' : headline(aggregate)}</strong>
+        {!unavailable && !loading && (
+          <span>
+            {summaryUnit ?? (unit === 'USD' ? 'USD' : unit)} · {text('periodTitle')}
+          </span>
+        )}
+      </div>
+      <div className="metric-chart-plot" ref={plot}>
         <svg
-          viewBox="0 0 600 220"
+          viewBox={`0 0 ${width} 220`}
           role="img"
           aria-labelledby={id + '-title ' + id + '-description'}
         >
@@ -76,7 +124,10 @@ export default function MetricChart({
                 <line x1={left} x2={right} y1={y(value)} y2={y(value)} />
                 {!unavailable && !loading && (
                   <text x={left - 10} y={y(value) + 4} textAnchor="end">
-                    {values.format(value)}
+                    {new Intl.NumberFormat(localeFor(i18n.language), {
+                      notation: 'compact',
+                      maximumFractionDigits: 1,
+                    }).format(value)}
                   </text>
                 )}
               </g>
@@ -95,7 +146,7 @@ export default function MetricChart({
                     controls.current[i] = node;
                   }}
                   role="button"
-                  tabIndex={i === Math.min(active, points.length - 1) ? 0 : -1}
+                  tabIndex={i === selectedIndex ? 0 : -1}
                   aria-label={`${point.label}: ${values.format(point.value)} ${unit}`}
                   aria-pressed={i === selectedIndex}
                   className="metric-chart-point"
@@ -153,16 +204,27 @@ export default function MetricChart({
                       r={i === selectedIndex ? 5 : 3.5}
                     />
                   )}
-                  {(i === 0 ||
+                  {(points.length <= 4 ||
+                    i === 0 ||
                     i === points.length - 1 ||
-                    i % Math.ceil(points.length / 4) === 0) && (
+                    i % Math.ceil(points.length / (width < 400 ? 2 : 4)) === 0) && (
                     <text
                       className="metric-chart-tick"
                       x={x(i)}
                       y={bottom + 24}
-                      textAnchor={i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle'}
+                      textAnchor={
+                        kind === 'bar'
+                          ? 'middle'
+                          : i === 0
+                            ? 'start'
+                            : i === points.length - 1
+                              ? 'end'
+                              : 'middle'
+                      }
                     >
-                      {point.shortLabel}
+                      {point.shortLabel.length > 14
+                        ? point.shortLabel.slice(0, 12) + '…'
+                        : point.shortLabel}
                     </text>
                   )}
                 </g>
@@ -195,7 +257,7 @@ export default function MetricChart({
             <caption className="sr-only">{title}</caption>
             <thead>
               <tr>
-                <th>{text('period')}</th>
+                <th>{dimensionLabel ?? text('period')}</th>
                 <th>{unit}</th>
               </tr>
             </thead>

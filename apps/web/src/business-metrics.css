@@ -1,222 +1,106 @@
+/* Shared dashboard layout; colors and shape follow the selected app theme. */
 .business-metrics {
   max-width: 1280px;
   margin-inline: auto;
 }
 .business-metrics-heading,
-.business-section-heading {
+.business-section-heading,
+.metric-chart-heading {
   display: flex;
-  justify-content: space-between;
   align-items: start;
+  justify-content: space-between;
   gap: 16px;
-}
-.business-metrics h1 {
-  margin: 0 0 6px;
-  font-size: 24px;
 }
 .business-metrics h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
 }
 .business-metrics-heading p,
-.business-metrics-note,
-.business-metric .business-metric-hint {
-  margin: 6px 0 0;
-  color: var(--md-on-surface-variant);
+.business-metrics-note {
   font-size: 13px;
+  color: var(--md-on-surface-variant);
+  margin: 6px 0 0;
 }
-.business-period {
-  margin: 24px 0;
-  padding: 18px;
+.business-period,
+.business-metric,
+.metric-chart {
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
   background: var(--md-surface);
 }
 .business-period-presets {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
 }
-.hc .business-period-presets [aria-pressed='true'] {
+html[data-ui-style] .business-metrics .business-period-presets .language[aria-pressed='true'] {
   background: var(--md-primary-soft);
   border-color: var(--md-primary-outline);
-  color: var(--md-primary);
+  color: var(--md-on-primary-container);
+  font-weight: 600;
 }
 .business-period-fields {
   display: grid;
   grid-template-columns: 1fr 1fr minmax(180px, 1.2fr);
-  gap: 14px;
 }
 .business-period-fields label {
   display: grid;
   gap: 6px;
+  min-width: 0;
   font-size: 13px;
   font-weight: 600;
-  min-width: 0;
 }
-.business-metrics > section {
-  margin-top: 30px;
-}
-.business-metric-grid {
+.business-metric-grid,
+.metrics-charts {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin: 16px 0 0;
 }
-.business-metric {
-  padding: 20px;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
-  background: var(--md-surface);
+.metrics-charts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .business-metric dt {
-  font-size: 14px;
   font-weight: 600;
 }
 .business-metric dd {
-  margin: 12px 0;
-  font-size: 34px;
-  line-height: 1.1;
   font-weight: 650;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
-}
-.business-metric[data-metric='overdue'] dd {
-  color: var(--md-on-surface);
 }
 .business-metric .business-metric-hint {
-  line-height: 1.5;
-}
-.business-recorded-days {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px 24px;
-  margin: 28px 0 18px;
-  padding: 20px;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
-  background: var(--md-surface-container);
-}
-.business-recorded-days > div {
-  flex: 1;
-  min-width: 180px;
-}
-.business-recorded-days p,
-.business-payment-note p {
   margin: 6px 0 0;
+  font-weight: 400;
   color: var(--md-on-surface-variant);
-  font-size: 13px;
 }
-.business-recorded-days strong {
-  font-size: 28px;
-  font-variant-numeric: tabular-nums;
+.metric-chart {
+  min-width: 0;
+  margin: 0;
 }
-.business-recorded-days small {
-  font-size: 13px;
-  font-weight: 500;
+.metric-chart-heading p {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
 }
-.business-payment-note {
-  display: flex;
-  gap: 12px;
-  padding: 18px 0;
-  border-top: 1px solid var(--md-outline-variant);
-}
-.business-payment-note > svg {
+.metric-chart-heading .icon-button {
   flex: none;
-  margin-top: 2px;
-}
-.business-payment-note h2 {
-  font-size: 14px;
 }
 .business-metrics-updated {
-  margin-top: 12px;
-  color: var(--md-on-surface-variant);
   font-size: 12px;
+  color: var(--md-on-surface-variant);
 }
 .business-metrics-error {
   padding: 16px;
   color: var(--md-error-ink);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--ui-card-radius, 12px);
 }
-@media (max-width: 900px) {
-  .business-metric-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 800px) {
+  .metrics-charts {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 600px) {
-  .business-period {
-    padding: 14px;
-  }
   .business-period-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
   }
   .business-period-fields > label:last-child {
-    grid-column: 1 / -1;
+    grid-column: 1/-1;
   }
-  .business-metric-grid {
-    gap: 10px;
-  }
-  .business-metric {
-    padding: 14px;
-  }
-  .business-metric dt {
-    min-height: 42px;
-    line-height: 1.5;
-  }
-  .business-metric dd {
-    font-size: 30px;
-    margin-block: 8px;
-  }
-  .business-section-heading {
-    flex-wrap: wrap;
-  }
-  .business-recorded-days {
-    padding: 16px;
-  }
-}
-
-.business-metric .business-metric-hint {
-  margin: 6px 0 0;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-.metrics-charts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-.metric-chart {
-  min-width: 0;
-  margin: 0;
-  padding: 20px;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
-  background: var(--md-surface);
-}
-.metric-chart:last-child {
-  grid-column: 1/-1;
-}
-.metric-chart-heading {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.business-metrics .metric-chart-heading h2 {
-  font-size: 16px;
-}
-.metric-chart-heading p {
-  max-width: 60ch;
-  margin: 6px 0 12px;
-  font-size: 12px;
-  color: var(--md-on-surface-variant);
-  line-height: 1.5;
-}
-.metric-chart-heading .icon-button {
-  flex: none;
 }
 .metric-chart-plot {
   position: relative;
@@ -358,4 +242,193 @@
 .metric-chart-plot {
   max-width: 650px;
   margin-inline: auto;
+}
+
+/* One dashboard rhythm for filters, snapshots and every chart. */
+.business-metrics {
+  display: grid;
+  gap: 20px;
+}
+.business-metrics > section,
+.business-metrics > .business-period,
+.business-metrics-updated {
+  margin: 0;
+}
+.business-metrics-heading {
+  align-items: center;
+}
+.business-metrics-heading h1 {
+  font-size: 24px;
+  margin: 0;
+}
+.business-metrics-heading p {
+  margin: 4px 0 0;
+}
+.business-period {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px 24px;
+  padding: 16px;
+  border-radius: var(--ui-card-radius, 12px);
+}
+.business-period-presets {
+  flex: none;
+  max-width: 100%;
+  margin: 0;
+  align-self: center;
+  gap: 0;
+}
+.business-period-fields {
+  flex: 1;
+  min-width: min(100%, 460px);
+  gap: 12px;
+}
+.metrics-data-source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.metrics-data-source p {
+  flex: 1;
+  min-width: min(100%, 280px);
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--md-on-surface-variant);
+}
+html[data-ui-style] .business-metrics .metrics-data-source .language[aria-pressed='true'] {
+  background: var(--md-primary-soft);
+  color: var(--md-on-primary-container);
+  font-weight: 600;
+}
+.business-section-heading {
+  align-items: center;
+}
+.business-metrics .business-section-heading h2 {
+  font-size: 16px;
+}
+.business-metric-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 12px;
+  gap: 12px;
+}
+.business-metric {
+  padding: 16px;
+  border-radius: var(--ui-card-radius, 12px);
+}
+.business-metric dt {
+  font-size: 13px;
+}
+.business-metric dd {
+  font-size: 28px;
+  margin: 10px 0 6px;
+}
+.business-metric .business-metric-hint {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.metrics-charts {
+  gap: 16px;
+  align-items: stretch;
+}
+.metric-chart,
+.metric-chart:last-child {
+  grid-column: auto;
+  border-radius: var(--ui-card-radius, 12px);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+}
+.metric-chart-heading {
+  min-height: 88px;
+}
+.metric-chart-heading > div {
+  min-width: 0;
+}
+.metric-chart-heading p {
+  margin: 5px 0 8px;
+  line-height: 1.4;
+}
+.metric-chart-heading .icon-button {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+}
+.metric-chart-total {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 6px 0 14px;
+  min-height: 36px;
+}
+.metric-chart-total strong {
+  font-size: 28px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.metric-chart-total > span,
+.metric-sample-label {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.metric-sample-label {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--md-surface-container);
+  margin-bottom: 4px;
+}
+.metric-chart-plot {
+  width: 100%;
+  margin-top: auto;
+}
+.metric-chart-selection {
+  min-height: 32px;
+  border-top: 1px solid var(--md-outline-variant);
+  padding-top: 10px;
+}
+.metric-chart-selection strong {
+  font-size: 14px;
+}
+.business-metrics-updated {
+  border-top: 1px solid var(--md-outline-variant);
+  padding-top: 14px;
+}
+@media (max-width: 1100px) {
+  .business-metric-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 800px) {
+  .business-metrics {
+    gap: 16px;
+  }
+  .business-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .business-metric dt {
+    min-height: 0;
+  }
+  .business-metric:last-child {
+    grid-column: 1/-1;
+  }
+  .business-metric {
+    padding: 14px;
+  }
+  .metric-chart-heading {
+    min-height: 0;
+  }
+  .metric-chart-heading .icon-button {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+  .metric-chart,
+  .metric-chart:last-child {
+    padding: 16px;
+  }
 }

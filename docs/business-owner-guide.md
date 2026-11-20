@@ -1,3 +1,13 @@
+## Cleaner Metrics dashboard — local preview
+
+Open http://localhost:4180/app/metrics/. Current totals are first, followed by six matching chart cards. The large number in a chart is the whole reporting-period total; the small caption shows the selected point. Hover/tap a point or use arrow keys; the table icon shows exact values.
+
+The local demo opens with **Sample data**, clearly labeled fictional. Revenue, days, bookings, new customers, boarding usage and handoffs have realistic example values. Choose **Saved records** for the original business records. The sample view never updates accounts or bookings; online dashboards do not use these fictional values. Change dates and timezone to compare periods.
+
+打开 http://localhost:4180/app/metrics/。当前总数位于顶部，下方六张图表采用一致布局。图表中的大数字为所选时段总数，小字说明显示选中的数据点。点击、悬停或用方向键选择数据点，表格图标可查看准确数值。
+
+本地演示默认显示明确标注的虚构“示例数据”，包括合理的营收、天数、预约、新增客户、寄养使用及交接数值。选择“已保存记录”可返回原业务数据。示例不会更改任何账户或预约，线上应用也不会使用这些虚构数值。可切换日期及时区比较时段。
+
 ## Metrics, Activity and calendar filters — local preview, 2026-11-19
 
 Open http://localhost:4180/app/metrics/ for the local preview. **Metrics** is the first administrator tab. Choose dates and timezone to view bookings, new customers, boarding-day changes and recorded boarding usage. Tap a graph point or use arrow keys; the table icon shows exact values. Revenue will appear only after payments are recorded. Day balances are not dollar revenue.
