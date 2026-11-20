@@ -27,8 +27,10 @@ for (const width of [390, 1280])
     const box = await dialog.boundingBox();
     await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
     await page.mouse.wheel(0, 350);
-    await expect.poll(() => dialog.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    await dialog.evaluate((element) => {
+    await expect
+      .poll(() => dialog.locator('.workflow-form-body').evaluate((element) => element.scrollTop))
+      .toBeGreaterThan(0);
+    await dialog.locator('.workflow-form-body').evaluate((element) => {
       element.scrollTop = element.scrollHeight;
     });
     await page.mouse.wheel(0, 900);
@@ -173,12 +175,15 @@ test('phone touch swipes scroll the modal without moving the background', async 
         () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
       );
     }
-    await swipe(195, 560, 250);
-    await expect.poll(() => dialog.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
-    await dialog.evaluate((element) => {
+    const bodyBox = (await dialog.locator('.workflow-form-body').boundingBox())!;
+    await swipe(195, bodyBox.y + bodyBox.height - 20, bodyBox.y + 20);
+    await expect
+      .poll(() => dialog.locator('.workflow-form-body').evaluate((element) => element.scrollTop))
+      .toBeGreaterThan(0);
+    await dialog.locator('.workflow-form-body').evaluate((element) => {
       element.scrollTop = element.scrollHeight;
     });
-    await swipe(195, 560, 250);
+    await swipe(195, bodyBox.y + bodyBox.height - 20, bodyBox.y + 20);
     await swipe(2, 560, 250);
     expect(await page.evaluate(() => window.scrollY)).toBe(background);
     await page.keyboard.press('Escape');

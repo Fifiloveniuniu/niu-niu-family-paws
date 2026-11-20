@@ -147,7 +147,12 @@ function TemplateEditor({
     }
   }
   return (
-    <Modal title={t(existing ? 'edit' : 'add')} onClose={close} disabled={blocked}>
+    <Modal
+      title={t(existing ? 'edit' : 'add')}
+      className="template-editor-dialog workflow-dialog"
+      onClose={close}
+      disabled={blocked}
+    >
       <form
         ref={form}
         className="customer-form workspace-form"
@@ -156,38 +161,40 @@ function TemplateEditor({
         <UnsavedChanges active={dirty || blocked} />
         {error && <p role="alert">{t(error)}</p>}
         {uncertain && <p role="alert">{uiText('ui.workspace.uncertain')}</p>}
-        <fieldset disabled={blocked}>
-          <label>
-            {t('name')}
-            <input
-              required
-              maxLength={120}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-            />
-          </label>
-          <div className="workspace-field-pair">
+        <div className="workflow-form-body">
+          <fieldset disabled={blocked}>
             <label>
-              {uiText('ui.workspace.validFrom')}
-              <CustomDateInput required value={from} onChange={setFrom} />
+              {t('name')}
+              <input
+                required
+                maxLength={120}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+              />
             </label>
+            <div className="workspace-field-pair">
+              <label>
+                {uiText('ui.workspace.validFrom')}
+                <CustomDateInput required value={from} onChange={setFrom} />
+              </label>
+              <label>
+                {uiText('ui.workspace.validThrough')}
+                <CustomDateInput required value={through} onChange={setThrough} />
+              </label>
+            </div>
             <label>
-              {uiText('ui.workspace.validThrough')}
-              <CustomDateInput required value={through} onChange={setThrough} />
+              {t('status')}
+              <CustomSelect
+                value={active ? 'active' : 'archived'}
+                onChange={(event) => setActive(event.target.value === 'active')}
+              >
+                <option value="active">{t('active')}</option>
+                <option value="archived">{t('archived')}</option>
+              </CustomSelect>
             </label>
-          </div>
-          <label>
-            {t('status')}
-            <CustomSelect
-              value={active ? 'active' : 'archived'}
-              onChange={(event) => setActive(event.target.value === 'active')}
-            >
-              <option value="active">{t('active')}</option>
-              <option value="archived">{t('archived')}</option>
-            </CustomSelect>
-          </label>
-          <p className="workspace-field-note">{t('copyHint')}</p>
-        </fieldset>
+            <p className="workspace-field-note">{t('copyHint')}</p>
+          </fieldset>
+        </div>
         <div className="portal-actions">
           <Button
             icon="check"
@@ -226,11 +233,13 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
       />
     );
   return (
-    <Modal title={t('title')} onClose={onClose}>
-      <p>{t('intro')}</p>
-      <Button icon="plus" variant="primary" onClick={() => setEditing(undefined)}>
-        {t('add')}
-      </Button>
+    <Modal title={t('title')} className="templates-dialog workflow-dialog" onClose={onClose}>
+      <div className="template-list-toolbar">
+        <p>{t('intro')}</p>
+        <Button icon="plus" variant="primary" onClick={() => setEditing(undefined)}>
+          {t('add')}
+        </Button>
+      </div>
       {loading && <p role="status">{uiText('ui.workspace.loading')}</p>}
       {error && (
         <p role="alert">
@@ -240,39 +249,38 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
           </Button>
         </p>
       )}
-      <div className="workspace-table-scroll">
-        <table className="workspace-table">
-          <thead>
-            <tr>
-              <th>{t('name')}</th>
-              <th>{uiText('ui.workspace.validFrom')}</th>
-              <th>{uiText('ui.workspace.validThrough')}</th>
-              <th>{t('status')}</th>
-              <th>{t('edit')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.validFrom}</td>
-                <td>{item.validThrough}</td>
-                <td>{t(item.active ? 'active' : 'archived')}</td>
-                <td>
-                  <Button
-                    icon="edit"
-                    variant="secondary"
-                    aria-label={t('edit') + ': ' + item.name}
-                    onClick={() => setEditing(item)}
-                  >
-                    {t('edit')}
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ul className="validity-template-list">
+        {items.map((item) => (
+          <li key={item.id}>
+            <div className="template-identity">
+              <strong>{item.name}</strong>
+              <span>{t(item.active ? 'active' : 'archived')}</span>
+            </div>
+            <dl>
+              <div>
+                <dt>{uiText('ui.workspace.validFrom')}</dt>
+                <dd>
+                  <time dateTime={item.validFrom}>{item.validFrom}</time>
+                </dd>
+              </div>
+              <div>
+                <dt>{uiText('ui.workspace.validThrough')}</dt>
+                <dd>
+                  <time dateTime={item.validThrough}>{item.validThrough}</time>
+                </dd>
+              </div>
+            </dl>
+            <Button
+              icon="edit"
+              variant="secondary"
+              aria-label={t('edit') + ': ' + item.name}
+              onClick={() => setEditing(item)}
+            >
+              {t('edit')}
+            </Button>
+          </li>
+        ))}
+      </ul>
       {!loading && !error && !items.length && <p>{t('empty')}</p>}
     </Modal>
   );

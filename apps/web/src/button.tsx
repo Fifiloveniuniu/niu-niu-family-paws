@@ -16,7 +16,10 @@ export default function Button({
   ...props
 }: Props) {
   return (
-    <button {...props} className={[classes[variant], className].filter(Boolean).join(' ')}>
+    <button
+      {...props}
+      className={['shared-button', classes[variant], className].filter(Boolean).join(' ')}
+    >
       {icon && <Icon name={icon} />}
       {children}
     </button>

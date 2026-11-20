@@ -107,6 +107,7 @@ export function BalanceEditor({
   return (
     <Modal
       title={row?.account ? t('editBalance') : t('addBalance')}
+      className="balance-editor-dialog workflow-dialog"
       onClose={close}
       disabled={blocked}
     >
@@ -119,95 +120,97 @@ export function BalanceEditor({
         <p>{t('balanceHint')}</p>
         {error && <p role="alert">{t(error)}</p>}
         {uncertain && <p role="alert">{t('uncertain')}</p>}
-        <fieldset disabled={blocked}>
-          <label>
-            {t('customer')}
-            <CustomerPicker
-              label={t('customer')}
-              required
-              disabled={!!data.customer || !!initial}
-              value={customer}
-              initial={initial ? [initial.customer] : data.customers}
-              onChange={(value) => {
-                setCustomer(value);
-                setPet('');
-                setPickedRow(undefined);
-                setFrom('');
-                setThrough('');
-                operation.current = crypto.randomUUID();
-              }}
-            />
-          </label>
-          <label>
-            {t('pet')}
-            <PetPicker
-              label={t('pet')}
-              required
-              disabled={!customer || !!initial}
-              scope={customer || undefined}
-              initial={
-                initial ? [initial] : data.rows.filter((row) => row.customer.id === customer)
-              }
-              value={pet && customer ? petKey(customer, pet) : ''}
-              onChange={(_key, selected) => {
-                setPet(selected?.pet.id ?? '');
-                setPickedRow(selected);
-                setFrom(selected?.account?.validFrom ?? '');
-                setThrough(selected?.account?.validThrough ?? '');
-                operation.current = crypto.randomUUID();
-              }}
-            />
-          </label>
-          <p className="workspace-current-balance">
-            {t('balance')}:{' '}
-            <strong>
-              {row?.account ? `${row.account.days} ${t('days')}` : uiText('common.notAvailable')}
-            </strong>
-          </p>
-          <label>
-            {t('delta')}
-            <input
-              required
-              type="number"
-              step="1"
-              min={row?.account ? -row.account.days : 1}
-              max="1000000"
-              value={delta}
-              onChange={(event) => setDelta(event.target.value)}
-            />
-          </label>
-          <TemplatePicker
-            disabled={!row}
-            onSelect={(template) => {
-              setFrom(template.validFrom);
-              setThrough(template.validThrough);
-            }}
-          />
-          <div className="workspace-field-pair">
+        <div className="workflow-form-body">
+          <fieldset disabled={blocked}>
             <label>
-              {t('validFrom')}
-              <CustomDateInput required value={from} onChange={setFrom} />
+              {t('customer')}
+              <CustomerPicker
+                label={t('customer')}
+                required
+                disabled={!!data.customer || !!initial}
+                value={customer}
+                initial={initial ? [initial.customer] : data.customers}
+                onChange={(value) => {
+                  setCustomer(value);
+                  setPet('');
+                  setPickedRow(undefined);
+                  setFrom('');
+                  setThrough('');
+                  operation.current = crypto.randomUUID();
+                }}
+              />
             </label>
             <label>
-              {t('validThrough')}
-              <CustomDateInput required value={through} onChange={setThrough} />
+              {t('pet')}
+              <PetPicker
+                label={t('pet')}
+                required
+                disabled={!customer || !!initial}
+                scope={customer || undefined}
+                initial={
+                  initial ? [initial] : data.rows.filter((row) => row.customer.id === customer)
+                }
+                value={pet && customer ? petKey(customer, pet) : ''}
+                onChange={(_key, selected) => {
+                  setPet(selected?.pet.id ?? '');
+                  setPickedRow(selected);
+                  setFrom(selected?.account?.validFrom ?? '');
+                  setThrough(selected?.account?.validThrough ?? '');
+                  operation.current = crypto.randomUUID();
+                }}
+              />
             </label>
-          </div>
-          <label>
-            {t('reason')}
-            <input
-              maxLength={1000}
-              value={reason}
-              onChange={(event) => setReason(event.target.value)}
+            <p className="workspace-current-balance">
+              {t('balance')}:{' '}
+              <strong>
+                {row?.account ? `${row.account.days} ${t('days')}` : uiText('common.notAvailable')}
+              </strong>
+            </p>
+            <label>
+              {t('delta')}
+              <input
+                required
+                type="number"
+                step="1"
+                min={row?.account ? -row.account.days : 1}
+                max="1000000"
+                value={delta}
+                onChange={(event) => setDelta(event.target.value)}
+              />
+            </label>
+            <TemplatePicker
+              disabled={!row}
+              onSelect={(template) => {
+                setFrom(template.validFrom);
+                setThrough(template.validThrough);
+              }}
             />
-          </label>
-          <p>
-            {t('afterBalance')}:{' '}
-            <strong>
-              {days === null ? uiText('common.notAvailable') : `${days} ${t('days')}`}
-            </strong>
-          </p>
-        </fieldset>
+            <div className="workspace-field-pair">
+              <label>
+                {t('validFrom')}
+                <CustomDateInput required value={from} onChange={setFrom} />
+              </label>
+              <label>
+                {t('validThrough')}
+                <CustomDateInput required value={through} onChange={setThrough} />
+              </label>
+            </div>
+            <label>
+              {t('reason')}
+              <input
+                maxLength={1000}
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+              />
+            </label>
+            <p>
+              {t('afterBalance')}:{' '}
+              <strong>
+                {days === null ? uiText('common.notAvailable') : `${days} ${t('days')}`}
+              </strong>
+            </p>
+          </fieldset>
+        </div>
         <div className="portal-actions">
           <Button
             icon="check"
