@@ -1,3 +1,4 @@
+import Button from './button';
 import { englishCatalog, localeFor, uiValue } from './i18n.ts';
 import { apiJson } from './api-client';
 import React from 'react';
@@ -115,29 +116,29 @@ export function AdminAccountLink({
             <>
               <p>{messages.verify}</p>
               <div className="portal-actions">
-                <button className="button" disabled={busy} onClick={() => void decide('approve')}>
+                <Button variant="primary" disabled={busy} onClick={() => void decide('approve')}>
                   {messages.approve}
-                </button>
-                <button className="language" disabled={busy} onClick={() => void decide('reject')}>
+                </Button>
+                <Button variant="secondary" disabled={busy} onClick={() => void decide('reject')}>
                   {messages.reject}
-                </button>
+                </Button>
               </div>
             </>
           )}
           <div className="portal-actions">
             {state.status !== 'approved' && (
-              <button className="language" disabled={busy} onClick={() => void issue()}>
+              <Button variant="secondary" disabled={busy} onClick={() => void issue()}>
                 {state.status === 'none' ? messages.generate : messages.regenerate}
-              </button>
+              </Button>
             )}
             {['open', 'requested'].includes(state.status) && (
-              <button className="language" disabled={busy} onClick={() => void decide('cancel')}>
+              <Button variant="secondary" disabled={busy} onClick={() => void decide('cancel')}>
                 {messages.cancel}
-              </button>
+              </Button>
             )}
-            <button className="language" disabled={busy} onClick={() => void run(load)}>
+            <Button variant="secondary" disabled={busy} onClick={() => void run(load)}>
               {messages.refresh}
-            </button>
+            </Button>
           </div>
         </>
       )}
@@ -220,15 +221,15 @@ export function AccountLinkRequest({
                 onChange={(event) => setCode(event.target.value)}
               />
             </label>
-            <button className="button" disabled={busy} type="submit">
+            <Button variant="primary" disabled={busy} type="submit">
               {messages.submit}
-            </button>
+            </Button>
           </form>
         )
       )}
-      <button className="language" disabled={busy} onClick={() => void run()}>
+      <Button variant="secondary" disabled={busy} onClick={() => void run()}>
         {busy ? messages.busy : messages.refresh}
-      </button>
+      </Button>
     </section>
   );
 }

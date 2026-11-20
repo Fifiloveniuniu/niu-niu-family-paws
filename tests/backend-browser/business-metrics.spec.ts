@@ -44,7 +44,7 @@ for (const [width, lang, palette] of [
     if (width > 800)
       await expect(
         page.getByRole('link', {
-          name: lang === 'en' ? 'Metrics' : '经营指标',
+          name: lang === 'en' ? 'Metrics' : '指标',
           exact: true,
         }),
       ).toHaveAttribute('aria-current', 'page');

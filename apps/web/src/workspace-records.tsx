@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor, supportedLanguages, languageName, uiText, uiValue } from './i18n.ts';
@@ -126,15 +127,12 @@ export function CustomerEditor({
           </p>
         </fieldset>
         <div className="portal-actions">
-          <button
-            className="button"
-            disabled={saving || error === 'conflict' || error === 'denied'}
-          >
+          <Button variant="primary" disabled={saving || error === 'conflict' || error === 'denied'}>
             {t(saving ? 'saving' : uncertain ? 'retry' : 'save')}
-          </button>
-          <button className="language" type="button" onClick={close} disabled={blocked}>
+          </Button>
+          <Button variant="secondary" type="button" onClick={close} disabled={blocked}>
             {t('cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>
@@ -198,23 +196,23 @@ export function BookingDetails({
         <p>{t('unbilled')}</p>
         {admin && ['planned', 'in_care'].includes(booking.status) && (
           <div className="portal-actions">
-            <button className="language" onClick={onEdit}>
+            <Button variant="secondary" onClick={onEdit}>
               <Icon name="edit" />
               {t('editBooking')}
-            </button>
+            </Button>
             {booking.status === 'planned' ? (
               <>
-                <button className="button" onClick={() => onAction('check_in')}>
+                <Button variant="primary" onClick={() => onAction('check_in')}>
                   {t('checkIn')}
-                </button>
-                <button className="language" onClick={() => onAction('cancel')}>
+                </Button>
+                <Button variant="secondary" onClick={() => onAction('cancel')}>
                   {t('cancelPlan')}
-                </button>
+                </Button>
               </>
             ) : (
-              <button className="button" onClick={() => onAction('check_out')}>
+              <Button variant="primary" onClick={() => onAction('check_out')}>
                 {t('checkOut')}
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -324,15 +322,15 @@ export function BookingAction({
           />
         )}
         <div className="portal-actions">
-          <button
-            className="button"
+          <Button
+            variant="primary"
             disabled={!valid || saving || error === 'conflict' || error === 'denied'}
           >
             {t(saving ? 'saving' : uncertain ? 'retry' : 'save')}
-          </button>
-          <button className="language" type="button" disabled={blocked} onClick={close}>
+          </Button>
+          <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
             {t('cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

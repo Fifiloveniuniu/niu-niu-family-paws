@@ -1,3 +1,4 @@
+import Button from './button';
 import {
   englishCatalog,
   languageName,
@@ -229,27 +230,27 @@ export default function Profile({
                 </CustomSelect>
               </label>
             </fieldset>
-            <button
-              className="button"
+            <Button
+              variant="primary"
               disabled={saving || loading || error === 'conflict' || error === 'forbidden'}
               type="submit"
             >
               {saving ? labels.saving : uncertain ? labels.retry : labels.save}
-            </button>
+            </Button>
           </form>
           {profile && showPets && <Pets key={profile.id} customerId={profile.id} />}
         </>
       )}
       {(error === 'error' || error === 'conflict') && !uncertain && (
-        <button
-          className="language"
+        <Button
+          variant="secondary"
           disabled={loading || saving || uncertain}
           onClick={() => {
             if (confirmDiscardChanges(i18n.language, form.current)) void load();
           }}
         >
           {labels.reload}
-        </button>
+        </Button>
       )}
     </section>
   );

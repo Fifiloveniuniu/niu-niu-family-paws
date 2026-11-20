@@ -1,3 +1,7 @@
+## Shared segmented controls — 2026-11-20
+
+Reuse Button, IconButton, SearchInput, SegmentedTabs and Modal for matching functionality. SegmentedTabs supports panel tabs and pressed-button range presets. Selected controls pair primary/on-primary colors; inactive labels are bold. Calendar groups navigation, date heading, timezone (left label) and view choices separately from actions. Its date input is removed; desktop uses one row and phones wrap. Settings glyphs are compact with 44px touch targets. Icon transforms use each asset's own viewBox. All further Playwright validation runs headlessly.
+
 ## Current app-family implementation — 2026-11-18
 
 Four curated families: **Google**, **Apple**, **Microsoft Light**, **Microsoft Dark**. Google Calendar and Gmail share one Google preset. The default is Google; legacy preferences migrate to these four families. Colors, typography, geometry, interaction states and native-style icon families change together. Source links are in `theme-catalog.ts`; selected SVG sources are in `theme-icons.json`, with original licenses and attribution in `public/licenses`. Apple-style icons use Lucide, not restricted Apple SF Symbols.

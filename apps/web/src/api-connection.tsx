@@ -1,3 +1,4 @@
+import Button from './button';
 import { type Language, uiText } from './i18n.ts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -76,15 +77,15 @@ export default function ApiConnection({
               {status === 'offline' && (
                 <>
                   <p>{uiText('ui.apiConnection.weCanTReachTheServerRightNowCheck')}</p>
-                  <button
-                    className="button"
+                  <Button
+                    variant="primary"
                     onClick={() => {
                       setStatus('checking');
                       setRetry((value) => value + 1);
                     }}
                   >
                     {uiText('ui.apiConnection.tryAgain')}
-                  </button>
+                  </Button>
                   <p>
                     <a href="/home/">{uiText('ui.apiConnection.backToWebsite')}</a>
                   </p>

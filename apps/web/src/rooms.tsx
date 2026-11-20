@@ -1,3 +1,5 @@
+import Button from './button';
+import IconButton from './icon-button';
 import LocationLabel from './location-label';
 import React from 'react';
 import './rooms.css';
@@ -152,14 +154,14 @@ export default function Rooms({
       <div hidden={embedded}>
         <div className="customer-heading">
           <h4>{label('title')}</h4>
-          <button
+          <Button
             type="button"
-            className="language"
+            variant="secondary"
             disabled={!addressReady || blocked}
             onClick={() => open()}
           >
             {label('add')}
-          </button>
+          </Button>
         </div>
         {!addressReady && <p>{uiText('ui.houses.addressMissing')}</p>}
         {loading && <p role="status">{label('loading')}</p>}
@@ -167,9 +169,9 @@ export default function Rooms({
         {error && !editor && (
           <>
             <p role="alert">{label(error)}</p>
-            <button className="language" onClick={() => void load()}>
+            <Button variant="secondary" onClick={() => void load()}>
               {label('retry')}
-            </button>
+            </Button>
           </>
         )}
         <ul>
@@ -186,16 +188,16 @@ export default function Rooms({
                   )
                   .join(' · ')}
               </span>
-              <button
+              <IconButton
                 type="button"
-                className="icon-button"
+
                 title={label('edit')}
                 aria-label={`${label('edit')}: ${room.name}`}
                 disabled={!addressReady || blocked}
                 onClick={() => open(room)}
               >
                 <Icon name="edit" />
-              </button>
+              </IconButton>
             </li>
           ))}
         </ul>
@@ -209,9 +211,9 @@ export default function Rooms({
             <p role="alert">
               {!addressReady ? uiText('ui.houses.addressMissing') : label(error || 'empty')}
             </p>
-            <button className="language" onClick={() => void load()}>
+            <Button variant="secondary" onClick={() => void load()}>
               {label('retry')}
-            </button>
+            </Button>
           </>
         ))}
       {editor && (
@@ -275,16 +277,16 @@ export default function Rooms({
               ))}
             </fieldset>
             <div className="portal-actions">
-              <button
+              <Button
                 type="submit"
-                className="button"
+                variant="primary"
                 disabled={saving || error === 'conflict' || error === 'denied'}
               >
                 {label(saving ? 'saving' : uncertain ? 'retry' : 'save')}
-              </button>
-              <button type="button" className="language" disabled={blocked} onClick={close}>
+              </Button>
+              <Button type="button" variant="secondary" disabled={blocked} onClick={close}>
                 {label('cancel')}
-              </button>
+              </Button>
             </div>
           </form>
         </Modal>

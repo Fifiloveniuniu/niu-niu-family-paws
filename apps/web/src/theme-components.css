@@ -1045,3 +1045,30 @@ html[data-ui-style] .hc .hc-scales [role='tab'] {
   text-align: center;
   gap: 6px;
 }
+
+/* Every segmented control uses the same base and paired selection colors. */
+html[data-ui-style] .hc .shared-tabs > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  border: 0;
+  border-radius: var(--ui-field-radius, 5px);
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  padding: 8px 15px;
+  min-height: 33px;
+  font-size: 12px;
+  font-weight: 600;
+}
+html[data-ui-style] .hc .shared-tabs > button[data-selected='true'] {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  font-weight: 600;
+}
+@media (max-width: 600px) {
+  html[data-ui-style] .hc .shared-tabs > button {
+    min-height: 44px;
+  }
+}

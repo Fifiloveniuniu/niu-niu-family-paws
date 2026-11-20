@@ -1,3 +1,11 @@
+## Shared UI controls and calendar toolbar — 2026-11-20
+
+Calendar (saved/preview), Pricing, Balances/Activity and Metrics period presets now reuse `SegmentedTabs`, with correct tab/pressed semantics and arrow/Home/End behavior. Selected controls use primary/on-primary role pairs (Apple red; Microsoft Light blue), inactive labels are bold and phone targets remain usable. Shared Button/IconButton/SearchInput replace repeated markup across pages. Gallery and preview booking details reuse Modal. Icon transforms now respect each source viewBox: the 24px Microsoft settings glyph is no longer incorrectly enlarged as a 16px asset.
+
+Calendar timezone is outside record filters with its label on the left. Navigation/date heading/timezone/view choices form one group, separate from booking/management actions; the date input was removed at the owner's request. Desktop keeps one row and phones wrap. The settings glyph is smaller while its target remains 44px. Page/navigation wording is Metrics (指标). Owner explicitly requires all further Playwright work to run headlessly.
+
+The companion change removes Metrics sample selection and adds persisted, emulator-only demonstration records; it is not included in this UI commit. Keep production data separate. Local validation and review captures are recorded with the companion final delivery entry. No manual intermediate deployment.
+
 ## Cancel superseded release workflows — 2026-11-19
 
 Latest owner instruction: merging a newer PR must cancel the previous release workflow. Workflow-level concurrency now cancels the whole older main run, including deployment, rather than only the build job. The deployment serialization lock and stale-main guard remain. Already submitted cloud operations are not rolled back; the newest release publishes the matching API/frontend. The older phone-dashboard release run was explicitly cancelled during this change.

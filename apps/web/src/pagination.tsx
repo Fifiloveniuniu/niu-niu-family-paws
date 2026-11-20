@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import { apiJson } from './api-client';
 import { uiText } from './i18n.ts';
@@ -95,30 +96,30 @@ export function Pagination({
         </CustomSelect>
       </label>
       <span role="status">{t('range', { first, last, page: page.index + 1 })}</span>
-      <button
-        className="language"
+      <Button
+        variant="secondary"
         disabled={page.loading || page.index === 0}
         onClick={page.previous}
       >
         {t('previous')}
-      </button>
-      <button
-        className="language"
+      </Button>
+      <Button
+        variant="secondary"
         disabled={page.loading || page.error || !page.nextCursor}
         onClick={page.next}
       >
         {t('next')}
-      </button>
+      </Button>
       {page.error && (
         <span role="alert">
           {t('error')}{' '}
-          <button className="language" onClick={page.reload}>
+          <Button variant="secondary" onClick={page.reload}>
             {t('retry')}
-          </button>
+          </Button>
           {page.index > 0 && (
-            <button className="language" onClick={page.reset}>
+            <Button variant="secondary" onClick={page.reset}>
               {t('first')}
-            </button>
+            </Button>
           )}
         </span>
       )}

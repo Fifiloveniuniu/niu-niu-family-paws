@@ -1,3 +1,6 @@
+import Button from './button';
+import IconButton from './icon-button';
+import SegmentedTabs from './segmented-tabs';
 import './workspace-views.css';
 import { CustomerPicker, PetPicker } from './workspace-pickers';
 import { useCursorPage, Pagination } from './pagination';
@@ -206,16 +209,16 @@ export function BalanceEditor({
           </p>
         </fieldset>
         <div className="portal-actions">
-          <button
-            className="button"
+          <Button
+            variant="primary"
             type="submit"
             disabled={saving || !valid || error === 'conflict' || error === 'denied'}
           >
             {t(saving ? 'saving' : uncertain ? 'retry' : 'save')}
-          </button>
-          <button className="language" type="button" disabled={blocked} onClick={close}>
+          </Button>
+          <Button variant="secondary" type="button" disabled={blocked} onClick={close}>
             {t('cancel')}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>
@@ -367,31 +370,23 @@ export default function WorkspaceBalances({
         <h1>{t('balances')}</h1>
         <p>{b('intro')}</p>
       </div>
-      <div className="hc-scales workspace-view-tabs" role="tablist" aria-label={t('balances')}>
-        {[false, true].map((value) => (
-          <button
-            key={String(value)}
-            type="button"
-            role="tab"
-            id={value ? 'activity-tab' : 'balances-tab'}
-            aria-selected={activity === value}
-            tabIndex={activity === value ? 0 : -1}
-            onKeyDown={(event) => {
-              if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
-                event.preventDefault();
-                const next = event.key === 'Home' ? false : event.key === 'End' ? true : !value;
-                onFilters({ panel: next ? 'activity' : '' });
-                document.getElementById(next ? 'activity-tab' : 'balances-tab')?.focus();
-              }
-            }}
-            aria-controls={value ? 'activity-panel' : 'balances-panel'}
-            onClick={() => onFilters({ panel: value ? 'activity' : '' })}
-          >
-            <Icon name={value ? 'clock' : 'balance'} />
-            {b(value ? 'activity' : 'current')}
-          </button>
-        ))}
-      </div>
+      <SegmentedTabs
+        className="workspace-view-tabs"
+        label={t('balances')}
+        value={activity ? 'activity' : 'balances'}
+        onChange={(value) => onFilters({ panel: value === 'activity' ? 'activity' : '' })}
+        items={(['balances', 'activity'] as const).map((value) => ({
+          value,
+          id: value + '-tab',
+          panelId: value + '-panel',
+          label: (
+            <>
+              <Icon name={value === 'activity' ? 'clock' : 'balance'} />
+              {b(value === 'activity' ? 'activity' : 'current')}
+            </>
+          ),
+        }))}
+      />
       {templates && <ValidityTemplates onClose={() => setTemplates(false)} />}
       <div className="workspace-section-actions workspace-balance-toolbar">
         {data.admin && !data.customer && (
@@ -418,14 +413,13 @@ export default function WorkspaceBalances({
           />
         </label>
         {selected && (
-          <button
-            className="icon-button"
+          <IconButton
             aria-label={t('clearFilters')}
             title={t('clearFilters')}
             onClick={() => onSelect('')}
           >
             <Icon name="reset" />
-          </button>
+          </IconButton>
         )}
         {data.admin && (
           <div className="workspace-primary-actions">
@@ -437,14 +431,13 @@ export default function WorkspaceBalances({
             >
               <Icon name="settings" />
             </a>
-            <button
-              className="icon-button"
+            <IconButton
               title={uiText('ui.templates.title')}
               aria-label={uiText('ui.templates.title')}
               onClick={() => setTemplates(true)}
             >
               <Icon name="calendar" />
-            </button>
+            </IconButton>
             <button className="hc-apply" disabled={false} onClick={() => onAdjust(undefined)}>
               <Icon name="plus" />
               {t('addBalance')}
@@ -503,9 +496,9 @@ export default function WorkspaceBalances({
                     )}
                   </td>
                   <td className="balance-history-cell">
-                    <button
+                    <IconButton
                       type="button"
-                      className="icon-button"
+
                       title={b('petActivity')}
                       aria-label={`${b('petActivity')}: ${row.pet.name}`}
                       onClick={() =>
@@ -513,18 +506,17 @@ export default function WorkspaceBalances({
                       }
                     >
                       <Icon name="clock" />
-                    </button>
+                    </IconButton>
                   </td>
                   {data.admin && (
                     <td className="balance-edit-cell">
-                      <button
-                        className="icon-button"
+                      <IconButton
                         title={t('editBalance')}
                         aria-label={`${t('editBalance')}: ${row.pet.name}`}
                         onClick={() => onAdjust(row)}
                       >
                         <Icon name="edit" />
-                      </button>
+                      </IconButton>
                     </td>
                   )}
                 </tr>
@@ -549,15 +541,14 @@ export default function WorkspaceBalances({
             <h2>{b('activity')}</h2>
             <p className="workspace-view-hint">{b('activityHint')}</p>
           </div>
-          <button
-            className="icon-button"
+          <IconButton
             title={t(exporting ? 'exporting' : 'exportCsv')}
             aria-label={t(exporting ? 'exporting' : 'exportCsv')}
             disabled={!valid || exporting}
             onClick={() => void exportCsv()}
           >
             <Icon name="download" />
-          </button>
+          </IconButton>
         </div>
         <div className="workspace-filters activity-filter-bar">
           <label>
@@ -585,24 +576,24 @@ export default function WorkspaceBalances({
         </div>
         <div className="activity-filter-note">
           <span>{t('timesIn', { zone })}</span>
-          <button
+          <IconButton
             type="button"
-            className="icon-button"
+
             title={t('clearFilters')}
             aria-label={t('clearFilters')}
             disabled={!kind && !from && !through}
             onClick={() => onFilters({ kind: '', from: '', through: '' })}
           >
             <Icon name="reset" />
-          </button>
+          </IconButton>
         </div>
         {!valid && <p role="alert">{t('invalidDates')}</p>}
         {error && (
           <p role="alert">
             {t('loadError')}{' '}
-            <button className="language" onClick={history.reload}>
+            <Button variant="secondary" onClick={history.reload}>
               {t('retry')}
-            </button>
+            </Button>
           </p>
         )}
         {loading && <p role="status">{t('loading')}</p>}
@@ -698,14 +689,13 @@ export default function WorkspaceBalances({
                     </small>
                   </td>
                   <td className="activity-detail-cell">
-                    <button
-                      className="icon-button"
+                    <IconButton
                       title={t('entryDetails')}
                       aria-label={`${t('entryDetails')}: ${row.pet.name} · ${row.event.at}`}
                       onClick={() => setDetail(row)}
                     >
                       <Icon name="search" />
-                    </button>
+                    </IconButton>
                   </td>
                 </tr>
               ))}

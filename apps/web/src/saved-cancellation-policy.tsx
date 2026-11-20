@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import { apiOptionalJson, apiJson } from './api-client';
 import { uiText } from './i18n.ts';
@@ -48,9 +49,9 @@ export default function SavedCancellationPolicy() {
     return (
       <div role="alert">
         <p>{uiText('ui.workspace.loadError')}</p>
-        <button className="language" onClick={() => void load()}>
+        <Button variant="secondary" onClick={() => void load()}>
           {uiText('ui.workspace.retry')}
-        </button>
+        </Button>
       </div>
     );
   return (

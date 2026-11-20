@@ -1,3 +1,4 @@
+import Button from './button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import supplied from '../../../packages/pricing/source-rates.json';
@@ -63,9 +64,9 @@ export default function PublicPrices() {
       {status === 'error' && (
         <p role="alert">
           {t('unavailable')}{' '}
-          <button className="language" onClick={retry}>
+          <Button variant="secondary" onClick={retry}>
             {uiText('ui.workspace.retry')}
-          </button>
+          </Button>
         </p>
       )}
       {groups.map(([key, label]) => {

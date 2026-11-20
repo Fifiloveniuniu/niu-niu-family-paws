@@ -1,3 +1,4 @@
+import IconButton from './icon-button';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -260,8 +261,8 @@ export function PetInfo({
             onMouseEnter={() => clearTimeout(timer.current)}
             onMouseLeave={leave}
           >
-            <button
-              className="icon-button popup-close"
+            <IconButton
+              className="popup-close"
               type="button"
               aria-label={t('close')}
               onClick={() => {
@@ -270,7 +271,7 @@ export function PetInfo({
               }}
             >
               <Icon name="close" />
-            </button>
+            </IconButton>
             <WorkspaceAvatar row={row} large />
             <h3>{row.pet.name}</h3>
             <p>{row.pet.species ? speciesText(row.pet.species) : na}</p>

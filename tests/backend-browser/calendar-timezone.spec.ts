@@ -23,28 +23,31 @@ for (const [width, lang] of [
         await import('/node_modules/.vite/deps/firebase_auth.js');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
-    const date = page.locator('.workspace-range-controls input');
+    const selectedDate = () => new URL(page.url()).searchParams.get('date');
+    await expect(page.locator('.calendar-time-controls .custom-date-input')).toHaveCount(0);
     const now = page.locator('.workspace-now-marker time');
     const tick = page.locator('.calendar-timeline-tick').first();
-    await expect(date).toHaveValue('2026-11-18');
+
     await expect(now).toHaveText(clock('America/Los_Angeles'));
     await expect(tick).toHaveAttribute('data-at', '2026-11-18T08:00:00.000Z');
     const timezone = page.locator('.workspace-clock [role="combobox"]');
     await timezone.click();
     await page.getByRole('option', { name: 'Asia/Tokyo', exact: true }).click();
-    await expect(date).toHaveValue('2026-11-19');
+    await expect.poll(selectedDate).toBe('2026-11-19');
     await expect(now).toHaveText(clock('Asia/Tokyo'));
     await expect(tick).toHaveAttribute('data-at', '2026-11-18T15:00:00.000Z');
     await page.reload();
     await expect(timezone).toHaveAttribute('data-value', 'Asia/Tokyo');
-    await expect(date).toHaveValue('2026-11-19');
-    await date.fill('2026-12-05');
-    await date.press('Tab');
+    await expect.poll(selectedDate).toBe('2026-11-19');
+    await page
+      .getByRole('button', { name: lang === 'zh' ? '上一时段' : 'Previous period', exact: true })
+      .click();
+    await expect.poll(selectedDate).toBe('2026-11-18');
     await timezone.click();
     await page.getByRole('option', { name: 'UTC', exact: true }).click();
-    await expect(date).toHaveValue('2026-12-05');
+    await expect.poll(selectedDate).toBe('2026-11-18');
     await page.getByRole('button', { name: lang === 'zh' ? '今天' : 'Today', exact: true }).click();
-    await expect(date).toHaveValue('2026-11-19');
+    await expect.poll(selectedDate).toBe('2026-11-19');
     await expect(now).toHaveText(clock('UTC'));
     await expect(tick).toHaveAttribute('data-at', '2026-11-19T00:00:00.000Z');
   });

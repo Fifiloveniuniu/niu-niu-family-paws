@@ -1,3 +1,4 @@
+import SegmentedTabs from './segmented-tabs';
 import { petTypeChoice } from './pet-type';
 import { withoutLanguage } from './language-url.ts';
 import { localeFor, type Language, uiText } from './i18n.ts';
@@ -161,7 +162,6 @@ export default function HouseCalendar({
   const [query, setQuery] = React.useState('');
   const [collapsed, setCollapsed] = React.useState<string[]>([]);
   const [selected, setSelected] = React.useState<Stay | null>(null);
-  const dialog = React.useRef<HTMLDialogElement>(null);
   React.useEffect(() => {
     document.querySelector<HTMLDetailsElement>('.hc-account-menu')?.removeAttribute('open');
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -174,11 +174,7 @@ export default function HouseCalendar({
       ? stays.find((stay) => stay.id === parsed.bookingId) || null
       : null;
     setSelected(selectedStay);
-    if (!selectedStay) dialog.current?.close();
   }, [route]);
-  React.useEffect(() => {
-    if (selected) dialog.current?.showModal();
-  }, [selected]);
   const span = { day: 1, week: 14, month: 35, year: 365 }[scale];
   const before = { day: 0, week: 3, month: 7, year: 30 }[scale];
   const from = new Date(focusDate.getTime() + (offset * span - before) * MILLISECONDS_PER_DAY);
@@ -313,32 +309,17 @@ export default function HouseCalendar({
     updateQuery({ view: value });
   }
   const scales = (
-    <div className="hc-scales" role="tablist" aria-label={uiText('ui.houseCalendar.calendarView')}>
-      {scaleValues.map((v, i) => (
-        <button
-          key={v}
-          id={'hc-tab-' + v}
-          role="tab"
-          aria-selected={scale === v}
-          aria-controls="hc-timeline-panel"
-          tabIndex={scale === v ? 0 : -1}
-          onClick={() => changeScale(v)}
-          onKeyDown={(event) => {
-            let next = i;
-            if (event.key === 'ArrowRight') next = (i + 1) % 4;
-            else if (event.key === 'ArrowLeft') next = (i + 3) % 4;
-            else if (event.key === 'Home') next = 0;
-            else if (event.key === 'End') next = 3;
-            else return;
-            event.preventDefault();
-            changeScale(scaleValues[next]);
-            document.getElementById('hc-tab-' + scaleValues[next])?.focus();
-          }}
-        >
-          {uiText('ui.houseCalendar.scale.' + v)}
-        </button>
-      ))}
-    </div>
+    <SegmentedTabs
+      label={uiText('ui.houseCalendar.calendarView')}
+      value={scale}
+      onChange={changeScale}
+      items={scaleValues.map((value) => ({
+        value,
+        id: 'hc-tab-' + value,
+        panelId: 'hc-timeline-panel',
+        label: uiText('ui.houseCalendar.scale.' + value),
+      }))}
+    />
   );
 
   return (
@@ -1159,72 +1140,60 @@ export default function HouseCalendar({
                 </div>
               </Modal>
             )}
-            <dialog
-              ref={dialog}
-              aria-label={selected?.name}
-              className="hc-dialog hc-stay-drawer"
-              onClose={() => {
-                setSelected(null);
-                if (currentRoute().bookingId) closeRecord('/app/calendar/' + parsed.search);
-              }}
-            >
-              {selected && (
-                <>
-                  <div className="hc-dialog-title">
-                    <h2>{selected.name}</h2>
-                    <button
-                      onClick={() => dialog.current?.close()}
-                      aria-label={uiText('ui.houseCalendar.close')}
-                    >
-                      ×
-                    </button>
-                  </div>
-                  <p className={'hc-status ' + selected.status}>
-                    {status(selected)}
-                    {selected.overdue ? ' · ' + uiText('ui.houseCalendar.pickupOverdue') : ''}
-                  </p>
-                  <dl>
-                    <dt>{uiText('ui.houseCalendar.customer')}</dt>
-                    <dd>{customerName(customerFor(selected.name))}</dd>
-                    <dt>{uiText('ui.houseCalendar.location')}</dt>
-                    <dd>
-                      {houseName(selected.house)} · {roomName(selected.house, selected.room)}
-                    </dd>
-                    <dt>{uiText('ui.houseCalendar.plannedArrival')}</dt>
-                    <dd>{dateAtOffset(selected.start).toLocaleString(locale)}</dd>
-                    <dt>{uiText('ui.houseCalendar.plannedPickup')}</dt>
-                    <dd>{dateAtOffset(selected.end).toLocaleString(locale)}</dd>
-                    <dt>{uiText('ui.houseCalendar.actualArrival')}</dt>
-                    <dd>
-                      {selected.status === 'upcoming'
-                        ? uiText('ui.houseCalendar.notRecorded')
-                        : dateAtOffset(selected.start).toLocaleString(locale)}
-                    </dd>
-                    <dt>{uiText('ui.houseCalendar.actualPickup')}</dt>
-                    <dd>
-                      {selected.status === 'out'
-                        ? dateAtOffset(selected.end).toLocaleString(locale)
-                        : uiText('ui.houseCalendar.notRecorded')}
-                    </dd>
-                  </dl>
-                  <CalendarProfileLink name={selected.name} />
-                  <button
-                    className="hc-manage"
-                    onClick={() => {
-                      pendingBalance.current = {
-                        pet: selected.name,
-                        service: selected.coverage?.service || 'boarding',
-                      };
-                      if (!navigate('/app/calendar/' + parsed.search, true))
-                        pendingBalance.current = null;
-                    }}
-                  >
-                    {uiText('ui.houseCalendar.viewPetBalance')}
-                  </button>
-                  <p>{uiText('ui.houseCalendar.noBookingOrAttendanceDataIsSaved')}</p>
-                </>
-              )}
-            </dialog>
+            {selected && (
+              <Modal
+                title={selected.name}
+                className="hc-dialog hc-stay-drawer"
+                onClose={() => {
+                  setSelected(null);
+                  if (currentRoute().bookingId) closeRecord('/app/calendar/' + parsed.search);
+                }}
+              >
+                <p className={'hc-status ' + selected.status}>
+                  {status(selected)}
+                  {selected.overdue ? ' · ' + uiText('ui.houseCalendar.pickupOverdue') : ''}
+                </p>
+                <dl>
+                  <dt>{uiText('ui.houseCalendar.customer')}</dt>
+                  <dd>{customerName(customerFor(selected.name))}</dd>
+                  <dt>{uiText('ui.houseCalendar.location')}</dt>
+                  <dd>
+                    {houseName(selected.house)} · {roomName(selected.house, selected.room)}
+                  </dd>
+                  <dt>{uiText('ui.houseCalendar.plannedArrival')}</dt>
+                  <dd>{dateAtOffset(selected.start).toLocaleString(locale)}</dd>
+                  <dt>{uiText('ui.houseCalendar.plannedPickup')}</dt>
+                  <dd>{dateAtOffset(selected.end).toLocaleString(locale)}</dd>
+                  <dt>{uiText('ui.houseCalendar.actualArrival')}</dt>
+                  <dd>
+                    {selected.status === 'upcoming'
+                      ? uiText('ui.houseCalendar.notRecorded')
+                      : dateAtOffset(selected.start).toLocaleString(locale)}
+                  </dd>
+                  <dt>{uiText('ui.houseCalendar.actualPickup')}</dt>
+                  <dd>
+                    {selected.status === 'out'
+                      ? dateAtOffset(selected.end).toLocaleString(locale)
+                      : uiText('ui.houseCalendar.notRecorded')}
+                  </dd>
+                </dl>
+                <CalendarProfileLink name={selected.name} />
+                <button
+                  className="hc-manage"
+                  onClick={() => {
+                    pendingBalance.current = {
+                      pet: selected.name,
+                      service: selected.coverage?.service || 'boarding',
+                    };
+                    if (!navigate('/app/calendar/' + parsed.search, true))
+                      pendingBalance.current = null;
+                  }}
+                >
+                  {uiText('ui.houseCalendar.viewPetBalance')}
+                </button>
+                <p>{uiText('ui.houseCalendar.noBookingOrAttendanceDataIsSaved')}</p>
+              </Modal>
+            )}
           </main>
         </div>
       </div>

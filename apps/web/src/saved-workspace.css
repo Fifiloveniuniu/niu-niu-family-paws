@@ -1100,11 +1100,19 @@
 .calendar-filter-groups .workspace-search {
   grid-column: 1/-1;
 }
-.saved-workspace .calendar-filter-groups .workspace-clock {
-  display: block;
-  grid-column: 1/-1;
+/* Timezone changes calendar presentation and remains available when filters collapse. */
+.calendar-results .workspace-clock {
+  flex: 0 1 320px;
+  min-width: 0;
+  max-width: 100%;
 }
-.saved-workspace .calendar-filter-groups .workspace-clock label {
+.calendar-results .workspace-clock label {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
   white-space: normal;
 }
 .saved-calendar .calendar-results > .hc-toolbar {
@@ -1136,5 +1144,69 @@
   }
   .calendar-results .workspace-range-controls {
     justify-content: start;
+  }
+}
+
+.calendar-results .workspace-clock .custom-select {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Keep the complete calendar toolbar together on desktop; phones wrap naturally. */
+@media (min-width: 1200px) {
+  .saved-calendar .calendar-results > .hc-toolbar {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  .hc .saved-calendar .calendar-results .hc-range {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+  .saved-calendar .calendar-results .hc-range h2 {
+    font-size: 14px;
+    margin-left: 4px;
+  }
+  .calendar-results .workspace-range-controls {
+    flex: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .calendar-results .workspace-clock {
+    flex: 1 1 250px;
+    min-width: 180px;
+    max-width: 320px;
+  }
+  .calendar-results .workspace-range-controls > .custom-date-input {
+    flex: 0 0 150px;
+    width: 150px;
+  }
+  .calendar-results .workspace-range-controls > .shared-tabs {
+    flex-shrink: 0;
+  }
+  html[data-ui-style] .hc .calendar-results .shared-tabs > button {
+    padding-inline: 10px;
+  }
+}
+.saved-workspace .saved-calendar .calendar-filter-groups {
+  align-items: start;
+}
+
+.calendar-results .calendar-time-controls {
+  justify-content: start;
+}
+.calendar-toolbar-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+.calendar-toolbar-actions .calendar-settings-action .paws-icon {
+  width: 16px;
+  height: 16px;
+}
+@media (min-width: 1200px) {
+  .calendar-results .calendar-time-controls {
+    flex-wrap: nowrap;
   }
 }

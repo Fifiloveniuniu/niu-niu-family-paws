@@ -1,3 +1,6 @@
+import SearchInput from './search-input';
+import IconButton from './icon-button';
+import SegmentedTabs from './segmented-tabs';
 import LocationLabel from './location-label';
 import { CalendarAxis, CalendarTrack, CalendarFrame, CalendarViewport } from './calendar-timeline';
 import {
@@ -11,7 +14,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor, speciesText, uiText, uiValue } from './i18n.ts';
 import CustomSelect from './custom-select';
-import CustomDateInput from './custom-date-input';
 import Icon from './icons';
 import { useWorkspaceText } from './workspace-text';
 import {
@@ -88,7 +90,7 @@ export default function WorkspaceCalendar({
   onAddress,
   onManage,
   loading,
-  filterZone,
+  timeZoneControl,
   filterCustomer,
 }: {
   data: WorkspaceData;
@@ -101,7 +103,7 @@ export default function WorkspaceCalendar({
   onAddress: (house: LocationRow['house']) => void;
   onManage: (target: { houseId: string; roomId?: string; addRoom?: boolean }) => void;
   loading: boolean;
-  filterZone?: React.ReactNode;
+  timeZoneControl?: React.ReactNode;
   filterCustomer?: React.ReactNode;
 }) {
   const t = useWorkspaceText();
@@ -172,18 +174,17 @@ export default function WorkspaceCalendar({
             {uiText('ui.calendarFilters.title')}
           </h2>{' '}
           <div className="calendar-filter-actions">
-            <button
-              className="icon-button"
+            <IconButton
               title={t('clearFilters')}
               aria-label={t('clearFilters')}
               disabled={!filtered}
               onClick={() => onQuery({ house: '', room: '', species: '', status: '', q: '' })}
             >
               <Icon name="reset" />
-            </button>
-            <button
+            </IconButton>
+            <IconButton
               type="button"
-              className="icon-button"
+
               title={uiText(filtersOpen ? 'ui.calendarFilters.hide' : 'ui.calendarFilters.show')}
               aria-label={uiText(
                 filtersOpen ? 'ui.calendarFilters.hide' : 'ui.calendarFilters.show',
@@ -193,7 +194,7 @@ export default function WorkspaceCalendar({
               onClick={() => setFiltersOpen((v) => !v)}
             >
               <Icon name="chevron-down" className={filtersOpen ? 'filter-chevron-open' : ''} />
-            </button>
+            </IconButton>
           </div>
         </div>
         <div
@@ -206,11 +207,7 @@ export default function WorkspaceCalendar({
             {filterCustomer}{' '}
             <label className="workspace-search">
               {t('searchPets')}
-              <input
-                type="search"
-                value={query}
-                onChange={(event) => onQuery({ q: event.target.value })}
-              />
+              <SearchInput value={query} onChange={(event) => onQuery({ q: event.target.value })} />
             </label>
             <label>
               {t('type')}
@@ -279,28 +276,43 @@ export default function WorkspaceCalendar({
                   )}
               </CustomSelect>
             </label>
-            {filterZone}
           </fieldset>
         </div>
       </section>
       <section className="calendar-results" aria-label={t('calendar')}>
         <div className="hc-toolbar">
-          <div className="hc-range">
-            <button type="button" aria-label={t('previous')} onClick={() => shift(-1)}>
-              <Icon name="chevron-left" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}
-            >
-              {t('today')}
-            </button>
-            <button type="button" aria-label={t('next')} onClick={() => shift(1)}>
-              <Icon name="chevron-right" />
-            </button>
-            <h2>{title}</h2>
+          <div
+            className="workspace-range-controls calendar-time-controls"
+            role="group"
+            aria-label={t('period')}
+          >
+            <div className="hc-range">
+              <button type="button" aria-label={t('previous')} onClick={() => shift(-1)}>
+                <Icon name="chevron-left" />
+              </button>
+              <button
+                type="button"
+                onClick={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}
+              >
+                {t('today')}
+              </button>
+              <button type="button" aria-label={t('next')} onClick={() => shift(1)}>
+                <Icon name="chevron-right" />
+              </button>
+              <h2>{title}</h2>
+            </div>
+            {timeZoneControl}
+            <SegmentedTabs
+              label={t('calendarView')}
+              value={range.view}
+              onChange={(view) => onQuery({ view })}
+              items={(['day', 'week', 'month', 'year'] as const).map((view) => ({
+                value: view,
+                label: t(view),
+              }))}
+            />
           </div>
-          <div className="workspace-range-controls">
+          <div className="calendar-toolbar-actions">
             <button className="hc-apply" disabled={!data.rows.length} onClick={() => onAdd()}>
               <Icon name="plus" />
               {t(data.admin ? 'addBooking' : 'availability')}
@@ -317,7 +329,7 @@ export default function WorkspaceCalendar({
             )}
             {data.admin && (
               <a
-                className="icon-button"
+                className="icon-button calendar-settings-action"
                 href="/app/settings/locations/"
                 title={t('manageLocations')}
                 aria-label={t('manageLocations')}
@@ -325,27 +337,6 @@ export default function WorkspaceCalendar({
                 <Icon name="settings" />
               </a>
             )}
-            <CustomDateInput
-              aria-label={t('period')}
-              value={range.date}
-              timeZone={range.zone}
-              onChange={(value) => {
-                if (parseWallInput(value, false)) onQuery({ date: value });
-              }}
-            />
-            <div className="hc-scales" role="tablist" aria-label={t('calendarView')}>
-              {(['day', 'week', 'month', 'year'] as const).map((view) => (
-                <button
-                  key={view}
-                  type="button"
-                  role="tab"
-                  aria-selected={range.view === view}
-                  onClick={() => onQuery({ view })}
-                >
-                  {t(view)}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
         {loading && <p role="status">{t('loading')}</p>}
