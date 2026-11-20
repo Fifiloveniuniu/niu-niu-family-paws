@@ -3,7 +3,11 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 
 test('local workflow scripts refuse non-demo configuration before creating records', () => {
-  for (const script of ['scripts/prepare-local-booking.mjs', 'scripts/seed-local-workflows.mjs']) {
+  for (const script of [
+    'scripts/prepare-local-booking.mjs',
+    'scripts/seed-local-workflows.mjs',
+    'scripts/seed-local-metrics.mjs',
+  ]) {
     const env = { ...process.env, GCLOUD_PROJECT: 'not-a-demo-project' };
     delete env.FIRESTORE_EMULATOR_HOST;
     delete env.FIREBASE_AUTH_EMULATOR_HOST;

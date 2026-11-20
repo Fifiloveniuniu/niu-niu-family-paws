@@ -1,4 +1,3 @@
-import { sampleMetrics } from './metrics-sample';
 import SegmentedTabs from './segmented-tabs';
 import Button from './button';
 import IconButton from './icon-button';
@@ -41,14 +40,9 @@ export default function BusinessMetrics({
     data: null,
     error: false,
   });
-  const sampleAvailable = import.meta.env.DEV && import.meta.env.MODE === 'test';
-  const sample =
-    sampleAvailable &&
-    (search.get('data') === 'sample' ||
-      (!search.has('data') && import.meta.env.VITE_LOCAL_SAMPLE_METRICS === 'true'));
   const key = from + ':' + through + ':' + zone + ':' + revision;
   React.useEffect(() => {
-    if (sample || !valid || !start || !end) return;
+    if (!valid || !start || !end) return;
     const abort = new AbortController();
     setState({ key, data: null, error: false });
     void apiJson<Metrics>(
@@ -62,13 +56,9 @@ export default function BusinessMetrics({
         if (!abort.signal.aborted) setState({ key, data: null, error: true });
       });
     return () => abort.abort();
-  }, [key, valid, start, end, sample]);
-  const preview = React.useMemo(
-    () => (sample && valid && start && end ? sampleMetrics(start, end, zone) : null),
-    [sample, valid, start, end, zone, revision],
-  );
-  const data = preview ?? (valid && state.key === key ? state.data : null),
-    error = !sample && valid && state.key === key && state.error,
+  }, [key, valid, start, end]);
+  const data = valid && state.key === key ? state.data : null,
+    error = valid && state.key === key && state.error,
     loading = valid && !data && !error;
   const number = new Intl.NumberFormat(localeFor(i18n.language));
   const zones = React.useMemo(
@@ -120,29 +110,6 @@ export default function BusinessMetrics({
           <Icon name="reset" />
         </IconButton>
       </div>
-      {sampleAvailable && (
-        <div className="metrics-data-source">
-          <div className="hc-scales" role="group" aria-label={text('dataSource')}>
-            <button
-              type="button"
-              className="language"
-              aria-pressed={!sample}
-              onClick={() => updateQuery({ data: 'saved' })}
-            >
-              {text('savedData')}
-            </button>
-            <button
-              type="button"
-              className="language"
-              aria-pressed={sample}
-              onClick={() => updateQuery({ data: 'sample' })}
-            >
-              {text('sampleData')}
-            </button>
-          </div>
-          {sample && <p role="status">{text('sampleHint')}</p>}
-        </div>
-      )}
       <div className="business-period">
         <SegmentedTabs
           className="business-period-presets"
@@ -243,7 +210,6 @@ export default function BusinessMetrics({
             }))}
             unit="USD"
             unavailable={!data?.revenueAvailable}
-            sample={sample}
             loading={loading}
           />
           <MetricChart
@@ -253,7 +219,6 @@ export default function BusinessMetrics({
             points={trend('balanceChange')}
             unit={text('days')}
             kind="bar"
-            sample={sample}
             loading={loading}
           />
           <MetricChart
@@ -262,7 +227,6 @@ export default function BusinessMetrics({
             hint={text('scheduledHint')}
             points={trend('bookings')}
             unit={text('bookingUnit')}
-            sample={sample}
             loading={loading}
           />
           <MetricChart
@@ -271,7 +235,6 @@ export default function BusinessMetrics({
             hint={text('customersChartHint')}
             points={trend('newCustomers')}
             unit={text('customerUnit')}
-            sample={sample}
             loading={loading}
           />
           <MetricChart
@@ -286,7 +249,6 @@ export default function BusinessMetrics({
             }))}
             unit={text('stayUnit')}
             kind="bar"
-            sample={sample}
             loading={loading}
           />
           <MetricChart
@@ -315,7 +277,6 @@ export default function BusinessMetrics({
             unit={text('handoffsUnit')}
             summaryUnit={text('handoffUnit')}
             kind="bar"
-            sample={sample}
             loading={loading}
           />
         </section>

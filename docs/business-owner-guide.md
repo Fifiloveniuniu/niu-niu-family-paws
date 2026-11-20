@@ -1,3 +1,13 @@
+## Consistent controls and Metrics — local preview, 2026-11-19
+
+Calendar, Pricing, Balances and Metrics now share the same segmented controls. Selected Apple controls are red; Microsoft Light controls are blue, with white text. Other choices have bold labels. In Calendar, navigation, the date heading, Timezone and view choices stay together, separate from booking/management actions. The date input is removed; use Previous, Today and Next. Timezone has its label on the left and remains available when filters are hidden. Desktop uses one toolbar row; phones wrap. The smaller settings icon keeps a full touch target.
+
+Metrics shows saved records directly; there is no Sample data switch. Clearly labeled local test customers and stays now provide persisted chart activity. Existing local records are preserved, so totals can differ from the old sample screen. Revenue stays unavailable until actual payment records are supported. Production business data has not been populated with test records. Further browser checks run headlessly.
+
+日历、价格管理、余额和指标现在共用分段控件。Apple 主题选中项为红底白字，Microsoft Light 为蓝底白字，其他选项使用粗体。日历的“时区”位于日期和视图控件旁，标签在选择框左侧，收起筛选后仍可使用。
+
+指标直接读取已保存记录，不再显示“示例数据”切换。本地数据库已加入明确标注的测试客户及入住记录，保留原有资料，因此总数可能与原示例界面不同。收款记录尚未实现，营收仍显示暂无数据。正式业务数据库没有加入测试资料。后续浏览器检查均使用无界面模式。
+
 ## Releases after merging — 2026-11-19
 
 Codex previews and checks changes locally, then submits a focused PR. GitHub tests the merged `main` version and publishes it automatically when all checks pass. PRs and feature branches do not publish. A failed check keeps the previous hosted release; the Actions page shows the cause. You do not need to run a terminal or deploy manually.
