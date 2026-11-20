@@ -13,7 +13,6 @@ export default function MetricChart({
   kind = 'line',
   unavailable = false,
   loading = false,
-  sample = false,
   total,
   summaryUnit,
   dimensionLabel,
@@ -27,7 +26,6 @@ export default function MetricChart({
   kind?: 'line' | 'bar';
   unavailable?: boolean;
   loading?: boolean;
-  sample?: boolean;
   total?: number;
   summaryUnit?: string;
   dimensionLabel?: string;
@@ -91,7 +89,6 @@ export default function MetricChart({
         <div>
           <h2 id={id + '-title'}>{title}</h2>
           <p>{hint}</p>
-          {sample && <span className="metric-sample-label">{text('sampleData')}</span>}
         </div>
         <IconButton
           type="button"

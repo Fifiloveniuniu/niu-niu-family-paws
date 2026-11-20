@@ -1,3 +1,9 @@
+## Shared controls, readable tabs and saved Metrics — 2026-11-19
+
+Use the same components for the same functions across pages. Calendar, Pricing, Balances/Activity and Metrics period presets share segmented-control behavior and styling. Selected Apple controls are red with white text; Microsoft Light uses blue with white text. Inactive labels are bold. Preserve tab semantics for page panels and pressed-button semantics for reporting-range filters. The English page/navigation name is Metrics (Chinese 指标).
+
+Remove Metrics' saved/sample switch. Populate the local demo database with labeled fictional records instead and read them through the regular aggregate API. Preserve existing records and never seed production. Do not fabricate revenue or financial workflows to match an old presentation sample. Calendar timezone controls display, stays outside collapsible record filters, and has its label to the left. Group navigation, date heading, timezone and view choices together; put booking and management actions separately. Keep one desktop toolbar row, allow phone wrapping, remove the current-date input, and render a smaller complete settings icon with a 44px target. All Playwright validation runs headlessly.
+
 ## Dashboard consistency and realistic preview values — 2026-11-19
 
 Use consistent snapshot/chart cards, filter controls, spacing, typography and responsive graph labels throughout Metrics. Every chart needs a meaningful reporting-period total and readable point details. Local previews should have realistic, coherent, explicitly labeled sample values across all charts, with saved records available separately. Do not represent synthetic values as business records, prices or received revenue. Production continues to use recorded aggregates. No business-data reset or financial workflow activation is authorized by presentation sampling.

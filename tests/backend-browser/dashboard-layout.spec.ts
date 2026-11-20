@@ -8,7 +8,7 @@ for (const [lang, width, palette] of [
   ['en', 320, 'google'],
   ['zh', 320, 'vscode-dark'],
 ] as const) {
-  test(`dashboard has coherent samples and consistent cards (${lang}, ${width}, ${palette})`, async ({
+  test(`dashboard reads saved records and has consistent cards (${lang}, ${width}, ${palette})`, async ({
     page,
     request,
   }, testInfo) => {
@@ -37,18 +37,14 @@ for (const [lang, width, palette] of [
     }, fixture.administrator.jwt);
     const charts = page.locator('.metric-chart');
     await expect(charts).toHaveCount(6);
-    await expect(page.locator('.metric-sample-label')).toHaveCount(6);
-    await expect(page.locator('.metrics-data-source [role="status"]')).toContainText(
-      lang === 'en' ? 'Fictional' : '虚构',
-    );
-    for (const card of await charts.all())
-      await expect(card.locator('.metric-chart-total strong')).not.toHaveText('—');
-    expect(metricsReads).toBe(0);
+    await expect(page.locator('.metrics-data-source')).toHaveCount(0);
+    await expect(page.locator('.metric-sample-label')).toHaveCount(0);
+    await expect(
+      page.locator('[data-metric="customers"] dd:not(.business-metric-hint)'),
+    ).toHaveText(/\d+/);
+    await expect(charts.first().locator('.metric-chart-total strong')).toHaveText('—');
+    expect(metricsReads).toBeGreaterThan(0);
     expect(writes).toBe(0);
-    const sourceColors = await page
-      .locator('.metrics-data-source button')
-      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).backgroundColor));
-    expect(sourceColors[0]).not.toBe(sourceColors[1]);
     const boxes = await charts.evaluateAll((nodes) =>
       nodes.map((node) => {
         const r = node.getBoundingClientRect();
@@ -92,13 +88,9 @@ for (const [lang, width, palette] of [
     await expect(services.locator('thead th').first()).toHaveText(
       lang === 'en' ? 'Pet type' : '宠物种类',
     );
-    const before = await charts.first().locator('.metric-chart-total strong').innerText();
+    const readsBefore = metricsReads;
     await page.locator('.business-period-presets button').first().click();
-    await expect(charts.first().locator('.metric-chart-total strong')).not.toHaveText(before);
-    expect(new URL(page.url()).searchParams.get('data')).toBe('sample');
-    await page
-      .getByRole('button', { name: lang === 'en' ? 'Saved records' : '已保存记录', exact: true })
-      .click();
+    await expect.poll(() => metricsReads).toBeGreaterThan(readsBefore);
     await expect(
       page.locator('[data-metric="customers"] dd:not(.business-metric-hint)'),
     ).toHaveText(/\d+/);

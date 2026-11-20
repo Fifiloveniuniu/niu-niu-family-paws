@@ -1,3 +1,9 @@
+## Shared presentation controls and Metrics source — 2026-11-19
+
+`button.tsx` owns primary/secondary/icon action surfaces; `icon-button.tsx` pairs secondary action labels/tooltips; `search-input.tsx` supplies shared search fields. `segmented-tabs.tsx` owns selection rendering and arrow/Home/End navigation for Calendar, Pricing, Balances and Metrics period controls. Its buttons mode uses pressed semantics; tabs mode uses roving focus and tab semantics. Paired primary/on-primary roles drive every selected segmented control. `Modal` also owns the marketing photo viewer and preview booking details.
+
+Metrics has no frontend sample-data path. The guarded local metrics seed writes persisted canonical records through ordinary audited booking/balance stores, with explicitly fictional identities and reviewed fixture dates. Its historical manual events are fixture-only, not an implementation of automatic booking charges/refunds. Existing demo records stay intact. The normal aggregate API remains authoritative and revenue remains unavailable without payment records. No production fixture seeding or financial activation.
+
 # Architecture and planned workflows
 
 ## Browser appearance preferences
