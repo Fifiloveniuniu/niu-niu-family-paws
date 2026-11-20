@@ -536,9 +536,14 @@ export function PetSearch({
             onChange={(event) => setSearch(event.target.value)}
           />
         </label>
-        <Button icon="search" variant="secondary" disabled={loading || !search.trim()}>
-          {labels.search}
-        </Button>
+        <IconButton
+          type="submit"
+          aria-label={labels.search}
+          title={labels.search}
+          disabled={loading || !search.trim()}
+        >
+          <Icon name="search" />
+        </IconButton>
       </form>
       {error && <p role="alert">{labels.error}</p>}
       {loading && <p role="status">{labels.loading}</p>}
