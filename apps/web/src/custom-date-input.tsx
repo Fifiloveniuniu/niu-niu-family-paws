@@ -146,8 +146,7 @@ export default function CustomDateInput({
       setHour(selectedHour);
       setMinute(selectedMinute);
       const full = `${next}T${selectedHour}:${selectedMinute}`;
-      setDraft(display(full));
-      emit(full);
+      commit(full);
     }
   }
   const locale = localeFor(i18n.language);

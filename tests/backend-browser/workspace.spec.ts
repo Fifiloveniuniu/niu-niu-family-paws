@@ -153,6 +153,9 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
     'data-value',
     new RegExp('^' + pickedDate + 'T\\d{2}:\\d{2}$'),
   );
+  await expect(picker).toHaveCount(0);
+  await expect(arrival).toBeFocused();
+  await arrival.click();
   await picker.getByRole('textbox', { name: 'Hour (24h)', exact: true }).fill('10');
   await picker.getByRole('textbox', { name: 'Minute', exact: true }).fill('00');
   await picker.getByRole('button', { name: 'Apply date and time', exact: true }).click();
