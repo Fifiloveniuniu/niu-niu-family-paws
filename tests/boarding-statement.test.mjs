@@ -79,3 +79,15 @@ test('CSV preserves signed numeric changes and quotes text/formulas without crea
   assert.ok(csv.includes('"\' =SUM(1,2)\n""quoted"""'));
   assert.equal(rows[0].after, 8);
 });
+
+test('booking activity export leaves financial columns blank rather than inventing zero balances', () => {
+  const sample = {
+    ...statementEntries(accounts, pets)[0],
+    kind: 'booking',
+    delta: null,
+    before: null,
+    after: null,
+  };
+  const csv = statementCsv([sample], [], { booking: 'Reserva' });
+  assert.ok(csv.includes('"Reserva","","","",'));
+});

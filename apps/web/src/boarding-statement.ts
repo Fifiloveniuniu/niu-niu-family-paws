@@ -87,9 +87,9 @@ export function filterStatement(entries: StatementEntry[], filters: StatementFil
 export function statementTotals(entries: StatementEntry[]) {
   return entries.reduce(
     (totals, entry) => ({
-      added: totals.added + Math.max(0, entry.delta),
-      removed: totals.removed + Math.max(0, -entry.delta),
-      net: totals.net + entry.delta,
+      added: totals.added + Math.max(0, entry.delta ?? 0),
+      removed: totals.removed + Math.max(0, -(entry.delta ?? 0)),
+      net: totals.net + (entry.delta ?? 0),
     }),
     { added: 0, removed: 0, net: 0 },
   );
@@ -99,10 +99,16 @@ const csvCell = (value: string | number) =>
   typeof value === 'number'
     ? String(value)
     : '"' + (/^[\s]*[=+\-@]/.test(value) ? "'" + value : value).replaceAll('"', '""') + '"';
+type ExportKind = StatementKind | 'booking' | 'cancelled';
 export function statementCsv(
-  entries: StatementEntry[],
+  entries: (Omit<StatementEntry, 'delta' | 'before' | 'after' | 'kind'> & {
+    delta: number | null;
+    before: number | null;
+    after: number | null;
+    kind: ExportKind;
+  })[],
   headers: string[],
-  labels: Record<StatementKind, string>,
+  labels: Partial<Record<ExportKind, string>>,
 ) {
   const rows: (string | number)[][] = [
     headers,
@@ -111,10 +117,10 @@ export function statementCsv(
       event.id,
       event.customerName,
       event.pet,
-      labels[event.kind],
-      event.delta,
-      event.before,
-      event.after,
+      labels[event.kind] ?? event.kind,
+      event.delta ?? '',
+      event.before ?? '',
+      event.after ?? '',
       event.reason,
     ]),
   ];

@@ -239,3 +239,62 @@
   background: var(--md-surface);
   box-shadow: 4px 0 0 var(--md-surface);
 }
+
+.pet-name-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--md-primary);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pet-details-dialog {
+  width: min(720px, calc(100vw - 32px));
+}
+.pet-details-dialog .shared-tabs {
+  flex-wrap: wrap;
+}
+.pet-details-dialog .shared-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pet-details-identity {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-block: 20px;
+}
+.pet-detail-events {
+  list-style: none;
+  padding: 0;
+}
+.pet-detail-events li {
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid var(--md-outline-variant);
+  padding-block: 16px;
+}
+.pet-detail-events time {
+  display: block;
+  font-size: 13px;
+  margin-top: 4px;
+  color: var(--md-on-surface-variant);
+}
+.pet-detail-events p {
+  margin-block: 6px;
+}
+.pet-photo-button {
+  display: block;
+  width: 64px;
+  height: 64px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}

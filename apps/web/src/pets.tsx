@@ -1,3 +1,5 @@
+import PetDetails from './pet-details';
+import { PetTypeIcon } from './pet-type';
 import Button from './button';
 import SearchInput from './search-input';
 import IconButton from './icon-button';
@@ -89,6 +91,7 @@ export default function Pets({
   const { i18n } = useTranslation();
   const labels = uiValue('ui.pets.labels', i18n.language);
   const headingId = React.useId();
+  const [detail, setDetail] = React.useState<Pet | null>(null);
   const [items, setItems] = React.useState<Pet[]>([]);
   const [pageSize, setPageSize] = React.useState('25');
   const [pageIndex, setPageIndex] = React.useState(0);
@@ -359,24 +362,43 @@ export default function Pets({
           </form>
         </Modal>
       )}
+      {detail && (
+        <PetDetails
+          customerId={detail.customerId}
+          petId={detail.id}
+          name={detail.name}
+          onClose={() => setDetail(null)}
+        />
+      )}
       <div className="pet-grid">
         {items.map((pet) => (
           <article
             className={'pet-card' + (pet.id === selectedPetId ? ' pet-card-selected' : '')}
             key={pet.id}
           >
-            <PetPhoto pet={pet} />
+            <button
+              type="button"
+              className="pet-photo-button"
+              aria-label={uiText('ui.calendarPetPhotos.viewPetDetails') + ': ' + pet.name}
+              onClick={() => setDetail(pet)}
+            >
+              <PetPhoto pet={pet} />
+            </button>
             <div>
               <h4>
-                {routable ? (
-                  <a href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}>
-                    {pet.name}
-                  </a>
-                ) : (
-                  pet.name
-                )}
+                <a
+                  href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}
+                  className="pet-name-button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setDetail(pet);
+                  }}
+                >
+                  {pet.name}
+                </a>
               </h4>
               <p>
+                <PetTypeIcon species={pet.species ?? ''} />
                 {pet.species ? speciesText(pet.species) : uiText('common.notAvailable')} ·{' '}
                 {pet.weightKg == null
                   ? uiText('common.notAvailable')

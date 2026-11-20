@@ -359,11 +359,11 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
     eventsPage.body.items.every((row) => row.customer.id === cid && row.event.actor === undefined),
   );
   const rest = await own('/workspace/events?cursor=' + eventsPage.body.nextCursor);
-  assert.equal(rest.body.items.length, 3);
+  assert.equal(rest.body.items.length, 5);
   assert.equal(rest.body.nextCursor, null);
   assert.equal(
     new Set([...eventsPage.body.items, ...rest.body.items].map((row) => row.event.id)).size,
-    53,
+    55,
   );
   const additions = await own('/workspace/events?kind=added');
   assert.equal(additions.body.items.length, 1);
@@ -372,7 +372,7 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   assert.equal(corrections.body.items[0].event.daysAfter, 28);
   assert.equal(corrections.body.items[0].event.delta, -2);
   assert.equal((await own('/workspace/events?customerId=' + otherCid)).status, 403);
-  assert.equal((await adm('/workspace/events?customerId=' + otherCid)).body.items.length, 0);
+  assert.equal((await adm('/workspace/events?customerId=' + otherCid)).body.items.length, 1);
   assert.equal(
     (await own('/workspace/events?through=2020-01-01T00%3A00%3A00.000Z')).body.items.length,
     0,

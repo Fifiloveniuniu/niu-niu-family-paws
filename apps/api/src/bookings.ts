@@ -77,6 +77,7 @@ export interface BookingStore {
     customerId?: string,
     cursor?: string,
     window?: { from: string; through: string },
+    options?: { petId?: string; pageSize?: string },
   ): Promise<{ items: Booking[]; nextCursor: string | null }>;
   availability(identity: Identity, input: AvailabilityInput): Promise<AvailabilityResult>;
   save(identity: Identity, id: string, input: BookingWrite): Promise<Booking>;
@@ -220,7 +221,8 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
         return booking;
       });
     },
-    async list(identity, cid, cursor, window) {
+    async list(identity, cid, cursor, window, options = {}) {
+      const size = Number(options.pageSize ?? 100);
       const from = window ? timestamp(window.from) : null,
         through = window ? timestamp(window.through) : null;
       if (
@@ -242,7 +244,12 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
           if (cid && scope !== cid) throw new PetAccess();
           await authorize(tx, identity, scope!);
         } else if (scope) await authorize(tx, identity, scope);
-        const base = scope ? bookings.where('customerId', '==', scope) : bookings;
+        if (options.petId && !scope) throw new PetInvalid();
+        if (options.petId) await authorize(tx, identity, scope!, options.petId);
+        let base: FirebaseFirestore.Query = scope
+          ? bookings.where('customerId', '==', scope)
+          : bookings;
+        if (options.petId) base = base.where('petId', '==', options.petId);
         let query =
           from && through
             ? base
@@ -258,8 +265,11 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
                 .orderBy('occupancyFrom')
                 .orderBy('occupancyThrough')
                 .orderBy(FieldPath.documentId())
-                .limit(101)
-            : base.orderBy(FieldPath.documentId()).limit(101);
+                .limit(size + 1)
+            : (options.petId
+                ? base.orderBy('updatedAt', 'desc').orderBy(FieldPath.documentId(), 'desc')
+                : base.orderBy(FieldPath.documentId())
+              ).limit(size + 1);
         if (cursor) {
           if (from && through) {
             const last = await tx.get(bookings.doc(cursor));
@@ -270,11 +280,20 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
               last.data()!.occupancyThrough,
               cursor,
             );
+          } else if (options.petId) {
+            const last = await tx.get(bookings.doc(cursor));
+            if (
+              !last.exists ||
+              last.data()!.customerId !== scope ||
+              last.data()!.petId !== options.petId
+            )
+              throw new PetInvalid();
+            query = query.startAfter(last.data()!.updatedAt, cursor);
           } else query = query.startAfter(cursor);
         }
         const result = await tx.get(query);
-        const items = result.docs.slice(0, 100).map((doc) => projectBooking(doc.data()));
-        return { items, nextCursor: result.size > 100 ? items.at(-1)!.id : null };
+        const items = result.docs.slice(0, size).map((doc) => projectBooking(doc.data()));
+        return { items, nextCursor: result.size > size ? items.at(-1)!.id : null };
       });
     },
     async availability(identity, input) {
@@ -526,7 +545,14 @@ export function bookingRoutes(api: FastifyInstance, store: BookingStore) {
     properties: { id: uuidSchema },
   };
   api.get<{
-    Querystring: { customerId?: string; cursor?: string; from?: string; through?: string };
+    Querystring: {
+      customerId?: string;
+      cursor?: string;
+      from?: string;
+      through?: string;
+      petId?: string;
+      pageSize?: string;
+    };
   }>(
     '/bookings',
     {
@@ -536,6 +562,8 @@ export function bookingRoutes(api: FastifyInstance, store: BookingStore) {
           additionalProperties: false,
           properties: {
             customerId: uuidSchema,
+            petId: uuidSchema,
+            pageSize: { type: 'string', enum: ['25', '50', '100'] },
             cursor: uuidSchema,
             from: { type: 'string', format: 'date-time' },
             through: { type: 'string', format: 'date-time' },
@@ -552,6 +580,7 @@ export function bookingRoutes(api: FastifyInstance, store: BookingStore) {
         request.query.from && request.query.through
           ? { from: request.query.from, through: request.query.through }
           : undefined,
+        { petId: request.query.petId, pageSize: request.query.pageSize },
       );
     },
   );

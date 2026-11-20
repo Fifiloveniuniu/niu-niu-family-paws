@@ -1323,7 +1323,7 @@ export interface components {
             /** Format: date-time */
             through?: string;
             /** @enum {string} */
-            kind?: "added" | "correction" | "terms";
+            kind?: "added" | "correction" | "terms" | "booking" | "cancelled";
             /** @enum {string} */
             pageSize?: "25" | "50" | "100";
         };
@@ -1331,7 +1331,7 @@ export interface components {
             items: {
                 customer: components["schemas"]["Customer"];
                 pet: components["schemas"]["Pet"];
-                event: components["schemas"]["BoardingEvent"];
+                event: components["schemas"]["WorkspaceActivityEvent"];
             }[];
             nextCursor: string | null;
         };
@@ -1739,6 +1739,30 @@ export interface components {
             /** Format: date */
             validThrough: string;
             active: boolean;
+        };
+        WorkspaceActivityEvent: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            version: number;
+            delta: number;
+            daysAfter: number | null;
+            validFrom: string;
+            validThrough: string;
+            reason: string;
+            actor?: string;
+            at: string;
+            /** @enum {string} */
+            kind?: "booking" | "cancelled";
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: date-time */
+            arrival?: string;
+            /** Format: date-time */
+            pickup?: string;
         };
     };
     responses: never;

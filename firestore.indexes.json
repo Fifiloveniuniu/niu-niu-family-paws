@@ -353,6 +353,114 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "bookingOperations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "result.customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookingOperations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "result.customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "result.petId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookingOperations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "result.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookingOperations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "result.customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "result.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookingOperations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "result.customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "result.petId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "result.status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "bookings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "customerId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "petId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": [
