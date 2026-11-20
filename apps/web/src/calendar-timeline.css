@@ -239,7 +239,102 @@
   background: var(--md-surface);
   box-shadow: 4px 0 0 var(--md-surface);
 }
-
+/* Each calendar owns its scrollport so its time axis remains aligned while scrolling. */
+.calendar-timeline-viewport {
+  max-height: 70dvh;
+  overflow: auto;
+  scroll-padding-top: 80px;
+}
+.calendar-timeline-axis {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  isolation: isolate;
+}
+.hc-booking-dialog .hc-schedule-scroll {
+  max-height: 55dvh;
+  overflow: auto;
+}
+.calendar-timeline-tick[data-today='true'] {
+  background: var(--md-primary-soft);
+  color: var(--md-primary);
+}
+.calendar-timeline-tick[data-holiday='true'] {
+  box-shadow: inset 0 -3px var(--md-primary);
+}
+.calendar-holiday {
+  display: block;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.calendar-annotations {
+  display: flex;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+  margin: 8px 0 14px;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--md-on-surface-variant);
+}
+.calendar-annotations li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.calendar-status-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--md-primary-container);
+  border: 1px solid var(--md-primary);
+}
+.calendar-status-dot.in_care {
+  background: var(--md-success-soft);
+  border-color: var(--md-success);
+}
+.calendar-status-dot.completed {
+  background: var(--md-secondary-container);
+  border-color: var(--md-secondary-outline);
+}
+.calendar-status-dot.cancelled {
+  background: transparent;
+  border-style: dashed;
+}
+.calendar-status-dot.overdue {
+  background: var(--md-error-container);
+  border-color: var(--md-error);
+}
+.calendar-span-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+.calendar-timeline .workspace-now-marker {
+  background: var(--md-primary);
+  z-index: 5;
+}
+.calendar-timeline .workspace-now-marker > span {
+  position: sticky;
+  top: 0;
+  display: inline-block;
+  background: var(--md-surface);
+  color: var(--md-primary);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.saved-busy-room .hc-stay.busy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--md-secondary-container);
+  color: var(--md-on-surface);
+  border: 1px solid var(--md-secondary-outline);
+}
 .pet-name-button {
   border: 0;
   padding: 0;
@@ -288,6 +383,56 @@
 .pet-detail-events p {
   margin-block: 6px;
 }
+.price-language-labels {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+}
+.price-language-labels > p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--md-on-surface-variant);
+}
+/* Shared navigation keeps the same geometry inside a booking dialog. */
+.hc-booking-dialog .calendar-time-controls {
+  gap: 12px;
+  align-items: center;
+  margin-block: 12px 20px;
+}
+.hc-booking-dialog .calendar-time-controls .hc-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  min-height: 40px;
+}
+.hc-booking-dialog .calendar-time-controls .hc-range button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  min-width: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 9px;
+  background: var(--md-surface);
+  color: var(--md-on-primary-container);
+  font: inherit;
+  cursor: pointer;
+}
+.hc-booking-dialog .calendar-time-controls .hc-range h2 {
+  font-size: 17px;
+  margin: 0 0 0 8px;
+}
+.hc-booking-dialog .calendar-time-controls > .custom-select {
+  max-width: 100%;
+  width: 220px;
+}
 .pet-photo-button {
   display: block;
   width: 64px;
@@ -297,4 +442,31 @@
   background: transparent;
   border-radius: 8px;
   cursor: pointer;
+}
+@media (max-width: 640px) {
+  .hc-booking-dialog .calendar-time-controls .hc-range h2 {
+    flex-basis: 100%;
+    margin-left: 0;
+    white-space: normal;
+  }
+}
+/* Explicit pairs survive the legacy dialog and calendar stylesheet order. */
+.hc .app-dialog.hc-booking-dialog .hc-schedule-scroll {
+  max-height: 55dvh;
+  overflow: auto;
+}
+.calendar-timeline .calendar-timeline-tick[data-today='true'] {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+.calendar-timeline-tick[data-today='true'] :is(span, strong, small) {
+  color: inherit;
+}
+.hc .app-dialog.hc-booking-dialog .hc-time-request {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+.hc .app-dialog.hc-booking-dialog .hc-time-request.picked {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
 }

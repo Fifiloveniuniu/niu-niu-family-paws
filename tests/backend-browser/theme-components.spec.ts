@@ -93,7 +93,7 @@ for (const theme of themes) {
     await page.getByRole('option').filter({ hasText: '[TEST] Alice pet 0' }).click();
     await booking.getByRole('combobox', { name: 'Arrival', exact: true }).fill('2030-11-02T10:00');
     await booking.getByRole('combobox', { name: 'Pickup', exact: true }).fill('2030-11-04T10:00');
-    await booking.getByRole('button', { name: 'Choose a room', exact: true }).click();
+    await booking.getByRole('button', { name: 'Choose', exact: true }).click();
     await expect(booking.locator('[data-step-state="current"] .hc-step-marker')).toHaveCSS(
       'background-color',
       (() => {

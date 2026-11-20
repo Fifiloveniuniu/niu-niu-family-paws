@@ -1,9 +1,12 @@
+import BookingCost from './booking-cost';
+import CalendarControls from './calendar-controls';
+import { calendarRange, type CalendarView } from './workspace-calendar';
 import Button from './button';
 import IconButton from './icon-button';
 import Icon from './icons';
 import LocationLabel from './location-label';
 import { CalendarAxis, CalendarTrack, CalendarFrame, CalendarViewport } from './calendar-timeline';
-import { dailyTimelineTicks, timelineSpan, timelineRangeLabel } from './timeline-layout';
+import { timelineSpan, timelineRangeLabel } from './timeline-layout';
 import { petTypes, petTypeChoice, PetTypeIcon } from './pet-type';
 import { speciesText } from './i18n.ts';
 import React from 'react';
@@ -18,14 +21,7 @@ import { apiJson, ApiError } from './api-client';
 import { petKey, roomKey, type WorkspaceData, type Booking } from './workspace-data';
 import { WorkspaceAvatar, PetOption } from './workspace-photos';
 import { useWorkspaceText } from './workspace-text';
-import {
-  parseWallInput,
-  resolveWallTime,
-  zonedValue,
-  zoneOffset,
-  startOfZonedDay,
-  shiftDay,
-} from './wall-time';
+import { parseWallInput, resolveWallTime, zonedValue, zoneOffset, shiftDay } from './wall-time';
 import type { components } from '../../../packages/contracts/generated';
 type Available = components['schemas']['AvailabilityResult'];
 export function selectedInstant(value: string, zone: string, choice: string) {
@@ -146,6 +142,7 @@ export default function WorkspaceBooking({
     data.locations.find((item) => item.house.id === initialRoom?.houseId)?.house.timezone ??
     browserZone;
   const [zone, setZone] = React.useState(initialZone);
+  const [calendarZone, setCalendarZone] = React.useState(initialZone);
   const [customer, setCustomer] = React.useState(existing?.customerId ?? data.customer?.id ?? '');
   const [pet, setPet] = React.useState(existing?.petId ?? '');
   const [petType, setPetType] = React.useState(
@@ -170,6 +167,8 @@ export default function WorkspaceBooking({
   );
   const [step, setStep] = React.useState(1);
   const [week, setWeek] = React.useState(0);
+  const [view, setView] = React.useState<CalendarView>('week');
+  const [calendarDate, setCalendarDate] = React.useState('');
   const [available, setAvailable] = React.useState<Available | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
@@ -226,21 +225,26 @@ export default function WorkspaceBooking({
     setSelected('');
     setError('');
     setWeek(0);
+    setCalendarDate('');
   }
   async function loadAvailability(
     offset = week,
     startAt = arrival,
     endAt = pickup,
     preferred = selected,
+    nextView = view,
+    nextDate = calendarDate,
+    nextZone = calendarZone,
   ) {
     if (!row || !startAt || !endAt) return;
     const request = ++generation.current;
     setLoading(true);
     setError('');
     try {
-      const day = shiftDay(zonedValue(startAt, zone).slice(0, 10), offset * 7);
-      const windowFrom = startOfZonedDay(day, zone),
-        windowThrough = startOfZonedDay(shiftDay(day, 7), zone);
+      const day = nextDate || shiftDay(zonedValue(startAt, nextZone).slice(0, 10), offset * 14);
+      const range = calendarRange(day, nextView, nextZone);
+      const windowFrom = range.from,
+        windowThrough = range.through;
       if (!windowFrom || !windowThrough) throw new ApiError(400);
       const result = await apiJson<Available>('/availability', {
         method: 'POST',
@@ -335,16 +339,26 @@ export default function WorkspaceBooking({
       setSaving(false);
     }
   }
-  function chooseSpan(room: Available['rooms'][number], from: number, through: number) {
-    const startAt = new Date(from).toISOString(),
-      endAt = new Date(through).toISOString();
-    setStart(zonedValue(startAt, zone));
-    setEnd(zonedValue(endAt, zone));
-    setStartChoice(initialChoice(startAt, zone));
-    setEndChoice(initialChoice(endAt, zone));
-    void loadAvailability(week, startAt, endAt, roomKey(room.houseId, room.roomId));
+  const ticks = available
+    ? calendarRange(zonedValue(available.from, calendarZone).slice(0, 10), view, calendarZone).ticks
+    : [];
+  function changeCalendar(nextDate: string, nextView = view, nextZone = calendarZone) {
+    setCalendarDate(nextDate);
+    setView(nextView);
+    void loadAvailability(week, arrival, pickup, selected, nextView, nextDate, nextZone);
   }
-  const ticks = available ? dailyTimelineTicks(available.from, available.through, zone) : [];
+  function shiftCalendar(direction: number) {
+    const date = new Date(
+      (calendarDate || zonedValue(available?.from || arrival, calendarZone).slice(0, 10)) +
+        'T12:00:00Z',
+    );
+    if (view === 'year') date.setUTCFullYear(date.getUTCFullYear() + direction);
+    else if (view === 'month') {
+      date.setUTCDate(1);
+      date.setUTCMonth(date.getUTCMonth() + direction);
+    } else date.setUTCDate(date.getUTCDate() + direction * (view === 'week' ? 14 : 1));
+    changeCalendar(date.toISOString().slice(0, 10));
+  }
   const heading = existing ? t('editBooking') : data.admin ? t('addBooking') : t('availability');
   return (
     <Modal
@@ -515,40 +529,53 @@ export default function WorkspaceBooking({
           aria-label={t('roomCalendar')}
         >
           <div className="hc-step-intro">
-            <h3>{t('freeSpace')}</h3>
+            <h3>
+              <Icon name="calendar" />
+              {t('roomCalendar')}
+            </h3>
             <p>{t('availabilityHint')}</p>
           </div>
-          <div className="workspace-availability-navigation">
-            <IconButton
-              type="button"
-
-              aria-label={t('previousWeek')}
-              disabled={loading || blocked}
-              onClick={() => {
-                setWeek((value) => value - 1);
-                void loadAvailability(week - 1);
-              }}
-            >
-              <Icon name="chevron-left" />
-            </IconButton>
-            <span>
-              {available
-                ? timelineRangeLabel(available.from, available.through, zone, locale)
-                : uiText('common.notAvailable')}
-            </span>
-            <IconButton
-              type="button"
-
-              aria-label={t('nextWeek')}
-              disabled={loading || blocked}
-              onClick={() => {
-                setWeek((value) => value + 1);
-                void loadAvailability(week + 1);
-              }}
-            >
-              <Icon name="chevron-right" />
-            </IconButton>
-          </div>
+          <CalendarControls
+            title={
+              available
+                ? timelineRangeLabel(available.from, available.through, calendarZone, locale)
+                : uiText('common.notAvailable')
+            }
+            view={view}
+            disabled={loading || blocked}
+            onShift={shiftCalendar}
+            onToday={() =>
+              changeCalendar(zonedValue(new Date().toISOString(), calendarZone).slice(0, 10))
+            }
+            onView={(value) =>
+              changeCalendar(
+                calendarDate || zonedValue(available?.from || arrival, calendarZone).slice(0, 10),
+                value,
+              )
+            }
+            timezone={
+              <CustomSelect
+                aria-label={t('clockTimezone')}
+                value={calendarZone}
+                disabled={loading || blocked}
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setCalendarZone(next);
+                  changeCalendar(
+                    calendarDate || zonedValue(available?.from || arrival, next).slice(0, 10),
+                    view,
+                    next,
+                  );
+                }}
+              >
+                {zones.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </CustomSelect>
+            }
+          />
           {loading && <p role="status">{t('loading')}</p>}
           {!loading && error === 'loadError' && (
             <Button
@@ -561,10 +588,6 @@ export default function WorkspaceBooking({
             </Button>
           )}
           <ul className="booking-calendar-legend" aria-label={t('calendarLegend')}>
-            <li>
-              <span className="booking-calendar-swatch available" aria-hidden="true" />
-              {t('freeSpace')}
-            </li>
             <li>
               <span className="booking-calendar-swatch unavailable" aria-hidden="true" />
               {t('blockedSpace')}
@@ -582,9 +605,10 @@ export default function WorkspaceBooking({
             <CalendarFrame
               className="hc-range-calendar"
               ticks={ticks}
-              view="week"
+              view={view}
               minColumnWidth={84}
               timeline={available ?? undefined}
+              zone={calendarZone}
             >
               {available && (
                 <CalendarAxis
@@ -592,9 +616,9 @@ export default function WorkspaceBooking({
                   through={available.through}
                   ticks={ticks}
                   label={t('room')}
-                  zone={zone}
+                  zone={calendarZone}
                   locale={locale}
-                  view="week"
+                  view={view}
                   className="workspace-availability-axis"
                 />
               )}
@@ -612,18 +636,6 @@ export default function WorkspaceBooking({
                       viewTo = Date.parse(available.through);
                     const spanStyle = (from: number, through: number) =>
                       timelineSpan(from, through, available.from, available.through);
-                    const duration = Date.parse(pickup) - Date.parse(arrival);
-                    const spans: { from: number; through: number }[] = [];
-                    let cursor = viewFrom;
-                    for (const range of [...room.blocked].sort((a, b) =>
-                      a.from.localeCompare(b.from),
-                    )) {
-                      const from = Math.max(viewFrom, Date.parse(range.from)),
-                        through = Math.min(viewTo, Date.parse(range.through));
-                      if (from > cursor) spans.push({ from: cursor, through: from });
-                      cursor = Math.max(cursor, through);
-                    }
-                    if (cursor < viewTo) spans.push({ from: cursor, through: viewTo });
                     const picked = selected === roomKey(room.houseId, room.roomId);
                     return (
                       <React.Fragment key={roomKey(room.houseId, room.roomId)}>
@@ -638,16 +650,19 @@ export default function WorkspaceBooking({
                         <div className="hc-range-room" data-selected={picked}>
                           <div className="hc-range-room-name">
                             <LocationLabel kind="room" name={room.roomName} />
-                            <button
-                              type="button"
-                              disabled={!room.available || loading || blocked}
-                              className="booking-room-choice"
-                              aria-pressed={picked}
-                              aria-label={`${t('choose')} ${room.houseName} · ${room.roomName}`}
-                              onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
-                            >
-                              {picked ? t('selected') : t('chooseRoom')}
-                            </button>
+                            {room.available && (
+                              <button
+                                type="button"
+                                disabled={!room.available || loading || blocked}
+                                className="booking-room-choice"
+                                aria-pressed={picked}
+                                aria-label={`${t('choose')} ${room.houseName} · ${room.roomName}`}
+                                onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
+                              >
+                                <Icon name="check" />
+                                {picked ? t('selected') : t('choose')}
+                              </button>
+                            )}
                             {room.issue && <small>{t('issue.' + room.issue)}</small>}
                           </div>
                           <CalendarTrack
@@ -657,33 +672,6 @@ export default function WorkspaceBooking({
                             className="hc-time-track"
                             gridOverContent
                           >
-                            {spans.map((span, index) => {
-                              const existingStart = Date.parse(arrival),
-                                existingEnd = Date.parse(pickup);
-                              const from =
-                                existingStart >= span.from && existingEnd <= span.through
-                                  ? existingStart
-                                  : Math.round(
-                                      (span.from + (span.through - span.from - duration) / 2) /
-                                        60000,
-                                    ) * 60000;
-                              const fits =
-                                duration > 0 &&
-                                from >= span.from &&
-                                from + duration <= span.through;
-                              return (
-                                <button
-                                  key={'free-' + index}
-                                  type="button"
-                                  className="hc-time-available"
-                                  style={spanStyle(span.from, span.through)!}
-                                  disabled={!fits || loading || blocked || inCare}
-                                  aria-label={`${t('freeSpace')}: ${room.houseName} · ${room.roomName}`}
-                                  title={`${formatInstant(new Date(span.from).toISOString(), zone, locale)} – ${formatInstant(new Date(span.through).toISOString(), zone, locale)}`}
-                                  onClick={() => chooseSpan(room, from, from + duration)}
-                                />
-                              );
-                            })}
                             {room.blocked.map((span, index) => {
                               const style = spanStyle(
                                 Date.parse(span.from),
@@ -709,13 +697,15 @@ export default function WorkspaceBooking({
                                 <button
                                   type="button"
                                   className={'hc-time-request' + (picked ? ' picked' : '')}
-                                  disabled={loading || blocked || inCare}
+                                  disabled={!room.available || loading || blocked || inCare}
                                   style={spanStyle(Date.parse(arrival), Date.parse(pickup))!}
                                   aria-label={`${t('choose')} ${room.houseName} · ${room.roomName} · ${formatInstant(arrival, zone, locale)}`}
                                   title={`${t('requestedStay')}: ${formatInstant(arrival, zone, locale)} – ${formatInstant(pickup, zone, locale)}`}
                                   aria-pressed={picked}
                                   onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
-                                />
+                                >
+                                  <span className="calendar-span-label">{t('requestedStay')}</span>
+                                </button>
                               )}
                           </CalendarTrack>
                         </div>
@@ -763,6 +753,14 @@ export default function WorkspaceBooking({
               </div>
             ))}
           </dl>
+          {step === 3 && (
+            <BookingCost
+              row={row}
+              arrival={arrival}
+              pickup={pickup}
+              zone={chosen?.timezone || zone}
+            />
+          )}
           <p className="hc-review-note">{t(data.admin ? 'unbilled' : 'customerBookingPending')}</p>
         </section>
         <footer className="hc-wizard-footer">
@@ -804,7 +802,7 @@ export default function WorkspaceBooking({
                   } else setStep(3);
                 }}
               >
-                {t(step === 1 ? 'chooseRoom' : 'reviewBooking')}
+                {t(step === 1 ? 'choose' : 'reviewBooking')}
               </Button>
             ) : (
               <Button
