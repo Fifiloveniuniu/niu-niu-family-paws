@@ -126,10 +126,7 @@ for (const width of [390, 1440])
         await expect(dialog).toHaveCount(0);
         await expect(opener).toBeFocused();
       };
-      await expect(page.locator('.calendar-toolbar-actions > .icon-button').first()).toHaveCSS(
-        'width',
-        '44px',
-      );
+      await expect(page.locator('.calendar-toolbar-actions > a')).toHaveCount(0);
       await expect(page.locator('.calendar-time-controls .custom-date-input')).toHaveCount(0);
       await capture('calendar');
       await inspectDialog(
@@ -168,21 +165,10 @@ for (const width of [390, 1440])
         'holidays',
       );
       await capture('pricing');
-      await page.goto(`/app/settings/locations/?lang=${language}`);
-      await inspectDialog(
-        page.getByRole('button', { name: t('ui.houses.labels').add, exact: true }),
-        'house',
-      );
-      await inspectDialog(
-        page.getByRole('button', { name: t('ui.employeeAssignments.title'), exact: true }),
-        'employee-access',
-      );
-      await page.goto(`/app/settings/locations/${fixture.hid}/?lang=${language}`);
-      await inspectDialog(
-        page.getByRole('button', { name: t('ui.rooms.add'), exact: true }),
-        'room',
-      );
-      await capture('locations');
+      await page.goto(`/app/calendar/?lang=${language}`);
+      await inspectDialog(page.locator('.hc-house .workspace-row-actions button').first(), 'house');
+      await inspectDialog(page.locator('.hc-room .workspace-row-actions button').first(), 'room');
+      await capture('location-dialogs');
       for (const route of [
         '/app/account/profile/',
         '/app/operations/',

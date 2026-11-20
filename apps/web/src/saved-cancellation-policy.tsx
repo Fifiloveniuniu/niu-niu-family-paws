@@ -57,8 +57,8 @@ export default function SavedCancellationPolicy() {
   return (
     <section className="saved-cancellation-policy" aria-busy={loading}>
       <div className="workspace-section-actions">
-        <a href="/app/settings/" className="language">
-          {uiText('ui.workspace.settings')}
+        <a href="/app/balances/" className="language">
+          {uiText('ui.workspace.balances')}
         </a>
         <a href="/pricing/#cancellation-policy" className="language">
           {uiText('ui.houseCalendar.cancellationPolicy')}

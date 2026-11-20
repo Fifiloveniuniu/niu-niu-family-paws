@@ -1,3 +1,7 @@
+## Retired management routes — 2026-11-20
+
+Canonical routing maps operations, settings root and location-settings URLs/deep links to Calendar without losing language/query state. Removed operations/employee-assignment page components and the saved/preview settings overview. Calendar row editors continue to compose Houses/Rooms inside Modal. Cancellation policy stays on its existing scoped administrator route and returns to Balances. Employee-only routing now opens personal Profile. Operational/location APIs and stored data are preserved. Timezone uses the shared CustomSelect with an accessible name but no visible label.
+
 ## Shared presentation controls and Metrics source — 2026-11-19
 
 `button.tsx` owns primary/secondary/icon action surfaces; `icon-button.tsx` pairs secondary action labels/tooltips; `search-input.tsx` supplies shared search fields. `segmented-tabs.tsx` owns selection rendering and arrow/Home/End navigation for Calendar, Pricing, Balances and Metrics period controls. Its buttons mode uses pressed semantics; tabs mode uses roving focus and tab semantics. Paired primary/on-primary roles drive every selected segmented control. `Modal` also owns the marketing photo viewer and preview booking details.

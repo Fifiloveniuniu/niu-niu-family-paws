@@ -6,7 +6,6 @@ import CustomSelect from './custom-select';
 import CustomAutocomplete from './custom-autocomplete';
 import { ApiError, apiJson } from './api-client';
 import React from 'react';
-import { navigate } from './routing';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
 import Rooms from './rooms';
@@ -22,7 +21,6 @@ function houseRequest<T>(path = '', body?: HouseWrite) {
 }
 export default function Houses({
   initialSelected = '',
-  routable = false,
   onChanged,
   initialEdit = false,
   onEditorClosed,
@@ -30,7 +28,6 @@ export default function Houses({
   onBusyChange,
 }: {
   initialSelected?: string;
-  routable?: boolean;
   onChanged?: () => void;
   initialEdit?: boolean;
   onEditorClosed?: () => void;
@@ -183,11 +180,6 @@ export default function Houses({
               disabled={blocked}
               onChange={(event) => {
                 setSelected(event.target.value);
-                if (routable)
-                  navigate(
-                    '/app/settings/locations/' +
-                      (event.target.value ? encodeURIComponent(event.target.value) + '/' : ''),
-                  );
               }}
             >
               <option value="">{labels.all}</option>
@@ -213,13 +205,7 @@ export default function Houses({
               <li key={house.id}>
                 <div>
                   <h3>
-                    {routable ? (
-                      <a href={'/app/settings/locations/' + house.id + '/'}>
-                        <LocationLabel kind="house" name={house.name} />
-                      </a>
-                    ) : (
-                      <LocationLabel kind="house" name={house.name} />
-                    )}
+                    <LocationLabel kind="house" name={house.name} />
                   </h3>
                   <p>{house.address || labels.noAddress}</p>
                   {!house.address?.trim() && (

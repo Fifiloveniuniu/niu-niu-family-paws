@@ -1,3 +1,13 @@
+## Simpler Calendar — local, 2026-11-20
+
+Calendar room rows no longer show capacity. Time controls now read Previous/Today/Next, date heading, view choices, timezone. Room capacity rules still apply.
+
+日历房间行不再显示容量，但容量规则仍然有效。时间控件顺序为：上一时段／今天／下一时段、日期标题、视图、时区。
+
+Calendar no longer has House operations or Calendar settings buttons or pages. Old links return to Calendar. Use the house/room row gears for focused editing. Cancellation policy remains in Balances. Employees can still open their personal profile. Filters are compact, and the timezone selector has no visible label. Navigation, the date heading, timezone and view choices stay together; Add booking is separate. The date input is removed. Saved data has not been deleted.
+
+日历已移除“房屋运营”和“日历设置”按钮及页面，旧链接会返回日历。仍可点击房屋或房间行的齿轮图标进行编辑；取消政策保留在余额页面。员工仍可管理个人资料。筛选区已精简，时区选择框不再显示标签。日期导航、日期标题、时区及视图切换放在一起，“添加预约”单独显示；已移除日期输入框。已保存的数据不会删除。
+
 ## Consistent controls and Metrics — local preview, 2026-11-19
 
 Calendar, Pricing, Balances and Metrics now share the same segmented controls. Selected Apple controls are red; Microsoft Light controls are blue, with white text. Other choices have bold labels. In Calendar, navigation, the date heading, Timezone and view choices stay together, separate from booking/management actions. The date input is removed; use Previous, Today and Next. Timezone has its label on the left and remains available when filters are hidden. Desktop uses one toolbar row; phones wrap. The smaller settings icon keeps a full touch target.

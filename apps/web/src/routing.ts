@@ -13,7 +13,6 @@ export type RouteKind =
   | 'customers'
   | 'balances'
   | 'settings'
-  | 'operations'
   | 'business-metrics'
   | 'admin-pricing'
   | 'personal'
@@ -27,8 +26,6 @@ export type AppRoute = {
   customerId?: string;
   petId?: string;
   bookingId?: string;
-  locationId?: string;
-  locations?: boolean;
   cancellation?: boolean;
 };
 export const publicPaths = [
@@ -61,13 +58,23 @@ export function canonicalUrl(input: string) {
     for (const [key, value] of new URLSearchParams(query)) target.searchParams.set(key, value);
     if (url.searchParams.has('lang') && !target.searchParams.has('lang'))
       target.searchParams.set('lang', url.searchParams.get('lang')!);
-    return target.pathname + target.search + target.hash;
+    return canonicalUrl(target.pathname + target.search + target.hash);
   }
   if (url.pathname.replace(/\/+$/, '') === '/cancellation-policy')
     return '/pricing/' + url.search + '#cancellation-policy';
   const path = url.pathname === '/' ? '/' : url.pathname.replace(/\/+$/, '') + '/';
   return (
-    (path === '/' ? '/home/' : path === '/app/' ? '/app/calendar/' : path) + url.search + url.hash
+    (path === '/app/operations/' ||
+    path === '/app/settings/' ||
+    path.startsWith('/app/settings/locations/')
+      ? '/app/calendar/'
+      : path === '/'
+        ? '/home/'
+        : path === '/app/'
+          ? '/app/calendar/'
+          : path) +
+    url.search +
+    url.hash
   );
 }
 export function parseRoute(input: string): AppRoute {
@@ -98,8 +105,6 @@ export function parseRoute(input: string): AppRoute {
     '/app/balances/': 'balances',
     '/app/pricing/': 'admin-pricing',
     '/app/metrics/': 'business-metrics',
-    '/app/operations/': 'operations',
-    '/app/settings/': 'settings',
     '/app/account/profile/': 'personal',
   };
   if (path === '/app/settings/cancellation/')
@@ -113,9 +118,6 @@ export function parseRoute(input: string): AppRoute {
   );
   if (recordMatch)
     return { ...base, kind: 'customers', customerId: recordMatch[1], petId: recordMatch[2] };
-  recordMatch = path.match(new RegExp('^/app/settings/locations/(?:' + recordIdPattern + '/)?$'));
-  if (recordMatch)
-    return { ...base, kind: 'settings', locations: true, locationId: recordMatch[1] };
   return { ...base, kind: 'not-found' };
 }
 export function safeReturnTo(value: string | null) {

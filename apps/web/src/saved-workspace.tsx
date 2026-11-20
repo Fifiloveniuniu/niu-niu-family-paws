@@ -1,7 +1,6 @@
 import Button from './button';
 import IconButton from './icon-button';
 import BusinessMetrics from './business-metrics';
-import EmployeeAssignments from './employee-assignments';
 import { CustomerPicker } from './workspace-pickers';
 import AdminPricing from './admin-pricing';
 import React from 'react';
@@ -50,20 +49,17 @@ function WorkspaceClock({ zone, onChange }: { zone: string; onChange: (zone: str
   );
   return (
     <div className="workspace-clock">
-      <label>
-        {t('timezone')}
-        <CustomSelect
-          aria-label={t('clockTimezone')}
-          value={zone}
-          onChange={(event) => onChange(event.target.value)}
-        >
-          {zones.map((value) => (
-            <option key={value} value={value}>
-              {value.replaceAll('_', ' ')}
-            </option>
-          ))}
-        </CustomSelect>
-      </label>
+      <CustomSelect
+        aria-label={t('clockTimezone')}
+        value={zone}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        {zones.map((value) => (
+          <option key={value} value={value}>
+            {value.replaceAll('_', ' ')}
+          </option>
+        ))}
+      </CustomSelect>
     </div>
   );
 }
@@ -124,7 +120,6 @@ export default function SavedWorkspace({
   const [locationBusy, setLocationBusy] = React.useState(false);
   const [address, setAddress] = React.useState<LocationRow['house'] | null>(null);
   const [contact, setContact] = React.useState<Customer | null>(null);
-  const [employeeAssignments, setEmployeeAssignments] = React.useState(false);
   const [ownEditor, setOwnEditor] = React.useState(false);
   const [detail, setDetail] = React.useState<Booking | null>(null);
   const [detailError, setDetailError] = React.useState(false);
@@ -157,7 +152,6 @@ export default function SavedWorkspace({
     setContact(null);
     setManageLocation(null);
     setOwnEditor(false);
-    setEmployeeAssignments(false);
     setAction(null);
     setDetail(null);
     setNotice('');
@@ -425,41 +419,12 @@ export default function SavedWorkspace({
                           />
                         )}
                         {view === 'settings' &&
-                          (data.admin ? (
-                            route.cancellation ? (
-                              <SavedCancellationPolicy />
-                            ) : (
-                              <section className="workspace-settings">
-                                <div className="customer-heading">
-                                  <h2>{t('manageLocations')}</h2>
-                                  <Button
-                                    variant="secondary"
-                                    onClick={() => setEmployeeAssignments(true)}
-                                  >
-                                    {uiText('ui.employeeAssignments.title')}
-                                  </Button>
-                                  <a className="language" href="/app/settings/cancellation/">
-                                    {uiText('ui.houseCalendar.cancellationPolicy')}
-                                  </a>
-                                </div>
-                                <Houses
-                                  initialSelected={route.locationId}
-                                  routable={route.locations}
-                                  onChanged={changed}
-                                />
-                              </section>
-                            )
-                          ) : (
-                            <p>{t('denied')}</p>
-                          ))}
+                          (data.admin ? <SavedCancellationPolicy /> : <p>{t('denied')}</p>)}
                       </>
                     )}
                   </>
                 )}
               </>
-            )}
-            {employeeAssignments && data?.admin && (
-              <EmployeeAssignments onClose={() => setEmployeeAssignments(false)} />
             )}
             {data && adding !== false && (
               <WorkspaceBooking

@@ -128,7 +128,6 @@ for (const theme of themes) {
       ],
       ['/app/customers/', 'Add customer', '.customer-form input'],
       ['/app/pricing/', 'Add price', '.workspace-form input'],
-      ['/app/settings/locations/', 'Add house', '.customer-form input'],
     ]) {
       await page.goto(route + '?lang=en');
       if (route.includes('customers'))

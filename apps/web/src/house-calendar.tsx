@@ -11,7 +11,6 @@ import React from 'react';
 import { currentRoute, routeUrl, navigate, closeRecord, updateQuery } from './routing';
 import { useTranslation } from 'react-i18next';
 import { MarketingHeader } from './marketing-shell';
-import Houses from './houses';
 import CalendarSettingsDialog, { type CalendarSettings } from './calendar-settings';
 import Icon from './icons';
 import AssignmentDialog from './calendar-assignment';
@@ -123,7 +122,6 @@ export default function HouseCalendar({
     room?: number;
     creating?: boolean;
   } | null>(null);
-  const [manage, setManage] = React.useState(false);
   const [addressHouse, setAddressHouse] = React.useState<number | null>(null);
   const [admin, setAdmin] = React.useState(false);
   React.useEffect(
@@ -140,9 +138,7 @@ export default function HouseCalendar({
       }),
     [],
   );
-  React.useEffect(() => {
-    if (!admin) setManage(false);
-  }, [admin]);
+  React.useEffect(() => {}, [admin]);
   const [clockTimezone, setClockTimezone] = React.useState(
     () => Intl.DateTimeFormat().resolvedOptions().timeZone,
   );
@@ -169,7 +165,6 @@ export default function HouseCalendar({
     pendingBalance.current = null;
     setAssignment(false);
     setSettings(null);
-    setManage(false);
     const selectedStay = parsed.bookingId
       ? stays.find((stay) => stay.id === parsed.bookingId) || null
       : null;
@@ -252,7 +247,6 @@ export default function HouseCalendar({
       setBalanceView(null);
       setAssignment(false);
       setSettings(null);
-      setManage(false);
     }
   }, [identityEpoch]);
   const nowPos = timelinePercent(now);
@@ -391,36 +385,6 @@ export default function HouseCalendar({
                 onManageBalance={(pet) => setBalanceView({ pet, service: 'boarding' })}
               />
             )}
-            <div hidden={view !== 'settings'}>
-              {parsed.locations ? (
-                <div className="hc-settings-locations">
-                  <a href="/app/settings/">← {uiText('ui.houseCalendar.settings')}</a>
-                  <Houses key={route} initialSelected={parsed.locationId} routable />
-                </div>
-              ) : (
-                <div className="hc-settings-cards">
-                  <section>
-                    <h2>{uiText('ui.houseCalendar.locationsAndTimezones')}</h2>
-                    <p>{uiText('ui.houseCalendar.manageSavedHouseDetailsAndEachLocationSLocal')}</p>
-                    {admin ? (
-                      <a className="hc-manage" href="/app/settings/locations/">
-                        {uiText('ui.houseCalendar.manageLocations')}
-                      </a>
-                    ) : (
-                      <a href="/app/sign-in/">{uiText('ui.houseCalendar.signInToManageHouses')}</a>
-                    )}
-                  </section>
-                  <section>
-                    <h2>{uiText('ui.houseCalendar.cancellationPolicy')}</h2>
-                    <p>{uiText('ui.houseCalendar.reviewNoticePeriodsAndCreditRestorationTerms')}</p>
-                    <a className="hc-manage" href="/cancellation-policy/">
-                      {uiText('ui.houseCalendar.cancellationPolicy')}
-                    </a>
-                  </section>
-                </div>
-              )}
-            </div>
-
             <div className="hc-calendar-workspace" hidden={view !== 'calendar'}>
               {parsed.bookingId && !stays.some((stay) => stay.id === parsed.bookingId) && (
                 <p role="alert">{uiText('ui.houseCalendar.bookingNotFound')}</p>
@@ -444,20 +408,6 @@ export default function HouseCalendar({
                       <Icon name="plus" />
                       {uiText('ui.houseCalendar.addHouse')}
                     </button>
-                    {admin ? (
-                      <button
-                        className="hc-settings hc-top-icon"
-                        title={uiText('ui.houseCalendar.manageHousesRooms')}
-                        aria-label={uiText('ui.houseCalendar.manageHousesRooms')}
-                        onClick={() => setManage(true)}
-                      >
-                        <Icon name="settings" />
-                      </button>
-                    ) : (
-                      <a className="hc-manage" href="/app/sign-in/">
-                        {uiText('ui.houseCalendar.signInToManageHouses')}
-                      </a>
-                    )}
                   </div>
                   <div className="hc-clock-controls">
                     <label>
@@ -855,6 +805,7 @@ export default function HouseCalendar({
                                               <strong title={customerName(customerFor(stay.name))}>
                                                 {stay.name}
                                               </strong>
+                                              <small>{petTypeChoice(stay.species)}</small>
                                               <small className={'hc-status ' + stay.status}>
                                                 {status(stay)}
                                               </small>
@@ -1124,21 +1075,6 @@ export default function HouseCalendar({
                   setSettings(null);
                 }}
               />
-            )}
-            {manage && admin && (
-              <Modal
-                title={uiText('ui.houseCalendar.manageHousesRooms')}
-                onClose={() => {
-                  if (confirmDiscardChanges(i18n.language)) setManage(false);
-                }}
-              >
-                <div className="hc-setup">
-                  <p className="hc-setup-note">
-                    {uiText('ui.houseCalendar.savedHouseSettingsAreSeparateFromTheCalendarRoom')}
-                  </p>
-                  <Houses />
-                </div>
-              </Modal>
             )}
             {selected && (
               <Modal

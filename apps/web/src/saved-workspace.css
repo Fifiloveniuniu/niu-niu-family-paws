@@ -1201,12 +1201,51 @@
   align-items: center;
   gap: 8px;
 }
-.calendar-toolbar-actions .calendar-settings-action .paws-icon {
-  width: 16px;
-  height: 16px;
-}
 @media (min-width: 1200px) {
   .calendar-results .calendar-time-controls {
     flex-wrap: nowrap;
+  }
+}
+
+/* Compact record filters: four customer/pet controls beside the two location controls. */
+.saved-calendar .calendar-filter-panel {
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.calendar-filter-panel .calendar-filter-heading {
+  margin-bottom: 8px;
+}
+.saved-workspace .saved-calendar .calendar-filter-groups {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+}
+.calendar-filter-groups fieldset:first-child {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.saved-workspace .calendar-filter-groups fieldset > label,
+.saved-workspace .calendar-filter-groups fieldset > .workspace-search {
+  grid-column: auto;
+  gap: 4px;
+  font-size: 12px;
+}
+.calendar-filter-groups legend {
+  margin-bottom: 8px;
+}
+.calendar-results .workspace-clock {
+  flex-basis: 220px;
+  max-width: 260px;
+}
+@media (max-width: 1000px) {
+  .saved-workspace .saved-calendar .calendar-filter-groups {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .saved-calendar .calendar-filter-panel {
+    padding: 12px;
+  }
+  .calendar-filter-groups fieldset:first-child {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
