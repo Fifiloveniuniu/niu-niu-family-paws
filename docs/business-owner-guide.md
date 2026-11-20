@@ -1,3 +1,9 @@
+## Releases after merging — 2026-11-19
+
+Codex previews and checks changes locally, then submits a focused PR. GitHub tests the merged `main` version and publishes it automatically when all checks pass. PRs and feature branches do not publish. A failed check keeps the previous hosted release; the Actions page shows the cause. You do not need to run a terminal or deploy manually.
+
+Codex 会先在本地预览并检查修改，再提交独立的 PR。合并到 main 后，GitHub 会运行检查，全部通过后自动发布。PR 和功能分支不会上线；检查失败时，线上保留原版本，可在 Actions 查看原因。您无需使用终端或手动部署。
+
 ## Cleaner Metrics dashboard — local preview
 
 Open http://localhost:4180/app/metrics/. Current totals are first, followed by six matching chart cards. The large number in a chart is the whole reporting-period total; the small caption shows the selected point. Hover/tap a point or use arrow keys; the table icon shows exact values.

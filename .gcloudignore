@@ -1,0 +1,21 @@
+# The API build needs source code only, never frontend assets, credentials or records.
+**
+!.dockerignore
+!.gcloudignore
+!package.json
+!package-lock.json
+!cloudbuild.api.yaml
+!apps/
+!apps/api/
+!apps/api/**
+!packages/
+!packages/**
+**/node_modules/**
+**/.env*
+**/*credentials*.json
+**/*service-account*.json
+**/gha-creds-*.json
+**/*.pem
+**/*.key
+**/*.log
+**/__pycache__/**

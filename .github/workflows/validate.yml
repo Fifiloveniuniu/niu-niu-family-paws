@@ -1,14 +1,18 @@
-name: Validate
+name: Release main
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   web:
+    concurrency:
+      group: main-validation
+      cancel-in-progress: true
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,3 +31,96 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chrome
       - run: npm run test:backend-browser
+      - run: node scripts/release-manifest.mjs "$GITHUB_SHA"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: web-${{ github.sha }}
+          path: dist
+          if-no-files-found: error
+          retention-days: 1
+  deploy:
+    concurrency:
+      group: production-release
+      cancel-in-progress: false
+    needs: web
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write
+    environment:
+      name: production
+      url: https://niu-niu-family-paws.web.app
+    env:
+      GCLOUD_PROJECT: niu-niu-family-paws
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that this is still the latest main commit
+        id: fresh
+        run: |
+          if [[ "$(git ls-remote origin refs/heads/main | cut -f1)" == "$GITHUB_SHA" ]]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "A newer main release is queued; skip this deployment."
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.fresh.outputs.current == 'true'
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+        if: steps.fresh.outputs.current == 'true'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        if: steps.fresh.outputs.current == 'true'
+        with:
+          name: web-${{ github.sha }}
+          path: dist
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        if: steps.fresh.outputs.current == 'true'
+        with:
+          project_id: niu-niu-family-paws
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+        if: steps.fresh.outputs.current == 'true'
+      - name: Build the API image from this commit
+        if: steps.fresh.outputs.current == 'true'
+        id: image
+        run: |
+          digest=$(gcloud builds submit . --project "$GCLOUD_PROJECT" --region us-west1 --config cloudbuild.api.yaml --substitutions "_REVISION=$GITHUB_SHA" --gcs-source-staging-dir gs://niu-niu-family-paws-build-source/github --suppress-logs --quiet --format='value(results.images[0].digest)')
+          [[ "$digest" =~ ^sha256:[a-f0-9]{64}$ ]]
+          echo "image=us-west1-docker.pkg.dev/niu-niu-family-paws/family-paws/api@$digest" >> "$GITHUB_OUTPUT"
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        if: steps.fresh.outputs.current == 'true'
+        with:
+          project_id: niu-niu-family-paws
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - name: Deploy the matching API revision
+        if: steps.fresh.outputs.current == 'true'
+        env:
+          API_IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          gcloud run deploy family-paws-api --project "$GCLOUD_PROJECT" --region us-west1 --image "$API_IMAGE" --service-account family-paws-api@niu-niu-family-paws.iam.gserviceaccount.com --revision-suffix "git-${GITHUB_SHA:0:12}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" --labels "git-sha=$GITHUB_SHA" --quiet
+      - name: Check the new API before publishing its frontend
+        if: steps.fresh.outputs.current == 'true'
+        run: node scripts/verify-release.mjs --api-only
+      - name: Publish rules and prepare indexes without deleting extra indexes
+        if: steps.fresh.outputs.current == 'true'
+        run: npx firebase deploy --only firestore:rules,firestore:indexes --project "$GCLOUD_PROJECT" --non-interactive
+      - name: Wait for required query indexes
+        if: steps.fresh.outputs.current == 'true'
+        run: node scripts/wait-firestore-indexes.mjs
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        if: steps.fresh.outputs.current == 'true'
+        with:
+          project_id: niu-niu-family-paws
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - name: Publish the tested frontend and pin its API revision
+        if: steps.fresh.outputs.current == 'true'
+        run: npx firebase deploy --only hosting --project "$GCLOUD_PROJECT" --non-interactive
+      - name: Verify the live release and protected API
+        if: steps.fresh.outputs.current == 'true'
+        run: node scripts/verify-release.mjs "$GITHUB_SHA"

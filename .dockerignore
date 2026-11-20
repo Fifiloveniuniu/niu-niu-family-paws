@@ -5,3 +5,10 @@ test-results
 .env*
 *.log
 .firebase
+
+gha-creds-*.json
+**/.env*
+**/*credentials*.json
+**/*service-account*.json
+**/*.pem
+**/*.key
