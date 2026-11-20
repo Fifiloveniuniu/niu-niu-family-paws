@@ -1382,5 +1382,17 @@
   "ui.calendarAnnotations.legend": "日历图例",
   "ui.calendarAnnotations.holiday": "节假日",
   "ui.pricingAdmin.labels": "各语言名称",
-  "ui.workspace.petInformation": "资料"
+  "ui.workspace.petInformation": "资料",
+  "ui.priceNameEditor.title": "价格分类名称",
+  "ui.priceNameEditor.hint": "先填写名称，再切换语言添加对应译名。",
+  "ui.priceNameEditor.language": "名称语言",
+  "ui.priceNameEditor.added": "已填写",
+  "ui.priceNameEditor.optional": "选填",
+  "ui.priceNameEditor.required": "必填",
+  "ui.priceNameEditor.fallback": "西班牙语留空时，将显示已有名称。",
+  "ui.priceNameEditor.progress": "已填写 {{count}} / 3 种语言",
+  "ui.priceNameEditor.missing": "仍需填写：{{languages}}",
+  "ui.priceNameEditor.ready": "必填名称已完成。",
+  "ui.priceNameEditor.preview": "客户看到的名称",
+  "ui.priceNameEditor.empty": "尚未填写名称"
 }

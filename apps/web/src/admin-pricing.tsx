@@ -1,3 +1,4 @@
+import PriceNameEditor from './price-name-editor';
 import { priceName } from './price-label';
 import Button from './button';
 import IconButton from './icon-button';
@@ -5,7 +6,7 @@ import SegmentedTabs from './segmented-tabs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiJson, ApiError } from './api-client';
-import { uiText, localeFor, speciesText, languageName } from './i18n.ts';
+import { uiText, localeFor, speciesText } from './i18n.ts';
 import Modal from './modal';
 import Icon from './icons';
 import CustomSelect from './custom-select';
@@ -136,6 +137,7 @@ function Editor({
   return (
     <Modal
       title={t(holidays ? 'holidays' : existing ? 'edit' : 'add')}
+      className="pricing-editor-dialog"
       onClose={close}
       disabled={blocked}
     >
@@ -200,36 +202,7 @@ function Editor({
             </>
           ) : (
             <>
-              <fieldset className="price-language-labels">
-                <legend>{uiText('ui.pricingAdmin.labels')}</legend>
-                <p>{uiText('ui.bookingCost.labelsHint')}</p>{' '}
-                <label>
-                  {languageName('en')}
-                  <input
-                    required
-                    maxLength={160}
-                    value={rate.name}
-                    onChange={(event) => patch({ name: event.target.value })}
-                  />
-                </label>
-                <label>
-                  {languageName('zh')}
-                  <input
-                    required
-                    maxLength={160}
-                    value={rate.nameZh}
-                    onChange={(event) => patch({ nameZh: event.target.value })}
-                  />
-                </label>
-                <label>
-                  {languageName('es')}
-                  <input
-                    maxLength={160}
-                    value={rate.nameEs ?? ''}
-                    onChange={(event) => patch({ nameEs: event.target.value || undefined })}
-                  />
-                </label>
-              </fieldset>
+              <PriceNameEditor rate={rate} onChange={patch} />
               <label>
                 {t('species')}
                 <CustomSelect

@@ -1382,5 +1382,17 @@
   "ui.calendarAnnotations.legend": "Calendar annotations",
   "ui.calendarAnnotations.holiday": "Holiday",
   "ui.pricingAdmin.labels": "Names by language",
-  "ui.workspace.petInformation": "Information"
+  "ui.workspace.petInformation": "Information",
+  "ui.priceNameEditor.title": "Category name",
+  "ui.priceNameEditor.hint": "Enter a name, then choose another language to add its translation.",
+  "ui.priceNameEditor.language": "Name language",
+  "ui.priceNameEditor.added": "Added",
+  "ui.priceNameEditor.optional": "Optional",
+  "ui.priceNameEditor.required": "Required",
+  "ui.priceNameEditor.fallback": "If Spanish is left blank, customers see the existing name.",
+  "ui.priceNameEditor.progress": "{{count}} of 3 names added",
+  "ui.priceNameEditor.missing": "Still required: {{languages}}",
+  "ui.priceNameEditor.ready": "Required names are complete.",
+  "ui.priceNameEditor.preview": "Shown to customers",
+  "ui.priceNameEditor.empty": "Name not entered"
 }

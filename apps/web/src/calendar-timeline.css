@@ -383,19 +383,6 @@
 .pet-detail-events p {
   margin-block: 6px;
 }
-.price-language-labels {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 16px;
-  border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
-}
-.price-language-labels > p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--md-on-surface-variant);
-}
 /* Shared navigation keeps the same geometry inside a booking dialog. */
 .hc-booking-dialog .calendar-time-controls {
   gap: 12px;
