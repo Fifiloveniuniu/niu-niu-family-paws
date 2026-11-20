@@ -1,3 +1,7 @@
+## Shared form polish, aligned actions and customer context — 2026-11-20
+
+Remove the extra content-area border in Add balance, Add/Edit customer and Add price dialogs using the shared dialog/form styling. Use meaningful icons alongside action labels where possible. Enabled buttons/controls need reasonable theme-aware hover feedback; language-menu surfaces, selection and hover must match the chosen app theme. Leave space between customer-row hover backgrounds and dividers. Align customer search controls with Add customer, and group Pricing actions with Add price rightmost. Administrator customer view needs a persistent banner naming the customer and a clear return-to-admin action, including on failed reads, without changing actual identity or permissions.
+
 ## Retire management pages and compact Calendar — 2026-11-20
 
 Remove capacity text from calendar rows while retaining capacity rules and room editing. Order time controls as Previous/Today/Next, date heading, view choices, timezone.

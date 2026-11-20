@@ -106,6 +106,11 @@ export default function SavedWorkspace({
     view === 'balances' || view === 'admin-pricing',
   );
   const admin = data?.admin ?? initialAdmin;
+  // The mounted workspace is keyed by actual identity; names never cross signed-in accounts.
+  const customerNames = React.useRef(new Map<string, string>());
+  if (scope && data?.customer?.id === scope) customerNames.current.set(scope, data.customer.name);
+  const viewingName = scope ? customerNames.current.get(scope) : undefined;
+
   const [adding, setAdding] = React.useState<
     false | { houseId: string; roomId: string } | undefined
   >(false);
@@ -240,28 +245,28 @@ export default function SavedWorkspace({
             </nav>
           }
         />
+        {admin && scope && (
+          <aside className="workspace-context" role="status" aria-label={t('customerView')}>
+            <div className="workspace-context-identity">
+              <Icon name="account" />
+              <div>
+                <strong>
+                  {viewingName ? t('viewingAs', { name: viewingName }) : t('customerView')}
+                </strong>
+                <small>{t('adminSession')}</small>
+              </div>
+            </div>
+            <Button
+              icon="chevron-left"
+              variant="secondary"
+              onClick={() => navigate('/app/metrics/')}
+            >
+              {t('backToAdmin')}
+            </Button>
+          </aside>
+        )}
         <div className="hc-body">
           <main className="hc-content" id="main">
-            {data?.admin && scope && data.customer && (
-              <div className="workspace-context" role="status">
-                <strong>{t('viewingAs', { name: data.customer.name })}</strong>
-                <Button
-                  icon="chevron-left"
-                  variant="secondary"
-                  onClick={() =>
-                    navigate(
-                      view === 'balances'
-                        ? '/app/balances/'
-                        : view === 'customers'
-                          ? '/app/customers/'
-                          : '/app/calendar/',
-                    )
-                  }
-                >
-                  {t('exitView')}
-                </Button>
-              </div>
-            )}
             {notice && <p role="status">{notice}</p>}
             {visitedProfile.current && (
               <div hidden={view !== 'personal'} data-retained-workspace>
