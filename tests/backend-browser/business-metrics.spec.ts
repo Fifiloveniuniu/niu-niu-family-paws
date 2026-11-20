@@ -38,7 +38,7 @@ for (const [width, lang, palette] of [
     expect(
       Number(await page.locator('[data-metric="pets"] dd:not(.business-metric-hint)').innerText()),
     ).toBeGreaterThanOrEqual(300);
-    await expect(page.locator('.business-payment-note')).toContainText(
+    await expect(page.locator('.metric-chart-placeholder')).toContainText(
       lang === 'en' ? 'Revenue not available' : '暂无营收数据',
     );
     if (width > 800)

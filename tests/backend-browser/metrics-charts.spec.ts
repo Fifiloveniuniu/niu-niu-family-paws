@@ -123,7 +123,7 @@ for (const [width, lang] of [
       { fixture, lang },
     );
     await page.reload();
-    await expect(page.locator('.metric-chart')).toHaveCount(5);
+    await expect(page.locator('.metric-chart')).toHaveCount(6);
     await expect(
       page.locator('[data-metric="customers"] dd:not(.business-metric-hint)'),
     ).toHaveText(/\d+/);

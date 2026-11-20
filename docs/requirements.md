@@ -1,3 +1,7 @@
+## Dashboard consistency and realistic preview values — 2026-11-19
+
+Use consistent snapshot/chart cards, filter controls, spacing, typography and responsive graph labels throughout Metrics. Every chart needs a meaningful reporting-period total and readable point details. Local previews should have realistic, coherent, explicitly labeled sample values across all charts, with saved records available separately. Do not represent synthetic values as business records, prices or received revenue. Production continues to use recorded aggregates. No business-data reset or financial workflow activation is authorized by presentation sampling.
+
 ## Current requested workspace changes — 2026-11-19
 
 The owner requests Metrics as the first tab with revenue, balance, bookings, customers and service-usage graphs; Pricing-style Balances/Activity tabs, compact icon actions, centered button contents, separated/grouped calendar filters, and clearer Activity. These are implemented locally pending final validation. Existing timezone cleanup/date/Now behavior, house Add room +, tighter settings/+ spacing and compact Customers remain required. Latest delivery instruction authorizes focused signed commits and PRs; deployment remains deferred.

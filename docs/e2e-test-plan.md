@@ -532,3 +532,8 @@ Calendar delivery follow-up: first CI passed 61/62 journeys but exposed a pet ho
 
 
 Final integrated local validation passes **all 66 backend Chrome journeys in one uninterrupted 3.8-minute run** after the hover dismissal fix and Metrics chart integration. This supersedes the earlier interrupted-run coverage notes for the current source. The final Metrics PR's full CI remains required before merge.
+
+
+## Dashboard consistency and presentation samples — 2026-11-19
+
+81 units, build/API/format checks and a stable 70-journey local Chrome run pass. After compact date presets and category table headings, all six final dashboard journeys pass (four themes, English/Chinese, 320px/390px/1440px). These check coherent sample totals, visible source/selection states, no Metrics API reads or business writes in samples, exact category headings, saved-record restoration, revenue remaining unavailable for genuine records, readable contrast and equal card widths. Sample unit tests verify additive totals, stable snapshots, no added/lost events across reporting zones and no recorded future receipts/handoffs. The combined current suite has 72 journeys; final PR CI must run all of them before merge. Read-only populated localhost walkthroughs verify default demo samples and switching to actual records on desktop and phones, including 320px. Screenshots: docs/review/dashboard-cleanup-2026-11-19. No default-database resets, financial activation or deployment.
