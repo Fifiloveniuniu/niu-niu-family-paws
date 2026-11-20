@@ -14,6 +14,7 @@ export function scopedUrl(path: string, scope?: string | null) {
   if (scope) url.searchParams.set('asCustomer', scope);
   return url.pathname + url.search;
 }
+export type BusySpan = { houseId: string; roomId: string; from: string; through: string };
 export type WorkspaceData = {
   admin: boolean;
   customer: Customer | null;
@@ -21,6 +22,7 @@ export type WorkspaceData = {
   customers: Customer[];
   locations: LocationRow[];
   bookings: Booking[];
+  busy?: BusySpan[];
 };
 async function allPets(scope: string | undefined, signal: AbortSignal, firstOnly = false) {
   let cursor: string | null = null;
@@ -143,8 +145,31 @@ export function useWorkspaceData(
           if (current === generation.current) common.current = { key, data: base };
         }
         const bookings = await allBookings(scope, range, abort.signal);
+        const busy: BusySpan[] = [];
+        if (base.customer && range.from && range.through) {
+          let cursor: string | null = null;
+          const seen = new Set<string>();
+          do {
+            const params = new URLSearchParams({
+              customerId: base.customer.id,
+              from: range.from,
+              through: range.through,
+            });
+            if (cursor) params.set('cursor', cursor);
+            const result: { items: BusySpan[]; nextCursor: string | null } = await apiJson(
+              '/workspace/busy?' + params,
+              { signal: abort.signal },
+            );
+            busy.push(...result.items);
+            cursor = result.nextCursor;
+            if (cursor) {
+              if (seen.has(cursor)) throw Error('Invalid pagination');
+              seen.add(cursor);
+            }
+          } while (cursor);
+        }
         if (current === generation.current)
-          setState({ key, data: { ...base, bookings }, loading: false, error: null });
+          setState({ key, data: { ...base, bookings, busy }, loading: false, error: null });
       } catch (error) {
         if (current === generation.current && !abort.signal.aborted) {
           const clear =

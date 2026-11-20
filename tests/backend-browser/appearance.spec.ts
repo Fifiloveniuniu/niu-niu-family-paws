@@ -126,7 +126,7 @@ for (const [width, language] of [
     await booking
       .getByRole('combobox', { name: w('pickup'), exact: true })
       .fill('2030-11-04T10:00');
-    await booking.getByRole('button', { name: w('chooseRoom'), exact: true }).click();
+    await booking.getByRole('button', { name: w('choose'), exact: true }).click();
     await expect(booking.locator('.hc-range-house .location-label-house')).toBeVisible();
     await expect(booking.locator('.hc-range-room .location-label-room').first()).toBeVisible();
     expect(await booking.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
@@ -275,7 +275,7 @@ for (const preset of themes.filter((theme) => theme.mode === 'dark')) {
     await arrival.fill('2030-11-02T10:00');
     await expect(arrival).toHaveCSS('background-color', rgb(preset.surface));
     await dialog.getByRole('combobox', { name: 'Pickup', exact: true }).fill('2030-11-04T10:00');
-    await dialog.getByRole('button', { name: 'Choose a room', exact: true }).click();
+    await dialog.getByRole('button', { name: 'Choose', exact: true }).click();
     await expect(dialog.locator('.calendar-timeline-axis')).toHaveCSS(
       'background-color',
       rgb(preset.surface),

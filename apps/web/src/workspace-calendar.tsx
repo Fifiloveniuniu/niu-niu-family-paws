@@ -1,7 +1,7 @@
 import Button from './button';
 import SearchInput from './search-input';
 import IconButton from './icon-button';
-import SegmentedTabs from './segmented-tabs';
+import CalendarControls from './calendar-controls';
 import LocationLabel from './location-label';
 import { CalendarAxis, CalendarTrack, CalendarFrame, CalendarViewport } from './calendar-timeline';
 import {
@@ -112,7 +112,7 @@ export default function WorkspaceCalendar({
   const [filtersOpen, setFiltersOpen] = React.useState(true);
   const [now, setNow] = React.useState(Date.now());
   React.useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 30000);
+    const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
   const locale = localeFor(i18n.language);
@@ -282,37 +282,14 @@ export default function WorkspaceCalendar({
       </section>
       <section className="calendar-results" aria-label={t('calendar')}>
         <div className="hc-toolbar">
-          <div
-            className="workspace-range-controls calendar-time-controls"
-            role="group"
-            aria-label={t('period')}
-          >
-            <div className="hc-range">
-              <button type="button" aria-label={t('previous')} onClick={() => shift(-1)}>
-                <Icon name="chevron-left" />
-              </button>
-              <button
-                type="button"
-                onClick={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}
-              >
-                {t('today')}
-              </button>
-              <button type="button" aria-label={t('next')} onClick={() => shift(1)}>
-                <Icon name="chevron-right" />
-              </button>
-              <h2>{title}</h2>
-            </div>
-            <SegmentedTabs
-              label={t('calendarView')}
-              value={range.view}
-              onChange={(view) => onQuery({ view })}
-              items={(['day', 'week', 'month', 'year'] as const).map((view) => ({
-                value: view,
-                label: t(view),
-              }))}
-            />
-            {timeZoneControl}
-          </div>
+          <CalendarControls
+            title={title}
+            view={range.view}
+            onShift={shift}
+            onToday={() => onQuery({ date: wallDateKey(wallNow(range.zone)) })}
+            onView={(view) => onQuery({ view })}
+            timezone={timeZoneControl}
+          />
           <div className="calendar-toolbar-actions">
             <Button
               variant="primary"
@@ -325,6 +302,14 @@ export default function WorkspaceCalendar({
             </Button>
           </div>
         </div>
+        <ul className="calendar-annotations" aria-label={uiText('ui.calendarAnnotations.legend')}>
+          {['planned', 'in_care', 'completed', 'cancelled', 'overdue'].map((status) => (
+            <li key={status}>
+              <span className={'calendar-status-dot ' + status} aria-hidden="true" />
+              {t(status)}
+            </li>
+          ))}
+        </ul>
         {loading && <p role="status">{t('loading')}</p>}
         <CalendarViewport
           className="hc-scroll"
@@ -335,6 +320,7 @@ export default function WorkspaceCalendar({
             className="hc-calendar saved-calendar-grid"
             ticks={range.ticks}
             timeline={range}
+            zone={range.zone}
             view={range.view}
             role="tabpanel"
             aria-label={t(range.view)}
@@ -345,27 +331,6 @@ export default function WorkspaceCalendar({
               locale={locale}
               className="hc-axis"
             />
-            {position(now) >= 0 && position(now) < 100 && (
-              <div
-                className="workspace-now-marker"
-                data-label-align={position(now) > 85 ? 'end' : 'start'}
-                style={{
-                  left: `calc(var(--label) + (100% - var(--label)) * ${position(now) / 100})`,
-                }}
-                aria-label={t('now')}
-              >
-                <span>
-                  {t('now')}{' '}
-                  <time dateTime={new Date(now).toISOString()}>
-                    {new Intl.DateTimeFormat(locale, {
-                      timeZone: range.zone,
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    }).format(new Date(now))}
-                  </time>
-                </span>
-              </div>
-            )}
             {locations.map((item) => (
               <React.Fragment key={item.house.id}>
                 <div className="hc-house">
@@ -455,12 +420,49 @@ export default function WorkspaceCalendar({
                             </button>
                           </div>
                         </div>
-                        {!groups.size && (
-                          <div className="hc-pet saved-empty-room">
-                            <div className="hc-label">{t('emptyBookings')}</div>
-                            <CalendarTrack {...range} className="hc-track" />
+                        {(data.busy ?? []).some(
+                          (span) => span.houseId === item.house.id && span.roomId === candidate.id,
+                        ) && (
+                          <div className="hc-pet saved-busy-room">
+                            <div className="hc-label">
+                              <Icon name="calendar" />
+                              {t('busy')}
+                            </div>
+                            <CalendarTrack {...range} className="hc-track">
+                              {(data.busy ?? [])
+                                .filter(
+                                  (span) =>
+                                    span.houseId === item.house.id && span.roomId === candidate.id,
+                                )
+                                .map((span, index) => (
+                                  <span
+                                    key={index}
+                                    className="hc-stay busy"
+                                    style={timelineSpan(
+                                      Date.parse(span.from),
+                                      Date.parse(span.through),
+                                      range.from,
+                                      range.through,
+                                    )!}
+                                    title={`${t('busy')} · ${new Date(span.from).toLocaleString(locale, { timeZone: range.zone })} – ${new Date(span.through).toLocaleString(locale, { timeZone: range.zone })}`}
+                                  >
+                                    <Icon name="calendar" />
+                                    {t('busy')}
+                                  </span>
+                                ))}
+                            </CalendarTrack>
                           </div>
                         )}
+                        {!groups.size &&
+                          !(data.busy ?? []).some(
+                            (span) =>
+                              span.houseId === item.house.id && span.roomId === candidate.id,
+                          ) && (
+                            <div className="hc-pet saved-empty-room">
+                              <div className="hc-label">{t('emptyBookings')}</div>
+                              <CalendarTrack {...range} className="hc-track" />
+                            </div>
+                          )}
                         {[...groups].map(([key, bookings]) => {
                           const row = rows.get(key)!;
                           const current =

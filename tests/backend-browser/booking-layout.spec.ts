@@ -11,7 +11,7 @@ for (const [width, language] of [
   [1280, 'en'],
   [1280, 'zh'],
 ] as const) {
-  test(`booking scrolls as one dialog with a fixed aligned step bar (${width}, ${language})`, async ({
+  test(`booking keeps aligned sticky date and step headers while scrolling (${width}, ${language})`, async ({
     page,
     request,
   }) => {
@@ -83,10 +83,10 @@ for (const [width, language] of [
     await dialog
       .getByRole('combobox', { name: t('pickup'), exact: true })
       .fill(width === 320 ? '2030-11-02T10:05' : '2030-11-04T10:00');
-    await dialog.getByRole('button', { name: t('chooseRoom'), exact: true }).click();
+    await dialog.getByRole('button', { name: t('choose'), exact: true }).click();
     await expect(dialog.locator('.hc-range-room')).toHaveCount(15);
     await page.screenshot({ path: `test-results-backend/booking-grid-${width}-${language}.png` });
-    await expect(dialog.locator('.calendar-timeline-tick')).toHaveCount(7);
+    await expect(dialog.locator('.calendar-timeline-tick')).toHaveCount(14);
     await expect(dialog.locator('.hc-range-house')).toHaveCount(1);
     await expect(dialog.locator('.hc-range-house .location-label-kind')).toHaveText(t('house'));
     await expect(dialog.locator('.hc-range-room-name .location-label-kind').first()).toHaveText(
@@ -171,7 +171,7 @@ for (const [width, language] of [
     expect(await houseLabel.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(
       true,
     );
-    await expect(dialog.locator('.booking-calendar-legend li')).toHaveCount(3);
+    await expect(dialog.locator('.booking-calendar-legend li')).toHaveCount(2);
     const semanticColors = await dialog.evaluate((node) => {
       const probe = document.createElement('span');
       document.body.append(probe);
@@ -180,19 +180,19 @@ for (const [width, language] of [
         return getComputedStyle(probe).color;
       };
       const result = {
-        available: getComputedStyle(node.querySelector('.booking-calendar-swatch.available')!)
+        unavailable: getComputedStyle(node.querySelector('.booking-calendar-swatch.unavailable')!)
           .backgroundColor,
         requested: getComputedStyle(node.querySelector('.booking-calendar-swatch.requested')!)
           .backgroundColor,
-        success: resolve('--md-success-soft'),
+        secondary: resolve('--md-secondary-container'),
         selection: resolve('--md-primary-container'),
       };
       probe.remove();
       return result;
     });
-    expect(semanticColors.available).toBe(semanticColors.success);
+    expect(semanticColors.unavailable).toBe(semanticColors.secondary);
     expect(semanticColors.requested).toBe(semanticColors.selection);
-    expect(semanticColors.available).not.toBe(semanticColors.requested);
+    expect(semanticColors.unavailable).not.toBe(semanticColors.requested);
 
     const steps = dialog.locator('.hc-wizard-progress li');
     await expect(steps.nth(0)).toHaveAttribute('data-step-state', 'completed');
@@ -213,7 +213,16 @@ for (const [width, language] of [
     const calendar = dialog.locator('.hc-schedule-scroll');
     expect(
       await calendar.evaluate((node) => node.scrollHeight - node.clientHeight),
-    ).toBeLessThanOrEqual(1);
+    ).toBeGreaterThan(1);
+    await calendar.evaluate((node) => {
+      node.scrollTop = 280;
+    });
+    const sticky = await dialog.locator('.calendar-timeline-axis').boundingBox();
+    const viewport = await calendar.boundingBox();
+    expect(Math.abs(sticky!.y - viewport!.y)).toBeLessThan(2);
+    await calendar.evaluate((node) => {
+      node.scrollTop = 0;
+    });
     await dialog.locator('.hc-range-room-name').first().scrollIntoViewIfNeeded();
     await calendar.evaluate((node) => {
       node.scrollLeft = 260;
@@ -240,13 +249,16 @@ for (const [width, language] of [
     await dialog.evaluate((node) => {
       node.scrollTop = 200;
     });
+    // Aim at the sticky dialog header, outside the calendar's separate scrollport.
+    const headerBox = (await header.boundingBox())!;
+    await page.mouse.move(headerBox.x + 20, headerBox.y + 20);
+    const calendarBefore = await calendar.evaluate((node) => node.scrollTop);
     const before = await dialog.evaluate((node) => node.scrollTop);
-    const box = await dialog.boundingBox();
-    await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height - 100);
-    await page.mouse.wheel(0, 350);
-    await expect.poll(() => dialog.evaluate((node) => node.scrollTop)).toBeGreaterThan(before);
+    expect(before).toBeGreaterThan(0);
+    await page.mouse.wheel(0, -350);
+    await expect.poll(() => dialog.evaluate((node) => node.scrollTop)).toBeLessThan(before);
     expect((await header.boundingBox())!.y).toBeCloseTo(initialTop, 0);
-    expect(await calendar.evaluate((node) => node.scrollTop)).toBe(0);
+    expect(await calendar.evaluate((node) => node.scrollTop)).toBe(calendarBefore);
     await expect(page.locator('html')).toHaveCSS('overflow-y', 'hidden');
     await page.screenshot({ path: `test-results-backend/booking-layout-${width}-${language}.png` });
     await dialog.getByRole('button', { name: t('reviewBooking'), exact: true }).click();

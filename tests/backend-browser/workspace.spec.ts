@@ -162,9 +162,9 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
   await expect(arrival).toHaveValue(pickedDate + ' 10:00');
   await dialog.getByRole('combobox', { name: 'Arrival', exact: true }).fill('2030-11-05T10:00');
   await dialog.getByRole('combobox', { name: 'Pickup', exact: true }).fill('2030-11-07T10:00');
-  await dialog.getByRole('button', { name: 'Choose a room', exact: true }).click();
-  await expect(dialog.locator('.hc-time-available').first()).toBeVisible();
-  await dialog.locator('.hc-time-available').first().click();
+  await dialog.getByRole('button', { name: 'Choose', exact: true }).click();
+  await expect(dialog.locator('.hc-time-request').first()).toBeVisible();
+  await dialog.locator('.hc-time-request').first().click();
   await dialog.getByRole('button', { name: 'Review booking', exact: true }).click();
   await expect(dialog).toContainText('[TEST] Practice room');
   await dialog.getByRole('button', { name: 'Save booking', exact: true }).click();
@@ -198,8 +198,8 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
   await page.getByRole('button', { name: 'Edit booking', exact: true }).click();
   await expect(dialog.getByRole('combobox', { name: 'Pet', exact: true })).toBeDisabled();
   await dialog.getByRole('combobox', { name: 'Pickup', exact: true }).fill('2030-11-08T10:00');
-  await dialog.getByRole('button', { name: 'Choose a room', exact: true }).click();
-  await dialog.locator('.hc-time-available').first().click();
+  await dialog.getByRole('button', { name: 'Choose', exact: true }).click();
+  await dialog.locator('.hc-time-request').first().click();
   await dialog.getByRole('button', { name: 'Review booking', exact: true }).click();
   await dialog.getByRole('button', { name: 'Save booking', exact: true }).click();
   await expect(dialog).toHaveCount(0);

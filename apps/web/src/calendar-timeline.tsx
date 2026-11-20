@@ -1,3 +1,7 @@
+import { useTranslation } from 'react-i18next';
+import { uiText, localeFor } from './i18n';
+import { apiJson } from './api-client';
+import { zonedValue } from './wall-time';
 import React from 'react';
 import { timelineGrid, timelinePosition, type TimelineTick } from './timeline-layout';
 import './calendar-timeline.css';
@@ -18,6 +22,15 @@ export function CalendarAxis({
   view: 'day' | 'week' | 'month' | 'year';
   className?: string;
 }) {
+  const [holidays, setHolidays] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    const abort = new AbortController();
+    void apiJson<{ holidays: string[] }>('/public/pricing', { signal: abort.signal })
+      .then((value) => setHolidays(value.holidays))
+      .catch(() => {});
+    return () => abort.abort();
+  }, []);
+  const today = zonedValue(new Date().toISOString(), zone).slice(0, 10);
   const offset = (at: string) =>
     new Intl.DateTimeFormat(locale, { timeZone: zone, timeZoneName: 'shortOffset' })
       .formatToParts(new Date(at))
@@ -35,11 +48,15 @@ export function CalendarAxis({
             from,
             through,
           );
+          const dateKey = zonedValue(tick.at, zone).slice(0, 10);
+          const holiday = view !== 'year' && holidays.includes(dateKey);
           return (
             <div
               key={tick.key}
               className="saved-axis-tick calendar-timeline-tick"
               data-at={tick.at}
+              data-today={dateKey === today}
+              data-holiday={holiday}
               style={{ left: `${left}%`, width: `${right - left}%` }}
               title={new Intl.DateTimeFormat(locale, {
                 timeZone: zone,
@@ -58,6 +75,11 @@ export function CalendarAxis({
                 }).format(date)}
               </span>
               {showOffsets && <small>{offset(tick.at)}</small>}
+              {holiday && (
+                <small className="calendar-holiday">
+                  {uiText('ui.calendarAnnotations.holiday')}
+                </small>
+              )}
               {view !== 'day' && (
                 <strong>
                   {new Intl.DateTimeFormat(locale, { timeZone: zone, day: 'numeric' }).format(date)}
@@ -101,6 +123,7 @@ export function CalendarFrame({
   view,
   minColumnWidth = view === 'day' || view === 'year' ? 64 : 48,
   timeline,
+  zone,
   className = '',
   children,
   ...props
@@ -109,6 +132,7 @@ export function CalendarFrame({
   view: 'day' | 'week' | 'month' | 'year';
   minColumnWidth?: number;
   timeline?: Pick<Timeline, 'from' | 'through'>;
+  zone?: string;
 }) {
   return (
     <div
@@ -125,6 +149,9 @@ export function CalendarFrame({
           aria-hidden="true"
           style={{ backgroundImage: timelineGrid(ticks, timeline.from, timeline.through) }}
         />
+      )}
+      {timeline && zone && (
+        <CalendarNow from={timeline.from} through={timeline.through} zone={zone} />
       )}
       {children}
     </div>
@@ -169,5 +196,42 @@ export function CalendarViewport({
         {children}
       </div>
     </>
+  );
+}
+
+function CalendarNow({ from, through, zone }: { from: string; through: string; zone: string }) {
+  const [now, setNow] = React.useState(Date.now());
+  const { i18n } = useTranslation();
+  React.useEffect(() => {
+    const update = () => setNow(Date.now());
+    const timer = setInterval(update, 1000);
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }, []);
+  const position = timelinePosition(now, from, through);
+  if (position < 0 || position >= 100) return null;
+  return (
+    <div
+      className="workspace-now-marker"
+      data-label-align={position > 85 ? 'end' : 'start'}
+      style={{
+        left: `calc(var(--label, 180px) + (100% - var(--label, 180px)) * ${position / 100})`,
+      }}
+      aria-label={uiText('ui.workspace.now')}
+    >
+      <span>
+        {uiText('ui.workspace.now')}{' '}
+        <time dateTime={new Date(now).toISOString()}>
+          {new Date(now).toLocaleTimeString(localeFor(i18n.language), {
+            timeZone: zone,
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </time>
+      </span>
+    </div>
   );
 }

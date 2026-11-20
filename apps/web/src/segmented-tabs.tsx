@@ -16,6 +16,7 @@ export default function SegmentedTabs<T extends string>({
   onChange,
   className = '',
   mode = 'tabs',
+  disabled = false,
 }: {
   label: string;
   value: T | undefined;
@@ -23,6 +24,7 @@ export default function SegmentedTabs<T extends string>({
   onChange: (value: T) => void;
   className?: string;
   mode?: 'tabs' | 'buttons';
+  disabled?: boolean;
 }) {
   const buttons = React.useRef<(HTMLButtonElement | null)[]>([]);
   return (
@@ -38,6 +40,7 @@ export default function SegmentedTabs<T extends string>({
             buttons.current[index] = node;
           }}
           type="button"
+          disabled={disabled}
           role={mode === 'tabs' ? 'tab' : undefined}
           id={item.id}
           aria-controls={item.panelId}
