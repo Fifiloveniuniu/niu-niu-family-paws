@@ -112,7 +112,8 @@
   border-radius: 10px;
   padding: 16px;
 }
-.iam-editor fieldset label {
+.iam-editor .iam-role-choice,
+.iam-editor .iam-house-choice {
   display: flex;
   align-items: center;
   gap: 10px;

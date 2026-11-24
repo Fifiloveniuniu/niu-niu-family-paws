@@ -1,3 +1,7 @@
+## Reason label wrapping fixed — local branch, 2026-11-24
+
+Owner reported Reason splitting onto a second line. The broad `.iam-editor fieldset label` flex rule also affected normal text-field labels inside the backend form wrapper. Restricted flex layout to role/house checkbox labels, restoring the existing grid layout for Reason and other text-field labels. Reason now stays on one line above the full-width textarea. Production build/format/whitespace pass. Actual read-only localhost headless Chrome checks cover 1440px/390px, EN/zh/es and all four themes: single-line label, label above/aligned with textarea, no document overflow. No data writes, push, PR or deployment.
+
 ## Access backend integrated — local feature branch, 2026-11-24
 
 Owner explicitly requested a branch, commit and full backend integration. Created **`feat/identity-access-management`** from main and saved all preceding dependent local features/UI in signed checkpoint **`c38103e`**. Verified its SSH signature locally against the configured authorized identity. No push, PR, merge or deployment has occurred; GitHub signature verification awaits a future authorized push. The checkpoint preserves earlier intertwined local work; the following commit focuses on Access integration.
