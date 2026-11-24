@@ -1,3 +1,8 @@
+import {
+  AccessError,
+  accessManagementRoutes,
+  type AccessManagementStore,
+} from './access-management.ts';
 import type { holidayCatalogStore } from './holiday-catalog.ts';
 import { testPaymentRoutes, type testPaymentStore } from './test-payments.ts';
 import { metricsRange, type BusinessMetricsStore, type MetricsQuery } from './business-metrics.ts';
@@ -41,6 +46,7 @@ export interface CustomerStore {
 }
 export class Conflict extends Error {}
 export function buildApp(deps: {
+  accessManagement?: AccessManagementStore;
   holidayCatalog?: ReturnType<typeof holidayCatalogStore>;
   testPayments?: ReturnType<typeof testPaymentStore>;
   businessMetrics?: BusinessMetricsStore;
@@ -118,6 +124,7 @@ export function buildApp(deps: {
         if (identity.google === true) roles.push('customer');
         return { uid: identity.uid, roles };
       });
+      if (deps.accessManagement) accessManagementRoutes(api, deps.accessManagement);
       if (deps.employeeAssignments) employeeAssignmentRoutes(api, deps.employeeAssignments);
       if (deps.operations) operationsRoutes(api, deps.operations);
       if (deps.pricing) pricingRoutes(api, deps.pricing);
@@ -252,6 +259,7 @@ export function buildApp(deps: {
       _request,
       reply,
     ) => {
+      if (error instanceof AccessError) return reply.code(error.status).send({ code: error.code });
       if (error instanceof BookingConflict)
         return reply.code(409).send({ code: 'booking_conflict', issue: error.issue });
       if (error instanceof BookingPolicyMissing)

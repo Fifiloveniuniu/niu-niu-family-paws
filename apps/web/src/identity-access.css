@@ -399,3 +399,27 @@
     align-items: center;
   }
 }
+.iam-editor > .iam-form-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+.iam-editor input[type='text'] {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 10px;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  padding: 12px;
+  font: inherit;
+}
+.iam-service-note {
+  color: var(--md-on-surface-variant);
+  padding-block: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}

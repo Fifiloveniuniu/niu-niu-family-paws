@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { localeFor, uiText } from './i18n';
+import { auth } from './auth-client';
+import { apiJson, ApiError } from './api-client';
 import Button from './button';
-import IconButton from './icon-button';
 import Icon from './icons';
 import Modal from './modal';
 import SearchInput from './search-input';
@@ -10,107 +11,96 @@ import CustomSelect from './custom-select';
 import SegmentedTabs from './segmented-tabs';
 import { useDialogState } from './dialog-routing';
 import { currentRoute, updateQuery } from './routing';
-import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
-import {
-  accessRoles,
-  previewAccounts,
-  previewActor,
-  normalizeAccess,
-  accountChangeError,
-  inviteError,
-  type PreviewAccount,
-  type PreviewInvite,
-  type AccessRole,
-} from './access-preview';
+import { Pagination, useCursorPage } from './pagination';
+import UnsavedChanges, { confirmDiscardChanges, markFormSaved } from './unsaved-changes';
+import type {
+  AccessAccount,
+  AccessWrite,
+  AccessInvitation,
+  InvitationWrite,
+  AccessRole,
+  AccessHistory,
+} from '../../../packages/access/types';
 import './identity-access.css';
-
+const roles: AccessRole[] = ['admin', 'employee', 'customer'];
 const text = (key: string) => uiText('ui.identityAccess.' + key);
-type AccessSelection = { roles: AccessRole[]; houses: number[] };
-type HistoryEntry = {
-  id: string;
-  time: string;
-  action: string;
-  email: string;
-  before?: PreviewAccount | PreviewInvite;
-  after: PreviewAccount | PreviewInvite;
-  reason?: string;
-};
+export const accessText = text;
+type House = { id: string; name: string };
+type Selection = { roles: AccessRole[]; houseIds: string[] };
 type Section = 'accounts' | 'invitations' | 'history';
-const accountName = (account: PreviewAccount) => text(account.name);
-function RoleBadges({ roles }: { roles: AccessRole[] }) {
+const houseNames = (ids: string[], houses: House[]) =>
+  ids.map((id) => houses.find((house) => house.id === id)?.name ?? text('unknownHouse')).join(', ');
+function RoleBadges({ value }: { value: Selection }) {
   return (
     <div className="iam-badges">
-      {roles.map((role) => (
+      {value.roles.map((role) => (
         <span key={role}>{text(role)}</span>
       ))}
     </div>
   );
 }
-function HouseAccess({ value }: { value: AccessSelection }) {
+function Scope({ value, houses }: { value: Selection; houses: House[] }) {
   return (
     <>
       {value.roles.includes('admin')
         ? text('allHouses')
         : value.roles.includes('employee')
-          ? value.houses.map((house) => text('sampleHouse') + ' ' + house).join(', ') ||
-            text('noAccess')
+          ? houseNames(value.houseIds, houses) || text('noAccess')
           : text('own')}
     </>
   );
 }
-function AccessSummary({ value }: { value: AccessSelection & { status?: string } }) {
+function Summary({ value, houses }: { value: Selection & { status?: string }; houses: House[] }) {
   return (
     <aside className="iam-summary">
       <strong>{text('effective')}</strong>
-      {value.status === 'suspended' ? (
-        <p>{text('suspendedSummary')}</p>
+      {value.status && value.status !== 'active' ? (
+        <p>{text(value.status === 'disabled' ? 'authDisabled' : 'suspendedSummary')}</p>
       ) : (
         <ul>
           {value.roles.includes('admin') && <li>{text('adminWarning')}</li>}
-          {value.roles.includes('employee') && (
+          {value.roles.includes('employee') && !value.roles.includes('admin') && (
             <li>
-              {text('employeeSummary')}{' '}
-              <HouseAccess
-                value={value.roles.includes('admin') ? { ...value, roles: ['employee'] } : value}
-              />
+              {text('employeeSummary')} {houseNames(value.houseIds, houses) || text('noAccess')}
             </li>
           )}
-          {value.roles.includes('customer') && <li>{text('ownSummary')}</li>}
+          <li>{text('ownSummary')}</li>
         </ul>
       )}
     </aside>
   );
 }
-function AccessFields({
+function Fields({
   value,
+  houses,
+  protectAdmin,
   onChange,
-  protectAdmin = false,
 }: {
-  value: AccessSelection;
-  onChange: (value: AccessSelection) => void;
+  value: Selection;
+  houses: House[];
   protectAdmin?: boolean;
+  onChange: (value: Selection) => void;
 }) {
   return (
     <>
       <fieldset>
         <legend>{text('roles')}</legend>
         <p>{text('roleHelp')}</p>
-        {accessRoles.map((role) => (
+        {roles.map((role) => (
           <label className="iam-role-choice" key={role}>
             <input
               type="checkbox"
               checked={value.roles.includes(role)}
-              disabled={role === 'admin' && protectAdmin}
-              onChange={(event) =>
-                onChange(
-                  normalizeAccess({
-                    ...value,
-                    roles: event.target.checked
-                      ? [...value.roles, role]
-                      : value.roles.filter((item) => item !== role),
-                  }),
-                )
-              }
+              disabled={role === 'customer' || (role === 'admin' && protectAdmin)}
+              onChange={(event) => {
+                const nextRoles = roles.filter((item) =>
+                  item === role ? event.target.checked : value.roles.includes(item),
+                );
+                onChange({
+                  roles: nextRoles,
+                  houseIds: nextRoles.includes('employee') ? value.houseIds : [],
+                });
+              }}
             />
             <span>
               <strong>{text(role)}</strong>
@@ -118,41 +108,104 @@ function AccessFields({
             </span>
           </label>
         ))}
+        <p>{text('automaticCustomer')}</p>
         {protectAdmin && <p>{text('selfProtection')}</p>}
       </fieldset>
       {value.roles.includes('employee') && (
         <fieldset>
           <legend>{text('houses')}</legend>
           <p>{text('houseHelp')}</p>
-          {[1, 2].map((house) => (
-            <label className="iam-house-choice" key={house}>
+          {houses.map((house) => (
+            <label className="iam-house-choice" key={house.id}>
               <input
                 type="checkbox"
-                checked={value.houses.includes(house)}
+                checked={value.houseIds.includes(house.id)}
                 onChange={(event) =>
                   onChange({
                     ...value,
-                    houses: event.target.checked
-                      ? [...value.houses, house]
-                      : value.houses.filter((item) => item !== house),
+                    houseIds: event.target.checked
+                      ? [...value.houseIds, house.id]
+                      : value.houseIds.filter((id) => id !== house.id),
                   })
                 }
               />
-              {text('sampleHouse')} {house}
+              {house.name}
             </label>
           ))}
-          {!value.houses.length && <p className="iam-warning">{text('noHouseWarning')}</p>}
+          {!houses.length && <p>{text('noHouses')}</p>}
+          {!value.houseIds.length && <p className="iam-warning">{text('noHouseWarning')}</p>}
         </fieldset>
       )}
-      {!value.roles.length && <p role="alert">{text('chooseRole')}</p>}
     </>
   );
 }
+/** Freeze uncertain writes so Retry uses exactly the same operation and reviewed input. */
+export function useAccessMutation<T>(onSaved: (result: T) => void) {
+  const [busy, setBusy] = React.useState(false),
+    [uncertain, setUncertain] = React.useState(false),
+    [error, setError] = React.useState('');
+  const pending = React.useRef<{ path: string; method: string; body: unknown } | null>(null);
+  const running = React.useRef(false),
+    alive = React.useRef(true);
+  React.useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  async function save(path: string, body: unknown, form: HTMLFormElement | null, method = 'PUT') {
+    if (running.current) return;
+    running.current = true;
+    pending.current ??= { path, body, method };
+    setBusy(true);
+    setError('');
+    try {
+      const attempt = pending.current;
+      const result = await apiJson<T>(attempt.path, { method: attempt.method, body: attempt.body });
+      if (!alive.current) return;
+      markFormSaved(form);
+      pending.current = null;
+      setUncertain(false);
+      onSaved(result);
+    } catch (error) {
+      if (!alive.current) return;
+      const unknown = !(error instanceof ApiError) || error.status >= 500;
+      setUncertain(unknown);
+      setError(
+        unknown
+          ? text('uncertain')
+          : text(
+              ['stale_access', 'operation_conflict'].includes(error.code)
+                ? 'stale_access'
+                : error.status === 401 || error.status === 403
+                  ? 'forbidden'
+                  : error.code in errorKeys
+                    ? errorKeys[error.code]
+                    : 'saveError',
+            ),
+      );
+      if (!unknown) pending.current = null;
+    } finally {
+      running.current = false;
+      if (alive.current) setBusy(false);
+    }
+  }
+  return { save, busy, uncertain, error, frozen: busy || uncertain };
+}
+const errorKeys: Record<string, string> = {
+  last_admin: 'lastAdmin',
+  self_protection: 'selfProtection',
+  duplicate_email: 'duplicateEmail',
+  account_unavailable: 'unavailable',
+  house_unavailable: 'houseUnavailable',
+  auth_disabled: 'authDisabled',
+  invitation_unavailable: 'invitationUnavailable',
+  existing_staff_access: 'existingStaff',
+  forbidden: 'forbidden',
+  invalid_input: 'invalidInput',
+};
 export default function IdentityAccess() {
-  const { i18n } = useTranslation();
-  const [accounts, setAccounts] = React.useState(previewAccounts);
-  const [invites, setInvites] = React.useState<PreviewInvite[]>([]);
-  const [history, setHistory] = React.useState<HistoryEntry[]>([]);
+  useTranslation();
   const params = new URLSearchParams(currentRoute().search);
   const section: Section =
     params.get('section') === 'invitations'
@@ -160,82 +213,92 @@ export default function IdentityAccess() {
       : params.get('section') === 'history'
         ? 'history'
         : 'accounts';
-  const [query, setQuery] = React.useState('');
-  const [filter, setFilter] = React.useState('');
-  const [status, setStatus] = React.useState('');
-  const [notice, setNotice] = React.useState('');
-  const [editing, setEditing] = useDialogState<string | null>('access-preview', null, {
-    encode: (value) => value,
-    decode: (value) => {
-      if (!previewAccounts.some((account) => account.id === value))
-        throw Error('Unavailable example');
-      return value;
-    },
+  const [query, setQuery] = React.useState(''),
+    [filter, setFilter] = React.useState(''),
+    [status, setStatus] = React.useState(''),
+    [revision, refresh] = React.useReducer((value) => value + 1, 0),
+    [notice, setNotice] = React.useState('');
+  const [houses, setHouses] = React.useState<House[]>([]),
+    [catalogError, setCatalogError] = React.useState(false),
+    [ready, setReady] = React.useState(false);
+  React.useEffect(() => {
+    const controller = new AbortController();
+    setReady(false);
+    setCatalogError(false);
+    void apiJson<{ items: House[] }>('/houses', { signal: controller.signal })
+      .then((result) => {
+        if (!controller.signal.aborted) {
+          setHouses(result.items);
+          setReady(true);
+        }
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setHouses([]);
+          setCatalogError(true);
+        }
+      });
+    return () => controller.abort();
+  }, [revision]);
+  const queryParams = new URLSearchParams();
+  if (query.trim()) queryParams.set('search', query.trim());
+  if (filter) queryParams.set('role', filter);
+  if (status) queryParams.set('status', status);
+  const accounts = useCursorPage<AccessAccount>(
+    '/access/accounts?' + queryParams,
+    revision,
+    section === 'accounts',
+  );
+  const invitations = useCursorPage<AccessInvitation>(
+    '/access/invitations',
+    revision,
+    section === 'invitations',
+  );
+  const history = useCursorPage<AccessHistory>('/access/history', revision, section === 'history');
+  const [editing, setEditing] = useDialogState<AccessAccount | null>('access-edit', null, {
+    encode: (value) => value?.uid ?? null,
+    decode: (uid, signal) => apiJson('/access/accounts/' + encodeURIComponent(uid), { signal }),
+  });
+  const [target, setTarget] = useDialogState<AccessAccount | null>('access-status', null, {
+    encode: (value) => value?.uid ?? null,
+    decode: (uid, signal) => apiJson('/access/accounts/' + encodeURIComponent(uid), { signal }),
   });
   const [inviting, setInviting] = useDialogState('access-invite', false);
-  const showInvitations = React.useRef(false);
-  React.useEffect(() => {
-    if (!inviting && showInvitations.current) {
-      showInvitations.current = false;
-      updateQuery({ section: 'invitations' });
-    }
-  }, [inviting]);
-  const [statusTarget, setStatusTarget] = useDialogState<string | null>('access-status', null, {
-    encode: (value) => value,
-    decode: (value) => {
-      if (!previewAccounts.some((account) => account.id === value))
-        throw Error('Unavailable example');
-      return value;
+  const [cancel, setCancel] = useDialogState<AccessInvitation | null>(
+    'access-invite-cancel',
+    null,
+    {
+      encode: (value) => value?.id ?? null,
+      decode: async (id, signal) =>
+        apiJson('/access/invitations/' + encodeURIComponent(id), { signal }),
     },
-  });
-  const [resetting, setResetting] = useDialogState('access-reset', false);
-  const selected = accounts.find((account) => account.id === editing);
-  const target = accounts.find((account) => account.id === statusTarget);
-  const matching = accounts.filter(
-    (account) =>
-      (!filter || account.roles.includes(filter as AccessRole)) &&
-      (!status || account.status === status) &&
-      (accountName(account) + ' ' + account.email)
-        .toLowerCase()
-        .includes(query.trim().toLowerCase()),
+  );
+  const [share, setShare] = React.useState<{ code: string; invitation: AccessInvitation } | null>(
+    null,
   );
   const clear = () => {
     setQuery('');
     setFilter('');
     setStatus('');
   };
-  function record(
-    action: string,
-    after: PreviewAccount | PreviewInvite,
-    before?: PreviewAccount | PreviewInvite,
-    reason?: string,
-  ) {
-    setHistory((current) => [
-      {
-        id: crypto.randomUUID(),
-        time: new Date().toISOString(),
-        action,
-        email: after.email,
-        before,
-        after,
-        reason,
-      },
-      ...current,
-    ]);
-  }
-  function changeAccount(next: PreviewAccount, reason?: string) {
-    const error = accountChangeError(accounts, next);
-    if (error) {
-      setNotice(text(error));
-      return;
+  const saved = () => {
+    refresh();
+    setNotice(text('saved'));
+    window.dispatchEvent(new Event('family-paws:access-changed'));
+  };
+  const open = async (account: AccessAccount, status = false) => {
+    try {
+      const fresh = await apiJson<AccessAccount>(
+        '/access/accounts/' + encodeURIComponent(account.uid),
+      );
+      if (status) setTarget(fresh);
+      else setEditing(fresh);
+    } catch {
+      setNotice(text('loadError'));
     }
-    const before = accounts.find((account) => account.id === next.id)!;
-    setAccounts((current) => current.map((item) => (item.id === next.id ? next : item)));
-    record(before.status === next.status ? 'accessChanged' : next.status, next, before, reason);
-    setEditing(null);
-    setStatusTarget(null);
-    setNotice(text(before.status === next.status ? 'updated' : 'statusUpdated'));
-  }
+  };
+  const activePage =
+    section === 'accounts' ? accounts : section === 'invitations' ? invitations : history;
   return (
     <section className="identity-access">
       <header className="iam-heading">
@@ -244,38 +307,15 @@ export default function IdentityAccess() {
           <p>{text('intro')}</p>
         </div>
         <div className="iam-actions">
-          <IconButton
-            title={text('reset')}
-            aria-label={text('reset')}
-            onClick={() => setResetting(true)}
-          >
-            <Icon name="reset" />
-          </IconButton>
-          <Button icon="plus" onClick={() => setInviting(true)}>
+          <Button variant="secondary" icon="reset" onClick={refresh}>
+            {text('refresh')}
+          </Button>
+          <Button icon="plus" disabled={!ready} onClick={() => setInviting(true)}>
             {text('invite')}
           </Button>
         </div>
       </header>
-      <aside className="iam-draft">
-        <strong>{text('draft')}</strong>
-        <p>{text('draftNote')}</p>
-      </aside>
-      <dl className="iam-stats">
-        {(['active', 'admin', 'employee', 'suspended'] as const).map((kind) => (
-          <div key={kind}>
-            <dt>{text(kind)}</dt>
-            <dd>
-              {
-                accounts.filter((account) =>
-                  kind === 'active' || kind === 'suspended'
-                    ? account.status === kind
-                    : account.status === 'active' && account.roles.includes(kind),
-                ).length
-              }
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <p className="iam-service-note">{text('liveNote')}</p>
       <SegmentedTabs
         label={text('sections')}
         value={section}
@@ -290,6 +330,14 @@ export default function IdentityAccess() {
       {notice && (
         <p className="iam-notice" role="status">
           {notice}
+        </p>
+      )}
+      {catalogError && (
+        <p role="alert">
+          {text('loadError')}{' '}
+          <Button variant="secondary" onClick={refresh}>
+            {text('retry')}
+          </Button>
         </p>
       )}
       <div
@@ -309,7 +357,7 @@ export default function IdentityAccess() {
                 {text('roles')}
                 <CustomSelect value={filter} onChange={(event) => setFilter(event.target.value)}>
                   <option value="">{text('all')}</option>
-                  {accessRoles.map((role) => (
+                  {roles.map((role) => (
                     <option key={role} value={role}>
                       {text(role)}
                     </option>
@@ -320,18 +368,16 @@ export default function IdentityAccess() {
                 {text('status')}
                 <CustomSelect value={status} onChange={(event) => setStatus(event.target.value)}>
                   <option value="">{text('allStatus')}</option>
-                  {['active', 'suspended'].map((value) => (
-                    <option key={value} value={value}>
-                      {text(value)}
+                  {['active', 'suspended', 'disabled'].map((status) => (
+                    <option key={status} value={status}>
+                      {text(status)}
                     </option>
                   ))}
                 </CustomSelect>
               </label>
             </div>
             <div className="iam-list-heading">
-              <h2>
-                {text('resultCount')} <small>({matching.length})</small>
-              </h2>
+              <h2>{text('accounts')}</h2>
               {(query || filter || status) && (
                 <Button variant="secondary" onClick={clear}>
                   {text('clear')}
@@ -339,21 +385,21 @@ export default function IdentityAccess() {
               )}
             </div>
             <div className="iam-accounts">
-              {matching.map((account) => (
-                <article className="iam-account" key={account.id}>
+              {accounts.items.map((account) => (
+                <article className="iam-account" key={account.uid}>
                   <div className="iam-person">
                     <span className="iam-avatar" aria-hidden="true">
                       <Icon name="account" />
                     </span>
                     <div>
-                      <h3>{accountName(account)}</h3>
+                      <h3>{account.name || account.email}</h3>
                       <p>{account.email}</p>
-                      <small>{account.id === previewActor ? text('you') : text('verified')}</small>
+                      {account.uid === auth.currentUser?.uid && <small>{text('you')}</small>}
                     </div>
                   </div>
                   <div>
                     <span className="iam-field-label">{text('roles')}</span>
-                    <RoleBadges roles={account.roles} />
+                    <RoleBadges value={account} />
                     <p className={'iam-state iam-state-' + account.status}>
                       {text(account.status)}
                     </p>
@@ -361,19 +407,20 @@ export default function IdentityAccess() {
                   <div>
                     <span className="iam-field-label">{text('houses')}</span>
                     <p>
-                      {account.status === 'suspended' ? (
-                        text('suspendedSummary')
-                      ) : (
-                        <HouseAccess value={account} />
-                      )}
+                      <Scope value={account} houses={houses} />
                     </p>
                   </div>
                   <div className="iam-row-actions">
-                    <Button variant="secondary" icon="edit" onClick={() => setEditing(account.id)}>
+                    <Button
+                      variant="secondary"
+                      icon="edit"
+                      disabled={!ready || account.status === 'disabled'}
+                      onClick={() => void open(account)}
+                    >
                       {text('edit')}
                     </Button>
-                    {account.id !== previewActor && (
-                      <Button variant="secondary" onClick={() => setStatusTarget(account.id)}>
+                    {account.uid !== auth.currentUser?.uid && account.status !== 'disabled' && (
+                      <Button variant="secondary" onClick={() => void open(account, true)}>
                         {text(account.status === 'active' ? 'suspend' : 'restore')}
                       </Button>
                     )}
@@ -381,12 +428,14 @@ export default function IdentityAccess() {
                 </article>
               ))}
             </div>
-            {!matching.length && (
+            {!accounts.loading && !accounts.error && !accounts.items.length && (
               <div className="iam-empty">
                 <p>{text('empty')}</p>
-                <Button variant="secondary" onClick={clear}>
-                  {text('clear')}
-                </Button>
+                {(query || filter || status) && (
+                  <Button variant="secondary" onClick={clear}>
+                    {text('clear')}
+                  </Button>
+                )}
               </div>
             )}
           </>
@@ -394,29 +443,25 @@ export default function IdentityAccess() {
         {section === 'invitations' && (
           <section className="iam-invitations">
             <h2>{text('invitations')}</h2>
-            {!invites.length && <p className="iam-empty">{text('noInvites')}</p>}
-            {invites.map((invite) => (
-              <article className="iam-invite" key={invite.id}>
+            <p>{text('inviteHelp')}</p>
+            {!invitations.loading && !invitations.error && !invitations.items.length && (
+              <p className="iam-empty">{text('noInvites')}</p>
+            )}
+            {invitations.items.map((invitation) => (
+              <article className="iam-invite" key={invitation.id}>
                 <div>
-                  <h3>{invite.email}</h3>
-                  <p>{text(invite.status === 'draft' ? 'draftStatus' : 'cancelled')}</p>
-                  <RoleBadges roles={invite.roles} />
+                  <h3>{invitation.email}</h3>
                   <p>
-                    <HouseAccess value={invite} />
+                    {text(invitation.status)} · {text('expires')}{' '}
+                    {new Date(invitation.expiresAt).toLocaleString(localeFor())}
+                  </p>
+                  <RoleBadges value={invitation} />
+                  <p>
+                    <Scope value={invitation} houses={houses} />
                   </p>
                 </div>
-                {invite.status === 'draft' && (
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      const after: PreviewInvite = { ...invite, status: 'cancelled' };
-                      setInvites((current) =>
-                        current.map((item) => (item.id === invite.id ? after : item)),
-                      );
-                      record('invitationCancelled', after, invite);
-                      setNotice(text('inviteCancelled'));
-                    }}
-                  >
+                {invitation.status === 'pending' && (
+                  <Button variant="secondary" onClick={() => setCancel(invitation)}>
                     {text('cancelInvite')}
                   </Button>
                 )}
@@ -427,47 +472,37 @@ export default function IdentityAccess() {
         {section === 'history' && (
           <section className="iam-history">
             <h2>{text('history')}</h2>
-            <p>{text('previewHistory')}</p>
-            {!history.length && <p className="iam-empty">{text('noHistory')}</p>}
-            {history.map((entry) => (
+            {!history.loading && !history.error && !history.items.length && (
+              <p className="iam-empty">{text('noHistory')}</p>
+            )}
+            {history.items.map((entry) => (
               <article key={entry.id}>
                 <div className="iam-history-heading">
                   <strong>{text(entry.action)}</strong>
-                  <time dateTime={entry.time}>
-                    {new Intl.DateTimeFormat(localeFor(), {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
-                    }).format(new Date(entry.time))}
-                  </time>
+                  <time dateTime={entry.at}>{new Date(entry.at).toLocaleString(localeFor())}</time>
                 </div>
                 <p>
-                  {entry.email} · {text('actor')}
+                  {entry.email} · {entry.actorEmail}
                 </p>
                 <div className="iam-history-diff">
-                  {entry.before && (
-                    <div>
-                      <strong>{text('before')}</strong>
-                      <p>
-                        {text(
-                          entry.before.status === 'draft' ? 'draftStatus' : entry.before.status,
-                        )}
-                      </p>
-                      <RoleBadges roles={entry.before.roles} />
-                      <p>
-                        <HouseAccess value={entry.before} />
-                      </p>
-                    </div>
+                  {(
+                    [
+                      ['before', entry.before],
+                      ['after', entry.after],
+                    ] as const
+                  ).map(
+                    ([label, value]) =>
+                      value && (
+                        <div key={label}>
+                          <strong>{text(label)}</strong>
+                          <p>{text(value.status)}</p>
+                          <RoleBadges value={value} />
+                          <p>
+                            <Scope value={value} houses={houses} />
+                          </p>
+                        </div>
+                      ),
                   )}
-                  <div>
-                    <strong>{text('after')}</strong>
-                    <p>
-                      {text(entry.after.status === 'draft' ? 'draftStatus' : entry.after.status)}
-                    </p>
-                    <RoleBadges roles={entry.after.roles} />
-                    <p>
-                      <HouseAccess value={entry.after} />
-                    </p>
-                  </div>
                 </div>
                 {entry.reason && (
                   <p>
@@ -478,11 +513,13 @@ export default function IdentityAccess() {
             ))}
           </section>
         )}
+        {activePage.loading && <p role="status">{text('loading')}</p>}
+        <Pagination page={activePage} label={text(section)} />
       </div>
       <details className="iam-guide">
         <summary>{text('permissions')}</summary>
         <dl>
-          {accessRoles.map((role) => (
+          {roles.map((role) => (
             <div key={role}>
               <dt>{text(role)}</dt>
               <dd>{text(role + 'Help')}</dd>
@@ -491,118 +528,164 @@ export default function IdentityAccess() {
         </dl>
         <p>{text('guideNote')}</p>
       </details>
-      {selected && (
-        <AccessEditor
-          key={selected.id}
-          account={selected}
-          accounts={accounts}
+      {editing && ready && (
+        <AccountEditor
+          key={editing.uid}
+          account={editing}
+          houses={houses}
           onClose={() => setEditing(null)}
-          onApply={changeAccount}
-        />
-      )}
-      {inviting && (
-        <InviteEditor
-          accounts={accounts}
-          invites={invites}
-          onClose={() => setInviting(false)}
-          onApply={(value) => {
-            const invite: PreviewInvite = {
-              ...normalizeAccess(value),
-              id: crypto.randomUUID(),
-              status: 'draft',
-            };
-            setInvites((current) => [invite, ...current]);
-            record('invitationCreated', invite);
-            showInvitations.current = true;
-            setInviting(false);
-            setNotice(text('inviteSaved'));
+          onSaved={() => {
+            setEditing(null);
+            saved();
           }}
         />
       )}
-      {target && (
-        <StatusEditor
-          key={target.id}
+      {target && ready && (
+        <AccountEditor
+          key={target.uid}
           account={target}
-          accounts={accounts}
-          onClose={() => setStatusTarget(null)}
-          onApply={changeAccount}
+          houses={houses}
+          statusChange
+          onClose={() => setTarget(null)}
+          onSaved={() => {
+            setTarget(null);
+            saved();
+          }}
         />
       )}
-      {resetting && (
-        <Modal title={text('resetTitle')} onClose={() => setResetting(false)}>
-          <p>{text('resetHelp')}</p>
-          <div className="iam-actions">
-            <Button variant="secondary" onClick={() => setResetting(false)}>
-              {text('close')}
-            </Button>
-            <Button
-              onClick={() => {
-                if (!confirmDiscardChanges(i18n.language)) return;
-                setAccounts(previewAccounts);
-                setInvites([]);
-                setHistory([]);
-                clear();
-                setEditing(null);
-                setStatusTarget(null);
-                setInviting(false);
-                setResetting(false);
-                setNotice(text('resetDone'));
-              }}
-            >
-              {text('resetConfirm')}
-            </Button>
-          </div>
-        </Modal>
+      {inviting && ready && (
+        <InviteEditor
+          houses={houses}
+          onClose={() => setInviting(false)}
+          onSaved={(invitation, code) => {
+            setInviting(false);
+            saved();
+            setShare({ invitation, code });
+          }}
+        />
       )}
+      {cancel && (
+        <CancelInvitation
+          invitation={cancel}
+          onClose={() => setCancel(null)}
+          onSaved={() => {
+            setCancel(null);
+            saved();
+          }}
+        />
+      )}
+      {share && <ShareInvitation value={share} onClose={() => setShare(null)} />}
     </section>
   );
 }
-function AccessEditor({
+function AccountEditor({
   account,
-  accounts,
+  houses,
+  statusChange = false,
   onClose,
-  onApply,
+  onSaved,
 }: {
-  account: PreviewAccount;
-  accounts: PreviewAccount[];
+  account: AccessAccount;
+  houses: House[];
+  statusChange?: boolean;
   onClose: () => void;
-  onApply: (account: PreviewAccount) => void;
+  onSaved: () => void;
 }) {
   const { i18n } = useTranslation();
-  const [draft, setDraft] = React.useState(account);
-  const normalized = normalizeAccess(draft);
-  const dirty = JSON.stringify(normalizeAccess(account)) !== JSON.stringify(normalized);
-  const error = accountChangeError(accounts, normalized);
+  const [selection, setSelection] = React.useState<Selection>({
+      roles: account.roles,
+      houseIds: account.houseIds,
+    }),
+    [reason, setReason] = React.useState('');
+  const mutation = useAccessMutation<AccessAccount>(onSaved);
+  const operationId = React.useRef(crypto.randomUUID());
+  const dirty =
+    statusChange ||
+    JSON.stringify(selection) !==
+      JSON.stringify({ roles: account.roles, houseIds: account.houseIds }) ||
+    !!reason;
+  const nextStatus = statusChange
+    ? account.status === 'active'
+      ? 'suspended'
+      : 'active'
+    : account.status;
   const close = () => {
-    if (confirmDiscardChanges(i18n.language)) onClose();
+    if (!mutation.busy && confirmDiscardChanges(i18n.language)) onClose();
   };
   return (
-    <Modal title={text('editTitle')} onClose={close}>
+    <Modal
+      title={text(
+        statusChange ? (account.status === 'active' ? 'suspend' : 'restore') : 'editTitle',
+      )}
+      onClose={close}
+      disabled={mutation.busy}
+    >
       <form
         className="iam-editor"
         onSubmit={(event) => {
           event.preventDefault();
-          if (dirty && !error) onApply(normalized);
+          if (nextStatus === 'disabled') return;
+          const body: AccessWrite = {
+            ...selection,
+            status: nextStatus,
+            reason: reason.trim(),
+            version: account.version,
+            assignmentVersion: account.assignmentVersion,
+            operationId: operationId.current,
+          };
+          if (dirty && reason.trim())
+            void mutation.save(
+              '/access/accounts/' + encodeURIComponent(account.uid),
+              body,
+              event.currentTarget,
+            );
         }}
       >
-        <UnsavedChanges active={dirty} />
+        <UnsavedChanges active={dirty || mutation.uncertain} />
         <div>
-          <h3>{accountName(account)}</h3>
+          <h3>{account.name || account.email}</h3>
           <p>{account.email}</p>
         </div>
-        <AccessFields
-          value={draft}
-          protectAdmin={account.id === previewActor}
-          onChange={(value) => setDraft({ ...draft, ...value })}
-        />
-        <AccessSummary value={normalized} />
-        {error && <p role="alert">{text(error)}</p>}
+        <fieldset className="iam-form-fields" disabled={mutation.frozen}>
+          {statusChange ? (
+            <p>{text(account.status === 'active' ? 'suspendHelp' : 'restoreHelp')}</p>
+          ) : (
+            <Fields
+              value={selection}
+              houses={houses}
+              protectAdmin={account.uid === auth.currentUser?.uid}
+              onChange={setSelection}
+            />
+          )}
+          <Summary value={{ ...selection, status: nextStatus }} houses={houses} />
+          <label className="iam-input-label">
+            {text('reason')}
+            <textarea
+              required
+              maxLength={500}
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+            />
+          </label>
+          <small>{text('reasonHint')}</small>
+        </fieldset>
+        {mutation.error && <p role="alert">{mutation.error}</p>}
         <div className="iam-actions">
-          <Button type="button" variant="secondary" onClick={close}>
+          <Button type="button" variant="secondary" disabled={mutation.busy} onClick={close}>
             {text('close')}
           </Button>
-          <Button type="submit" disabled={!dirty || !!error}>
-            {text('apply')}
+          <Button type="submit" disabled={mutation.busy || !dirty || !reason.trim()}>
+            {text(
+              mutation.busy
+                ? 'saving'
+                : mutation.uncertain
+                  ? 'retry'
+                  : statusChange
+                    ? account.status === 'active'
+                      ? 'confirmSuspend'
+                      : 'confirmRestore'
+                    : 'apply',
+            )}
           </Button>
         </div>
       </form>
@@ -610,128 +693,165 @@ function AccessEditor({
   );
 }
 function InviteEditor({
-  accounts,
-  invites,
+  houses,
   onClose,
-  onApply,
+  onSaved,
 }: {
-  accounts: PreviewAccount[];
-  invites: PreviewInvite[];
+  houses: House[];
   onClose: () => void;
-  onApply: (value: AccessSelection & { email: string }) => void;
+  onSaved: (invitation: AccessInvitation, code: string) => void;
 }) {
   const { i18n } = useTranslation();
-  const [email, setEmail] = React.useState('');
-  const [value, setValue] = React.useState<AccessSelection>({ roles: ['employee'], houses: [] });
-  const [submitted, setSubmitted] = React.useState(false);
-  const error =
-    inviteError(email, accounts, invites) || (!value.roles.length ? 'chooseRole' : null);
-  const dirty = !!email || value.roles.join() !== 'employee' || !!value.houses.length;
+  const [email, setEmail] = React.useState(''),
+    [selection, setSelection] = React.useState<Selection>({
+      roles: ['employee', 'customer'],
+      houseIds: [],
+    });
+  const secrets = React.useRef<{ operationId: string; code: string } | null>(null);
+  if (!secrets.current) {
+    const operationId = crypto.randomUUID();
+    secrets.current = {
+      operationId,
+      code:
+        operationId +
+        '.' +
+        Array.from(crypto.getRandomValues(new Uint8Array(24)), (value) =>
+          value.toString(16).padStart(2, '0'),
+        ).join(''),
+    };
+  }
+  const mutation = useAccessMutation<AccessInvitation>((invitation) =>
+    onSaved(invitation, secrets.current!.code),
+  );
+  const dirty =
+    !!email || selection.roles.join() !== 'employee,customer' || !!selection.houseIds.length;
   const close = () => {
-    if (confirmDiscardChanges(i18n.language)) onClose();
+    if (!mutation.busy && confirmDiscardChanges(i18n.language)) onClose();
   };
   return (
-    <Modal title={text('inviteTitle')} onClose={close}>
+    <Modal title={text('inviteTitle')} onClose={close} disabled={mutation.busy}>
       <form
         className="iam-editor"
         onSubmit={(event) => {
           event.preventDefault();
-          setSubmitted(true);
-          if (!error) onApply({ ...normalizeAccess(value), email: email.trim().toLowerCase() });
+          const body: InvitationWrite = {
+            email: email.trim().toLowerCase(),
+            ...selection,
+            ...secrets.current!,
+          };
+          void mutation.save('/access/invitations', body, event.currentTarget, 'POST');
         }}
       >
-        <UnsavedChanges active={dirty} />
+        <UnsavedChanges active={dirty || mutation.uncertain} />
         <p>{text('inviteHelp')}</p>
-        <label className="iam-input-label">
-          {text('email')}
-          <input
-            type="email"
-            value={email}
-            required
-            maxLength={254}
-            autoComplete="off"
-            aria-invalid={submitted && !!error}
-            aria-describedby={submitted && error ? 'iam-invite-error' : undefined}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </label>
-        <AccessFields value={value} onChange={setValue} />
-        <AccessSummary value={value} />
-        {submitted && error && (
-          <p id="iam-invite-error" role="alert">
-            {text(error)}
-          </p>
-        )}
+        <fieldset className="iam-form-fields" disabled={mutation.frozen}>
+          <label className="iam-input-label">
+            {text('email')}
+            <input
+              type="email"
+              required
+              maxLength={254}
+              autoComplete="off"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </label>
+          <Fields value={selection} houses={houses} onChange={setSelection} />
+          <Summary value={selection} houses={houses} />
+        </fieldset>
+        {mutation.error && <p role="alert">{mutation.error}</p>}
         <div className="iam-actions">
-          <Button type="button" variant="secondary" onClick={close}>
+          <Button type="button" variant="secondary" disabled={mutation.busy} onClick={close}>
             {text('close')}
           </Button>
-          <Button type="submit" disabled={!value.roles.length}>
-            {text('saveInvite')}
+          <Button type="submit" disabled={mutation.busy}>
+            {text(mutation.busy ? 'saving' : mutation.uncertain ? 'retry' : 'saveInvite')}
           </Button>
         </div>
       </form>
     </Modal>
   );
 }
-function StatusEditor({
-  account,
-  accounts,
+function CancelInvitation({
+  invitation,
   onClose,
-  onApply,
+  onSaved,
 }: {
-  account: PreviewAccount;
-  accounts: PreviewAccount[];
+  invitation: AccessInvitation;
   onClose: () => void;
-  onApply: (account: PreviewAccount, reason: string) => void;
+  onSaved: () => void;
 }) {
-  const { i18n } = useTranslation();
-  const [reason, setReason] = React.useState('');
-  const next: PreviewAccount = {
-    ...account,
-    status: account.status === 'active' ? 'suspended' : 'active',
-  };
-  const error = accountChangeError(accounts, next);
-  const close = () => {
-    if (confirmDiscardChanges(i18n.language)) onClose();
-  };
+  const mutation = useAccessMutation<AccessInvitation>(onSaved),
+    operationId = React.useRef(crypto.randomUUID());
   return (
-    <Modal title={text(account.status === 'active' ? 'suspend' : 'restore')} onClose={close}>
+    <Modal title={text('cancelInvite')} onClose={onClose} disabled={mutation.busy}>
       <form
         className="iam-editor"
         onSubmit={(event) => {
           event.preventDefault();
-          if (!error && reason.trim()) onApply(next, reason.trim());
+          void mutation.save(
+            '/access/invitations/' + invitation.id + '/cancel',
+            { version: invitation.version, operationId: operationId.current },
+            event.currentTarget,
+            'POST',
+          );
         }}
       >
-        <UnsavedChanges active={!!reason} />
-        <div>
-          <h3>{accountName(account)}</h3>
-          <p>{account.email}</p>
-        </div>
-        <p>{text(account.status === 'active' ? 'suspendHelp' : 'restoreHelp')}</p>
-        <AccessSummary value={next} />
-        <label className="iam-input-label">
-          {text('reason')}
-          <textarea
-            required
-            maxLength={500}
-            value={reason}
-            onChange={(event) => setReason(event.target.value)}
-            aria-describedby="iam-reason-hint"
-          />
-        </label>
-        <small id="iam-reason-hint">{text('reasonHint')}</small>
-        {error && <p role="alert">{text(error)}</p>}
+        <UnsavedChanges active={mutation.uncertain} />
+        <p>{invitation.email}</p>
+        <p>{text('cancelHelp')}</p>
+        {mutation.error && <p role="alert">{mutation.error}</p>}
         <div className="iam-actions">
-          <Button type="button" variant="secondary" onClick={close}>
+          <Button type="button" variant="secondary" disabled={mutation.busy} onClick={onClose}>
             {text('close')}
           </Button>
-          <Button type="submit" disabled={!!error || !reason.trim()}>
-            {text(account.status === 'active' ? 'confirmSuspend' : 'confirmRestore')}
+          <Button type="submit" disabled={mutation.busy}>
+            {text(mutation.busy ? 'saving' : mutation.uncertain ? 'retry' : 'cancelInvite')}
           </Button>
         </div>
       </form>
+    </Modal>
+  );
+}
+function ShareInvitation({
+  value,
+  onClose,
+}: {
+  value: { code: string; invitation: AccessInvitation };
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = React.useState(false);
+  return (
+    <Modal title={text('shareTitle')} onClose={onClose}>
+      <div className="iam-editor">
+        <p>{value.invitation.email}</p>
+        <p>{text('shareHelp')}</p>
+        <label className="iam-input-label">
+          {text('invitationCode')}
+          <textarea readOnly value={value.code} onFocus={(event) => event.target.select()} />
+        </label>
+        <p>
+          {text('expires')} {new Date(value.invitation.expiresAt).toLocaleString(localeFor())}
+        </p>
+        <p>
+          {text('shareDestination')}{' '}
+          <a href="/app/account/profile/?dialog.access-accept=true">{text('acceptInvitation')}</a>
+        </p>
+        <div className="iam-actions">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              void navigator.clipboard
+                .writeText(value.code)
+                .then(() => setCopied(true))
+                .catch(() => setCopied(false));
+            }}
+          >
+            {text(copied ? 'copied' : 'copy')}
+          </Button>
+          <Button onClick={onClose}>{text('done')}</Button>
+        </div>
+      </div>
     </Modal>
   );
 }

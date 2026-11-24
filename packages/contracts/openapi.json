@@ -921,6 +921,379 @@
             "type": "boolean"
           }
         }
+      },
+      "AccessAccount": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "uid",
+          "name",
+          "email",
+          "roles",
+          "houseIds",
+          "status",
+          "version",
+          "assignmentVersion"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "roles": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "employee",
+                "customer"
+              ]
+            }
+          },
+          "houseIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "suspended",
+              "disabled"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "assignmentVersion": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "AccessWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "roles",
+          "houseIds",
+          "status",
+          "version",
+          "assignmentVersion",
+          "operationId",
+          "reason"
+        ],
+        "properties": {
+          "roles": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "employee",
+                "customer"
+              ]
+            }
+          },
+          "houseIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "suspended"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "assignmentVersion": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "AccessInvitation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "email",
+          "roles",
+          "houseIds",
+          "status",
+          "version",
+          "expiresAt",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "roles": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "employee",
+                "customer"
+              ]
+            }
+          },
+          "houseIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "accepted",
+              "cancelled",
+              "expired"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InvitationWrite": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "roles",
+          "houseIds",
+          "operationId",
+          "code"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "roles": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "employee",
+                "customer"
+              ]
+            }
+          },
+          "houseIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[0-9a-f-]{36}\\.[0-9a-f]{48}$",
+            "minLength": 85,
+            "maxLength": 85
+          }
+        }
+      },
+      "AccessHistory": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "at",
+          "actorUid",
+          "actorEmail",
+          "action",
+          "email",
+          "before",
+          "after",
+          "reason"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorUid": {
+            "type": "string"
+          },
+          "actorEmail": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "accessChanged",
+              "invitationCreated",
+              "invitationCancelled",
+              "invitationAccepted"
+            ]
+          },
+          "email": {
+            "type": "string"
+          },
+          "before": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AccessAccount"
+              },
+              {
+                "$ref": "#/components/schemas/AccessInvitation"
+              }
+            ]
+          },
+          "after": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AccessAccount"
+              },
+              {
+                "$ref": "#/components/schemas/AccessInvitation"
+              }
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "AccessAccountPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessAccount"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AccessInvitationPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessInvitation"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AccessHistoryPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessHistory"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       }
     }
   },
@@ -2008,6 +2381,521 @@
           },
           "403": {
             "description": "Verified identity required"
+          }
+        }
+      }
+    },
+    "/api/access/accounts": {
+      "get": {
+        "operationId": "listAccessAccounts",
+        "description": "Verified Google accounts; name/email, role and status filtering occurs on the backend before cursor pagination. Managed Firestore policies override legacy Auth staff claims.",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 8192
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "25",
+                "50",
+                "100"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "admin",
+                "employee",
+                "customer"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "suspended",
+                "disabled"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessAccountPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        }
+      }
+    },
+    "/api/access/accounts/{uid}": {
+      "get": {
+        "operationId": "getAccessAccount",
+        "description": "",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        }
+      },
+      "put": {
+        "operationId": "saveAccessAccount",
+        "description": "Atomic roles, workspace suspension, house assignment and durable actor audit; idempotent operations, reviewed versions and current/last-admin protection. Does not change Google credentials or Firebase account disabled state. Customer ownership is unchanged.",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessWrite"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/access/invitations": {
+      "get": {
+        "operationId": "listAccessInvitations",
+        "description": "",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 8192
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "25",
+                "50",
+                "100"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessInvitationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createAccessInvitation",
+        "description": "Create an email-bound 24-hour one-use code invitation. Client-generated code is persisted as a digest only, never returned by reads or sent as email. Existing signed-in accounts are managed directly.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessInvitation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationWrite"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/access/invitations/{id}": {
+      "get": {
+        "operationId": "getAccessInvitation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessInvitation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        }
+      }
+    },
+    "/api/access/invitations/{id}/cancel": {
+      "post": {
+        "operationId": "cancelAccessInvitation",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessInvitation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "version",
+                  "operationId"
+                ],
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/access/invitations/accept": {
+      "post": {
+        "operationId": "acceptAccessInvitation",
+        "description": "Requires current verified Google identity with exact invited email, a pending unexpired secret code, and a still-active issuing administrator. Grants roles/assignments once without linking or moving customer records. Rate-limited.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code",
+                  "operationId"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f-]{36}\\.[0-9a-f]{48}$",
+                    "minLength": 85,
+                    "maxLength": 85
+                  },
+                  "operationId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/access/history": {
+      "get": {
+        "operationId": "listAccessHistory",
+        "description": "Administrator-only durable before/after access history, newest first; excludes secrets and internal operation signatures.",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 8192
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "25",
+                "50",
+                "100"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current permitted result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessHistoryPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Invalid or suspended identity"
+          },
+          "403": {
+            "description": "Current verified administrator required except invitation acceptance"
+          },
+          "404": {
+            "description": "Unavailable account or invitation"
+          },
+          "409": {
+            "description": "Stale version, duplicate, lockout or operation conflict"
           }
         }
       }

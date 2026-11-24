@@ -451,3 +451,7 @@ Use Access as the tab name. Make account identity, role permissions and active/s
 ## Workspace navigation priority — 2026-11-24
 
 Latest order: Calendar / Balances / Customers / Pricing / Metrics / Payments / Access. Daily workflows come first, configuration/reporting next, and supporting administration last. Use the same order in desktop and phone navigation while preserving authorized customer/role visibility. This supersedes previous navigation ordering; no change to default entry routes is implied.
+
+## Access management backend — 2026-11-24
+
+Owner now authorizes implementation and local signed commits on a feature branch. This supersedes the UI-only Access scope. Replace sample records with current verified Google accounts, enforce managed roles/status and employee house scope on every server request, preserve inherent own-customer access, protect current/last administrators, and save versions/audit/receipts atomically. Invitations are actual privately shared, one-use, email-bound 24-hour codes; no email provider is connected. Recipient acceptance belongs in My profile. Suspension applies to workspace access and preserves the Firebase account and business records; Firebase-disabled logins require project-admin recovery. Keep customer record linking separate. Provide persisted cursor-paginated invitations/history and frozen identical retries after unknown save results. No push/deployment is requested by this change. See access-management.md.
