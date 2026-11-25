@@ -95,7 +95,7 @@ test('Access preserves each loaded section when switching tabs', async ({ page, 
   await accountList.evaluate((element) => (element.scrollTop = 600));
   const position = await accountList.evaluate((element) => element.scrollTop);
   await page.getByRole('tab', { name: 'Invitations', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Invitations', exact: true })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Invitations', exact: true })).toBeVisible();
   await page.getByRole('tab', { name: 'Accounts', exact: true }).click();
   await expect(accounts).toHaveCount(50);
   expect(await page.locator('.record-list-scroll').evaluate((element) => element.scrollTop)).toBe(

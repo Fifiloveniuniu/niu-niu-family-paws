@@ -530,9 +530,7 @@ export default function AdminPricing() {
       cents / 100,
     );
   return (
-    <section className="admin-pricing" aria-busy={loading}>
-      <h1>{t('title')}</h1>
-      <p>{t('intro')}</p>
+    <section className="admin-pricing tab-workspace" aria-label={t('title')} aria-busy={loading}>
       {loading && <p role="status">{uiText('ui.workspace.loading')}</p>}
       {error && (
         <p role="alert">

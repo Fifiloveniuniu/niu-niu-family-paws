@@ -394,19 +394,10 @@ export default function Customers({
   const visibleItems = onlyMine ? items.filter((item) => item.id === ownCustomer?.id) : items;
   return (
     <section
-      className="customer-section customer-workspace"
+      className="customer-section customer-workspace tab-workspace"
       data-selected={petCustomer ? 'true' : 'false'}
-      aria-labelledby="customers-title"
+      aria-label={labels.title}
     >
-      <div className="customer-heading">
-        <div>
-          <h2 id="customers-title">{labels.title}</h2>
-          <p className="customer-workspace-intro">{uiText('ui.customerView.intro')}</p>
-        </div>
-        <Button icon="plus" variant="primary" disabled={saving || uncertain} onClick={() => open()}>
-          {labels.add}
-        </Button>
-      </div>
       <section className="customer-filters" aria-label={uiText('ui.customers.customerFilters')}>
         <div className="customer-filter-toolbar">
           <div className="customer-filter-fields">
@@ -454,6 +445,16 @@ export default function Customers({
           />
           {uiText('ui.customers.onlyMyPets')}
         </label>
+        <div className="customer-add-action">
+          <Button
+            icon="plus"
+            variant="primary"
+            disabled={saving || uncertain}
+            onClick={() => open()}
+          >
+            {labels.add}
+          </Button>
+        </div>
         {ownLoading && <p role="status">{uiText('ui.customers.loadingYourOwnProfile')}</p>}
         {ownError && (
           <p role="alert">

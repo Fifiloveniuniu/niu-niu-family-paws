@@ -298,30 +298,27 @@ export default function IdentityAccess() {
     }
   };
   return (
-    <section className="identity-access record-workspace">
-      <header className="iam-heading">
-        <div>
-          <h1>{text('title')}</h1>
-          <p>{text('intro')}</p>
-        </div>
-        <div className="iam-actions">
-          <Button icon="plus" disabled={!ready} onClick={() => setInviting(true)}>
-            {text('invite')}
-          </Button>
-        </div>
-      </header>
-      <p className="iam-service-note">{text('liveNote')}</p>
-      <SegmentedTabs
-        label={text('sections')}
-        value={section}
-        items={(['accounts', 'invitations', 'history'] as Section[]).map((value) => ({
-          value,
-          label: text(value),
-          id: 'iam-tab-' + value,
-          panelId: 'iam-panel-' + value,
-        }))}
-        onChange={(value) => updateQuery({ section: value === 'accounts' ? null : value })}
-      />
+    <section className="identity-access record-workspace tab-workspace" aria-label={text('title')}>
+      <div className="iam-tab-toolbar">
+        <SegmentedTabs
+          label={text('sections')}
+          value={section}
+          items={(['accounts', 'invitations', 'history'] as Section[]).map((value) => ({
+            value,
+            label: text(value),
+            id: 'iam-tab-' + value,
+            panelId: 'iam-panel-' + value,
+          }))}
+          onChange={(value) => updateQuery({ section: value === 'accounts' ? null : value })}
+        />
+        {section !== 'accounts' && (
+          <div className="iam-actions">
+            <Button icon="plus" disabled={!ready} onClick={() => setInviting(true)}>
+              {text('invite')}
+            </Button>
+          </div>
+        )}
+      </div>
       {notice && (
         <p className="iam-notice" role="status">
           {notice}
@@ -370,15 +367,19 @@ export default function IdentityAccess() {
                   ))}
                 </CustomSelect>
               </label>
+              <div className="iam-actions">
+                <Button icon="plus" disabled={!ready} onClick={() => setInviting(true)}>
+                  {text('invite')}
+                </Button>
+              </div>
             </div>
-            <div className="iam-list-heading">
-              <h2>{text('accounts')}</h2>
-              {(query || filter || status) && (
+            {(query || filter || status) && (
+              <div className="iam-list-heading">
                 <Button variant="secondary" onClick={clear}>
                   {text('clear')}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
             <RecordList list={accounts} label={text('accounts')} resetKey={queryParams.toString()}>
               <div className="iam-accounts">
                 {accounts.items.map((account) => (
@@ -442,8 +443,6 @@ export default function IdentityAccess() {
         )}
         {section === 'invitations' && (
           <>
-            <h2>{text('invitations')}</h2>
-            <p>{text('inviteHelp')}</p>
             <RecordList list={invitations} label={text('invitations')}>
               <section className="iam-invitations">
                 {!invitations.loading &&
@@ -476,7 +475,6 @@ export default function IdentityAccess() {
         )}
         {section === 'history' && (
           <>
-            <h2>{text('history')}</h2>
             <RecordList list={history} label={text('history')}>
               <section className="iam-history">
                 {!history.loading &&

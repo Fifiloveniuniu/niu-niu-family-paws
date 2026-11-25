@@ -20,7 +20,7 @@ for (const [width, lang] of [
     }, fixture.administrator.jwt);
     const rows = page.locator('.customer-directory-panel .customer-list > li');
     await expect(rows).toHaveCount(25);
-    await expect(page.locator('.customer-filters button')).toHaveCount(0);
+    await expect(page.locator('.customer-filter-fields button')).toHaveCount(0);
     const filtered = page.waitForResponse((response) => {
       const url = new URL(response.url());
       return (

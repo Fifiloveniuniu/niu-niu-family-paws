@@ -75,8 +75,7 @@ export default function Payments({ data }: { data: WorkspaceData }) {
       cents / 100,
     );
   return (
-    <section className="payments-page record-workspace">
-      <h1>{t('title')}</h1>
+    <section className="payments-page record-workspace tab-workspace" aria-label={t('title')}>
       <p className="payments-notice">{t('testNotice')}</p>
       {enabled === false ? (
         <p role="status">{t('unavailable')}</p>

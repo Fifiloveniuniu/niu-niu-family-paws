@@ -91,7 +91,7 @@ for (const palette of ['apple', 'vscode-light'] as const) {
       await expect(presets.getByRole('button').last()).toBeFocused();
       await expect(presets.getByRole('button').last()).toHaveAttribute('aria-pressed', 'true');
       if (language === 'en')
-        await expect(page.getByRole('heading', { level: 1 })).toHaveText('Metrics');
+        await expect(page.getByRole('region', { name: 'Metrics', exact: true })).toBeVisible();
     });
   }
 }

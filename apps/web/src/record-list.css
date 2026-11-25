@@ -13,6 +13,13 @@
 .record-list-scroll :is(.workspace-table-scroll, .payments-table) {
   overflow: visible;
 }
+/* Clip table paint to its border without creating a second scroll container.
+   The outer record list owns scrolling and sticky headings on both axes. */
+.record-list-scroll .workspace-table-scroll {
+  overflow: clip;
+  min-width: min-content;
+  max-width: none;
+}
 @media (min-width: 761px) and (min-height: 800px) {
   .record-workspace {
     display: flex;
