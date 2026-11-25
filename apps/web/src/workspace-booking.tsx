@@ -1,3 +1,4 @@
+import type { FundingQuote } from '../../../packages/payments/types';
 import BookingCost from './booking-cost';
 import CalendarControls from './calendar-controls';
 import { calendarRange, type CalendarView } from './workspace-calendar';
@@ -125,12 +126,14 @@ export default function WorkspaceBooking({
   data,
   existing,
   initialRoom,
+  initialCustomerId,
   onClose,
   onSaved,
 }: {
   data: WorkspaceData;
   existing?: Booking;
   initialRoom?: { houseId: string; roomId: string };
+  initialCustomerId?: string;
   onClose: () => void;
   onSaved: (booking: Booking) => void;
 }) {
@@ -143,7 +146,9 @@ export default function WorkspaceBooking({
     browserZone;
   const [zone, setZone] = React.useState(initialZone);
   const [calendarZone, setCalendarZone] = React.useState(initialZone);
-  const [customer, setCustomer] = React.useState(existing?.customerId ?? data.customer?.id ?? '');
+  const [customer, setCustomer] = React.useState(
+    existing?.customerId ?? data.customer?.id ?? initialCustomerId ?? '',
+  );
   const [pet, setPet] = React.useState(existing?.petId ?? '');
   const [petType, setPetType] = React.useState(
     data.rows.find(
@@ -200,6 +205,53 @@ export default function WorkspaceBooking({
   const chosen = available?.rooms.find(
     (room) => roomKey(room.houseId, room.roomId) === selected && room.available,
   );
+  const [testBilling, setTestBilling] = React.useState<boolean | null>(null);
+  const [funding, setFunding] = React.useState<{ key: string; quote: FundingQuote } | null>(null);
+  const [fundingRevision, setFundingRevision] = React.useState(0);
+  const [fundingError, setFundingError] = React.useState(false);
+  const fundingKey = JSON.stringify([
+    customer,
+    pet,
+    arrival,
+    pickup,
+    chosen?.houseId,
+    chosen?.roomId,
+    fundingRevision,
+  ]);
+  const quote = existing?.funding ?? (funding?.key === fundingKey ? funding.quote : null);
+  React.useEffect(() => {
+    const abort = new AbortController();
+    void apiJson<{ testMode: boolean }>('/payment-capabilities', { signal: abort.signal })
+      .then((r) => setTestBilling(r.testMode))
+      .catch(() => {
+        if (!abort.signal.aborted) setFundingError(true);
+      });
+    return () => abort.abort();
+  }, []);
+  React.useEffect(() => {
+    if (step !== 3 || !testBilling || !chosen || !valid || existing?.funding) return;
+    const abort = new AbortController();
+    setFundingError(false);
+    void apiJson<FundingQuote>('/bookings/quote', {
+      method: 'POST',
+      signal: abort.signal,
+      body: {
+        operationId: operation.current,
+        version: existing?.version ?? 0,
+        customerId: customer,
+        petId: pet,
+        houseId: chosen.houseId,
+        roomId: chosen.roomId,
+        arrival,
+        pickup,
+      },
+    })
+      .then((quote) => setFunding({ key: fundingKey, quote }))
+      .catch(() => {
+        if (!abort.signal.aborted) setFundingError(true);
+      });
+    return () => abort.abort();
+  }, [step, testBilling, fundingKey]);
   const baseline = React.useRef(
     JSON.stringify([customer, pet, start, end, zone, startChoice, endChoice, selected]),
   );
@@ -285,7 +337,15 @@ export default function WorkspaceBooking({
       } else if (step === 2 && chosen) setStep(3);
       return;
     }
-    if (!data.admin || !valid || !chosen || saving) return;
+    if (
+      !data.admin ||
+      !valid ||
+      !chosen ||
+      saving ||
+      testBilling === null ||
+      (testBilling && (!quote || quote.issue))
+    )
+      return;
     setSaving(true);
     setError('');
     try {
@@ -299,6 +359,7 @@ export default function WorkspaceBooking({
           roomId: chosen.roomId,
           arrival,
           pickup,
+          ...(quote ? { quoteToken: quote.token } : {}),
         },
       });
       markFormSaved(form.current);
@@ -315,7 +376,20 @@ export default function WorkspaceBooking({
           'pet_setup',
           'house_setup',
         ].includes(error.issue);
-        if (recoverable) {
+        if (error.issue === 'quote_changed') {
+          setFundingRevision((v) => v + 1);
+          setStale(false);
+        } else if (
+          [
+            'payment_declined',
+            'payment_required',
+            'price_missing',
+            'charged_edit',
+            'refund_unconfigured',
+          ].includes(error.issue)
+        ) {
+          setStale(false);
+        } else if (recoverable) {
           setStep(2);
           await loadAvailability();
         } else setStale(true);
@@ -421,7 +495,7 @@ export default function WorkspaceBooking({
               }))}
               onChange={(value) => {
                 setCustomer(value);
-                setPet('');
+                if (value !== customer) setPet('');
                 invalidate();
               }}
             />
@@ -443,7 +517,7 @@ export default function WorkspaceBooking({
               ]}
               onChange={(value) => {
                 setPetType(value);
-                setPet('');
+                if (row && value && row.pet.species !== value) setPet('');
                 invalidate();
               }}
             />
@@ -453,21 +527,26 @@ export default function WorkspaceBooking({
             <CustomAutocomplete
               label={t('pet')}
               required
-              disabled={!customer || !!existing}
-              value={pet}
+              disabled={!!existing}
+              value={pet && customer ? petKey(customer, pet) : ''}
               options={data.rows
                 .filter(
                   (item) =>
-                    item.customer.id === customer && (!petType || item.pet.species === petType),
+                    (!customer || item.customer.id === customer) &&
+                    (!petType || item.pet.species === petType),
                 )
                 .map((item) => ({
-                  value: item.pet.id,
+                  value: petKey(item.customer.id, item.pet.id),
                   label: item.pet.name,
                   content: <PetOption row={item} showType={false} />,
                   adornment: <WorkspaceAvatar row={item} />,
                 }))}
               onChange={(value) => {
-                setPet(value);
+                const picked = data.rows.find(
+                  (item) => petKey(item.customer.id, item.pet.id) === value,
+                );
+                setPet(picked?.pet.id ?? '');
+                if (picked) setCustomer(picked.customer.id);
                 invalidate();
               }}
             />
@@ -477,7 +556,7 @@ export default function WorkspaceBooking({
             <CustomAutocomplete
               label={t('dateTimezone')}
               required
-              disabled={!row || inCare}
+              disabled={inCare || !!existing?.funding}
               value={zone}
               options={zones.map((value) => ({ value, label: value }))}
               onChange={(value) => {
@@ -502,7 +581,7 @@ export default function WorkspaceBooking({
                 setStartChoice(value);
                 invalidate();
               }}
-              disabled={!row || inCare}
+              disabled={inCare || !!existing?.funding}
             />
             <ZonedField
               label={t('pickup')}
@@ -517,7 +596,7 @@ export default function WorkspaceBooking({
                 setEndChoice(value);
                 invalidate();
               }}
-              disabled={!row}
+              disabled={!!existing?.funding}
             />
           </div>
           {arrival && pickup && pickup <= arrival && <p role="status">{t('timeOrder')}</p>}
@@ -745,7 +824,7 @@ export default function WorkspaceBooking({
               [t('balance'), row?.account ? `${row.account.days} ${t('days')}` : ''],
               [t('validFrom'), row?.account?.validFrom],
               [t('validThrough'), row?.account?.validThrough],
-              [t('creditUsage'), uiText('common.notAvailable')],
+              [t('creditUsage'), quote ? String(quote.balanceDays) : uiText('common.notAvailable')],
             ].map(([label, value]) => (
               <div key={label}>
                 <dt>{label}</dt>
@@ -761,7 +840,72 @@ export default function WorkspaceBooking({
               zone={chosen?.timezone || zone}
             />
           )}
-          <p className="hc-review-note">{t(data.admin ? 'unbilled' : 'customerBookingPending')}</p>
+          {testBilling ? (
+            <section className="booking-funding" aria-label={uiText('ui.payments.fundingTitle')}>
+              <h3>{uiText('ui.payments.fundingTitle')}</h3>
+              {quote ? (
+                <>
+                  <dl className="workspace-details">
+                    {[
+                      ['days', String(quote.days)],
+                      ['balanceDays', String(quote.balanceDays)],
+                      ['uncoveredDays', String(quote.uncoveredDays)],
+                      ['balanceAfter', String(quote.balanceAfter)],
+                      [
+                        'cardTotal',
+                        quote.cardCents === null
+                          ? uiText('common.notAvailable')
+                          : new Intl.NumberFormat(locale, {
+                              style: 'currency',
+                              currency: 'USD',
+                            }).format(quote.cardCents / 100),
+                      ],
+                      [
+                        'holiday',
+                        quote.holidayCents === null
+                          ? uiText('common.notAvailable')
+                          : new Intl.NumberFormat(locale, {
+                              style: 'currency',
+                              currency: 'USD',
+                            }).format(quote.holidayCents / 100),
+                      ],
+                    ].map(([label, value]) => (
+                      <div key={label}>
+                        <dt>{uiText('ui.payments.' + label)}</dt>
+                        <dd>{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  {quote.issue && <p role="alert">{uiText('ui.payments.' + quote.issue)}</p>}
+                  <p>{uiText('ui.payments.' + (existing?.funding ? 'moveNote' : 'fundingNote'))}</p>
+                  <a
+                    target="_blank"
+                    rel="noopener"
+                    href={
+                      '/app/payments/?' +
+                      new URLSearchParams({ asCustomer: customer, lang: i18n.language })
+                    }
+                  >
+                    {uiText('ui.payments.paymentLink')}
+                  </a>
+                </>
+              ) : (
+                <p role={fundingError ? 'alert' : 'status'}>
+                  {t(fundingError ? 'loadError' : 'loading')}
+                </p>
+              )}
+              <Button
+                type="button"
+                variant="secondary"
+                icon="reset"
+                onClick={() => setFundingRevision((v) => v + 1)}
+              >
+                {uiText('ui.payments.retryQuote')}
+              </Button>
+            </section>
+          ) : (
+            !data.admin && <p className="hc-review-note">{t('customerBookingPending')}</p>
+          )}
         </section>
         <footer className="hc-wizard-footer">
           <Button
@@ -810,7 +954,15 @@ export default function WorkspaceBooking({
                 icon="check"
                 type="submit"
                 className="hc-apply"
-                disabled={saving || stale || !data.admin || !chosen || !valid}
+                disabled={
+                  saving ||
+                  stale ||
+                  !data.admin ||
+                  !chosen ||
+                  !valid ||
+                  testBilling === null ||
+                  !!(testBilling && (!quote || quote.issue))
+                }
               >
                 {t(saving ? 'saving' : uncertain ? 'retry' : 'confirmPlan')}
               </Button>

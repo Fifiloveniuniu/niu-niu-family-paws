@@ -99,7 +99,7 @@ const csvCell = (value: string | number) =>
   typeof value === 'number'
     ? String(value)
     : '"' + (/^[\s]*[=+\-@]/.test(value) ? "'" + value : value).replaceAll('"', '""') + '"';
-type ExportKind = StatementKind | 'booking' | 'cancelled';
+type ExportKind = StatementKind | 'booking' | 'cancelled' | 'booking_charge';
 export function statementCsv(
   entries: (Omit<StatementEntry, 'delta' | 'before' | 'after' | 'kind'> & {
     delta: number | null;

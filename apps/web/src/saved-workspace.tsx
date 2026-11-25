@@ -1,5 +1,6 @@
 import { useDialogState } from './dialog-routing';
 import { dialogBooking, dialogCustomer, dialogHouse, dialogPetRow } from './dialog-records';
+import Payments from './payments';
 import Button from './button';
 import IconButton from './icon-button';
 import BusinessMetrics from './business-metrics';
@@ -281,6 +282,7 @@ export default function SavedWorkspace({
                       ['/app/metrics/', 'businessMetrics', 'metrics'],
                     ]
                   : []),
+                ['/app/payments/', 'payments', 'balance'],
               ].map(([path, label, icon]) => (
                 <a
                   key={path}
@@ -478,6 +480,7 @@ export default function SavedWorkspace({
                               <p role="alert">{t('invalidDates')}</p>
                             </section>
                           ))}
+                        {view === 'payments' && <Payments key={scope ?? 'admin'} data={data} />}
                         {view === 'balances' && (
                           <WorkspaceBalances
                             data={data}
@@ -503,6 +506,7 @@ export default function SavedWorkspace({
                 key={JSON.stringify(adding) ?? 'new'}
                 data={data}
                 initialRoom={adding}
+                initialCustomerId={params.get('customer') ?? undefined}
                 onClose={() => setAdding(false)}
                 onSaved={savedBooking}
               />

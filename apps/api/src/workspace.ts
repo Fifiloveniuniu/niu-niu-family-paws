@@ -1,3 +1,4 @@
+import { bookingActivity } from './booking-activity.ts';
 import { createHash } from 'node:crypto';
 import { FieldPath, Filter, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
@@ -264,11 +265,8 @@ export function workspaceStore(database: Firestore): WorkspaceStore {
               petId: booking.petId,
               version: booking.version,
               at: operation.at,
-              delta: 0,
-              daysAfter: null,
-              validFrom: booking.arrival.slice(0, 10),
-              validThrough: booking.pickup.slice(0, 10),
-              reason: '',
+              ...(operation.activity ?? bookingActivity(booking)),
+              billingStatus: booking.billingStatus,
               kind: booking.status === 'cancelled' ? 'cancelled' : 'booking',
               bookingId: booking.id,
               arrival: booking.arrival,

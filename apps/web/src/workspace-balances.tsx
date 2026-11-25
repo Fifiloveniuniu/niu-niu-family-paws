@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import IconButton from './icon-button';
 import SegmentedTabs from './segmented-tabs';
@@ -248,7 +249,14 @@ export default function WorkspaceBalances({
   onCustomer: (id: string) => void;
 }) {
   const t = useWorkspaceText();
-  const [templates, setTemplates] = React.useState(false);
+  const [templates, setTemplates] = useDialogState('validity-templates', false, {
+    decode: (raw) => {
+      if (!data.admin) throw Error('Administrator required');
+      const value = JSON.parse(raw);
+      if (typeof value !== 'boolean') throw Error('Invalid dialog');
+      return value;
+    },
+  });
   const { i18n } = useTranslation();
 
   const activity = search.get('panel') === 'activity';
@@ -259,20 +267,42 @@ export default function WorkspaceBalances({
 
   const [error, setError] = React.useState(false);
   const [exporting, setExporting] = React.useState(false);
-  const [detail, setDetail] = React.useState<EventRow | null>(null);
+  const [detail, setDetail] = useDialogState<EventRow | null>('activity-detail', null, {
+    encode: (value) =>
+      value ? value.customer.id + '/' + value.pet.id + '/' + value.event.id : null,
+    decode: async (raw, signal) => {
+      const [customerId, petId, id] = raw.split('/');
+      let cursor: string | null = null;
+      do {
+        const page: components['schemas']['WorkspaceEvents'] = await apiJson<
+          components['schemas']['WorkspaceEvents']
+        >(
+          '/workspace/events?' +
+            new URLSearchParams({ customerId, petId, ...(cursor ? { cursor } : {}) }),
+          { signal },
+        );
+        const item = page.items.find((item) => item.event.id === id);
+        if (item) return item;
+        cursor = page.nextCursor;
+      } while (cursor);
+      throw Error('Activity unavailable');
+    },
+  });
+  const customerFilter = scope ?? data.customer?.id ?? search.get('customer') ?? '';
   const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const pair = selected.split('/');
   const chosen =
     pair.length === 2 ? { customer: { id: pair[0] }, pet: { id: pair[1] } } : undefined;
   const valid =
     (!selected || !!chosen) &&
+    (!customerFilter || !chosen || chosen.customer.id === customerFilter) &&
     (!from || (!!parseWallInput(from, false) && !!startOfZonedDay(from, zone))) &&
     (!through ||
       (!!parseWallInput(through, false) && !!startOfZonedDay(shiftDay(through, 1), zone))) &&
     (!from || !through || through >= from);
   const params = React.useMemo(() => {
     const result = new URLSearchParams();
-    if (scope) result.set('customerId', scope);
+    if (customerFilter) result.set('customerId', customerFilter);
     if (chosen) {
       result.set('customerId', chosen.customer.id);
       result.set('petId', chosen.pet.id);
@@ -287,17 +317,17 @@ export default function WorkspaceBalances({
       if (value) result.set('through', value);
     }
     return result;
-  }, [scope, chosen?.customer.id, chosen?.pet.id, kind, from, through, zone]);
+  }, [customerFilter, chosen?.customer.id, chosen?.pet.id, kind, from, through, zone]);
   const history = useCursorPage<EventRow>('/workspace/events?' + params, data.rows, valid);
   const events = history.items,
     loading = history.loading;
   const balanceParams = new URLSearchParams();
-  if (scope) balanceParams.set('customerId', scope);
+  if (customerFilter) balanceParams.set('customerId', customerFilter);
   if (chosen) {
     balanceParams.set('customerId', chosen.customer.id);
     balanceParams.set('petId', chosen.pet.id);
   }
-  const balances = useCursorPage<PetRow>('/workspace/pets?' + balanceParams, data.rows);
+  const balances = useCursorPage<PetRow>('/workspace/pets?' + balanceParams, data.rows, valid);
   const entries = (rows: EventRow[]): StatementEntry[] =>
     rows
       .filter((row) => !row.event.bookingId)
@@ -332,9 +362,9 @@ export default function WorkspaceBalances({
       do {
         const query = new URLSearchParams(params);
         if (next) query.set('cursor', next);
-        const page = await apiJson<components['schemas']['WorkspaceEvents']>(
-          '/workspace/events?' + query,
-        );
+        const page: components['schemas']['WorkspaceEvents'] = await apiJson<
+          components['schemas']['WorkspaceEvents']
+        >('/workspace/events?' + query);
         all.push(...page.items);
         next = page.nextCursor;
         if (next) {
@@ -351,12 +381,10 @@ export default function WorkspaceBalances({
           pet: pet.name,
           kind:
             event.kind ?? (event.delta > 0 ? 'added' : event.delta < 0 ? 'correction' : 'terms'),
-          delta: event.bookingId ? null : event.delta,
+          delta: event.delta,
           before: event.daysAfter === null ? null : event.daysAfter - event.delta,
           after: event.daysAfter,
-          reason: event.bookingId
-            ? `${event.arrival} – ${event.pickup} · ${t('unbilled')}`
-            : event.reason,
+          reason: event.bookingId ? `${event.arrival} – ${event.pickup}` : event.reason,
           sequence: event.version,
         })),
         [
@@ -376,6 +404,7 @@ export default function WorkspaceBalances({
           terms: t('terms'),
           booking: t('booking'),
           cancelled: t('cancelled'),
+          booking_charge: t('booking_charge'),
         },
       );
       const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -420,12 +449,11 @@ export default function WorkspaceBalances({
           <label>
             {t('customer')}
             <CustomerPicker
+              allowAll
               label={t('allCustomers')}
-              value=""
+              value={customerFilter}
               initial={data.customers}
-              onChange={(id) => {
-                if (id) onCustomer(id);
-              }}
+              onChange={(id) => onFilters({ customer: id, pet: '' })}
             />
           </label>
         )}
@@ -434,7 +462,7 @@ export default function WorkspaceBalances({
           <PetPicker
             label={t('allPets')}
             value={selected}
-            scope={scope}
+            scope={customerFilter || undefined}
             initial={rows}
             onChange={onSelect}
           />
@@ -524,7 +552,7 @@ export default function WorkspaceBalances({
                         <span>– {row.account.validThrough}</span>
                       </span>
                     ) : (
-                      '—'
+                      <span className="workspace-muted">{b('noBalance')}</span>
                     )}
                   </td>
                   <td className="balance-history-cell">
@@ -590,11 +618,13 @@ export default function WorkspaceBalances({
               onChange={(event) => onFilters({ kind: event.target.value })}
             >
               <option value="">{t('allActivity')}</option>
-              {['added', 'correction', 'terms', 'booking', 'cancelled'].map((value) => (
-                <option key={value} value={value}>
-                  {t(value)}
-                </option>
-              ))}
+              {['added', 'correction', 'terms', 'booking', 'cancelled', 'booking_charge'].map(
+                (value) => (
+                  <option key={value} value={value}>
+                    {t(value)}
+                  </option>
+                ),
+              )}
             </CustomSelect>
           </label>
           <label>
@@ -659,7 +689,6 @@ export default function WorkspaceBalances({
                 <th>{t('pet')}</th>
                 <th>{t('activity')}</th>
                 <th>{t('change')}</th>
-                <th>{b('balanceTransition')}</th>
                 <th>
                   <span className="sr-only">{t('entryDetails')}</span>
                 </th>
@@ -696,6 +725,18 @@ export default function WorkspaceBalances({
                               : 'terms'),
                       )}
                     </span>
+                    {row.event.bookingId && (
+                      <small className="activity-note">
+                        {formatter.format(new Date(row.event.arrival!))} –{' '}
+                        {formatter.format(new Date(row.event.pickup!))}
+                      </small>
+                    )}
+                    <small className="activity-note">
+                      {row.event.reason ||
+                        (row.event.delta === 0 && !row.event.bookingId
+                          ? `${row.event.validFrom} – ${row.event.validThrough}`
+                          : '')}
+                    </small>
                   </td>
                   <td className="activity-delta-cell">
                     <strong
@@ -704,36 +745,9 @@ export default function WorkspaceBalances({
                         row.event.delta > 0 ? 'added' : row.event.delta < 0 ? 'removed' : 'terms'
                       }
                     >
-                      {row.event.bookingId ? (
-                        uiText('ui.workspace.unbilled')
-                      ) : (
-                        <>
-                          {row.event.delta > 0 ? '+' : ''}
-                          {row.event.delta} <small>{t('days')}</small>
-                        </>
-                      )}
+                      {row.event.delta > 0 ? '+' : ''}
+                      {row.event.delta} <small>{t('days')}</small>
                     </strong>
-                  </td>
-                  <td className="activity-after-cell" data-label={b('balanceTransition')}>
-                    {!row.event.bookingId && (
-                      <span className="activity-running-balance">
-                        <span>{(row.event.daysAfter ?? 0) - row.event.delta}</span>
-                        <Icon name="chevron-right" />
-                        <strong>{row.event.daysAfter}</strong>
-                      </span>
-                    )}
-                    {row.event.bookingId && (
-                      <span>
-                        {formatter.format(new Date(row.event.arrival!))} –{' '}
-                        {formatter.format(new Date(row.event.pickup!))}
-                      </span>
-                    )}
-                    <small className="activity-note">
-                      {row.event.reason ||
-                        (row.event.delta === 0
-                          ? `${row.event.validFrom} – ${row.event.validThrough}`
-                          : '')}
-                    </small>
                   </td>
                   <td className="activity-detail-cell">
                     <IconButton
@@ -759,15 +773,11 @@ export default function WorkspaceBalances({
               [t('customer'), detail.customer.name],
               [t('pet'), detail.pet.name],
               [t('date'), formatter.format(new Date(detail.event.at))],
-              [
-                t('change'),
-                detail.event.bookingId ? t(detail.event.kind!) : String(detail.event.delta),
-              ],
+              [t('change'), String(detail.event.delta)],
               ...(detail.event.bookingId
                 ? [
                     [t('arrival'), formatter.format(new Date(detail.event.arrival!))],
                     [t('pickup'), formatter.format(new Date(detail.event.pickup!))],
-                    [t('status'), t('unbilled')],
                   ]
                 : [
                     [t('balanceAfter'), String(detail.event.daysAfter)],

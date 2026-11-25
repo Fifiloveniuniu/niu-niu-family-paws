@@ -70,6 +70,7 @@ export function projectBoardingEvent(
     reason,
     at,
     ...(includeActor && data.actor ? { actor: data.actor } : {}),
+    ...(data.kind === 'booking_charge' ? { kind: 'booking_charge' as const } : {}),
   };
 }
 export function validDay(value: string) {

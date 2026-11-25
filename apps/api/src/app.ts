@@ -1,4 +1,5 @@
 import type { holidayCatalogStore } from './holiday-catalog.ts';
+import { testPaymentRoutes, type testPaymentStore } from './test-payments.ts';
 import { metricsRange, type BusinessMetricsStore, type MetricsQuery } from './business-metrics.ts';
 import { employeeAssignmentRoutes, type EmployeeAssignmentStore } from './employee-assignments.ts';
 import { operationsRoutes, type OperationsStore } from './operations.ts';
@@ -41,6 +42,7 @@ export interface CustomerStore {
 export class Conflict extends Error {}
 export function buildApp(deps: {
   holidayCatalog?: ReturnType<typeof holidayCatalogStore>;
+  testPayments?: ReturnType<typeof testPaymentStore>;
   businessMetrics?: BusinessMetricsStore;
   pricing?: PricingStore;
   operations?: OperationsStore;
@@ -122,6 +124,8 @@ export function buildApp(deps: {
       if (deps.cancellationDraft) cancellationDraftRoutes(api, deps.cancellationDraft);
       if (deps.validityTemplates) validityTemplateRoutes(api, deps.validityTemplates);
       if (deps.workspace) workspaceRoutes(api, deps.workspace);
+      api.get('/payment-capabilities', async () => ({ testMode: !!deps.testPayments }));
+      if (deps.testPayments) testPaymentRoutes(api, deps.testPayments);
       if (deps.bookings) bookingRoutes(api, deps.bookings);
       if (deps.balances) balanceRoutes(api, deps.balances);
       if (deps.rooms) roomRoutes(api, deps.rooms);
