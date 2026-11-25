@@ -490,7 +490,14 @@ export default function SavedWorkspace({
                                 <p role="alert">{t('invalidDates')}</p>
                               </section>
                             ))}
-                          {view === 'payments' && <Payments key={scope ?? 'admin'} data={data} />}
+                          {view === 'payments' && (
+                            <Payments
+                              key={scope ?? 'admin'}
+                              data={data}
+                              search={params}
+                              zone={zone}
+                            />
+                          )}
                           {view === 'balances' && (
                             <WorkspaceBalances
                               data={data}

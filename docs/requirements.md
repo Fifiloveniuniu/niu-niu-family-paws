@@ -1,3 +1,9 @@
+## Consistent tabs and payment browsing — owner request, 2026-11-25
+
+Remove routine page refresh buttons, including icon-only controls and circular-arrow symbols that resemble refresh. Keep contextual error recovery clearly labeled Try again. Remove repeated navigation-tab titles (including Identity & access) and generic introductions; retain necessary field labels, state, permissions and test-payment context. Share content edges, control styles and action alignment across tabs, with Add customer/Invite person in the same desktop row as their filters and sensible phone wrapping. Rounded containers must contain their children without breaking sticky headings or scrolling.
+
+Payments needs customer, booking-reference/card-ending search and inclusive local-date range filters across complete saved history, bounded cursor continuation and retained scoped card metadata. Sample cards should resemble physical payment cards, with masked digits, chip/contactless artwork and explicit sample/test labeling; do not fabricate issuer, expiry or cardholder data, collect full numbers/CVV, or enable real payments.
+
 ## User-controlled record loading — 2026-11-25
 
 Owner approved the refined UX and requested implementation: start record lists with 25 records and append only when Load more is activated. Scrolling alone must not request another batch. Apply the same control to customers, pets, balances/activity, payments, Access and pet-dialog history, superseding automatic-scroll loading below. Keep live filters, keyboard operation/focus, existing scrolling surfaces, retained records/retries and full matching exports. Existing direct saved-pet resolution and canonical own-customer lookup may traverse continuations to find their explicitly requested target.

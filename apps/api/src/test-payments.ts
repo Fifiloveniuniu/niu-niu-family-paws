@@ -1,6 +1,8 @@
 import { FieldPath, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
-import { PetAccess, PetMissing } from './pets.ts';
+import { timestamp } from './bookings.ts';
+export type PaymentFilters = { from?: string; through?: string; search?: string };
+import { PetAccess, PetMissing, PetInvalid } from './pets.ts';
 import { Conflict } from './app.ts';
 import { requestIdentity, type Identity } from './request-context.ts';
 import { uuidSchema } from './validation.ts';
@@ -25,7 +27,13 @@ export function testPaymentStore(db: Firestore) {
       cid: string,
       cursor?: string,
       pageSize = 25,
+      filters: PaymentFilters = {},
     ): Promise<TestPaymentRead> {
+      const from = filters.from ? timestamp(filters.from) : undefined;
+      const through = filters.through ? timestamp(filters.through) : undefined;
+      if (from && through && through <= from) throw new PetInvalid();
+      const search = filters.search?.trim().toLowerCase() ?? '';
+      if (search.length > 80) throw new PetInvalid();
       return db.runTransaction(async (tx) => {
         await authorize(tx, identity, cid);
         const ref = db.doc(`customers/${cid}/testPayments/card`);
@@ -34,20 +42,34 @@ export function testPaymentStore(db: Firestore) {
           .collection('charges')
           .orderBy('at', 'desc')
           .orderBy(FieldPath.documentId(), 'desc')
-          .limit(pageSize + 1);
+          .limit((search ? 250 : pageSize) + 1);
+        if (from) query = query.where('at', '>=', from);
+        if (through) query = query.where('at', '<', through);
         if (cursor) {
           const anchor = await tx.get(ref.collection('charges').doc(cursor));
           if (!anchor.exists) throw new Conflict();
           query = query.startAfter(anchor);
         }
         const result = await tx.get(query);
-        const charges = result.docs.slice(0, pageSize).map((doc) => doc.data() as TestCharge);
+        const charges: TestCharge[] = [];
+        let consumed = 0;
+        for (const doc of result.docs.slice(0, search ? 250 : pageSize)) {
+          consumed++;
+          const charge = doc.data() as TestCharge;
+          if (
+            !search ||
+            charge.bookingId.toLowerCase().includes(search) ||
+            charge.last4.includes(search)
+          )
+            charges.push(charge);
+          if (charges.length === pageSize) break;
+        }
         return {
           card: card.exists
             ? (card.data() as TestCard)
             : { scenario: 'none', last4: null, version: 0 },
           charges,
-          nextCursor: result.size > pageSize ? charges.at(-1)!.id : null,
+          nextCursor: result.size > consumed ? result.docs[consumed - 1].id : null,
         };
       });
     },
@@ -87,7 +109,10 @@ export function testPaymentRoutes(
     required: ['customerId'],
     properties: { customerId: uuidSchema },
   };
-  api.get<{ Params: { customerId: string }; Querystring: { cursor?: string; pageSize?: string } }>(
+  api.get<{
+    Params: { customerId: string };
+    Querystring: PaymentFilters & { cursor?: string; pageSize?: string };
+  }>(
     '/customers/:customerId/test-payments',
     {
       schema: {
@@ -97,6 +122,9 @@ export function testPaymentRoutes(
           additionalProperties: false,
           properties: {
             cursor: uuidSchema,
+            from: { type: 'string', format: 'date-time' },
+            through: { type: 'string', format: 'date-time' },
+            search: { type: 'string', maxLength: 80 },
             pageSize: { type: 'string', enum: ['25', '50', '100'] },
           },
         },
@@ -108,6 +136,7 @@ export function testPaymentRoutes(
         req.params.customerId,
         req.query.cursor,
         Number(req.query.pageSize ?? 25),
+        { from: req.query.from, through: req.query.through, search: req.query.search },
       ),
   );
   api.put<{

@@ -1,3 +1,9 @@
+## Scoped payment-history filters and card presentation — 2026-11-25
+
+The demo-only payment-history GET accepts optional `from` and exclusive `through` instants and case-insensitive booking-reference/card-ending `search` (80 characters maximum). Date bounds are applied in Firestore; substring matching scans at most 250 candidates per request, yielding a continuation even across empty scan windows. Unfiltered reads stay at page-size-plus-one. Reads retain owner/admin authorization on every request and the existing demo-emulator guard. The OpenAPI route and generated contract expose the query together; no charge writes or stored-card schema change.
+
+Payment filters live in the route, and inclusive date inputs use the selected IANA timezone (next-day boundary for Through, including DST). The shared record hook scopes/aborts/resets pagination on filter changes. Card metadata is retained only for the same customer while a filtered list reloads; no loaded-subset filtering. Card and editor previews share one masked sample-card component and never display invented expiry/issuer/cardholder values.
+
 ## Explicit record continuation — 2026-11-25
 
 `LoadMore` now invokes continuation only from its button; it has no observer, sentinel or scroll-root dependency. Customers, Pets and `RecordList` share that control. Loading uses `aria-disabled` plus an activation guard so keyboard focus stays on the existing button while requests run; parent-disabled states remain natively disabled. The bounded cursor hooks, desktop/phone/dialog layouts, scoped record retention, retry behavior and complete exports are unchanged. Direct saved-pet resolution and canonical own-profile searches retain their intentional target-discovery reads. This supersedes the observer behavior described below.

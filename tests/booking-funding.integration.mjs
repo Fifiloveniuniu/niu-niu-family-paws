@@ -389,3 +389,67 @@ test('booking activity values are persisted with the transaction and returned fr
   assert.equal(result.items[0].event.reason, 'Stored activity note');
   assert.equal((await f.accountRef.get()).data().days, 2);
 });
+
+test('payment filters scan bounded history, retain card metadata and enforce owner scope', async (t) => {
+  const f = await fixture(t, { days: 0, card: 'approved' });
+  const batch = f.db.batch();
+  for (let n = 0; n < 262; n++) {
+    const id = randomUUID();
+    batch.set(f.cardRef.collection('charges').doc(id), {
+      id,
+      bookingId:
+        n === 0
+          ? 'deadbeef-0000-4000-8000-000000000001'
+          : 'abcdefab-1111-4111-8111-' + String(n).padStart(12, '7'),
+      amountCents: 1000 + n,
+      last4: n === 258 ? '0002' : '4242',
+      at: new Date(Date.parse('2029-01-01T00:00:00Z') + n * 1000).toISOString(),
+    });
+  }
+  await batch.commit();
+  const first = await f.payments.read(admin, f.cid, undefined, 25, { search: 'DEADBEEF' });
+  assert.equal(first.charges.length, 0);
+  assert.ok(first.nextCursor);
+  assert.equal(first.card.last4, '4242');
+  const second = await f.payments.read(admin, f.cid, first.nextCursor, 25, { search: 'DEADBEEF' });
+  assert.equal(second.charges.length, 1);
+  assert.equal(second.charges[0].bookingId, 'deadbeef-0000-4000-8000-000000000001');
+  assert.equal(second.nextCursor, null);
+  const byCard = await f.payments.read(admin, f.cid, undefined, 25, { search: '0002' });
+  assert.equal(byCard.charges.length, 1);
+  assert.equal(byCard.charges[0].last4, '0002');
+  const dated = await f.payments.read(admin, f.cid, undefined, 25, {
+    from: '2029-01-01T00:00:10Z',
+    through: '2029-01-01T00:00:20Z',
+    search: '4242',
+  });
+  assert.equal(dated.charges.length, 10);
+  assert.equal(dated.nextCursor, null);
+  assert.equal(dated.charges[0].at, '2029-01-01T00:00:19.000Z');
+  await assert.rejects(
+    f.payments.read({ uid: 'stranger', google: true }, f.cid, undefined, 25, { search: '4242' }),
+  );
+  await assert.rejects(
+    f.payments.read(admin, f.cid, undefined, 25, {
+      from: '2029-02-01T00:00:00Z',
+      through: '2029-01-01T00:00:00Z',
+    }),
+  );
+  const api = buildApp({ verify: async () => admin, store: {}, testPayments: f.payments });
+  t.after(() => api.close());
+  for (const query of [
+    'from=bad',
+    'from=2029-02-01T00:00:00Z&through=2029-01-01T00:00:00Z',
+    'search=' + 'x'.repeat(81),
+  ]) {
+    assert.equal(
+      (
+        await api.inject({
+          url: `/api/customers/${f.cid}/test-payments?${query}`,
+          headers: { authorization: 'Bearer admin' },
+        })
+      ).statusCode,
+      400,
+    );
+  }
+});

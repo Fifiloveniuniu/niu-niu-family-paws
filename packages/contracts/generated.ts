@@ -348,6 +348,12 @@ export interface paths {
             parameters: {
                 query?: {
                     cursor?: string;
+                    pageSize?: "25" | "50" | "100";
+                    from?: string;
+                    /** @description Exclusive end instant */
+                    through?: string;
+                    /** @description Case-insensitive booking reference substring or card last four digits */
+                    search?: string;
                 };
                 header?: never;
                 path: {
