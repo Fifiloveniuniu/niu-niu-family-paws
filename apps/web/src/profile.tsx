@@ -1,3 +1,4 @@
+import AccessInvitationAcceptance from './access-invitation';
 import Button from './button';
 import {
   englishCatalog,
@@ -111,11 +112,13 @@ export default function Profile({
     }
     refreshRoles();
     document.addEventListener('visibilitychange', refreshRoles);
+    window.addEventListener('family-paws:access-changed', refreshRoles);
     void load();
     return () => {
       alive.current = false;
       roleRequest++;
       document.removeEventListener('visibilitychange', refreshRoles);
+      window.removeEventListener('family-paws:access-changed', refreshRoles);
     };
   }, []);
   async function save(event: React.FormEvent) {
@@ -158,6 +161,7 @@ export default function Profile({
         </span>
       )}
       <p>{labels.intro}</p>
+      <AccessInvitationAcceptance />
       {rolesError && <p role="status">{labels.rolesUnavailable}</p>}
       {roles && (
         <div className="profile-roles" aria-label={labels.roles}>

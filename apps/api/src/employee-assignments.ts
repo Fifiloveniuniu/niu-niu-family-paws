@@ -1,3 +1,4 @@
+import { accessKey, projectAccess } from './access-management.ts';
 import { createHash } from 'node:crypto';
 import type { Firestore } from 'firebase-admin/firestore';
 import type { Auth, UserRecord } from 'firebase-admin/auth';
@@ -30,10 +31,12 @@ export function employeeAssignmentStore(
       if ((error as { code?: string }).code === 'auth/user-not-found') throw new PetMissing();
       throw error;
     }
+    const policy = (await db.doc('accountAccess/' + accessKey(user.uid)).get()).data();
     if (
+      projectAccess(user, policy).status !== 'active' ||
       user.disabled ||
       !user.emailVerified ||
-      user.customClaims?.employee !== true ||
+      !projectAccess(user, policy).roles.includes('employee') ||
       !user.providerData.some((provider) => provider.providerId === 'google.com') ||
       !user.email
     )
@@ -66,11 +69,15 @@ export function employeeAssignmentStore(
       return db.runTransaction(async (tx) => {
         const ref = db.doc('employeeAssignments/' + uid),
           receipt = db.doc('employeeAssignmentOperations/' + input.operationId);
-        const [old, operation, ...houses] = await Promise.all([
+        const [policy, old, operation, ...houses] = await Promise.all([
+          tx.get(db.doc('accountAccess/' + accessKey(uid))),
           tx.get(ref),
           tx.get(receipt),
           ...houseIds.map((id) => tx.get(db.doc('houses/' + id))),
         ]);
+        const current = projectAccess(user, policy.data());
+        if (current.status !== 'active' || !current.roles.includes('employee'))
+          throw new PetMissing();
         if (operation.exists) {
           if (operation.data()!.signature !== signature) throw new Conflict();
           return operation.data()!.result;

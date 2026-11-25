@@ -66,7 +66,7 @@ test('real authenticated HTTP workflows persist and enforce current admin roles 
   await auth.setCustomUserClaims(admin.localId, { admin: true });
   const adminLogin = await admin.login();
   const api = buildApp({
-    verify: firebaseIdentity(auth),
+    verify: firebaseIdentity(auth, db),
     store: firestoreStore(db),
     pets: petStore(db, { put: async () => {}, get: async () => Buffer.from('') }),
     houses: houseStore(db),

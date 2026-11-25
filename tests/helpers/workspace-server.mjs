@@ -1,3 +1,4 @@
+import { accessManagementStore } from '../../apps/api/src/access-management.ts';
 import { businessMetricsStore } from '../../apps/api/src/business-metrics.ts';
 import { employeeAssignmentStore } from '../../apps/api/src/employee-assignments.ts';
 import { operationsStore } from '../../apps/api/src/operations.ts';
@@ -68,7 +69,8 @@ const administrator = await identity(true, true),
 const photos = new Map();
 const api = buildApp({
   businessMetrics: businessMetricsStore(db),
-  verify: firebaseIdentity(auth),
+  verify: firebaseIdentity(auth, db),
+  accessManagement: accessManagementStore(db, auth),
   store: firestoreStore(db),
   pets: petStore(db, {
     put: async (k, v) => {

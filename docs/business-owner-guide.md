@@ -584,3 +584,11 @@ Open http://localhost:4180/app/access/?lang=en and choose **Access** in the app 
 This is a UI preview: accounts/houses are fictional, invitations are not sent and real permissions are unchanged. Changes reset when you leave or reload.
 
 打开 http://localhost:4180/app/access/?lang=zh，点击“权限”。可搜索示例账号、按角色或状态筛选，在弹窗中编辑角色与员工房屋权限。停用或恢复需填写原因；“邀请”仅保存或取消草稿；“更改历史”展示预览操作。重置前会要求确认。示例店主的管理员权限受到保护。此处全部为虚构预览，不发送邀请，不改变真实权限，离开或刷新后会重置。
+
+## Access is now connected locally — 2026-11-24
+
+The Access page now reads and saves real records in the local demo database. Search for a signed-in Google account, choose Edit access, select roles/houses, enter the reason and save. Suspend access blocks workspace access immediately; Restore access keeps the previous role/house selections. Your own administrator access stays protected. Google-disabled accounts need help from the project administrator.
+
+For a new person, choose Invite person, review their email and permissions, create the invitation, and copy the one-time code before closing. Share it privately; no email is sent automatically. The person signs in with that Google email, opens My profile → Accept invitation and pastes the code within 24 hours. Invitation access and customer-record linking remain separate. Cancel an unused invitation in Invitations. Change history saves the before/after details. If a save's result is unknown, keep the form open and Retry.
+
+“权限”页面现已连接本地演示数据库，可保存账号角色和员工房屋分配。编辑时填写原因后保存；“停用权限”会立即阻止工作区访问，“恢复权限”保留原角色和房屋。您自己的管理员权限受到保护。新成员点击“邀请成员”，核对邮箱和权限后创建邀请码，并在关闭前复制，私下分享给对方。对方使用指定 Google 邮箱登录，在“我的资料 → 接受邀请”中粘贴，24 小时内有效。不会自动发送邮件，也不会自动关联已有客户资料。“邀请”可取消未使用的邀请码，“更改历史”保存前后内容。保存结果不明时请保留表单并重试。此功能尚未发布到正式网站。

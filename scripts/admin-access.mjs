@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 // Uses the existing Firebase CLI login; never creates or stores a service-account key.
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
@@ -40,6 +41,17 @@ try {
   ) {
     throw new Error('Administrator grants require an active, verified Google account.');
   }
+  // Managed policies are authoritative; a legacy claim write must never report a false success.
+  const policy = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents/accountAccess/${createHash('sha256').update(user.localId).digest('hex')}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (policy.ok)
+    throw new Error(
+      'This account is managed in Access. Use the signed-in administrator Access page to change its roles.',
+    );
+  if (policy.status !== 404)
+    throw new Error('Could not verify the account access policy. No claims were changed.');
   const claims = JSON.parse(user.customAttributes || '{}');
   if (revoke) delete claims.admin;
   else claims.admin = true;
