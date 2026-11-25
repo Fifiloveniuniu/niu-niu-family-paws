@@ -45,6 +45,7 @@ import { wallDateKey, wallNow, zonedValue } from './wall-time';
 import './house-calendar.css';
 import './workspace.css';
 import './saved-workspace.css';
+import './tab-workspace.css';
 function WorkspaceClock({ zone, onChange }: { zone: string; onChange: (zone: string) => void }) {
   const t = useWorkspaceText();
   const zones = React.useMemo(

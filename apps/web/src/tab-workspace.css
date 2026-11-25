@@ -1,0 +1,60 @@
+/* Navigation tabs share content edges; task controls supply the hierarchy. */
+html[data-ui-style] .saved-workspace .tab-workspace {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin-inline: 0;
+}
+html[data-ui-style] .hc .customer-workspace .customer-filters {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto auto;
+  align-items: end;
+}
+html[data-ui-style] .hc .customer-workspace .customer-add-action {
+  grid-column: 4;
+  grid-row: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+.saved-workspace .iam-tab-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.saved-workspace .identity-access .iam-filters {
+  grid-template-columns: minmax(0, 2fr) minmax(140px, 1fr) minmax(140px, 1fr) auto;
+  align-items: end;
+  gap: 16px;
+  margin-block: 16px;
+}
+.saved-workspace .iam-filters .iam-actions {
+  align-self: end;
+}
+/* Avoid distributing a fixed record viewport into empty grid tracks. */
+html[data-ui-style] .saved-workspace .payments-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (max-width: 1000px) {
+  html[data-ui-style] .hc .customer-workspace .customer-filters {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  html[data-ui-style] .hc .customer-workspace .customer-add-action {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .saved-workspace .identity-access .iam-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 500px) {
+  .saved-workspace .identity-access .iam-filters > label:first-child {
+    grid-column: 1 / -1;
+  }
+  .saved-workspace .identity-access .iam-filters .iam-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}

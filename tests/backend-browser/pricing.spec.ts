@@ -55,7 +55,7 @@ test('administrator edits source pricing, packages and holidays with persisted b
   await expect(page.locator('.admin-pricing')).toContainText('Configured holiday dates: 1');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/app/pricing/?lang=zh');
-  await expect(page.getByRole('heading', { name: '价格管理', exact: true })).toBeVisible();
+  await expect(page.getByRole('region', { name: '价格管理', exact: true })).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
   ).toBeTruthy();

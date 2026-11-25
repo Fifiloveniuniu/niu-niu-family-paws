@@ -94,13 +94,7 @@ export default function BusinessMetrics({
       value: point[field],
     }));
   return (
-    <section className="business-metrics" aria-labelledby="business-metrics-title">
-      <div className="business-metrics-heading">
-        <div>
-          <h1 id="business-metrics-title">{text('title')}</h1>
-          <p>{text('intro')}</p>
-        </div>
-      </div>
+    <section className="business-metrics tab-workspace" aria-label={text('title')}>
       <div className="business-period">
         <div className="business-period-lookback">
           <span id="business-lookback-label">{text('lookback')}</span>

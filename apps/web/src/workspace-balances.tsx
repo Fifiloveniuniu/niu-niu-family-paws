@@ -429,11 +429,7 @@ export default function WorkspaceBalances({
   }
   const rows = balances.items;
   return (
-    <section className="saved-balances record-workspace">
-      <div className="workspace-view-heading">
-        <h1>{t('balances')}</h1>
-        <p>{b('intro')}</p>
-      </div>
+    <section className="saved-balances record-workspace tab-workspace" aria-label={t('balances')}>
       <SegmentedTabs
         className="workspace-view-tabs"
         label={t('balances')}
@@ -514,7 +510,6 @@ export default function WorkspaceBalances({
         )}
       </div>
       <section id="balances-panel" role="tabpanel" aria-labelledby="balances-tab" hidden={activity}>
-        <p className="workspace-view-hint">{b('currentHint')}</p>
         <RecordList list={balances} label={t('balances')} resetKey={balanceParams.toString()}>
           <div className="workspace-table-scroll">
             <table className="workspace-table">
@@ -609,20 +604,6 @@ export default function WorkspaceBalances({
         className="workspace-statement"
         aria-label={t('history')}
       >
-        <div className="activity-heading">
-          <div>
-            <h2>{b('activity')}</h2>
-            <p className="workspace-view-hint">{b('activityHint')}</p>
-          </div>
-          <IconButton
-            title={t(exporting ? 'exporting' : 'exportCsv')}
-            aria-label={t(exporting ? 'exporting' : 'exportCsv')}
-            disabled={!valid || exporting}
-            onClick={() => void exportCsv()}
-          >
-            <Icon name="download" />
-          </IconButton>
-        </div>
         <div className="workspace-filters activity-filter-bar">
           <label>
             {t('activity')}
@@ -648,6 +629,14 @@ export default function WorkspaceBalances({
             {t('through')}
             <CustomDateInput value={through} onChange={(value) => onFilters({ through: value })} />
           </label>
+          <IconButton
+            title={t(exporting ? 'exporting' : 'exportCsv')}
+            aria-label={t(exporting ? 'exporting' : 'exportCsv')}
+            disabled={!valid || exporting}
+            onClick={() => void exportCsv()}
+          >
+            <Icon name="download" />
+          </IconButton>
         </div>
         <div className="activity-filter-note">
           <span>{t('timesIn', { zone })}</span>

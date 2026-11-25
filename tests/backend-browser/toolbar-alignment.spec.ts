@@ -29,11 +29,11 @@ for (const [language, width] of [
       name: messages['ui.customers.labels'].add,
       exact: true,
     });
-    await expect(page.locator('.customer-workspace > .customer-heading')).toContainText(
+    await expect(page.locator('.customer-add-action')).toContainText(
       messages['ui.customers.labels'].add,
     );
     await expect(add.locator('.paws-icon')).toHaveCount(1);
-    await expect(page.locator('.customer-filters button')).toHaveCount(0);
+    await expect(page.locator('.customer-filter-fields button')).toHaveCount(0);
     if (width >= 1200) {
       const inputs = await page.locator('.customer-filter-fields input').all();
       const first = (await inputs[0].boundingBox())!;
@@ -83,7 +83,7 @@ for (const [language, width] of [
     await page.screenshot({ path: testInfo.outputPath('customers-aligned.png'), fullPage: true });
     await page.locator('.pet-search input').fill('');
     await expect(page.locator('.customer-directory-panel .customer-list > li')).toHaveCount(25);
-    await expect(page.locator('.customer-filters button')).toHaveCount(0);
+    await expect(page.locator('.customer-filter-fields button')).toHaveCount(0);
     await page.goto(`/app/pricing/?lang=${language}`);
     const priceAdd = page.getByRole('button', {
       name: messages['ui.pricingAdmin.add'],

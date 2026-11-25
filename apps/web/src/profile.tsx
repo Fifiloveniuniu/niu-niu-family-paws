@@ -160,7 +160,6 @@ export default function Profile({
           {labels.title}
         </span>
       )}
-      <p>{labels.intro}</p>
       <AccessInvitationAcceptance />
       {rolesError && <p role="status">{labels.rolesUnavailable}</p>}
       {roles && (
