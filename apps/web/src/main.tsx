@@ -85,6 +85,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
       faqs: t('questions'),
       pricing: uiText('ui.main.pricing'),
       operations: uiText('ui.operations.title'),
+      'identity-access': uiText('ui.identityAccess.title'),
       'admin-pricing': uiText('ui.pricingAdmin.title'),
       'business-metrics': uiText('ui.metrics.title'),
       contact: t('contact'),
