@@ -38,7 +38,7 @@
   --label: var(--room-label);
   --calendar-min-width: 880px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .hc-booking-dialog .hc-time-request {
   z-index: 3;
@@ -93,7 +93,7 @@
   line-height: 1.5;
 }
 .hc-booking-dialog .calendar-timeline-pan-hint:not([hidden]) {
-  margin-block: 0 -16px;
+  margin-block: 0;
 }
 
 /* Availability and the requested stay have separate lanes, never stacked labels. */
@@ -118,7 +118,7 @@
   width: 24px;
   height: 14px;
   border: 1px solid var(--md-primary-outline);
-  border-radius: 4px;
+  border-radius: var(--component-radius);
 }
 .booking-calendar-swatch.available {
   background: var(--md-success-soft);
@@ -162,11 +162,15 @@
   font-size: 13px;
 }
 .hc-booking-dialog .hc-range-room-name .booking-room-choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   max-width: 100%;
   min-height: 40px;
   padding: 8px 12px;
   border: 1px solid var(--md-field-outline);
-  border-radius: 20px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-primary);
   font-size: 14px;
@@ -185,7 +189,7 @@
   height: 28px;
   min-width: 0;
   padding: 0;
-  border-radius: 4px;
+  border-radius: var(--component-radius);
 }
 .hc-booking-dialog .hc-time-unavailable {
   background: var(--md-secondary-container);
@@ -197,7 +201,7 @@
   min-height: 0;
   min-width: 0;
   padding: 0;
-  border-radius: 4px;
+  border-radius: var(--component-radius);
 }
 .hc-booking-dialog .hc-time-track {
   isolation: isolate;
@@ -284,7 +288,7 @@
   display: inline-block;
   width: 12px;
   height: 12px;
-  border-radius: 3px;
+  border-radius: var(--component-radius);
   background: var(--md-primary-container);
   border: 1px solid var(--md-primary);
 }
@@ -324,7 +328,7 @@
   padding: 4px 7px;
   background: var(--md-primary);
   color: var(--md-on-primary);
-  border-radius: var(--ui-event-radius, 4px);
+  border-radius: 0 var(--component-radius) var(--component-radius) 0;
   font-size: 14px;
   font-weight: 600;
   line-height: 18px;
@@ -409,7 +413,7 @@
   min-width: 36px;
   padding: 6px 10px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-primary-container);
   font: inherit;
@@ -430,7 +434,7 @@
   border: 0;
   padding: 0;
   background: transparent;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   cursor: pointer;
 }
 @media (max-width: 640px) {
@@ -475,7 +479,7 @@ html[data-ui-style] .calendar-timeline.saved-calendar-grid .workspace-now-marker
 .hc .calendar-timeline > .workspace-now-marker > span {
   left: 0;
   padding: 4px 7px;
-  border-radius: var(--ui-event-radius, 4px);
+  border-radius: 0 var(--component-radius) var(--component-radius) 0;
   background: var(--md-primary);
   color: var(--md-on-primary);
   font-size: 14px;
@@ -523,4 +527,64 @@ html[data-ui-style] .hc .calendar-time-controls .hc-range > .calendar-today {
   width: 18px;
   height: 18px;
   flex: none;
+}
+
+/* Keep the rounded calendar frame on the viewport while the timeline pans. */
+.hc .calendar-timeline-viewport {
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--component-radius);
+  clip-path: inset(0 round var(--component-radius));
+}
+.hc .calendar-timeline-viewport > :is(.saved-calendar-grid, .hc-range-calendar) {
+  border: 0;
+  border-radius: 0;
+}
+
+@media (min-width: 761px) and (min-height: 800px) {
+  .saved-calendar .calendar-timeline-viewport {
+    max-height: max(320px, calc(100dvh - 360px));
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+}
+
+/* Keep the booking calendar frame in place on both scroll axes. */
+.hc .app-dialog.hc-booking-dialog .hc-schedule-scroll {
+  max-height: max(240px, 50dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.hc
+  .app-dialog.hc-booking-dialog
+  :is(.calendar-time-controls, .calendar-time-controls .hc-range, .booking-calendar-legend) {
+  justify-content: flex-start;
+  text-align: left;
+}
+.hc .app-dialog.hc-booking-dialog .calendar-time-controls > * {
+  flex: 0 1 auto;
+  margin-inline-start: 0;
+}
+.hc .app-dialog.hc-booking-dialog .booking-calendar-legend {
+  width: 100%;
+  padding: 0;
+  margin-inline: 0;
+}
+
+.hc .app-dialog.hc-booking-dialog .hc-wizard-step[data-booking-step='2'] {
+  gap: 12px;
+}
+.hc .app-dialog.hc-booking-dialog :is(.calendar-time-controls, .booking-calendar-legend) {
+  margin-block: 0;
+}
+.hc .calendar-timeline > .workspace-now-marker > span {
+  border-radius: 0 var(--component-radius) var(--component-radius) 0;
+}
+
+.hc-booking-dialog .hc-range-room-name .booking-room-choice > .paws-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
 }

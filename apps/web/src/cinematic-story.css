@@ -154,7 +154,7 @@
   width: 7px;
   height: 7px;
   border: 1px solid currentColor;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   opacity: 0.5;
 }
 .cinema-rail [aria-current='step'] > span {
@@ -281,7 +281,7 @@
     grid-template-columns: 40px 1fr 28px;
     gap: 14px;
     padding: 24px 18px;
-    border-radius: 28px 28px 28px 4px;
+    border-radius: var(--component-radius);
   }
   .home-story.cinematic-story[data-cinema-enabled] .service-path-icon {
     width: 40px;
@@ -309,7 +309,7 @@
 }
 /* Layered artwork follows the same reversible movement timeline. */
 .home-story.cinematic-story[data-cinema-enabled] .service-path {
-  border-radius: 32px;
+  border-radius: var(--component-radius);
 }
 .home-story.cinematic-story[data-cinema-enabled] .hero-stage {
   margin-inline: auto;
@@ -520,7 +520,7 @@
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  border-radius: 999px;
+  border-radius: var(--component-radius);
 }
 .home-story.cinematic-story[data-cinema-enabled] .cinema-rail {
   padding-block: 1px;
@@ -639,7 +639,7 @@
   left: 18.5px;
   width: 7px;
   height: 23px;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: currentColor;
   transform: translateY(var(--rail-offset, 6.5px));
   pointer-events: none;

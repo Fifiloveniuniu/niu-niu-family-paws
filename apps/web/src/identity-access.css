@@ -29,7 +29,7 @@
   padding: 18px;
   background: var(--md-secondary-container);
   color: var(--md-on-secondary-container);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .iam-filters {
   display: grid;
@@ -44,7 +44,7 @@
 }
 .iam-accounts {
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   overflow: hidden;
 }
 .iam-account {
@@ -78,7 +78,7 @@
 }
 .iam-badges span {
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: var(--component-radius);
   background: var(--md-secondary-container);
   color: var(--md-on-secondary-container);
   font-size: 12px;
@@ -109,7 +109,7 @@
 }
 .iam-editor fieldset {
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   padding: 16px;
 }
 .iam-editor .iam-role-choice,
@@ -154,7 +154,7 @@
   min-height: 42px;
   box-sizing: border-box;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   padding: 10px 12px;
   background: var(--md-surface);
   color: var(--md-on-surface);
@@ -182,7 +182,7 @@
 .iam-stats > div {
   border: 1px solid var(--md-outline-variant);
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .iam-stats dt {
@@ -260,7 +260,7 @@
   padding: 16px;
   background: var(--md-secondary-container);
   color: var(--md-on-secondary-container);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .iam-summary ul {
   margin: 10px 0 0;
@@ -298,7 +298,7 @@
   width: 100%;
   box-sizing: border-box;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   padding: 12px;
@@ -311,7 +311,7 @@
 .iam-warning {
   padding: 12px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
 }
 .iam-empty {
   padding: 36px 20px;
@@ -322,7 +322,7 @@
   padding: 20px;
   margin-block: 12px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .iam-invite {
   display: flex;
@@ -412,7 +412,7 @@
   width: 100%;
   box-sizing: border-box;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   padding: 12px;

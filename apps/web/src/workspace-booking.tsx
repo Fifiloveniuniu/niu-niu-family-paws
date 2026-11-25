@@ -607,13 +607,6 @@ export default function WorkspaceBooking({
           hidden={step !== 2}
           aria-label={t('roomCalendar')}
         >
-          <div className="hc-step-intro">
-            <h3>
-              <Icon name="calendar" />
-              {t('roomCalendar')}
-            </h3>
-            <p>{t('availabilityHint')}</p>
-          </div>
           <CalendarControls
             title={
               available

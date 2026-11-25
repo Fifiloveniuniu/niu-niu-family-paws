@@ -24,7 +24,7 @@
   padding: 20px;
   overflow-y: auto;
   border: 1px solid #c5cdbd;
-  border-radius: 20px;
+  border-radius: var(--component-radius);
   background: #faf8f2;
   color: #293f35;
   box-shadow: 0 12px 30px #293f3524;
@@ -49,7 +49,7 @@
   width: 112px;
   height: 112px;
   flex: none;
-  border-radius: 20px;
+  border-radius: var(--component-radius);
 }
 .hc .hc-pet-preview .hc-pet-preview-photo svg {
   width: 52px;

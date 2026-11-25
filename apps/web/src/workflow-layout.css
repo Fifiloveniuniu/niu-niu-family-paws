@@ -67,7 +67,7 @@ html[data-ui-style] .hc .holiday-preset-list > label {
   padding: 12px;
   gap: 12px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .holiday-preset-list input {
   width: 20px;
@@ -111,7 +111,7 @@ html[data-ui-style] .hc .holiday-preset-list input {
   gap: 12px;
   padding: 10px 12px;
   background: var(--md-surface-container);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 .saved-cancellation-policy {
   max-width: 1120px;
@@ -287,7 +287,7 @@ html[data-ui-style] .hc .workflow-dialog .customer-form .workflow-form-body > fi
   align-items: center;
   padding: 20px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .template-identity {
   display: grid;

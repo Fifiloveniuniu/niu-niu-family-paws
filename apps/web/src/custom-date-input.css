@@ -13,7 +13,7 @@
   min-width: 0;
   padding-right: 42px !important;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   font: inherit;
@@ -29,7 +29,7 @@
   min-height: 32px;
   padding: 6px;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   background: transparent;
   color: var(--md-link);
 }
@@ -48,7 +48,7 @@
   overflow: auto;
   overscroll-behavior: contain;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   box-shadow: var(--md-shadow);
@@ -66,7 +66,7 @@
   font: inherit;
   color: inherit;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: transparent;
   cursor: pointer;
   min-height: 36px;
@@ -147,7 +147,7 @@
   padding: 8px !important;
   font-size: 16px !important;
   border: 1px solid var(--md-outline-variant) !important;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
 }

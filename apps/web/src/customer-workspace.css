@@ -8,14 +8,14 @@ html[data-ui-style] .hc .pet-card {
   gap: 14px;
   padding: 12px;
   align-items: start;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .pet-card .pet-photo {
   width: 64px;
   height: 64px;
   min-height: 0;
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   overflow: hidden;
 }
 html[data-ui-style] .hc .pet-card .pet-photo img {
@@ -79,7 +79,7 @@ html[data-ui-style] .hc .customer-workspace .customer-filters {
   padding: 12px 14px;
   margin: 0 0 16px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface-container-low, var(--md-surface));
 }
 .customer-filter-toolbar {
@@ -167,7 +167,7 @@ html[data-ui-style] .hc .customer-workspace .customer-list > li {
   padding: 9px 12px !important;
   margin: 0 0 2px;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   box-shadow: none;
   background: transparent;
 }
@@ -191,7 +191,7 @@ html[data-ui-style] .hc .customer-workspace .customer-select {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .customer-workspace .customer-list p {
   margin: 5px 0 0;
@@ -521,7 +521,7 @@ html[data-ui-style]
   box-shadow: none;
 }
 .customer-workspace .customer-select::after {
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .customer-workspace :is(.admin-pets, .customer-directory-panel):focus {
   outline: none;
@@ -538,7 +538,7 @@ html[data-ui-style] .hc .customer-workspace .pet-card .pet-photo-button {
   min-height: 0;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   overflow: hidden;
 }
 html[data-ui-style]
@@ -594,7 +594,7 @@ html[data-ui-style] .hc .pets-section .pet-card {
   align-items: center;
   gap: 0 12px;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   overflow: visible;
 }
 html[data-ui-style] .hc .pets-section .pet-card > .pet-card-info {
@@ -630,7 +630,7 @@ html[data-ui-style] .hc .pets-section .pet-card .pet-photo {
   min-width: 0;
   min-height: 0;
   padding: 0;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .pets-section .pet-card .pet-photo-button {
   position: relative;
@@ -641,7 +641,7 @@ html[data-ui-style] .hc .pets-section .pet-card .pet-name-button::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .pets-section .pet-card:hover,
 html[data-ui-style] .hc .pets-section .pet-card-selected {
@@ -787,7 +787,7 @@ html[data-ui-style] .hc .customer-workspace .customer-pet-layout {
 html[data-ui-style] .hc .customer-workspace :is(.customer-directory-panel, .admin-pets) {
   padding: 14px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 14px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   box-shadow: 0 1px 3px color-mix(in srgb, var(--md-on-surface) 6%, transparent);
 }
@@ -808,17 +808,17 @@ html[data-ui-style] .hc .customer-workspace .selected-customer-heading {
   color: var(--md-primary);
 }
 html[data-ui-style] .hc .customer-workspace .customer-list > li {
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   margin-bottom: 4px;
 }
 .customer-workspace .customer-select::after {
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .customer-workspace .admin-pets .pet-card {
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .hc .customer-workspace .pet-card .pet-name-button::after {
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 @media (max-width: 800px) {
   html[data-ui-style] .hc .customer-workspace :is(.customer-directory-panel, .admin-pets) {
@@ -888,7 +888,7 @@ html[data-ui-style] .hc .customer-workspace .customer-filters .icon-button {
   min-height: 44px;
   padding: 0;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface-variant);
 }

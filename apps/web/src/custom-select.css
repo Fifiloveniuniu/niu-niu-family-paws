@@ -28,7 +28,7 @@
   min-height: 40px;
   padding: 8px 12px;
   border: 1px solid var(--md-field-outline);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   font: inherit;
@@ -67,7 +67,7 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   box-shadow: var(--md-shadow);
@@ -88,7 +88,7 @@
   min-height: 40px;
   padding: 8px 12px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   cursor: pointer;
   overflow-wrap: anywhere;
 }

@@ -211,9 +211,26 @@ for (const [width, language] of [
       'absolute',
     );
     const calendar = dialog.locator('.hc-schedule-scroll');
+    // The fixed rounded calendar viewport owns row scrolling.
     expect(
       await calendar.evaluate((node) => node.scrollHeight - node.clientHeight),
-    ).toBeLessThanOrEqual(1);
+    ).toBeGreaterThan(100);
+    for (const position of [0, 0.5, 1]) {
+      await calendar.evaluate((node, position) => {
+        node.scrollTop = (node.scrollHeight - node.clientHeight) * position;
+      }, position);
+      await expect(calendar).toHaveCSS('clip-path', 'inset(0px round 8px)');
+      await expect
+        .poll(async () => {
+          const axis = await dialog.locator('.calendar-timeline-axis').boundingBox();
+          const bounds = await calendar.boundingBox();
+          return Math.abs(axis!.y - bounds!.y - 1);
+        })
+        .toBeLessThan(2);
+    }
+    await calendar.evaluate((node) => {
+      node.scrollTop = 0;
+    });
     await dialog.evaluate((node) => {
       const axis = node.querySelector('.calendar-timeline-axis')!,
         header = node.querySelector('.dialog-fixed-header')!;
@@ -223,8 +240,10 @@ for (const [width, language] of [
     await expect
       .poll(async () => {
         const axis = (await dialog.locator('.calendar-timeline-axis').boundingBox())!,
-          headerBox = (await header.boundingBox())!;
-        return Math.abs(axis.y - headerBox.y - headerBox.height - 1);
+          headerBox = (await header.boundingBox())!,
+          frame = (await calendar.boundingBox())!;
+        // A short modal may reach its scroll limit before the frame reaches the header.
+        return Math.abs(axis.y - Math.max(frame.y, headerBox.y + headerBox.height) - 1);
       })
       .toBeLessThan(2);
     expect(await dialog.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
