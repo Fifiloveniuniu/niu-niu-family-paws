@@ -1,4 +1,5 @@
 import { holidayCatalogStore } from './holiday-catalog.ts';
+import { testPaymentStore } from './test-payments.ts';
 import { businessMetricsStore } from './business-metrics.ts';
 import { employeeAssignmentStore } from './employee-assignments.ts';
 import { operationsStore } from './operations.ts';
@@ -44,7 +45,8 @@ const app = buildApp({
   houses: houseStore(getFirestore()),
   rooms: roomStore(getFirestore()),
   balances: balanceStore(getFirestore()),
-  bookings: bookingStore(getFirestore()),
+  bookings: bookingStore(getFirestore(), () => Date.now(), emulated),
+  ...(emulated ? { testPayments: testPaymentStore(getFirestore()) } : {}),
   employeeAssignments: employeeAssignmentStore(getFirestore(), auth),
   operations: operationsStore(getFirestore()),
   pricing: pricingStore(getFirestore()),

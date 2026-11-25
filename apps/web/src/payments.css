@@ -1,0 +1,74 @@
+.payments-page {
+  display: grid;
+  gap: 16px;
+  max-width: 960px;
+  margin-inline: auto;
+}
+.payments-page h1,
+.payments-page h2,
+.payments-page p {
+  margin: 0;
+}
+.payments-page > .shared-button {
+  justify-self: start;
+}
+.payments-notice {
+  padding: 14px 16px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 12px;
+  color: var(--md-on-surface-variant);
+}
+.payments-card {
+  display: grid;
+  gap: 24px;
+  width: min(100%, 380px);
+  box-sizing: border-box;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid var(--md-primary-outline);
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+}
+.payments-card-number {
+  font-size: clamp(18px, 4vw, 23px);
+  letter-spacing: 1px;
+  font-variant-numeric: tabular-nums;
+}
+.payments-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+.payments-table {
+  overflow-x: auto;
+}
+.payments-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.payments-table :is(th, td) {
+  text-align: start;
+  padding: 12px;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+
+.hc .payments-page h1 {
+  font-size: 24px;
+}
+.hc .payments-page h2 {
+  font-size: 18px;
+  margin-top: 8px;
+}
+.booking-funding {
+  display: grid;
+  gap: 16px;
+  padding-block: 20px;
+}
+.booking-funding h3,
+.booking-funding p {
+  margin: 0;
+}
+.booking-funding > .shared-button {
+  justify-self: start;
+}

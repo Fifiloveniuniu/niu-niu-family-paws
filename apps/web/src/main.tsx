@@ -93,6 +93,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
       calendar: uiText('ui.main.calendar'),
       customers: uiText('ui.main.customers'),
       balances: uiText('ui.main.balances'),
+      payments: uiText('ui.payments.title'),
       settings: uiText('ui.main.settings'),
       personal: uiText('ui.main.myProfile'),
       login: uiText('ui.main.signIn'),

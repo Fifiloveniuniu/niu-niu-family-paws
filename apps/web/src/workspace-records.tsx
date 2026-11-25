@@ -197,7 +197,26 @@ export function BookingDetails({
             </div>
           ))}
         </dl>
-        <p>{t('unbilled')}</p>
+        {booking.funding ? (
+          <>
+            <p>{uiText('ui.payments.fundingNote')}</p>
+            <dl className="workspace-details">
+              <div>
+                <dt>{uiText('ui.payments.balanceDays')}</dt>
+                <dd>{booking.funding.balanceDays}</dd>
+              </div>
+              <div>
+                <dt>{uiText('ui.payments.cardTotal')}</dt>
+                <dd>
+                  {new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(
+                    (booking.funding.cardCents ?? 0) / 100,
+                  )}
+                </dd>
+              </div>
+            </dl>
+            <p>{uiText('ui.payments.chargedRestriction')}</p>
+          </>
+        ) : null}
         {admin && ['planned', 'in_care'].includes(booking.status) && (
           <div className="portal-actions">
             <Button variant="secondary" onClick={onEdit}>
@@ -209,7 +228,12 @@ export function BookingDetails({
                 <Button icon="check" variant="primary" onClick={() => onAction('check_in')}>
                   {t('checkIn')}
                 </Button>
-                <Button icon="close" variant="secondary" onClick={() => onAction('cancel')}>
+                <Button
+                  icon="close"
+                  variant="secondary"
+                  disabled={!!booking.funding}
+                  onClick={() => onAction('cancel')}
+                >
                   {t('cancelPlan')}
                 </Button>
               </>

@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import CustomDateInput from './custom-date-input';
 import { localeFor, uiText } from './i18n.ts';
@@ -47,7 +48,19 @@ export default function BoardingStatement({
     ...emptyStatementFilters,
     pet: pets.some((p) => p.name === initialPet) ? initialPet! : 'all',
   }));
-  const [selected, setSelected] = React.useState<StatementEntry | null>(null);
+  const [selected, setSelected] = useDialogState<StatementEntry | null>(
+    'preview-statement-detail',
+    null,
+    {
+      encode: (value) => value?.id ?? null,
+      decode: (raw) => {
+        const item = statementEntries(accounts, pets).find((item) => item.id === raw);
+        if (!item) throw Error('Statement unavailable');
+        return item;
+      },
+    },
+    [accounts, pets],
+  );
   const filters = sharedFilters || localFilters;
   const setFilters = onFiltersChange || setLocalFilters;
   const entries = statementEntries(accounts, pets);

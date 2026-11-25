@@ -1,5 +1,8 @@
+import { bookingActivity } from './booking-activity.ts';
+import { bookingFunding } from './booking-funding.ts';
+import type { FundingQuote } from '../../../packages/payments/types.ts';
 import { employeeHouse } from './employee-access.ts';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { FieldPath, Filter, type Firestore } from 'firebase-admin/firestore';
 import type { FastifyInstance } from 'fastify';
 import type { components } from '../../../packages/contracts/generated.ts';
@@ -34,6 +37,7 @@ export function projectBooking(data: FirebaseFirestore.DocumentData): Booking {
     timezone,
     status,
     billingStatus,
+    funding,
     actualArrival,
     actualPickup,
     version,
@@ -55,6 +59,7 @@ export function projectBooking(data: FirebaseFirestore.DocumentData): Booking {
     timezone,
     status,
     billingStatus,
+    ...(funding ? { funding } : {}),
     actualArrival,
     actualPickup,
     version,
@@ -71,6 +76,7 @@ export class BookingConflict extends Error {
 }
 export class BookingPolicyMissing extends Error {}
 export interface BookingStore {
+  quote?(identity: Identity, input: BookingWrite): Promise<FundingQuote>;
   get(identity: Identity, id: string): Promise<Booking>;
   list(
     identity: Identity,
@@ -96,7 +102,17 @@ export function timestamp(value: string) {
 }
 const signature = (value: unknown) =>
   createHash('sha256').update(JSON.stringify(value)).digest('hex');
-export function bookingStore(database: Firestore, clock = () => Date.now()): BookingStore {
+export function bookingStore(
+  database: Firestore,
+  clock = () => Date.now(),
+  testBilling = false,
+): BookingStore {
+  if (
+    testBilling &&
+    ((database as Firestore & { projectId: string }).projectId !== 'demo-niu-niu' ||
+      process.env.FIRESTORE_EMULATOR_HOST !== '127.0.0.1:8085')
+  )
+    throw Error('Billing simulator requires demo emulators');
   const bookings = database.collection('bookings');
   const activeQuery = (field: string, id: string) =>
     bookings.where(field, '==', id).where('status', 'in', ['planned', 'in_care']);
@@ -203,6 +219,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
       after: next,
     });
     tx.create(operation, {
+      activity: bookingActivity(next),
       signature: hash,
       actor: identity.uid,
       effectiveCustomerId: next.customerId,
@@ -212,6 +229,28 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
     return next;
   }
   return {
+    ...(testBilling
+      ? {
+          async quote(identity: Identity, input: BookingWrite) {
+            if (identity.admin !== true) throw new PetAccess();
+            return database.runTransaction(async (tx) => {
+              const pet = await authorize(tx, identity, input.customerId, input.petId);
+              const house = await tx.get(database.doc('houses/' + input.houseId));
+              if (!house.exists || !validTimezone(house.data()!.timezone)) throw new PetInvalid();
+              if (timestamp(input.pickup) <= timestamp(input.arrival)) throw new PetInvalid();
+              return (
+                await bookingFunding(
+                  database,
+                  tx,
+                  { ...input, arrival: timestamp(input.arrival), pickup: timestamp(input.pickup) },
+                  pet!,
+                  house.data()!.timezone,
+                )
+              ).quote;
+            });
+          },
+        }
+      : {}),
     async get(identity, id) {
       return database.runTransaction(async (tx) => {
         const snapshot = await tx.get(bookings.doc(id));
@@ -396,6 +435,7 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
       if (pickup <= arrival) throw new PetInvalid();
       const normalized = { ...input, arrival, pickup };
       const hash = signature(['save', identity.uid, id, normalized]);
+      const balanceOperationId = randomUUID();
       return database.runTransaction(async (tx) => {
         // Customer paid bookings stay disabled until the owner configures the financial lifecycle.
         if (identity.admin !== true) {
@@ -427,8 +467,25 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
         )
           throw new BookingConflict('in_care_edit');
         const ctx = await context(tx, identity, input, previous);
+        if (
+          previous?.funding &&
+          (previous.arrival !== arrival ||
+            previous.pickup !== pickup ||
+            previous.timezone !== ctx.house.timezone)
+        )
+          throw new BookingConflict('charged_edit');
         if (previous?.status === 'in_care' && previous.species !== ctx.pet.species)
           throw new BookingConflict('pet_setup');
+        const funding =
+          testBilling && !previous?.funding
+            ? await bookingFunding(database, tx, normalized, ctx.pet, ctx.house.timezone)
+            : null;
+        if (funding) {
+          if (input.quoteToken !== funding.quote.token) throw new BookingConflict('quote_changed');
+          if (funding.quote.issue) throw new BookingConflict(funding.quote.issue);
+          if (funding.quote.cardCents! > 0 && funding.card?.scenario === 'declined')
+            throw new BookingConflict('payment_declined');
+        }
         const now = new Date(clock()).toISOString();
         const next: Booking = {
           id,
@@ -442,7 +499,18 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
           units: previous?.status === 'in_care' ? previous.units : ctx.units,
           timezone: ctx.house.timezone,
           status: previous?.status ?? 'planned',
-          billingStatus: 'unbilled',
+          billingStatus: previous?.funding
+            ? previous.billingStatus
+            : funding
+              ? funding.quote.cardCents! > 0
+                ? 'test_paid'
+                : 'balance'
+              : 'unbilled',
+          ...(previous?.funding
+            ? { funding: previous.funding }
+            : funding
+              ? { funding: funding.quote }
+              : {}),
           occupancyFrom: previous?.actualArrival ?? arrival,
           occupancyThrough: pickup,
           actualArrival: previous?.actualArrival ?? null,
@@ -454,6 +522,54 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
         if (next.actualArrival && Date.parse(pickup) <= Date.parse(next.actualArrival))
           throw new PetInvalid();
         requireCapacity(ctx.stays, next, ctx.room, clock());
+        if (funding) {
+          const q = funding.quote;
+          if (q.balanceDays > 0) {
+            const account = {
+              ...funding.account!,
+              days: q.balanceAfter,
+              version: funding.account!.version + 1,
+              updatedAt: now,
+            };
+            tx.set(funding.accountRef, account);
+            tx.create(funding.accountRef.collection('events').doc(balanceOperationId), {
+              id: balanceOperationId,
+              customerId: input.customerId,
+              petId: input.petId,
+              version: account.version,
+              kind: 'booking_charge',
+              delta: -q.balanceDays,
+              daysAfter: account.days,
+              validFrom: account.validFrom,
+              validThrough: account.validThrough,
+              reason: 'TEST booking ' + id,
+              actor: identity.uid,
+              at: now,
+            });
+            tx.create(database.doc('balanceOperations/' + balanceOperationId), {
+              signature: hash,
+              kind: 'booking_charge',
+              result: account,
+              actor: identity.uid,
+              customerId: input.customerId,
+              petId: input.petId,
+              at: now,
+              before: funding.account,
+              after: account,
+              bookingId: id,
+            });
+          }
+          if (q.cardCents! > 0)
+            tx.create(funding.cardRef.collection('charges').doc(input.operationId), {
+              id: input.operationId,
+              bookingId: id,
+              amountCents: q.cardCents,
+              last4: q.last4,
+              at: now,
+              testMode: true,
+              actor: identity.uid,
+            });
+        }
         ctx.touch();
         return receipt(tx, id, input.operationId, hash, identity, previous, next, 'save');
       });
@@ -498,7 +614,8 @@ export function bookingStore(database: Firestore, clock = () => Date.now()): Boo
           (ctx!.pet.species !== previous.species || ctx!.units !== previous.units)
         )
           throw new BookingConflict('pet_setup');
-        if (previous.billingStatus !== 'unbilled') throw new BookingConflict('billing');
+        if (previous.billingStatus !== 'unbilled' && input.action === 'cancel')
+          throw new BookingConflict('refund_unconfigured');
         const releaseRefs = ctx
           ? []
           : [
@@ -584,6 +701,12 @@ export function bookingRoutes(api: FastifyInstance, store: BookingStore) {
       );
     },
   );
+  if (store.quote)
+    api.post<{ Body: BookingWrite }>(
+      '/bookings/quote',
+      { schema: { querystring: emptyObjectSchema, body: spec.components.schemas.BookingWrite } },
+      (req) => store.quote!(requestIdentity(req), req.body),
+    );
   api.post<{ Body: AvailabilityInput }>(
     '/availability',
     { schema: { querystring: emptyObjectSchema, body: spec.components.schemas.AvailabilityInput } },

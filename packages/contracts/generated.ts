@@ -81,7 +81,7 @@ export interface paths {
                     cursor?: string;
                     from?: string;
                     through?: string;
-                    kind?: "added" | "correction" | "terms";
+                    kind?: "added" | "correction" | "terms" | "booking" | "cancelled" | "booking_charge";
                     pageSize?: "25" | "50" | "100";
                 };
                 header?: never;
@@ -226,6 +226,182 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/holiday-presets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Database-backed opt-in holiday reference calendars grouped by US, China and India */
+        get: {
+            parameters: {
+                query: {
+                    year: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Available year catalog; no selected fee dates are changed */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payment-capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Authenticated payment capabilities; simulator enabled only on demo Firestore */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Payment mode */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Local test-only server-calculated funding review; no mutations */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["BookingWrite"];
+                };
+            };
+            responses: {
+                /** @description Funding review */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["BookingFunding"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/customers/{customerId}/test-payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Demo-only owner/admin test-card metadata and paginated simulated charges */
+        get: {
+            parameters: {
+                query?: {
+                    cursor?: string;
+                };
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Test card metadata and charges */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        /** Demo-only test scenario selection; never accepts card numbers or CVV */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    customerId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        version: number;
+                        /** @enum {string} */
+                        scenario: "approved" | "declined" | "none";
+                    };
+                };
+            };
+            responses: {
+                /** @description Saved test card metadata */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/bookings/{id}": {
         parameters: {
             query?: never;
@@ -256,7 +432,7 @@ export interface paths {
                 };
             };
         };
-        /** Save an unbilled planned placement or edit an active booking (administrator only until billing rules are configured) */
+        /** Save an administrator booking; isolated local demo uses audited test funding, production remains unbilled */
         put: {
             parameters: {
                 query?: never;
@@ -1323,7 +1499,7 @@ export interface components {
             /** Format: date-time */
             through?: string;
             /** @enum {string} */
-            kind?: "added" | "correction" | "terms" | "booking" | "cancelled";
+            kind?: "added" | "correction" | "terms" | "booking" | "cancelled" | "booking_charge";
             /** @enum {string} */
             pageSize?: "25" | "50" | "100";
         };
@@ -1352,6 +1528,7 @@ export interface components {
             }[];
         };
         BookingWrite: {
+            quoteToken?: string;
             /** Format: uuid */
             operationId: string;
             /** Format: uuid */
@@ -1367,6 +1544,28 @@ export interface components {
             arrival: string;
             /** Format: date-time */
             pickup: string;
+        };
+        BookingFunding: {
+            /** @enum {boolean} */
+            testMode: true;
+            days: number;
+            balanceDays: number;
+            uncoveredDays: number;
+            balanceAfter: number;
+            cardCents: number | null;
+            holidayCents: number | null;
+            last4: string | null;
+            /** @enum {string|null} */
+            issue: "payment_required" | "price_missing" | null;
+            token: string;
+            pricingVersion: number;
+            rate: components["schemas"]["PriceRate"] | null;
+            weightKg: number | null;
+            firstDay: string;
+            lastDay: string;
+            holidayDates: string[];
+            balanceValidFrom: string | null;
+            balanceValidThrough: string | null;
         };
         Booking: {
             /** Format: uuid */
@@ -1391,7 +1590,8 @@ export interface components {
             /** @enum {string} */
             status: "planned" | "in_care" | "completed" | "cancelled";
             /** @enum {string} */
-            billingStatus: "unbilled";
+            billingStatus: "unbilled" | "balance" | "test_paid";
+            funding?: components["schemas"]["BookingFunding"];
             /** Format: date-time */
             readonly occupancyFrom: string;
             /** Format: date-time */
@@ -1480,7 +1680,35 @@ export interface components {
             validThrough: string;
             reason: string;
         };
+        WorkspaceActivityEvent: {
+            /** @enum {string} */
+            billingStatus?: "unbilled" | "balance" | "test_paid";
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            customerId: string;
+            /** Format: uuid */
+            petId: string;
+            version: number;
+            delta: number;
+            daysAfter: number | null;
+            validFrom: string;
+            validThrough: string;
+            reason: string;
+            actor?: string;
+            at: string;
+            /** @enum {string} */
+            kind?: "booking" | "cancelled" | "booking_charge";
+            /** Format: uuid */
+            bookingId?: string;
+            /** Format: date-time */
+            arrival?: string;
+            /** Format: date-time */
+            pickup?: string;
+        };
         BoardingEvent: {
+            /** @enum {string} */
+            kind?: "booking_charge";
             /** Format: uuid */
             id: string;
             /** Format: uuid */
@@ -1740,30 +1968,6 @@ export interface components {
             /** Format: date */
             validThrough: string;
             active: boolean;
-        };
-        WorkspaceActivityEvent: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            customerId: string;
-            /** Format: uuid */
-            petId: string;
-            version: number;
-            delta: number;
-            daysAfter: number | null;
-            validFrom: string;
-            validThrough: string;
-            reason: string;
-            actor?: string;
-            at: string;
-            /** @enum {string} */
-            kind?: "booking" | "cancelled";
-            /** Format: uuid */
-            bookingId?: string;
-            /** Format: date-time */
-            arrival?: string;
-            /** Format: date-time */
-            pickup?: string;
         };
     };
     responses: never;

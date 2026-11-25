@@ -11,6 +11,7 @@ export type RouteKind =
   | 'login'
   | 'calendar'
   | 'customers'
+  | 'payments'
   | 'balances'
   | 'settings'
   | 'business-metrics'
@@ -103,6 +104,7 @@ export function parseRoute(input: string): AppRoute {
     '/app/calendar/': 'calendar',
     '/app/customers/': 'customers',
     '/app/balances/': 'balances',
+    '/app/payments/': 'payments',
     '/app/pricing/': 'admin-pricing',
     '/app/metrics/': 'business-metrics',
     '/app/account/profile/': 'personal',
