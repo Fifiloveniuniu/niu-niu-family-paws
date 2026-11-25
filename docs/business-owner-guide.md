@@ -1,3 +1,13 @@
+## Simpler tabs and payment filters — 2026-11-25
+
+Tabs no longer repeat their names as page headings or show generic introductions. Customer and Access filters share their desktop row with Add customer / Invite person; smaller screens wrap the controls. Rounded table borders contain their content and headings stay visible while scrolling.
+
+In the local payment demo, choose a customer, search a booking reference or the card’s last four digits, and optionally set From / Through dates. Dates include the full selected days in the displayed timezone. Filters search saved history, and Load more continues longer searches. Clear a field to remove that filter. The sample card stays visible during filtering. Manage card previews successful, declined or removed test methods; it never asks for a real card number or security code. Real payments remain unconnected.
+
+各标签页不再重复显示页面标题和通用介绍。客户与权限页面的筛选条件和“添加客户／邀请成员”在桌面上位于同一行，小屏幕会自动换行。表格内容不会溢出圆角，滚动时仍保留表头。
+
+在本地付款演示中，先选择客户，再按预约编号或卡号后四位搜索，也可设置起止日期。日期按显示的时区包含整天。筛选覆盖已保存的历史记录，“加载更多”可继续查看。清空字段即可取消该条件，筛选时示例卡仍保持可见。“管理卡片”可预览成功、拒付或移除的测试状态，不要求输入真实卡号或安全码；尚未连接真实支付。
+
 ## Pages without refresh controls — 2026-11-25
 
 Pages load when opened and update after changes or filter selections. Metrics and Access no longer have routine Refresh buttons. Booking payment review offers **Try again** only when its quote fails to load; changed quotes are still recovered automatically. Other failed reads retain their contextual retry actions.

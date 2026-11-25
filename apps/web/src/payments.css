@@ -72,3 +72,206 @@
 .booking-funding > .shared-button {
   justify-self: start;
 }
+
+.payments-filters {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(220px, 1.5fr) repeat(2, minmax(160px, 1fr));
+  align-items: end;
+  gap: 16px;
+}
+.payments-filters > label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.payments-timezone {
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.payments-method {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.payments-method > .shared-button {
+  align-self: end;
+}
+.payments-card {
+  position: relative;
+  isolation: isolate;
+  flex: 0 1 380px;
+  aspect-ratio: 1.586;
+  min-height: 0;
+  overflow: hidden;
+  gap: 14px;
+  grid-template-rows: auto 1fr auto auto;
+  padding: 24px;
+  background: linear-gradient(125deg, var(--md-primary-container), var(--md-secondary-container));
+  border-color: var(--md-outline-variant);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--md-on-surface) 12%, transparent);
+}
+.payments-card::after {
+  content: '';
+  position: absolute;
+  width: 110%;
+  aspect-ratio: 1;
+  right: -60%;
+  top: -65%;
+  border: 28px solid color-mix(in srgb, var(--md-on-primary-container) 6%, transparent);
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+.payments-card-top,
+.payments-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.payments-card-top strong {
+  font-size: 16px;
+}
+.payments-card-badge {
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.payments-card-symbols {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.payments-chip {
+  width: 42px;
+  height: 32px;
+  fill: #dfc68a;
+  stroke: #75603d;
+  stroke-width: 1;
+}
+.payments-contactless {
+  width: 22px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+.payments-card-number {
+  white-space: nowrap;
+  font-size: clamp(16px, 4vw, 22px);
+  letter-spacing: 0.08em;
+}
+.payments-card-bottom {
+  align-items: end;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.payments-card-bottom > :last-child {
+  text-align: end;
+}
+.payments-card[data-empty='true'] {
+  box-shadow: none;
+}
+@media (max-width: 1000px) {
+  .payments-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 500px) {
+  .payments-filters > label:nth-last-child(n + 3) {
+    grid-column: 1 / -1;
+  }
+  .payments-card {
+    padding: 20px;
+    gap: 10px;
+  }
+}
+
+.payments-filters input[type='search'] {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--md-field-outline, var(--md-outline-variant));
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font: inherit;
+}
+.payments-filters input {
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 400;
+}
+.payments-card {
+  flex-basis: auto;
+  border-radius: var(--ui-card-radius, 18px);
+}
+@media (max-width: 700px) {
+  .payments-table thead {
+    display: none;
+  }
+  .payments-table :is(table, tbody) {
+    display: block;
+  }
+  .payments-table tbody {
+    border: 1px solid var(--md-outline-variant);
+    border-radius: var(--ui-card-radius, 12px);
+    overflow: hidden;
+  }
+  .payments-table tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px 20px;
+    padding: 16px;
+    border-bottom: 1px solid var(--md-outline-variant);
+  }
+  .payments-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .payments-table td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    overflow-wrap: anywhere;
+  }
+  .payments-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    color: var(--md-on-surface-variant);
+    margin-bottom: 4px;
+  }
+  .payments-table td:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .payments-table td:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: end;
+    white-space: nowrap;
+  }
+  .payments-table td:nth-child(4) {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: end;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+}
+.saved-workspace .payments-filters input {
+  box-sizing: border-box;
+  height: 44px;
+  min-height: 44px;
+  line-height: 20px;
+}
