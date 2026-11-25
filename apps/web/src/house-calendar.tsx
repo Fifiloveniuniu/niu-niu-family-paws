@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import SegmentedTabs from './segmented-tabs';
 import { petTypeChoice } from './pet-type';
@@ -5,6 +6,7 @@ import { withoutLanguage } from './language-url.ts';
 import { localeFor, type Language, uiText } from './i18n.ts';
 import CalendarPetPreview from './calendar-pet-preview';
 import CustomSelect from './custom-select';
+import CustomAutocomplete from './custom-autocomplete';
 import { initialStays } from './calendar-fixtures';
 import { sampleDateAtOffset, MILLISECONDS_PER_DAY } from './calendar-time';
 import { localDateKey } from './date-utils';
@@ -93,17 +95,35 @@ export default function HouseCalendar({
     { id: 1, rooms: [1, 2, 3, ...(import.meta.env.MODE === 'test' ? [4] : [])] },
     { id: 2, rooms: [1, 2] },
   ]);
-  const [assignment, setAssignment] = React.useState<
+  const [assignment, setAssignment] = useDialogState<
     { house: number; room: number } | null | false
-  >(false);
+  >('preview-booking-add', false, {
+    encode: (value) => (value === false ? null : value === null ? 'new' : JSON.stringify(value)),
+    decode: (raw) => (raw === 'new' ? null : JSON.parse(raw)),
+  });
   const [balanceTemplates, setBalanceTemplates] = React.useState<BalancePolicyTemplate[]>([]);
   const [balances, setBalances] = React.useState<Record<string, PetBalance>>({});
   const pendingBalance = React.useRef<{ pet: string; service: BalanceService } | null>(null);
-  const [balanceView, setBalanceView] = React.useState<{
+  const [balanceView, setBalanceView] = useDialogState<{
     pet: string;
     service: BalanceService;
     fromStay?: boolean;
-  } | null>(null);
+  } | null>('preview-balance', null, {
+    encode: (value) =>
+      value
+        ? JSON.stringify({
+            pet: initialStays.findIndex((item) => item.name === value.pet),
+            service: value.service,
+            fromStay: value.fromStay,
+          })
+        : null,
+    decode: (raw) => {
+      const value = JSON.parse(raw);
+      const pet = initialStays[value.pet];
+      if (!pet) throw Error('Pet unavailable');
+      return { pet: pet.name, service: 'boarding', fromStay: !!value.fromStay };
+    },
+  });
   const [notice, setNotice] = React.useState('');
   const nextId = React.useRef(10);
   const [customerFilter, setCustomerFilter] = React.useState('all');
@@ -118,12 +138,12 @@ export default function HouseCalendar({
   const [roomFilter, setRoomFilter] = React.useState('all');
   const [speciesFilter, setSpeciesFilter] = React.useState('all');
   const [statusFilter, setStatusFilter] = React.useState('all');
-  const [settings, setSettings] = React.useState<{
+  const [settings, setSettings] = useDialogState<{
     house: number;
     room?: number;
     creating?: boolean;
-  } | null>(null);
-  const [addressHouse, setAddressHouse] = React.useState<number | null>(null);
+  } | null>('preview-location-edit', null);
+  const [addressHouse, setAddressHouse] = useDialogState<number | null>('preview-address', null);
   const [admin, setAdmin] = React.useState(false);
   React.useEffect(
     () =>
@@ -158,8 +178,22 @@ export default function HouseCalendar({
   const [house, setHouse] = React.useState('all');
   const [query, setQuery] = React.useState('');
   const [collapsed, setCollapsed] = React.useState<string[]>([]);
-  const [selected, setSelected] = React.useState<Stay | null>(null);
+  const [selected, setSelected] = useDialogState<Stay | null>(
+    'preview-booking',
+    null,
+    {
+      encode: (value) => value?.id ?? null,
+      decode: (raw) => {
+        const item = stays.find((item) => item.id === raw);
+        if (!item) throw Error('Stay unavailable');
+        return item;
+      },
+    },
+    [stays],
+  );
   React.useEffect(() => {
+    if ([...new URLSearchParams(location.search).keys()].some((key) => key.startsWith('dialog.')))
+      return;
     document.querySelector<HTMLDetailsElement>('.hc-account-menu')?.removeAttribute('open');
     window.scrollTo({ top: 0, behavior: 'instant' });
     setBalanceView(pendingBalance.current);
@@ -565,12 +599,26 @@ export default function HouseCalendar({
                   </label>
                   <label className="hc-search">
                     {uiText('ui.houseCalendar.findAPet')}
-                    <input
-                      placeholder={uiText('ui.houseCalendar.searchPetName')}
+                    <CustomAutocomplete
+                      label={uiText('ui.houseCalendar.findAPet')}
                       value={query}
-                      onChange={(event) => {
-                        setQuery(event.target.value);
-                        updateQuery({ q: event.target.value });
+                      options={[
+                        { value: '', label: uiText('ui.workspace.allPets') },
+                        ...Array.from(
+                          new Set(
+                            stays
+                              .filter(
+                                (stay) =>
+                                  customerFilter === 'all' ||
+                                  customerFor(stay.name) === customerFilter,
+                              )
+                              .map((stay) => stay.name),
+                          ),
+                        ).map((name) => ({ value: name, label: name })),
+                      ]}
+                      onChange={(value) => {
+                        setQuery(value);
+                        updateQuery({ q: value });
                       }}
                     />
                   </label>

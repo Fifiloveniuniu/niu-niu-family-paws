@@ -1,6 +1,5 @@
 import { uiText } from './i18n.ts';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 
 const drafts = new Map<HTMLElement, () => void>();
 
@@ -30,8 +29,7 @@ export function confirmDiscardChanges(
 
 /** Register only while a form has changes, including saves awaiting confirmation. */
 export default function UnsavedChanges({ active }: { active: boolean }) {
-  const { i18n } = useTranslation();
-  const notice = React.useRef<HTMLParagraphElement>(null);
+  const notice = React.useRef<HTMLSpanElement>(null);
   React.useEffect(() => {
     const element = notice.current;
     if (!active || !element) return;
@@ -47,13 +45,5 @@ export default function UnsavedChanges({ active }: { active: boolean }) {
     window.addEventListener('beforeunload', warn);
     return release;
   }, [active]);
-  return active ? (
-    <p ref={notice} className="unsaved-notice" role="status">
-      {uiText(
-        'ui.unsavedChanges.youHaveUnsavedChangesSaveBeforeRefreshingOrClosing',
-        {},
-        i18n.language,
-      )}
-    </p>
-  ) : null;
+  return <span ref={notice} hidden aria-hidden="true" />;
 }

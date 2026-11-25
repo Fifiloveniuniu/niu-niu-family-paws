@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
@@ -23,7 +24,14 @@ export default function PetDetails({
 }) {
   const t = useWorkspaceText();
   const { i18n } = useTranslation();
-  const [tab, setTab] = React.useState('info');
+  const [tab, setTab] = useDialogState('pet-tab', 'info', {
+    decode: (raw) => {
+      const value = JSON.parse(raw);
+      if (!['info', 'bookings', 'balance', 'activity'].includes(value))
+        throw Error('Invalid pet tab');
+      return value;
+    },
+  });
   const [row, setRow] = React.useState<PetRow | null>(null);
   const [error, setError] = React.useState(false);
   const params = new URLSearchParams({ customerId, petId });
@@ -48,7 +56,7 @@ export default function PetDetails({
   const na = uiText('common.notAvailable');
   const date = (value: string) => new Date(value).toLocaleString(localeFor(i18n.language));
   return (
-    <Modal title={name} onClose={onClose} className="pet-details-dialog">
+    <Modal title={row?.pet.name ?? name} onClose={onClose} className="pet-details-dialog">
       <SegmentedTabs
         label={t('viewPet')}
         value={tab}
@@ -147,7 +155,6 @@ export default function PetDetails({
                         <p>
                           {date(booking.arrival)} – {date(booking.pickup)}
                         </p>
-                        <small>{t('unbilled')}</small>
                       </div>
                     </li>
                   ))}

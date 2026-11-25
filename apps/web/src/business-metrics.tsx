@@ -111,24 +111,27 @@ export default function BusinessMetrics({
         </IconButton>
       </div>
       <div className="business-period">
-        <SegmentedTabs
-          className="business-period-presets"
-          mode="buttons"
-          label={text('period')}
-          value={
-            through === today
-              ? [7, 30, 90].find((days) => from === shiftDay(today, 1 - days))?.toString()
-              : undefined
-          }
-          onChange={(value) =>
-            updateQuery({ from: shiftDay(today, 1 - Number(value)), through: today })
-          }
-          items={[7, 30, 90].map((days) => ({
-            value: String(days),
-            label: uiText('ui.metrics.rangeDays', { count: days }),
-            ariaLabel: uiText('ui.metrics.lastDays', { count: days }),
-          }))}
-        />
+        <div className="business-period-lookback">
+          <span id="business-lookback-label">{text('lookback')}</span>
+          <SegmentedTabs
+            className="business-period-presets"
+            mode="buttons"
+            label={text('lookback')}
+            value={
+              through === today
+                ? [7, 30, 90].find((days) => from === shiftDay(today, 1 - days))?.toString()
+                : undefined
+            }
+            onChange={(value) =>
+              updateQuery({ from: shiftDay(today, 1 - Number(value)), through: today })
+            }
+            items={[7, 30, 90].map((days) => ({
+              value: String(days),
+              label: uiText('ui.metrics.rangeDays', { count: days }),
+              ariaLabel: uiText('ui.metrics.lastDays', { count: days }),
+            }))}
+          />
+        </div>
         <div className="business-period-fields">
           <label>
             {text('from')}

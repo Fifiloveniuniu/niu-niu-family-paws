@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import PetDetails from './pet-details';
 import IconButton from './icon-button';
 import React from 'react';
@@ -14,7 +15,20 @@ import { PetTypeIcon } from './pet-type';
 const PhotoLoader = React.createContext<(row: PetRow) => Promise<string>>(async () => {
   throw Error('Photo provider unavailable');
 });
+const OpenPetDialog = React.createContext<(row: PetRow) => void>(() => {});
 export function WorkspacePhotos({ children }: { children: React.ReactNode }) {
+  const [target, setTarget] = useDialogState<{
+    customerId: string;
+    petId: string;
+    name?: string;
+  } | null>('pet-details', null, {
+    encode: (value) => (value ? value.customerId + '/' + value.petId : null),
+    decode: (raw) => {
+      const [customerId, petId] = raw.split('/');
+      if (!customerId || !petId) throw Error('Invalid pet');
+      return { customerId, petId };
+    },
+  });
   const cache = React.useRef(new Map<string, Promise<string>>());
   const urls = React.useRef(new Set<string>());
   const requests = React.useRef(new Set<AbortController>());
@@ -51,7 +65,25 @@ export function WorkspacePhotos({ children }: { children: React.ReactNode }) {
     cache.current.set(key, pending);
     return pending;
   }, []);
-  return <PhotoLoader.Provider value={load}>{children}</PhotoLoader.Provider>;
+  return (
+    <PhotoLoader.Provider value={load}>
+      <OpenPetDialog.Provider
+        value={(row) =>
+          setTarget({ customerId: row.customer.id, petId: row.pet.id, name: row.pet.name })
+        }
+      >
+        {children}
+      </OpenPetDialog.Provider>
+      {target && (
+        <PetDetails
+          customerId={target.customerId}
+          petId={target.petId}
+          name={target.name ?? uiText('ui.workspace.pet')}
+          onClose={() => setTarget(null)}
+        />
+      )}
+    </PhotoLoader.Provider>
+  );
 }
 export function WorkspaceAvatar({ row, large = false }: { row: PetRow; large?: boolean }) {
   const t = useWorkspaceText();
@@ -155,7 +187,7 @@ export function PetInfo({
   const t = useWorkspaceText();
   const { i18n } = useTranslation();
   const [open, setOpen] = useDropdownState(false);
-  const [details, setDetails] = React.useState(false);
+  const openPet = React.useContext(OpenPetDialog);
   const [portal, setPortal] = React.useState<HTMLElement | null>(null);
   const root = React.useRef<HTMLSpanElement>(null),
     trigger = React.useRef<HTMLButtonElement>(null),
@@ -245,21 +277,12 @@ export function PetInfo({
         onFocus={enter}
         onClick={() => {
           dismiss();
-          setDetails(true);
+          openPet(row);
         }}
       >
         <WorkspaceAvatar row={row} />
       </button>
-      {details && (
-        <PetDetails
-          customerId={row.customer.id}
-          petId={row.pet.id}
-          name={row.pet.name}
-          onClose={() => setDetails(false)}
-        />
-      )}
       {open &&
-        !details &&
         portal &&
         createPortal(
           <div

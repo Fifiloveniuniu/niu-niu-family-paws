@@ -560,7 +560,7 @@ html[data-ui-style] .saved-calendar-grid .hc-axis {
 html[data-ui-style] .saved-calendar-grid .workspace-now-marker {
   top: 62px;
   z-index: 5;
-  background: var(--md-focus);
+  background: var(--md-primary);
 }
 html[data-ui-style] .saved-calendar-grid .workspace-now-marker > span {
   left: 0;

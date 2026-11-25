@@ -239,25 +239,23 @@
   background: var(--md-surface);
   box-shadow: 4px 0 0 var(--md-surface);
 }
-/* Each calendar owns its scrollport so its time axis remains aligned while scrolling. */
+/* Vertical scrolling belongs to the page/dialog; retain horizontal panning. */
 .calendar-timeline-viewport {
-  max-height: 70dvh;
-  overflow: auto;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
   scroll-padding-top: 80px;
 }
 .calendar-timeline-axis {
-  position: sticky;
-  top: 0;
+  position: relative;
+  transform: translateY(var(--calendar-axis-offset, 0px));
   z-index: 12;
   isolation: isolate;
 }
 .hc-booking-dialog .hc-schedule-scroll {
-  max-height: 55dvh;
-  overflow: auto;
-}
-.calendar-timeline-tick[data-today='true'] {
-  background: var(--md-primary-soft);
-  color: var(--md-primary);
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .calendar-timeline-tick[data-holiday='true'] {
   box-shadow: inset 0 -3px var(--md-primary);
@@ -316,15 +314,20 @@
 }
 .calendar-timeline .workspace-now-marker {
   background: var(--md-primary);
-  z-index: 5;
+  z-index: 13;
 }
 .calendar-timeline .workspace-now-marker > span {
-  position: sticky;
+  position: absolute;
   top: 0;
   display: inline-block;
-  background: var(--md-surface);
-  color: var(--md-primary);
-  font-size: 11px;
+  left: 0;
+  padding: 4px 7px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  border-radius: var(--ui-event-radius, 4px);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
   white-space: nowrap;
 }
 .saved-busy-room .hc-stay.busy {
@@ -439,15 +442,9 @@
 }
 /* Explicit pairs survive the legacy dialog and calendar stylesheet order. */
 .hc .app-dialog.hc-booking-dialog .hc-schedule-scroll {
-  max-height: 55dvh;
-  overflow: auto;
-}
-.calendar-timeline .calendar-timeline-tick[data-today='true'] {
-  background: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-}
-.calendar-timeline-tick[data-today='true'] :is(span, strong, small) {
-  color: inherit;
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 .hc .app-dialog.hc-booking-dialog .hc-time-request {
   background: var(--md-primary-container);
@@ -456,4 +453,74 @@
 .hc .app-dialog.hc-booking-dialog .hc-time-request.picked {
   background: var(--md-primary);
   color: var(--md-on-primary);
+}
+
+/* Keep the attached Now label visible in the lane below the date surface. */
+html[data-ui-style] .calendar-timeline.saved-calendar-grid .workspace-now-marker {
+  z-index: 13;
+}
+
+/* Both timelines share the date heading and its dedicated current-time lane. */
+.hc .calendar-timeline > .calendar-timeline-axis {
+  height: auto;
+  min-height: 82px;
+  padding-bottom: 26px;
+  box-sizing: border-box;
+}
+.hc .calendar-timeline > .workspace-now-marker {
+  top: 56px;
+  z-index: 13;
+  background: var(--md-primary);
+}
+.hc .calendar-timeline > .workspace-now-marker > span {
+  left: 0;
+  padding: 4px 7px;
+  border-radius: var(--ui-event-radius, 4px);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.calendar-timeline-viewport {
+  overflow-anchor: none;
+}
+.calendar-timeline-axis,
+.calendar-timeline .workspace-now-marker > span {
+  transition: none;
+}
+
+.hc .calendar-timeline-axis > .calendar-timeline-label {
+  min-height: 62px;
+  padding: 8px 12px;
+  font-size: 11px;
+  background: var(--md-surface);
+}
+
+.hc .calendar-timeline > .workspace-now-marker[data-label-align='end'] > span {
+  left: auto;
+  right: 4px;
+}
+
+/* Center the Today icon and text inside the existing navigation control. */
+.hc .calendar-time-controls .hc-range > .calendar-today,
+html[data-ui-style] .hc .calendar-time-controls .hc-range > .calendar-today {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  min-height: 36px;
+  margin: 0;
+  padding: 6px 10px;
+  color: var(--md-on-surface);
+  font: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.hc .calendar-time-controls .hc-range > .calendar-today > svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
 }

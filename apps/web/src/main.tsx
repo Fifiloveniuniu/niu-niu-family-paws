@@ -1,3 +1,4 @@
+import { DialogRouteErrors } from './dialog-routing';
 import { setAppearanceScope } from './theme-preferences';
 import useLanguageUrl from './use-language-url';
 import { withLanguage } from './language-url.ts';
@@ -139,6 +140,7 @@ export function App({ initialPath = '/' }: { initialPath?: string } = {}) {
     ) : null;
   return (
     <>
+      <DialogRouteErrors />
       {portal}
       {!appVisible && (
         <>

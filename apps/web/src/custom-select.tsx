@@ -2,6 +2,7 @@ import Icon from './icons';
 import React from 'react';
 import { useDropdownState } from './dropdown-state';
 import './custom-select.css';
+import { uiText } from './i18n';
 
 type Props = React.SelectHTMLAttributes<HTMLSelectElement> & {
   renderChoice?: (value: string, label: string) => React.ReactNode;
@@ -52,11 +53,17 @@ export default function CustomSelect(props: Props) {
   const [active, setActive] = React.useState(-1);
   const [label, setLabel] = React.useState('');
   const root = React.useRef<HTMLSpanElement>(null);
-  const trigger = React.useRef<HTMLButtonElement>(null);
+  const trigger = React.useRef<HTMLInputElement>(null);
   const native = React.useRef<HTMLSelectElement>(null);
   const popup = React.useRef<HTMLDivElement>(null);
   const listId = React.useId();
-  const prefix = React.useRef({ text: '', at: 0 });
+  const [query, setQuery] = React.useState('');
+  const [typing, setTyping] = React.useState(false);
+  const visible = options
+    .map((option, index) => ({ option, index }))
+    .filter(({ option }) =>
+      option.label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()),
+    );
   const selectedOption = options.find((item) => item.value === selected);
 
   React.useLayoutEffect(() => {
@@ -71,6 +78,9 @@ export default function CustomSelect(props: Props) {
 
   const reveal = () => {
     if (disabled) return;
+    setQuery('');
+    setTyping(false);
+    requestAnimationFrame(() => trigger.current?.select());
     setActive(
       Math.max(
         0,
@@ -141,7 +151,7 @@ export default function CustomSelect(props: Props) {
     if (disabled) setOpen(false);
   }, [disabled, setOpen]);
 
-  function keyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
+  function keyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Escape' && open) {
       event.preventDefault();
       event.stopPropagation();
@@ -149,17 +159,21 @@ export default function CustomSelect(props: Props) {
       return;
     }
     if (event.key === 'Tab') return setOpen(false);
-    if (['Enter', ' '].includes(event.key)) {
+    if (event.key === 'Enter') {
       event.preventDefault();
       if (open) choose(active);
       else reveal();
       return;
     }
-    const enabled = options
-      .map((option, index) => (option.disabled ? -1 : index))
+    const enabled = visible
+      .map(({ option, index }) => (option.disabled ? -1 : index))
       .filter((index) => index >= 0);
     if (!enabled.length) return;
-    if (['ArrowDown', 'ArrowUp', 'Home', 'End', 'PageDown', 'PageUp'].includes(event.key)) {
+    if (
+      ['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ...(!typing ? ['Home', 'End'] : [])].includes(
+        event.key,
+      )
+    ) {
       event.preventDefault();
       if (!open) reveal();
       const index = enabled.indexOf(
@@ -180,20 +194,9 @@ export default function CustomSelect(props: Props) {
             ? enabled.length - 1
             : Math.max(0, Math.min(enabled.length - 1, index + offset));
       setActive(enabled[next]);
-    } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
-      event.preventDefault();
-      const now = Date.now();
-      prefix.current.text =
-        now - prefix.current.at < 700 ? prefix.current.text + event.key : event.key;
-      prefix.current.at = now;
-      const query = prefix.current.text.toLocaleLowerCase();
-      const match = options.findIndex(
-        (option) => !option.disabled && option.label.toLocaleLowerCase().startsWith(query),
-      );
-      if (!open) reveal();
-      if (match >= 0) setActive(match);
     }
   }
+
   return (
     <span className="custom-select" ref={root}>
       <select
@@ -217,38 +220,60 @@ export default function CustomSelect(props: Props) {
       >
         {children}
       </select>
-      <button
-        ref={trigger}
-        id={id}
-        type="button"
-        role="combobox"
-        data-value={selected}
-        className={`custom-select-trigger${className ? ' ' + className : ''}`}
-        disabled={disabled}
-        aria-label={props['aria-label'] ?? (label || undefined)}
-        aria-labelledby={props['aria-labelledby']}
-        aria-describedby={props['aria-describedby']}
-        aria-invalid={props['aria-invalid']}
-        aria-required={props.required}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={open ? listId : undefined}
-        aria-activedescendant={open && active >= 0 ? `${listId}-${active}` : undefined}
-        title={props.title}
-        onClick={() => (open ? setOpen(false) : reveal())}
-        onKeyDown={keyDown}
-        onBlur={(event) => {
-          if (!root.current?.contains(event.relatedTarget as Node)) setOpen(false);
-        }}
-      >
-        <span className="custom-select-value">
-          {selectedOption
-            ? ((selected ? renderChoice?.(selected, selectedOption.label) : undefined) ??
-              selectedOption.label)
-            : 'N/A'}
+      <span className="custom-select-field">
+        <input
+          ref={trigger}
+          id={id}
+          type="text"
+          autoComplete="off"
+          aria-autocomplete="list"
+          value={open && typing ? query : (selectedOption?.label ?? '')}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setTyping(true);
+            setActive(
+              options.findIndex(
+                (option) =>
+                  !option.disabled &&
+                  option.label
+                    .toLocaleLowerCase()
+                    .includes(event.target.value.trim().toLocaleLowerCase()),
+              ),
+            );
+            setOpen(true);
+          }}
+          role="combobox"
+          data-value={selected}
+          data-rich={!!(renderChoice && selected && !(open && typing)) || undefined}
+          className={`custom-select-trigger${className ? ' ' + className : ''}`}
+          disabled={disabled}
+          aria-label={props['aria-label'] ?? (label || undefined)}
+          aria-labelledby={props['aria-labelledby']}
+          aria-describedby={props['aria-describedby']}
+          aria-invalid={props['aria-invalid']}
+          aria-required={props.required}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={open ? listId : undefined}
+          aria-activedescendant={open && active >= 0 ? `${listId}-${active}` : undefined}
+          title={props.title}
+          onClick={() => {
+            if (!open) reveal();
+          }}
+          onKeyDown={keyDown}
+          onBlur={(event) => {
+            if (!root.current?.contains(event.relatedTarget as Node)) setOpen(false);
+          }}
+        />
+        {renderChoice && selected && !(open && typing) && selectedOption && (
+          <span className="custom-select-rich-value" aria-hidden="true">
+            {renderChoice(selected, selectedOption.label)}
+          </span>
+        )}
+        <span className="custom-select-chevron" aria-hidden="true">
+          <Icon name="chevron-down" />
         </span>
-        <Icon name="chevron-down" />
-      </button>
+      </span>
       {open && (
         <div
           ref={popup}
@@ -258,7 +283,8 @@ export default function CustomSelect(props: Props) {
           role="listbox"
           aria-label={props['aria-label'] ?? (label || undefined)}
         >
-          {options.map((option, index) => (
+          {!visible.length && <p role="status">{uiText('ui.autocomplete.noMatches')}</p>}
+          {visible.map(({ option, index }) => (
             <div
               key={`${option.value}-${index}`}
               id={`${listId}-${index}`}

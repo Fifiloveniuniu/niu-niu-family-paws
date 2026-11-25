@@ -125,3 +125,44 @@
 .custom-select > .custom-select-trigger {
   border: 1px solid var(--md-outline-variant);
 }
+
+.custom-select-field {
+  position: relative;
+  display: grid;
+  min-width: 0;
+}
+.custom-select-field input.custom-select-trigger {
+  padding-right: 36px;
+  cursor: text;
+  box-sizing: border-box;
+}
+.custom-select-chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+}
+.custom-select-chevron svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.custom-select-field input[data-rich] {
+  color: transparent !important;
+}
+.custom-select-rich-value {
+  position: absolute;
+  left: 12px;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

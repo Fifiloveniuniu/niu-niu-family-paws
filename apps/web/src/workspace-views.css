@@ -225,17 +225,6 @@
     grid-row: 1;
     text-align: end;
   }
-  .activity-after-cell {
-    grid-column: 2;
-    grid-row: 2 / 4;
-    text-align: end;
-  }
-  .activity-after-cell::before {
-    content: attr(data-label);
-    display: block;
-    color: var(--md-on-surface-variant);
-    font-size: 11px;
-  }
   .activity-detail-cell {
     grid-column: 3;
     grid-row: 1 / 4;

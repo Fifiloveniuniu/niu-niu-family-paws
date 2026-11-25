@@ -1,3 +1,4 @@
+import { useDialogState, DIALOG_PENDING } from './dialog-routing';
 import Button from './button';
 import IconButton from './icon-button';
 import LocationLabel from './location-label';
@@ -44,7 +45,29 @@ export default function Houses({
   const [uncertain, setUncertain] = React.useState(false);
   const [error, setError] = React.useState<keyof typeof englishMessages | null>(null);
   const [saved, setSaved] = React.useState(false);
-  const [editor, setEditor] = React.useState<{ id: string; input: HouseWrite } | null>(null);
+  const [editor, setEditor] = useDialogState<{ id: string; input: HouseWrite } | null>(
+    'house-edit',
+    null,
+    {
+      encode: (value) => (value ? (value.input.version ? value.id : 'new') : null),
+      decode: (raw) => {
+        if (loading) return DIALOG_PENDING;
+        const house = raw === 'new' ? undefined : items.find((item) => item.id === raw);
+        if (raw !== 'new' && !house) throw Error('House unavailable');
+        const input: HouseWrite = house
+          ? {
+              name: house.name,
+              address: house.address,
+              timezone: house.timezone,
+              version: house.version,
+            }
+          : { name: '', address: '', timezone: '', version: 0 };
+        baseline.current = JSON.stringify(input);
+        return { id: house?.id ?? crypto.randomUUID(), input };
+      },
+    },
+    [items, loading],
+  );
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null);
   const generation = React.useRef(0);

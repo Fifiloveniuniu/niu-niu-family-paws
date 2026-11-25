@@ -1,3 +1,4 @@
+import { useDialogState, DIALOG_PENDING } from './dialog-routing';
 import Button from './button';
 import IconButton from './icon-button';
 import LocationLabel from './location-label';
@@ -37,7 +38,29 @@ export default function Rooms({
   const [error, setError] = React.useState('');
   const [saving, setSaving] = React.useState(false);
   const [uncertain, setUncertain] = React.useState(false);
-  const [editor, setEditor] = React.useState<{ id: string; input: RoomWrite } | null>(null);
+  const [editor, setEditor] = useDialogState<{ id: string; input: RoomWrite } | null>(
+    'room-edit',
+    null,
+    {
+      encode: (value) => (value ? (value.input.version ? value.id : 'new') : null),
+      decode: (raw) => {
+        if (loading) return DIALOG_PENDING;
+        const room = raw === 'new' ? undefined : rooms.find((item) => item.id === raw);
+        if (raw !== 'new' && !room) throw Error('Room unavailable');
+        const input: RoomWrite = room
+          ? {
+              name: room.name,
+              capacity: room.capacity ?? 0,
+              costs: { ...room.costs },
+              version: room.version,
+            }
+          : { name: '', capacity: 0, costs: {}, version: 0 };
+        baseline.current = JSON.stringify(input);
+        return { id: room?.id ?? crypto.randomUUID(), input };
+      },
+    },
+    [rooms, loading],
+  );
   const baseline = React.useRef('');
   const form = React.useRef<HTMLFormElement>(null);
   const generation = React.useRef(0);

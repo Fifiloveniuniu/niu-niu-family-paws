@@ -1,3 +1,5 @@
+import { useDialogState } from './dialog-routing';
+import { dialogCustomer } from './dialog-records';
 import Button from './button';
 import SearchInput from './search-input';
 import IconButton from './icon-button';
@@ -61,7 +63,33 @@ export default function Customers({
   const [loaded, setLoaded] = React.useState(false);
   const [message, setMessage] = React.useState<keyof typeof englishMessages | null>(null);
   const [error, setError] = React.useState<keyof typeof englishMessages | null>(null);
-  const [editor, setEditor] = React.useState<{ id: string; input: CustomerWrite } | null>(null);
+  const [editor, setEditor] = useDialogState<{ id: string; input: CustomerWrite } | null>(
+    'customer-edit',
+    null,
+    {
+      encode: (value) => (value ? (value.input.version ? value.id : 'new') : null),
+      decode: async (raw, signal) => {
+        const customer = raw === 'new' ? null : await dialogCustomer(raw, signal);
+        const input: CustomerWrite = customer
+          ? {
+              name: customer.name,
+              email: customer.email,
+              phone: customer.phone,
+              language: customer.language,
+              version: customer.version,
+            }
+          : {
+              name: '',
+              email: '',
+              phone: '',
+              language: profileLanguage(i18n.language),
+              version: 0,
+            };
+        baseline.current = JSON.stringify(input);
+        return { id: customer?.id ?? crypto.randomUUID(), input };
+      },
+    },
+  );
   const [uncertain, setUncertain] = React.useState(false);
   const [search, setSearch] = React.useState(
     () => new URLSearchParams(location.search).get('customerSearch') || '',
@@ -75,7 +103,10 @@ export default function Customers({
     loginEmail: string | null;
   } | null>(null);
   const [linkBusy, setLinkBusy] = React.useState(false);
-  const [linkCustomer, setLinkCustomer] = React.useState<string | null>(null);
+  const [linkCustomer, setLinkCustomer] = useDialogState<string | null>('customer-link', null, {
+    encode: (value) => value,
+    decode: async (raw, signal) => (await dialogCustomer(raw, signal)).id,
+  });
   const request = React.useRef(0);
   const alive = React.useRef(true);
   const baseline = React.useRef('');

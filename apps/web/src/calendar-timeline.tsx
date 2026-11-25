@@ -80,7 +80,7 @@ export function CalendarAxis({
                   {uiText('ui.calendarAnnotations.holiday')}
                 </small>
               )}
-              {view !== 'day' && (
+              {view !== 'day' && view !== 'year' && (
                 <strong>
                   {new Intl.DateTimeFormat(locale, { timeZone: zone, day: 'numeric' }).format(date)}
                 </strong>
@@ -180,6 +180,55 @@ export function CalendarViewport({
     if (viewport.firstElementChild) observer.observe(viewport.firstElementChild);
     update();
     return () => observer.disconnect();
+  }, []);
+  React.useLayoutEffect(() => {
+    const viewport = ref.current;
+    if (!viewport) return;
+    const dialog = viewport.closest('.hc-booking-dialog');
+    const toolbar = dialog
+      ? dialog.querySelector('.dialog-fixed-header')
+      : viewport.closest('.hc')?.querySelector('.marketing-header, .hc-top');
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const axis = viewport.querySelector<HTMLElement>('.calendar-timeline-axis');
+      if (!axis) return;
+      const bounds = viewport.getBoundingClientRect();
+      const boundary = toolbar?.getBoundingClientRect().bottom ?? 0;
+      const context = !dialog && document.querySelector('.workspace-context');
+      const top = context ? Math.max(boundary, context.getBoundingClientRect().bottom) : boundary;
+      // Keep the axis in its original flow until it reaches the toolbar, then
+      // translate within the horizontally pannable frame until its last row.
+      const offset = Math.max(0, Math.min(top - bounds.top, bounds.height - axis.offsetHeight));
+      viewport.style.setProperty('--calendar-axis-offset', `${offset}px`);
+      const marker = viewport.querySelector<HTMLElement>('.workspace-now-marker');
+      const dates = axis.querySelector<HTMLElement>('.calendar-timeline-axis-track');
+      if (marker && dates && marker.parentElement) {
+        // The line and its label share one origin immediately below the dates.
+        // Measure the translated date track so both follow the sticky axis.
+        const lineTop =
+          dates.getBoundingClientRect().bottom - marker.parentElement.getBoundingClientRect().top;
+        marker.style.top = `${lineTop}px`;
+      }
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const observer = new ResizeObserver(schedule);
+    observer.observe(viewport);
+    if (toolbar) observer.observe(toolbar);
+    const mutation = new MutationObserver(schedule);
+    mutation.observe(viewport, { childList: true, subtree: true });
+    document.addEventListener('scroll', update, true);
+    window.addEventListener('resize', schedule);
+    update();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      mutation.disconnect();
+      document.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', schedule);
+    };
   }, []);
   return (
     <>

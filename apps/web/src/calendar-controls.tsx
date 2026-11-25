@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from './icons';
+import Button from './button';
 import SegmentedTabs from './segmented-tabs';
 import { useWorkspaceText } from './workspace-text';
 import type { CalendarView } from './workspace-calendar';
@@ -38,10 +39,16 @@ export default function CalendarControls({
         >
           <Icon name="chevron-left" />
         </button>
-        <button type="button" disabled={disabled} onClick={onToday}>
-          <Icon name="calendar" />
+        <Button
+          variant="secondary"
+          className="calendar-today"
+          icon="calendar"
+          type="button"
+          disabled={disabled}
+          onClick={onToday}
+        >
           {t('today')}
-        </button>
+        </Button>
         <button
           type="button"
           disabled={disabled}

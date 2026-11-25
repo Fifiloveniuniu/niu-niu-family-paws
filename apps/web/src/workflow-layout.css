@@ -335,3 +335,13 @@ html[data-ui-style] .hc .app-dialog.workflow-dialog > .dialog-heading {
   padding: 0;
   align-items: center;
 }
+
+.holiday-country-group {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.holiday-country-group h3 {
+  margin: 0;
+  font-size: 16px;
+}

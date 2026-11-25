@@ -2,6 +2,8 @@ import Button from './button';
 import React from 'react';
 import CustomAutocomplete from './custom-autocomplete';
 import { apiJson } from './api-client';
+import { auth } from './auth-client';
+import { findCustomerById } from './customer-lookup';
 import { uiText } from './i18n.ts';
 import { petKey, type Customer, type PetRow } from './workspace-data';
 import { PetOption, WorkspaceAvatar } from './workspace-photos';
@@ -61,6 +63,7 @@ export function CustomerPicker({
   initial = [],
   disabled = false,
   required = false,
+  allowAll = false,
 }: {
   value: string;
   label: string;
@@ -68,6 +71,7 @@ export function CustomerPicker({
   initial?: Customer[];
   disabled?: boolean;
   required?: boolean;
+  allowAll?: boolean;
 }) {
   const [query, setQuery] = React.useState('');
   const choices = useChoices<Customer>(
@@ -75,9 +79,26 @@ export function CustomerPicker({
     initial,
   );
   const selected = React.useRef<Customer | undefined>(undefined);
-  const match = [...choices.items, ...initial].find((item) => item.id === value);
+  const [resolved, setResolved] = React.useState<Customer>();
+  const match = [...choices.items, ...initial, ...(resolved ? [resolved] : [])].find(
+    (item) => item.id === value,
+  );
   if (match) selected.current = match;
   if (selected.current?.id !== value) selected.current = undefined;
+  const missingSelection = Boolean(value && !selected.current);
+  React.useEffect(() => {
+    if (!missingSelection) return;
+    const controller = new AbortController();
+    void (async () => {
+      const token = await auth.currentUser?.getIdToken();
+      if (!token || controller.signal.aborted) return;
+      const customer = await findCustomerById(value, token, controller.signal);
+      if (!controller.signal.aborted) setResolved(customer);
+    })().catch(() => {
+      // The directory retry remains available; never invent a selected label.
+    });
+    return () => controller.abort();
+  }, [value, missingSelection]);
   const items = [
     ...new Map(
       [...(selected.current ? [selected.current] : []), ...choices.items].map((item) => [
@@ -93,11 +114,14 @@ export function CustomerPicker({
         value={value}
         disabled={disabled}
         required={required}
-        options={items.map((item) => ({
-          value: item.id,
-          label: item.name,
-          search: [item.name, item.email, item.phone, item.loginEmail].filter(Boolean).join(' '),
-        }))}
+        options={[
+          ...(allowAll ? [{ value: '', label: uiText('ui.workspace.allCustomers') }] : []),
+          ...items.map((item) => ({
+            value: item.id,
+            label: item.name,
+            search: [item.name, item.email, item.phone, item.loginEmail].filter(Boolean).join(' '),
+          })),
+        ]}
         onChange={onChange}
         onQueryChange={setQuery}
         onMore={choices.more}
