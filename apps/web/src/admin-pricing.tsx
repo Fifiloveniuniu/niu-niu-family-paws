@@ -1,4 +1,5 @@
-import { holidayPresets } from './holiday-presets';
+import type { HolidayCatalog } from '../../../packages/pricing/holiday-catalog';
+import { useDialogState, DIALOG_PENDING } from './dialog-routing';
 import PriceNameEditor from './price-name-editor';
 import { priceName } from './price-label';
 import Button from './button';
@@ -68,12 +69,42 @@ function Editor({
   const [dates, setDates] = React.useState(config.holidays);
   const [date, setDate] = React.useState('');
   const [year, setYear] = React.useState(new Date().getFullYear());
-  const presets = holidayPresets(year);
+  const [catalogs, setCatalogs] = React.useState<Record<number, HolidayCatalog>>({});
+  const [catalogError, setCatalogError] = React.useState(false);
+  React.useEffect(() => {
+    if (!holidays) return;
+    const abort = new AbortController();
+    setCatalogError(false);
+    const years = [...new Set([year, ...dates.map((day) => Number(day.slice(0, 4)))])].filter(
+      (value) => !catalogs[value],
+    );
+    void Promise.all(
+      years.map(
+        async (value) =>
+          [
+            value,
+            await apiJson<HolidayCatalog>('/public/holiday-presets?year=' + value, {
+              signal: abort.signal,
+            }),
+          ] as const,
+      ),
+    )
+      .then((entries) => {
+        if (!abort.signal.aborted)
+          setCatalogs((old) => ({ ...old, ...Object.fromEntries(entries) }));
+      })
+      .catch(() => {
+        if (!abort.signal.aborted) setCatalogError(true);
+      });
+    return () => abort.abort();
+  }, [year, holidays, dates.map((day) => day.slice(0, 4)).join(',')]);
   const holidayText = (key: string) => uiText('ui.holidayPresets.' + key);
-  const holidayName = (day: string) => {
-    const preset = holidayPresets(Number(day.slice(0, 4))).find((item) => item.date === day);
-    return preset ? holidayText(preset.key) : t('date');
-  };
+  const holidayName = (day: string) =>
+    catalogs[Number(day.slice(0, 4))]?.groups
+      .flatMap((group) => group.entries)
+      .filter((item) => item.date === day)
+      .map((item) => holidayText(item.key))
+      .join(' / ') || holidayText('custom');
   const [percent, setPercent] = React.useState(config.holidayPercent);
   const [saving, setSaving] = React.useState(false),
     [uncertain, setUncertain] = React.useState(false),
@@ -192,6 +223,7 @@ function Editor({
                         new Date().getFullYear(),
                         new Date().getFullYear() + 1,
                         new Date().getFullYear() + 2,
+                        ...(catalogs[year]?.years ?? []),
                         ...dates.map((day) => Number(day.slice(0, 4))),
                       ]),
                     )
@@ -203,27 +235,46 @@ function Editor({
                       ))}
                   </CustomSelect>
                 </label>
-                <div className="holiday-preset-list">
-                  {presets.map((item) => (
-                    <label key={item.date}>
-                      <input
-                        type="checkbox"
-                        checked={dates.includes(item.date)}
-                        onChange={(event) =>
-                          setDates(
-                            event.target.checked
-                              ? [...dates, item.date].sort()
-                              : dates.filter((day) => day !== item.date),
-                          )
-                        }
-                      />
-                      <span>
-                        <strong>{holidayText(item.key)}</strong>
-                        <time dateTime={item.date}>{item.date}</time>
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                {catalogError && <p role="alert">{holidayText('unavailable')}</p>}
+                {!catalogs[year] && !catalogError && (
+                  <p role="status">{uiText('ui.workspace.loading')}</p>
+                )}
+                {catalogs[year] && !catalogs[year].available && (
+                  <p role="status">{holidayText('unavailable')}</p>
+                )}
+                {catalogs[year]?.groups.map((group) => (
+                  <section
+                    className="holiday-country-group"
+                    key={group.country}
+                    aria-label={holidayText('country.' + group.country)}
+                  >
+                    <h3>{holidayText('country.' + group.country)}</h3>
+                    {!group.complete && (
+                      <p className="workspace-field-note">{holidayText('partial')}</p>
+                    )}
+                    <div className="holiday-preset-list">
+                      {group.entries.map((item) => (
+                        <label key={item.key + ':' + item.date}>
+                          <input
+                            type="checkbox"
+                            checked={dates.includes(item.date)}
+                            onChange={(event) =>
+                              setDates(
+                                event.target.checked
+                                  ? [...new Set([...dates, item.date])].sort()
+                                  : dates.filter((day) => day !== item.date),
+                              )
+                            }
+                          />
+                          <span>
+                            <strong>{holidayText(item.key)}</strong>
+                            <time dateTime={item.date}>{item.date}</time>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </section>
+                ))}
                 <details className="holiday-custom-date">
                   <summary>{holidayText('custom')}</summary>
                   <div className="workspace-field-pair">
@@ -438,8 +489,22 @@ export default function AdminPricing() {
     [loading, setLoading] = React.useState(true),
     [error, setError] = React.useState('');
   const [kind, setKind] = React.useState<PriceRate['kind']>('boarding');
-  const [editor, setEditor] = React.useState<false | { existing?: PriceRate; holidays?: boolean }>(
+  const [editor, setEditor] = useDialogState<false | { existing?: PriceRate; holidays?: boolean }>(
+    'price',
     false,
+    {
+      encode: (value) =>
+        value === false ? null : value.holidays ? 'holidays' : (value.existing?.id ?? 'new'),
+      decode: (raw) => {
+        if (!config) return DIALOG_PENDING;
+        if (raw === 'new') return {};
+        if (raw === 'holidays') return { holidays: true };
+        const existing = config.rates.find((item) => item.id === raw);
+        if (!existing) throw Error('Price unavailable');
+        return { existing };
+      },
+    },
+    [config],
   );
   const [revision, reload] = React.useReducer((value) => value + 1, 0);
   React.useEffect(() => {
