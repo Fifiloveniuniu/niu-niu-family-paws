@@ -165,7 +165,6 @@ export function RecordList({
       {children}
       {list.error && <p role="alert">{uiText('ui.workspace.loadError')}</p>}
       <LoadMore
-        root={root}
         hasMore={!!list.nextCursor}
         loading={list.loading && list.enabled}
         error={list.error}

@@ -671,7 +671,6 @@ export default function Customers({
 
             {!onlyMine && (
               <LoadMore
-                root={listScroll}
                 hasMore={!!cursor}
                 loading={loading}
                 error={!!error && !editor}

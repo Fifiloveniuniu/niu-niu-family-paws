@@ -3,9 +3,6 @@ test('customer lists append batches, retry without losing rows and reset on sear
   page,
   request,
 }) => {
-  await page.addInitScript(() => {
-    delete (window as any).IntersectionObserver;
-  });
   const fixture = await (await request.get('/__test-fixture')).json();
   await page.goto('/app/customers/?lang=en');
   await page.evaluate(async (jwt) => {

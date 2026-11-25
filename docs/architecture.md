@@ -1,3 +1,7 @@
+## Explicit record continuation — 2026-11-25
+
+`LoadMore` now invokes continuation only from its button; it has no observer, sentinel or scroll-root dependency. Customers, Pets and `RecordList` share that control. Loading uses `aria-disabled` plus an activation guard so keyboard focus stays on the existing button while requests run; parent-disabled states remain natively disabled. The bounded cursor hooks, desktop/phone/dialog layouts, scoped record retention, retry behavior and complete exports are unchanged. Direct saved-pet resolution and canonical own-profile searches retain their intentional target-discovery reads. This supersedes the observer behavior described below.
+
 ## Shared continuous record lists — 2026-11-24
 
 `record-list.tsx` owns the shared bounded 25-record cursor loader for balances/activity, Access, Payments and pet-dialog history. Its query/refresh scope isolates responses, aborts stale requests, retains rows on continuation failure, ignores duplicate canonical IDs and rejects repeated continuations. `record-list-state.ts` includes owner/pet/event-kind scope in identities; Access uses immutable UIDs. Successful batches remain in component memory when a subsection pauses. Scroll positions are per query scope. Payment reads adapt their existing charge/card envelope without changing the test-payment API or enabling collection.
