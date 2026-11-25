@@ -402,7 +402,7 @@ export default function Pets({
             >
               <PetPhoto pet={pet} />
             </button>
-            <div>
+            <div className="pet-card-info">
               <h4>
                 <a
                   href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}
@@ -413,6 +413,7 @@ export default function Pets({
                   }}
                 >
                   {pet.name}
+                  <Icon name="chevron-right" className="pet-card-open-icon" />
                 </a>
               </h4>
               <p>
@@ -424,6 +425,16 @@ export default function Pets({
                       weight: new Intl.NumberFormat(localeFor(i18n.language)).format(pet.weightKg),
                     })}
               </p>
+            </div>
+            <IconButton
+              title={labels.edit}
+              aria-label={`${labels.edit}: ${pet.name}`}
+              disabled={blocked}
+              onClick={() => open(pet)}
+            >
+              <Icon name="edit" />
+            </IconButton>
+            <div className="pet-card-footer">
               {pet.photoCredit && (
                 <p className="pet-photo-credit">
                   {uiText('ui.pets.testPhoto', {}, i18n.language)} · {pet.photoCredit.creator} ·{' '}
@@ -437,14 +448,6 @@ export default function Pets({
                 </p>
               )}
               <DemoBalanceLink customerId={pet.customerId} petId={pet.id} />
-              <IconButton
-                title={labels.edit}
-                aria-label={`${labels.edit}: ${pet.name}`}
-                disabled={blocked}
-                onClick={() => open(pet)}
-              >
-                <Icon name="edit" />
-              </IconButton>
             </div>
           </article>
         ))}

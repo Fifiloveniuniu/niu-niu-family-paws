@@ -1,3 +1,33 @@
+## Customer/pet redesign PR — 2026-11-24
+
+Submitted the compact customer/pet redesign as [PR #201](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/201), targeting main through `gh stack`. Code commit `4456f8a` has a valid verified GitHub signature. Build CI and checked merge are the delivery gate; no production workflow dispatch is part of this UI change. Repository auto-merge remains disabled and the connected account is not an administrator, so use the previously authorized normal checked merge after CI/signature verification. Final design keeps the owner's Undo (previous customer selection colors), and includes the subsequently requested right-panel and pet-row fixes described below. Screenshots and validation are in this PR. Review/merge status on GitHub is authoritative.
+
+## Customer and pet UI finalized — local branch, 2026-11-24
+
+Final scope on `feat/customer-workspace-redesign`: compact desktop filters and directory; canonical customer header with grouped actions/contact/language; compact right-hand pet list and pagination. Pet rows align avatar/name/species/weight with a separate edit action, full-row detail target and explicit opening chevron. Photo credits and existing demo balance shortcuts have their own supporting row. Avatar/photo hit areas share 52px dimensions and 8px corners; whole-row keyboard focus matches hover/selection. The owner's **Undo** restored the previous customer-selection colors and left stripe; do not reapply the rejected solid background/white-text experiment without another request.
+
+Customer editor/link modals now live outside the phone-hidden directory, and save/error messages remain visible in the selected-customer view. Full canonical customer records refresh the selected header after directory/link reloads. Existing business APIs/rules remain unchanged. Preserve EN/zh/es, themes and customer/admin pet sizing. Review images: `docs/review/customer-workspace-2026-11-24/` (demo records only).
+
+Validation: production build/API typecheck/format/whitespace and 98 Node 24 unit tests pass; actual localhost headless Chrome walked EN/zh/es phones, customer edit/link, photo-bearing pet detail/edit, avatar geometry and keyboard outlines. PR-boundary headless Chrome ran all 105 scenarios (98 initially passed); fixed the seven failing cases and verified all 12 affected customer/dialog/toolbar scenarios in targeted rechecks. Current test edits follow the new select-customer-then-edit flow and explicitly establish keyboard intent before checking keyboard-only focus. The final EN/zh/es pet-modal scenarios passed for both administrator and customer views, including matching avatar sizes. Production release remains deferred under the existing combined-release boundaries. Earlier local-only notes below describe the iteration history.
+
+## Avatar outline geometry corrected — local, 2026-11-24
+
+Owner clarified avatar/outline mismatch. Compact pet photos were 52px inside the old 64px photo button. The photo, button and rounded hover/focus outline now share 52px dimensions and 8px corners. Removed the competing shared hover shadow on photo/name buttons with scoped specificity; keyboard focus remains visible on the avatar/whole customer row. Actual localhost headless Chrome checks verified equal photo/button dimensions, matching corners, inset outlines, no duplicate shadows and functioning pet dialog. Build and formatting/whitespace pass. No commit, PR or deployment.
+
+## Customer focus outlines aligned — local, 2026-11-24
+
+Owner reported outlines not matching hover/selection. Customer keyboard focus now uses one inset ring on the same rounded row as hover/selection; removed the duplicate text-button focus shadow/outline. Programmatically focused list/detail regions no longer draw a large rectangular panel outline. Pet selected outline is inset to its card. Actual localhost headless Chrome desktop/phone walkthrough verified row radius, inset ring, absence of duplicate focus shadow and panel outline; production build/format/whitespace pass. No commit, PR or deployment.
+
+## Compact customer workspace follow-up — local, 2026-11-24
+
+Owner requested a more compact UI, especially filters. Reduced page/list/profile/pet spacing and avatar sizes. Desktop filters now occupy one row with customer search, pet search, reset and Only my pets; fixed the pet-search submit button wrapping below its input. Narrow screens retain stacked fields and touch-sized actions. Actual localhost headless Chrome walkthrough passed edit/link dialogs and EN/zh/es phone list/detail navigation with no horizontal overflow or JS errors. Production build/format/whitespace pass. Still local on the redesign branch; no commit, push, PR or deployment.
+
+## Customer workspace redesign — local preview, 2026-11-24
+
+Owner requested a cleaner, more intuitive redesign of the selected customer page. Local branch `feat/customer-workspace-redesign` simplifies the directory into compact selection rows, moves repeated edit/link/view-as actions to the selected customer header, shows canonical contact/language/account details there, and gives pets a wider focused panel. Add customer sits in the page heading; searches share a quiet grouped surface. Phone navigation retains list/detail and focused dialogs. Canonical full customer lookup also supports actions when selection originates from pet search or a later directory page. Existing API writes and business rules are unchanged.
+
+Validation: production build, changed-file Prettier and diff whitespace pass. Actual localhost headless Chrome walkthrough opened edit/link dialogs without saving, navigated phone list/detail in EN/zh/es, and checked no horizontal overflow or JavaScript errors. Review captures are `/tmp/customer-redesign/` (temporary local files). Full Chrome regression remains reserved for PR submission. No commit, push, PR or deployment in this iteration; owner can review the running localhost page. Preserve the existing production-release boundaries above.
+
 ## GitHub review and delivery links — 2026-11-24
 
 The owner authorized opening and merging the validated work. Submitted after the 5 PM PST restriction as native GitHub stack #200, ultimately targeting main. These links are the current delivery path and authoritative merge status, superseding earlier local-only notes:

@@ -78,6 +78,7 @@ for (const [palette, language, width] of [
     await page.goto(`/app/customers/?lang=${language}`);
     await page.getByRole('button', { name: t('ui.customers.labels').add, exact: true }).click();
     await checkDialog();
+    await page.locator('.customer-directory-panel .customer-select').first().click();
     await page
       .getByRole('button', { name: new RegExp('^' + t('ui.customers.labels').edit + ':') })
       .first()

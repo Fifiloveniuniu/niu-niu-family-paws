@@ -97,11 +97,9 @@ export default function Customers({
   const [activeSearch, setActiveSearch] = React.useState(
     () => new URLSearchParams(location.search).get('customerSearch') || '',
   );
-  const [petCustomer, setPetCustomer] = React.useState<{
-    id: string;
-    name: string;
-    loginEmail: string | null;
-  } | null>(null);
+  const [petCustomer, setPetCustomer] = React.useState<
+    (Pick<Customer, 'id' | 'name' | 'loginEmail'> & Partial<Customer>) | null
+  >(null);
   const [linkBusy, setLinkBusy] = React.useState(false);
   const [linkCustomer, setLinkCustomer] = useDialogState<string | null>('customer-link', null, {
     encode: (value) => value,
@@ -163,6 +161,9 @@ export default function Customers({
       const page = await customerRequest<components['schemas']['CustomerPage']>('?' + params);
       if (!alive.current || generation !== request.current) return;
       setItems(page.items);
+      setPetCustomer((previous) =>
+        previous ? (page.items.find((item) => item.id === previous.id) ?? previous) : previous,
+      );
       setCursor(page.nextCursor);
       setLoaded(true);
     } catch (error) {
@@ -243,9 +244,8 @@ export default function Customers({
       try {
         const token = await auth.currentUser?.getIdToken();
         if (!token) return;
-        const customerRecord = lookup
-          ? await findPetCustomer(customer, pet, lookup, token, controller.signal)
-          : await findCustomerById(customer, token, controller.signal);
+        if (lookup) await findPetCustomer(customer, pet, lookup, token, controller.signal);
+        const customerRecord = await findCustomerById(customer, token, controller.signal);
         if (active) setPetCustomer(customerRecord);
       } catch {
         if (active) setError('error');
@@ -325,9 +325,12 @@ export default function Customers({
       <div className="customer-heading">
         <div>
           <h2 id="customers-title">{labels.title}</h2>
+          <p className="customer-workspace-intro">{uiText('ui.customerView.intro')}</p>
         </div>
+        <Button icon="plus" variant="primary" disabled={saving || uncertain} onClick={() => open()}>
+          {labels.add}
+        </Button>
       </div>
-      <p className="customer-workspace-intro">{uiText('ui.customerView.intro')}</p>
       <section className="customer-filters" aria-label={uiText('ui.customers.customerFilters')}>
         <div className="customer-filter-toolbar">
           <div className="customer-filter-fields">
@@ -375,14 +378,6 @@ export default function Customers({
             >
               <Icon name="reset" />
             </IconButton>
-            <Button
-              icon="plus"
-              variant="primary"
-              disabled={saving || uncertain}
-              onClick={() => open()}
-            >
-              {labels.add}
-            </Button>
           </div>
         </div>
         <label className="customer-ownership-filter">
@@ -406,6 +401,138 @@ export default function Customers({
           <p>{uiText('ui.customers.saveYourProfileFromTheAccountMenuToFind')}</p>
         )}
       </section>
+      {message && <p role="status">{labels[message]}</p>}
+      {!editor && error && <p role="alert">{labels[error]}</p>}
+      {editor && (
+        <Modal
+          title={editor.input.version ? labels.edit : labels.add}
+          disabled={saving || uncertain}
+          onClose={() => {
+            if (confirmDiscardChanges(i18n.language, form.current)) {
+              setEditor(null);
+              setError(null);
+            }
+          }}
+        >
+          <form ref={form} className="customer-form" onSubmit={(event) => void save(event)}>
+            <UnsavedChanges
+              active={JSON.stringify(editor.input) !== baseline.current || saving || uncertain}
+            />
+            {error && <p role="alert">{labels[error]}</p>}
+            {!editor.input.version && (
+              <p className="customer-intro">
+                {uiText('ui.customers.savingContactDetailsDoesNotCreateALoginOr')}
+              </p>
+            )}
+            <fieldset disabled={saving || uncertain}>
+              <label>
+                {labels.name}
+                <input
+                  name="name"
+                  autoComplete="name"
+                  required
+                  maxLength={120}
+                  value={editor.input.name}
+                  onChange={(event) =>
+                    setEditor({
+                      ...editor,
+                      input: { ...editor.input, name: event.target.value },
+                    })
+                  }
+                />
+              </label>
+              <label>
+                {labels.email}
+                <input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  maxLength={254}
+                  value={editor.input.email}
+                  onChange={(event) =>
+                    setEditor({
+                      ...editor,
+                      input: { ...editor.input, email: event.target.value },
+                    })
+                  }
+                />
+              </label>
+              <label>
+                {labels.phone}
+                <input
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  maxLength={40}
+                  value={editor.input.phone}
+                  onChange={(event) =>
+                    setEditor({
+                      ...editor,
+                      input: { ...editor.input, phone: event.target.value },
+                    })
+                  }
+                />
+              </label>
+              <label>
+                {labels.language}
+                <CustomSelect
+                  value={editor.input.language}
+                  onChange={(event) =>
+                    setEditor({
+                      ...editor,
+                      input: { ...editor.input, language: event.target.value },
+                    })
+                  }
+                >
+                  {supportedLanguages.map(({ code, name, htmlLang }) => (
+                    <option key={code} value={code} lang={htmlLang}>
+                      {name}
+                    </option>
+                  ))}
+                </CustomSelect>
+              </label>
+            </fieldset>
+            <div className="portal-actions">
+              <Button
+                icon="check"
+                variant="primary"
+                disabled={saving || error === 'conflict' || error === 'forbidden'}
+                type="submit"
+              >
+                {saving ? labels.saving : uncertain ? labels.retry : labels.save}
+              </Button>
+              <Button
+                icon="close"
+                variant="secondary"
+                type="button"
+                disabled={saving || uncertain}
+                onClick={() => {
+                  if (confirmDiscardChanges(i18n.language, form.current)) {
+                    setEditor(null);
+                    setError(null);
+                  }
+                }}
+              >
+                {labels.cancel}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
+      {linkCustomer && (
+        <Modal
+          title={uiText('ui.customers.linkAGoogleAccount')}
+          disabled={linkBusy}
+          onClose={() => setLinkCustomer(null)}
+        >
+          <AdminAccountLink
+            key={linkCustomer}
+            customerId={linkCustomer}
+            onBusyChange={setLinkBusy}
+            onLinked={() => void load()}
+          />
+        </Modal>
+      )}
       <div className="customer-pet-layout">
         <div
           ref={directoryPanel}
@@ -414,123 +541,6 @@ export default function Customers({
           role="region"
           aria-label={uiText('ui.customers.customerList')}
         >
-          {message && <p role="status">{labels[message]}</p>}
-          {error && <p role="alert">{labels[error]}</p>}
-          {editor && (
-            <Modal
-              title={editor.input.version ? labels.edit : labels.add}
-              disabled={saving || uncertain}
-              onClose={() => {
-                if (confirmDiscardChanges(i18n.language, form.current)) {
-                  setEditor(null);
-                  setError(null);
-                }
-              }}
-            >
-              <form ref={form} className="customer-form" onSubmit={(event) => void save(event)}>
-                <UnsavedChanges
-                  active={JSON.stringify(editor.input) !== baseline.current || saving || uncertain}
-                />
-                {!editor.input.version && (
-                  <p className="customer-intro">
-                    {uiText('ui.customers.savingContactDetailsDoesNotCreateALoginOr')}
-                  </p>
-                )}
-                <fieldset disabled={saving || uncertain}>
-                  <label>
-                    {labels.name}
-                    <input
-                      name="name"
-                      autoComplete="name"
-                      required
-                      maxLength={120}
-                      value={editor.input.name}
-                      onChange={(event) =>
-                        setEditor({
-                          ...editor,
-                          input: { ...editor.input, name: event.target.value },
-                        })
-                      }
-                    />
-                  </label>
-                  <label>
-                    {labels.email}
-                    <input
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      maxLength={254}
-                      value={editor.input.email}
-                      onChange={(event) =>
-                        setEditor({
-                          ...editor,
-                          input: { ...editor.input, email: event.target.value },
-                        })
-                      }
-                    />
-                  </label>
-                  <label>
-                    {labels.phone}
-                    <input
-                      name="phone"
-                      type="tel"
-                      autoComplete="tel"
-                      maxLength={40}
-                      value={editor.input.phone}
-                      onChange={(event) =>
-                        setEditor({
-                          ...editor,
-                          input: { ...editor.input, phone: event.target.value },
-                        })
-                      }
-                    />
-                  </label>
-                  <label>
-                    {labels.language}
-                    <CustomSelect
-                      value={editor.input.language}
-                      onChange={(event) =>
-                        setEditor({
-                          ...editor,
-                          input: { ...editor.input, language: event.target.value },
-                        })
-                      }
-                    >
-                      {supportedLanguages.map(({ code, name, htmlLang }) => (
-                        <option key={code} value={code} lang={htmlLang}>
-                          {name}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </label>
-                </fieldset>
-                <div className="portal-actions">
-                  <Button
-                    icon="check"
-                    variant="primary"
-                    disabled={saving || error === 'conflict' || error === 'forbidden'}
-                    type="submit"
-                  >
-                    {saving ? labels.saving : uncertain ? labels.retry : labels.save}
-                  </Button>
-                  <Button
-                    icon="close"
-                    variant="secondary"
-                    type="button"
-                    disabled={saving || uncertain}
-                    onClick={() => {
-                      if (confirmDiscardChanges(i18n.language, form.current)) {
-                        setEditor(null);
-                        setError(null);
-                      }
-                    }}
-                  >
-                    {labels.cancel}
-                  </Button>
-                </div>
-              </form>
-            </Modal>
-          )}
           <div className="customer-heading directory-toolbar">
             <p>
               {loaded && !visibleItems.length && !loading
@@ -587,52 +597,10 @@ export default function Customers({
                     {languageName(customer.language)}
                   </span>
                 </div>
-                <div className="customer-row-actions">
-                  {onViewAs && (
-                    <IconButton
-                      type="button"
-                      title={uiText('ui.workspace.viewAs')}
-                      aria-label={`${uiText('ui.workspace.viewAs')}: ${customer.name}`}
-                      onClick={() => onViewAs(customer)}
-                    >
-                      <Icon name="account" />
-                    </IconButton>
-                  )}
-                  <IconButton
-                    title={labels.edit}
-                    aria-label={`${labels.edit}: ${customer.name}`}
-                    disabled={saving || uncertain}
-                    onClick={() => open(customer)}
-                  >
-                    <Icon name="edit" />
-                  </IconButton>
-                  {!customer.loginEmail && (
-                    <IconButton
-                      title={uiText('ui.customers.linkGoogleAccount')}
-                      aria-label={`${uiText('ui.customers.linkGoogleAccount')}: ${customer.name}`}
-                      onClick={() => setLinkCustomer(customer.id)}
-                    >
-                      <Icon name="link" />
-                    </IconButton>
-                  )}
-                </div>
+                <Icon name="chevron-right" className="customer-row-chevron" />
               </li>
             ))}
           </ul>
-          {linkCustomer && (
-            <Modal
-              title={uiText('ui.customers.linkAGoogleAccount')}
-              disabled={linkBusy}
-              onClose={() => setLinkCustomer(null)}
-            >
-              <AdminAccountLink
-                key={linkCustomer}
-                customerId={linkCustomer}
-                onBusyChange={setLinkBusy}
-                onLinked={() => void load()}
-              />
-            </Modal>
-          )}
 
           {loading && <p role="status">{labels.loading}</p>}
           {!onlyMine && (
@@ -689,8 +657,61 @@ export default function Customers({
                 >
                   {uiText('ui.customers.customers')}
                 </button>
-                <h3>{petCustomer.name}</h3>
-                {petCustomer.loginEmail && <p>{petCustomer.loginEmail}</p>}
+                <div className="customer-profile-summary">
+                  <span className="customer-profile-avatar" aria-hidden="true">
+                    <Icon name="account" />
+                  </span>
+                  <div className="customer-profile-copy">
+                    <p className="customer-profile-label">{labels.title}</p>
+                    <h3>{petCustomer.name}</h3>
+                    <div className="customer-profile-meta">
+                      <p>
+                        {[petCustomer.email, petCustomer.phone].filter(Boolean).join(' · ') ||
+                          labels.noContact}
+                      </p>
+                      {petCustomer.language && (
+                        <span className="customer-profile-language">
+                          {languageName(petCustomer.language)}
+                        </span>
+                      )}
+                    </div>
+                    {petCustomer.loginEmail && (
+                      <p>
+                        {labels.loginEmail}: {petCustomer.loginEmail}
+                      </p>
+                    )}
+                  </div>
+                  <div className="customer-profile-actions">
+                    {petCustomer.version != null && (
+                      <IconButton
+                        title={labels.edit}
+                        aria-label={`${labels.edit}: ${petCustomer.name}`}
+                        disabled={saving || uncertain}
+                        onClick={() => open(petCustomer as Customer)}
+                      >
+                        <Icon name="edit" />
+                      </IconButton>
+                    )}
+                    {!petCustomer.loginEmail && (
+                      <IconButton
+                        title={uiText('ui.customers.linkGoogleAccount')}
+                        aria-label={uiText('ui.customers.linkGoogleAccount')}
+                        onClick={() => setLinkCustomer(petCustomer.id)}
+                      >
+                        <Icon name="link" />
+                      </IconButton>
+                    )}
+                    {onViewAs && petCustomer.version != null && (
+                      <IconButton
+                        title={uiText('ui.workspace.viewAs')}
+                        aria-label={uiText('ui.workspace.viewAs')}
+                        onClick={() => onViewAs(petCustomer as Customer)}
+                      >
+                        <Icon name="account" />
+                      </IconButton>
+                    )}
+                  </div>
+                </div>
               </div>
               <Pets
                 routable

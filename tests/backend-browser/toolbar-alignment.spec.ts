@@ -29,12 +29,12 @@ for (const [language, width] of [
       name: messages['ui.customers.labels'].add,
       exact: true,
     });
-    await expect(page.locator('.customer-filter-actions')).toContainText(
+    await expect(page.locator('.customer-workspace > .customer-heading')).toContainText(
       messages['ui.customers.labels'].add,
     );
     await expect(add.locator('.paws-icon')).toHaveCount(1);
     if (width >= 1200) {
-      const action = (await add.boundingBox())!;
+      const action = (await page.locator('.customer-filter-actions button').boundingBox())!;
       for (const input of await page.locator('.customer-filter-fields input').all()) {
         const box = (await input.boundingBox())!;
         expect(Math.abs(box.y + box.height - action.y - action.height)).toBeLessThan(2);
@@ -70,14 +70,16 @@ for (const [language, width] of [
     const row = page.locator('.customer-directory-panel > .customer-list > li').first();
     await expect(row).toBeVisible();
     await row.hover();
-    const separation = await row.evaluate((node) => ({
-      margin: parseFloat(getComputedStyle(node).marginBottom),
-      divider: parseFloat(getComputedStyle(node, '::after').bottom),
+    const rowShape = await row.evaluate((node) => ({
+      radius: parseFloat(getComputedStyle(node).borderRadius),
       border: parseFloat(getComputedStyle(node).borderBottomWidth),
     }));
-    expect(separation.margin).toBeGreaterThanOrEqual(4);
-    expect(separation.divider).toBeLessThanOrEqual(-4);
-    expect(separation.border).toBe(0);
+    expect(rowShape.radius).toBeGreaterThan(0);
+    expect(rowShape.border).toBe(0);
+    await page.keyboard.press('Tab');
+    await row.locator('.customer-select').focus();
+    await expect(row).toHaveCSS('outline-offset', '-2px');
+    await expect(row.locator('.customer-select')).toHaveCSS('outline-style', 'none');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
