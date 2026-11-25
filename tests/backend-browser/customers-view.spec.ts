@@ -25,7 +25,9 @@ for (const [width, lang] of [
     await search.press('Enter');
     const row = page.locator('.customer-list > li');
     await expect(row).toHaveCount(1);
-    await row
+    await row.getByRole('button', { name: '[TEST] Alice', exact: true }).click();
+    await page
+      .locator('.customer-profile-actions')
       .getByRole('button', {
         name: lang === 'en' ? 'Edit customer: [TEST] Alice' : '编辑客户: [TEST] Alice',
         exact: true,
@@ -36,8 +38,8 @@ for (const [width, lang] of [
     await dialog.locator('input[name="phone"]').fill('555-0123');
     await dialog.locator('button[type="submit"]').click();
     await expect(dialog).toHaveCount(0);
-    await expect(row).toContainText('555-0123');
-    await row.getByRole('button', { name: '[TEST] Alice', exact: true }).click();
+    if (width >= 800) await expect(row).toContainText('555-0123');
+    await expect(page.locator('.customer-profile-copy')).toContainText('555-0123');
     await expect(page.locator('.admin-pets .pet-card')).toHaveCount(3);
     if (width < 800) {
       await expect(page.locator('.customer-directory-panel')).toBeHidden();
