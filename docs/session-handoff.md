@@ -1,3 +1,32 @@
+## GitHub review and delivery links — 2026-11-24
+
+The owner authorized opening and merging the validated work. Submitted after the 5 PM PST restriction as native GitHub stack #200, ultimately targeting main. These links are the current delivery path and authoritative merge status, superseding earlier local-only notes:
+
+- [PR #192: Manual production releases and PR validation](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/192)
+- [PR #193: Routable dialogs and calendar controls](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/193)
+- [PR #194: Firestore holiday reference catalog](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/194)
+- [PR #195: Guarded local test-payment booking funding](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/195)
+- [PR #196: Access UI and workspace tab priority](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/196)
+- [PR #197: Access backend, invitation acceptance and policy enforcement](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/197)
+- [PR #198: Current live-workspace browser regression](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/198)
+- [PR #199: Pet-dialog Escape/focus correction and delivery record](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/199)
+
+All submitted commit signatures were verified by GitHub (`verified: true`, reason `valid`). All eight PR build checks passed and all eight deployment jobs were skipped before this documentation-only link update. The final code passed 105 headless Chrome tests, 98 Node 24 unit tests, 41 real emulator integration tests, build/API/format checks and an actual default-demo Access walkthrough. The link-update commit is signed and receives the same CI before merge. No branch protection/ruleset bypass or repository settings change is used; normal checked stack merging is authorized because repository auto-merge is disabled and the connected account is not a repository administrator.
+
+**GitHub delivery is separate from hosted delivery.** The first PR makes production deployment manual with an explicit opt-in, so merging this stack does not deploy Firebase Hosting or Cloud Run. The final hosted release, production holiday preparation and unresolved charged-booking change/refund rules remain pending. Retain the policy-aware API during rollback once Access has managed an account. Original pre-stack commits remain on local backup history.
+
+## Validated PR stack prepared — 2026-11-24
+
+Owner authorized opening and merging PRs. The prior combined checkpoint was split into eight focused, locally signed stack layers targeting main: `chore/manual-production-release`, `feat/routable-workspace-dialogs`, `feat/database-holiday-catalog`, `feat/test-payment-booking-funding`, `feat/access-management-ui`, `feat/identity-access-management`, `test/live-workspace-regressions`, `fix/pet-dialog-escape`. Current working branch is the last layer. Original checkpoint history remains on local `backup/access-before-stack-20261124`; no work was discarded. Each functional layer independently built and passed its applicable unit/API checks. Extra focused notes describe the layer boundaries.
+
+Final validation: **105/105 current headless Chrome tests**, **98/98 Node 24 unit tests**, **41/41 real Auth/Firestore integrations**, production build, API typecheck, formatting and whitespace checks pass. The actual default-demo localhost Access walkthrough also passes after checking out the final stack. Added real Access/Reason-layout coverage. Fixed role-display outages blocking own-profile editing (without inferring staff access), background pet popovers consuming Escape and Strict Mode opener-focus jumps. Room selection in the end-to-end regression now uses its intended fixture rather than the first room added by another test.
+
+Default browser regression now uses the real named-database workspace server, a separate optimizer cache and a checked-in verified holiday catalog seeded only into that test database. Historical prototype/mock fixtures remain under `playwright.prototype.config.ts`; their old claims/profile mocks, removed sample-service assumptions, pre-language URLs and retired independent calendar scroll controls do not describe the current app. They were not counted as passing release checks or deleted. Visible rich combobox overlay text is checked for contrast instead of its intentionally transparent input text.
+
+The existing main workflow would have deployed automatically on merge. The first stack layer changes this: PRs/main run validation/builds, while production deployment requires explicit workflow dispatch on main with `deploy=true` (default false). Its parsed YAML gate was checked. **No production release is authorized by this PR request.** Financial lifecycle limitations and policy-aware API rollback requirements still apply.
+
+At preparation, GitHub reported no branch protection/rulesets and repository auto-merge disabled; the connected account has push but not repository-admin permission. Use normal checked stack merging after GitHub CI and signature verification rather than changing repository settings or bypassing requirements. Push/PR creation remains deferred until 5 PM PST under AGENTS.md unless the owner explicitly overrides the window. GitHub PR links/signature results will be added at submission. No push or PR had been created when this preparation note was committed.
+
 ## Reason label wrapping fixed — local branch, 2026-11-24
 
 Owner reported Reason splitting onto a second line. The broad `.iam-editor fieldset label` flex rule also affected normal text-field labels inside the backend form wrapper. Restricted flex layout to role/house checkbox labels, restoring the existing grid layout for Reason and other text-field labels. Reason now stays on one line above the full-width textarea. Production build/format/whitespace pass. Actual read-only localhost headless Chrome checks cover 1440px/390px, EN/zh/es and all four themes: single-line label, label above/aligned with textarea, no document overflow. No data writes, push, PR or deployment.

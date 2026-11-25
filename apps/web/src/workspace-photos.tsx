@@ -217,7 +217,13 @@ export function PetInfo({
   React.useEffect(() => {
     if (!open) return;
     const escape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      const modal = document.querySelector('dialog[open]');
+      if (
+        event.key !== 'Escape' ||
+        event.defaultPrevented ||
+        (modal && !modal.contains(root.current))
+      )
+        return;
       event.preventDefault();
       dismiss();
       if (
@@ -230,12 +236,13 @@ export function PetInfo({
     return () => document.removeEventListener('keydown', escape);
   }, [open, dismiss]);
   const enter = () => {
-    if (restoring.current || dismissed.current) return;
+    const modal = document.querySelector('dialog[open]');
+    if (restoring.current || dismissed.current || (modal && !modal.contains(root.current))) return;
     clearTimeout(timer.current);
     setOpen(true);
   };
   const leave = () => {
-    dismissed.current = false;
+    if (!document.querySelector('dialog[open]')) dismissed.current = false;
     clearTimeout(timer.current);
     timer.current = setTimeout(() => {
       if (
@@ -252,7 +259,11 @@ export function PetInfo({
       className="workspace-pet-info"
       onBlur={(event) => {
         const next = event.relatedTarget as Node | null;
-        if (!root.current?.contains(next) && !popup.current?.contains(next))
+        if (
+          !document.querySelector('dialog[open]') &&
+          !root.current?.contains(next) &&
+          !popup.current?.contains(next)
+        )
           dismissed.current = false;
       }}
       onMouseEnter={enter}

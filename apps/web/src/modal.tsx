@@ -36,7 +36,11 @@ function NativeModal({
       ?.focus({ preventScroll: className.split(' ').includes('workflow-dialog') });
     return () => {
       dialog?.close();
-      if (opener?.isConnected) opener.focus({ preventScroll: true });
+      // Strict Mode replays effects while the same dialog remains mounted.
+      // Restore its opener only after the dialog has actually left the DOM.
+      queueMicrotask(() => {
+        if (!dialog?.isConnected && opener?.isConnected) opener.focus({ preventScroll: true });
+      });
     };
   }, []);
   const heading = (
