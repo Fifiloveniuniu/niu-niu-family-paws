@@ -1,3 +1,20 @@
+## GitHub review and delivery links — 2026-11-24
+
+The owner authorized opening and merging the validated work. Submitted after the 5 PM PST restriction as native GitHub stack #200, ultimately targeting main. These links are the current delivery path and authoritative merge status, superseding earlier local-only notes:
+
+- [PR #192: Manual production releases and PR validation](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/192)
+- [PR #193: Routable dialogs and calendar controls](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/193)
+- [PR #194: Firestore holiday reference catalog](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/194)
+- [PR #195: Guarded local test-payment booking funding](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/195)
+- [PR #196: Access UI and workspace tab priority](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/196)
+- [PR #197: Access backend, invitation acceptance and policy enforcement](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/197)
+- [PR #198: Current live-workspace browser regression](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/198)
+- [PR #199: Pet-dialog Escape/focus correction and delivery record](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/199)
+
+All submitted commit signatures were verified by GitHub (`verified: true`, reason `valid`). All eight PR build checks passed and all eight deployment jobs were skipped before this documentation-only link update. The final code passed 105 headless Chrome tests, 98 Node 24 unit tests, 41 real emulator integration tests, build/API/format checks and an actual default-demo Access walkthrough. The link-update commit is signed and receives the same CI before merge. No branch protection/ruleset bypass or repository settings change is used; normal checked stack merging is authorized because repository auto-merge is disabled and the connected account is not a repository administrator.
+
+**GitHub delivery is separate from hosted delivery.** The first PR makes production deployment manual with an explicit opt-in, so merging this stack does not deploy Firebase Hosting or Cloud Run. The final hosted release, production holiday preparation and unresolved charged-booking change/refund rules remain pending. Retain the policy-aware API during rollback once Access has managed an account. Original pre-stack commits remain on local backup history.
+
 ## Validated PR stack prepared — 2026-11-24
 
 Owner authorized opening and merging PRs. The prior combined checkpoint was split into eight focused, locally signed stack layers targeting main: `chore/manual-production-release`, `feat/routable-workspace-dialogs`, `feat/database-holiday-catalog`, `feat/test-payment-booking-funding`, `feat/access-management-ui`, `feat/identity-access-management`, `test/live-workspace-regressions`, `fix/pet-dialog-escape`. Current working branch is the last layer. Original checkpoint history remains on local `backup/access-before-stack-20261124`; no work was discarded. Each functional layer independently built and passed its applicable unit/API checks. Extra focused notes describe the layer boundaries.
