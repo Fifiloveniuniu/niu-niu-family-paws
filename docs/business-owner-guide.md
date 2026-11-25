@@ -1,3 +1,9 @@
+## Automatic website updates — 2026-11-24
+
+After a reviewed change is merged and its checks pass, the app publishes automatically. A green validation check means the code passed its checks; the deployment must also finish successfully before the hosted version is updated. We handle implementation, review, release and live verification for you.
+
+已审核的更改合并并通过检查后，应用会自动发布。绿色的验证检查表示代码检查通过；还需等待部署成功，线上版本才会更新。实现、审核、发布和线上验证都由我们处理，无需您操作终端。
+
 ## Searchable choices — local preview
 
 Click Find a pet to choose a saved pet, or type in the field to narrow the list. Choose All pets to clear the pet filter. Other dropdown fields also accept typing to filter their choices. Select a matching option to apply it; unmatched text is not saved as a value. Unsaved-changes banners are removed; leaving an edited form still asks whether to discard edits.

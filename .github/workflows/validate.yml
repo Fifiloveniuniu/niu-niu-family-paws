@@ -4,17 +4,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: Publish the final reviewed release to production
-        type: boolean
-        required: false
-        default: false
 permissions:
   contents: read
 concurrency:
   group: release-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   build:
     if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
@@ -44,7 +38,7 @@ jobs:
       group: production-release
       cancel-in-progress: false
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.deploy
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
