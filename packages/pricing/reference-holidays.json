@@ -1,0 +1,610 @@
+{
+  "years": [
+    2025,
+    2026,
+    2027,
+    2028
+  ],
+  "catalogs": [
+    {
+      "year": 2025,
+      "groups": [
+        {
+          "country": "US",
+          "complete": true,
+          "entries": [
+            {
+              "date": "2025-01-01",
+              "key": "newYear"
+            },
+            {
+              "date": "2025-01-20",
+              "key": "mlk"
+            },
+            {
+              "date": "2025-02-17",
+              "key": "washington"
+            },
+            {
+              "date": "2025-05-26",
+              "key": "memorial"
+            },
+            {
+              "date": "2025-06-19",
+              "key": "juneteenth"
+            },
+            {
+              "date": "2025-07-04",
+              "key": "independence"
+            },
+            {
+              "date": "2025-09-01",
+              "key": "labor"
+            },
+            {
+              "date": "2025-10-13",
+              "key": "columbus"
+            },
+            {
+              "date": "2025-11-11",
+              "key": "veterans"
+            },
+            {
+              "date": "2025-11-27",
+              "key": "thanksgiving"
+            },
+            {
+              "date": "2025-12-25",
+              "key": "christmas"
+            }
+          ],
+          "sources": [
+            "https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/"
+          ]
+        },
+        {
+          "country": "CN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "newYear",
+              "date": "2025-01-01"
+            },
+            {
+              "key": "springEve",
+              "date": "2025-01-28"
+            },
+            {
+              "key": "springFestival",
+              "date": "2025-01-29"
+            },
+            {
+              "key": "lantern",
+              "date": "2025-02-12"
+            },
+            {
+              "key": "qingming",
+              "date": "2025-04-04"
+            },
+            {
+              "key": "chinaLabor",
+              "date": "2025-05-01"
+            },
+            {
+              "key": "dragonBoat",
+              "date": "2025-05-31"
+            },
+            {
+              "key": "chinaNational",
+              "date": "2025-10-01"
+            },
+            {
+              "key": "midAutumn",
+              "date": "2025-10-06"
+            }
+          ],
+          "sources": [
+            "https://data.weather.gov.hk/weatherAPI/hko_data/calendar/nongli_calendar_2025.csv",
+            "https://www.hko.gov.hk/en/gts/time/calendar/pdf/files/2025e.pdf"
+          ]
+        },
+        {
+          "country": "IN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "republic",
+              "date": "2025-01-26"
+            },
+            {
+              "key": "holi",
+              "date": "2025-03-14"
+            },
+            {
+              "key": "indiaIndependence",
+              "date": "2025-08-15"
+            },
+            {
+              "key": "gandhi",
+              "date": "2025-10-02"
+            },
+            {
+              "key": "dussehra",
+              "date": "2025-10-02"
+            },
+            {
+              "key": "diwali",
+              "date": "2025-10-20"
+            },
+            {
+              "key": "christmas",
+              "date": "2025-12-25"
+            }
+          ],
+          "sources": [
+            "https://srfmtti.dacnet.nic.in/assets/pdfs/circular/holiday%20list%202025.pdf"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "groups": [
+        {
+          "country": "US",
+          "complete": true,
+          "entries": [
+            {
+              "date": "2026-01-01",
+              "key": "newYear"
+            },
+            {
+              "date": "2026-01-19",
+              "key": "mlk"
+            },
+            {
+              "date": "2026-02-16",
+              "key": "washington"
+            },
+            {
+              "date": "2026-05-25",
+              "key": "memorial"
+            },
+            {
+              "date": "2026-06-19",
+              "key": "juneteenth"
+            },
+            {
+              "date": "2026-07-04",
+              "key": "independence"
+            },
+            {
+              "date": "2026-09-07",
+              "key": "labor"
+            },
+            {
+              "date": "2026-10-12",
+              "key": "columbus"
+            },
+            {
+              "date": "2026-11-11",
+              "key": "veterans"
+            },
+            {
+              "date": "2026-11-26",
+              "key": "thanksgiving"
+            },
+            {
+              "date": "2026-12-25",
+              "key": "christmas"
+            }
+          ],
+          "sources": [
+            "https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/"
+          ]
+        },
+        {
+          "country": "CN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "newYear",
+              "date": "2026-01-01"
+            },
+            {
+              "key": "springEve",
+              "date": "2026-02-16"
+            },
+            {
+              "key": "springFestival",
+              "date": "2026-02-17"
+            },
+            {
+              "key": "lantern",
+              "date": "2026-03-03"
+            },
+            {
+              "key": "qingming",
+              "date": "2026-04-05"
+            },
+            {
+              "key": "chinaLabor",
+              "date": "2026-05-01"
+            },
+            {
+              "key": "dragonBoat",
+              "date": "2026-06-19"
+            },
+            {
+              "key": "midAutumn",
+              "date": "2026-09-25"
+            },
+            {
+              "key": "chinaNational",
+              "date": "2026-10-01"
+            }
+          ],
+          "sources": [
+            "https://data.weather.gov.hk/weatherAPI/hko_data/calendar/nongli_calendar_2026.csv",
+            "https://www.hko.gov.hk/en/gts/time/calendar/pdf/files/2026e.pdf"
+          ]
+        },
+        {
+          "country": "IN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "republic",
+              "date": "2026-01-26"
+            },
+            {
+              "key": "holi",
+              "date": "2026-03-04"
+            },
+            {
+              "key": "ramNavami",
+              "date": "2026-03-26"
+            },
+            {
+              "key": "mahavir",
+              "date": "2026-03-31"
+            },
+            {
+              "key": "goodFriday",
+              "date": "2026-04-03"
+            },
+            {
+              "key": "buddha",
+              "date": "2026-05-01"
+            },
+            {
+              "key": "indiaIndependence",
+              "date": "2026-08-15"
+            },
+            {
+              "key": "janmashtami",
+              "date": "2026-09-04"
+            },
+            {
+              "key": "gandhi",
+              "date": "2026-10-02"
+            },
+            {
+              "key": "dussehra",
+              "date": "2026-10-20"
+            },
+            {
+              "key": "diwali",
+              "date": "2026-11-08"
+            },
+            {
+              "key": "guruNanak",
+              "date": "2026-11-24"
+            },
+            {
+              "key": "christmas",
+              "date": "2026-12-25"
+            }
+          ],
+          "sources": [
+            "https://www.iirs.gov.in/holidaycalender"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2027,
+      "groups": [
+        {
+          "country": "US",
+          "complete": true,
+          "entries": [
+            {
+              "date": "2027-01-01",
+              "key": "newYear"
+            },
+            {
+              "date": "2027-01-18",
+              "key": "mlk"
+            },
+            {
+              "date": "2027-02-15",
+              "key": "washington"
+            },
+            {
+              "date": "2027-05-31",
+              "key": "memorial"
+            },
+            {
+              "date": "2027-06-19",
+              "key": "juneteenth"
+            },
+            {
+              "date": "2027-07-04",
+              "key": "independence"
+            },
+            {
+              "date": "2027-09-06",
+              "key": "labor"
+            },
+            {
+              "date": "2027-10-11",
+              "key": "columbus"
+            },
+            {
+              "date": "2027-11-11",
+              "key": "veterans"
+            },
+            {
+              "date": "2027-11-25",
+              "key": "thanksgiving"
+            },
+            {
+              "date": "2027-12-25",
+              "key": "christmas"
+            }
+          ],
+          "sources": [
+            "https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/"
+          ]
+        },
+        {
+          "country": "CN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "newYear",
+              "date": "2027-01-01"
+            },
+            {
+              "key": "springEve",
+              "date": "2027-02-05"
+            },
+            {
+              "key": "springFestival",
+              "date": "2027-02-06"
+            },
+            {
+              "key": "lantern",
+              "date": "2027-02-20"
+            },
+            {
+              "key": "qingming",
+              "date": "2027-04-05"
+            },
+            {
+              "key": "chinaLabor",
+              "date": "2027-05-01"
+            },
+            {
+              "key": "dragonBoat",
+              "date": "2027-06-09"
+            },
+            {
+              "key": "midAutumn",
+              "date": "2027-09-15"
+            },
+            {
+              "key": "chinaNational",
+              "date": "2027-10-01"
+            }
+          ],
+          "sources": [
+            "https://data.weather.gov.hk/weatherAPI/hko_data/calendar/nongli_calendar_2027.csv",
+            "https://www.hko.gov.hk/en/gts/time/calendar/pdf/files/2027e.pdf"
+          ]
+        },
+        {
+          "country": "IN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "republic",
+              "date": "2027-01-26"
+            },
+            {
+              "key": "holi",
+              "date": "2027-03-23"
+            },
+            {
+              "key": "goodFriday",
+              "date": "2027-03-26"
+            },
+            {
+              "key": "ramNavami",
+              "date": "2027-04-15"
+            },
+            {
+              "key": "mahavir",
+              "date": "2027-04-19"
+            },
+            {
+              "key": "buddha",
+              "date": "2027-05-20"
+            },
+            {
+              "key": "indiaIndependence",
+              "date": "2027-08-15"
+            },
+            {
+              "key": "janmashtami",
+              "date": "2027-08-25"
+            },
+            {
+              "key": "gandhi",
+              "date": "2027-10-02"
+            },
+            {
+              "key": "dussehra",
+              "date": "2027-10-09"
+            },
+            {
+              "key": "diwali",
+              "date": "2027-10-29"
+            },
+            {
+              "key": "guruNanak",
+              "date": "2027-11-14"
+            },
+            {
+              "key": "christmas",
+              "date": "2027-12-25"
+            }
+          ],
+          "sources": [
+            "https://www.iirs.gov.in/holidaycalender"
+          ]
+        }
+      ]
+    },
+    {
+      "year": 2028,
+      "groups": [
+        {
+          "country": "US",
+          "complete": true,
+          "entries": [
+            {
+              "date": "2028-01-01",
+              "key": "newYear"
+            },
+            {
+              "date": "2028-01-17",
+              "key": "mlk"
+            },
+            {
+              "date": "2028-02-21",
+              "key": "washington"
+            },
+            {
+              "date": "2028-05-29",
+              "key": "memorial"
+            },
+            {
+              "date": "2028-06-19",
+              "key": "juneteenth"
+            },
+            {
+              "date": "2028-07-04",
+              "key": "independence"
+            },
+            {
+              "date": "2028-09-04",
+              "key": "labor"
+            },
+            {
+              "date": "2028-10-09",
+              "key": "columbus"
+            },
+            {
+              "date": "2028-11-11",
+              "key": "veterans"
+            },
+            {
+              "date": "2028-11-23",
+              "key": "thanksgiving"
+            },
+            {
+              "date": "2028-12-25",
+              "key": "christmas"
+            }
+          ],
+          "sources": [
+            "https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/"
+          ]
+        },
+        {
+          "country": "CN",
+          "complete": true,
+          "entries": [
+            {
+              "key": "newYear",
+              "date": "2028-01-01"
+            },
+            {
+              "key": "springEve",
+              "date": "2028-01-25"
+            },
+            {
+              "key": "springFestival",
+              "date": "2028-01-26"
+            },
+            {
+              "key": "lantern",
+              "date": "2028-02-09"
+            },
+            {
+              "key": "qingming",
+              "date": "2028-04-04"
+            },
+            {
+              "key": "chinaLabor",
+              "date": "2028-05-01"
+            },
+            {
+              "key": "dragonBoat",
+              "date": "2028-05-28"
+            },
+            {
+              "key": "chinaNational",
+              "date": "2028-10-01"
+            },
+            {
+              "key": "midAutumn",
+              "date": "2028-10-03"
+            }
+          ],
+          "sources": [
+            "https://data.weather.gov.hk/weatherAPI/hko_data/calendar/nongli_calendar_2028.csv",
+            "https://www.hko.gov.hk/en/gts/time/calendar/pdf/files/2028e.pdf"
+          ]
+        },
+        {
+          "country": "IN",
+          "complete": false,
+          "entries": [
+            {
+              "key": "republic",
+              "date": "2028-01-26"
+            },
+            {
+              "key": "indiaIndependence",
+              "date": "2028-08-15"
+            },
+            {
+              "key": "gandhi",
+              "date": "2028-10-02"
+            },
+            {
+              "key": "christmas",
+              "date": "2028-12-25"
+            }
+          ],
+          "sources": [
+            "https://www.iirs.gov.in/holidaycalender"
+          ]
+        }
+      ]
+    }
+  ]
+}

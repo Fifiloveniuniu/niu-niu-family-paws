@@ -1,3 +1,4 @@
+import { holidayCatalogStore } from './holiday-catalog.ts';
 import { businessMetricsStore } from './business-metrics.ts';
 import { employeeAssignmentStore } from './employee-assignments.ts';
 import { operationsStore } from './operations.ts';
@@ -37,6 +38,7 @@ initializeApp(
 );
 const auth = getAuth();
 const app = buildApp({
+  holidayCatalog: holidayCatalogStore(getFirestore()),
   businessMetrics: businessMetricsStore(getFirestore()),
   verify: firebaseIdentity(auth),
   houses: houseStore(getFirestore()),

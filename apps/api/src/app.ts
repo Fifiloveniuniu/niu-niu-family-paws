@@ -1,3 +1,4 @@
+import type { holidayCatalogStore } from './holiday-catalog.ts';
 import { metricsRange, type BusinessMetricsStore, type MetricsQuery } from './business-metrics.ts';
 import { employeeAssignmentRoutes, type EmployeeAssignmentStore } from './employee-assignments.ts';
 import { operationsRoutes, type OperationsStore } from './operations.ts';
@@ -39,6 +40,7 @@ export interface CustomerStore {
 }
 export class Conflict extends Error {}
 export function buildApp(deps: {
+  holidayCatalog?: ReturnType<typeof holidayCatalogStore>;
   businessMetrics?: BusinessMetricsStore;
   pricing?: PricingStore;
   operations?: OperationsStore;
@@ -70,6 +72,21 @@ export function buildApp(deps: {
     reply.header('Cache-Control', 'private, no-store').header('X-Content-Type-Options', 'nosniff');
   });
   app.get('/health', async () => ({ ok: true }));
+  if (deps.holidayCatalog)
+    app.get<{ Querystring: { year: string } }>(
+      '/api/public/holiday-presets',
+      {
+        schema: {
+          querystring: {
+            type: 'object',
+            additionalProperties: false,
+            required: ['year'],
+            properties: { year: { type: 'string', pattern: '^[0-9]{4}$' } },
+          },
+        },
+      },
+      (req) => deps.holidayCatalog!.read(Number(req.query.year)),
+    );
   if (deps.pricing)
     app.get('/api/public/pricing', { schema: { querystring: emptyObjectSchema } }, async () => {
       const config = await deps.pricing!.get();
