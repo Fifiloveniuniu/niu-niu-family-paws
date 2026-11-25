@@ -4,7 +4,7 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 
 # Delivery
 
-- Current owner instruction (2026-11-15): develop and validate locally, one feature/PR at a time. Deploy once all requested features are complete. Do not deploy intermediate feature PRs; distinguish locally complete work from the final hosted delivery.
+- Current owner instruction (2026-11-24): deploy automatically after successful validation of changes merged into main. This supersedes earlier manual/final-batch-only deployment directions. Keep changes in focused, signed, validated PRs; never push directly to main. Verify the automatic hosted release.
 - Use Google Cloud: Firebase Hosting for the web frontend, Cloud Run for the future API, Firebase Authentication, and Firestore. Do not switch to OpenAI Sites hosting.
 - Preserve working features, English/Simplified Chinese support, and mobile/desktop usability in every release.
 - Do not invent business contact details, pricing, photos, testimonials, or unresolved service rules.
@@ -34,7 +34,7 @@ Read `docs/session-handoff.md` before continuing work. It records the hosted app
 - User authorized building features as a sequence of GitHub PRs, automatically merging each after validation and continuing. Keep one feature/change per PR targeting `main`; never push directly to `main`.
 - Always preview the actual local site in Chrome using running localhost dev servers; screenshots alone are not a local-site walkthrough. Use localhost (not 127.0.0.1) for real Google sign-in.
 - Use dialogs for focused tasks such as editing and Google account linking. Use recognizable icons with tooltips and accessible names for secondary actions; keep primary actions clear.
-- Preview visible changes locally and walk the owner through them in the browser. Merge validated feature PRs sequentially, but defer Firebase Hosting/Cloud Run deployment until all requested features are complete. Verify the live result after that final deployment.
+- Preview visible changes locally and walk the owner through them in the browser. Merge validated feature PRs sequentially; successful main validation automatically deploys Firebase Hosting/Cloud Run. Verify the live result after deployment.
 - Continue autonomously within the requested scope; avoid repeated approval questions. Ask concise questions for missing business facts, access, billing decisions, or mandatory confirmations. Never invent answers.
 - Preserve bilingual support, mobile/desktop usability, and existing working features. Follow the Google Cloud architecture in the handoff.
 - Keep the handoff current with delivered changes, links, validation, and unresolved decisions so a future session can continue. Never store secrets in project documentation.
