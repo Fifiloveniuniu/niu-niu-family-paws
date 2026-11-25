@@ -14,7 +14,7 @@ import {
   type User,
 } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
-import { apiJson } from './api-client';
+import { apiJson, ApiError } from './api-client';
 import { auth } from './auth-client';
 import Customers from './customers';
 const HouseCalendar = React.lazy(() => import('./house-calendar'));
@@ -64,18 +64,29 @@ export default function Portal({
       return;
     }
     try {
-      const token = await current.getIdToken(force);
-      const identity = await apiJson<{ uid: string; roles: string[] }>('/identity', { token });
-      if (request === generation.current && identity.uid === current.uid)
-        setAccess(
-          identity.roles.includes('admin')
-            ? 'admin'
-            : identity.roles.includes('employee')
-              ? 'employee'
-              : identity.roles.includes('customer')
-                ? 'customer'
-                : 'denied',
-        );
+      const token = await current.getIdTokenResult(force);
+      try {
+        const identity = await apiJson<{ uid: string; roles: string[] }>('/identity', {
+          token: token.token,
+        });
+        if (request === generation.current && identity.uid === current.uid)
+          setAccess(
+            identity.roles.includes('admin')
+              ? 'admin'
+              : identity.roles.includes('employee')
+                ? 'employee'
+                : identity.roles.includes('customer')
+                  ? 'customer'
+                  : 'denied',
+          );
+      } catch (error) {
+        // Own-profile routing can survive a role-display outage; staff access is never inferred.
+        const temporary = !(error instanceof ApiError) || error.status >= 500;
+        const google = token.claims.firebase?.sign_in_provider === 'google.com';
+        if (temporary && current.emailVerified && token.claims.email_verified === true && google) {
+          if (request === generation.current) setAccess('customer');
+        } else throw error;
+      }
     } catch {
       if (request === generation.current) {
         setAccess('denied');
