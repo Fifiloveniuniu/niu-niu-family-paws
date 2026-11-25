@@ -1,3 +1,12 @@
+## Automatic release and customer tab delivery stack — 2026-11-24
+
+Submitted as native [GitHub stack #204](https://github.com/Fifiloveniuniu/niu-niu-family-paws/stack/204), targeting main through two focused PRs:
+
+- [PR #202: Deploy successful main builds automatically](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/202)
+- [PR #203: Improve customer browsing and live pet filters](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/203)
+
+Both code commits (`87c669a`, `538239d`) have valid verified GitHub signatures. Production publication is authorized by the owner's new automatic-deployment instruction; checked merging this stack should trigger main validation and the ordinary Google Cloud release. Verify GitHub CI, signatures, the final hosted release manifest/API and Chrome entry routes before reporting hosted delivery. GitHub PR/workflow status is authoritative. All 108 headless Chrome tests, 98 unit tests, 42 real emulator integrations, build/API/format/whitespace and actual localhost walkthroughs pass. Previous local-only and manual-deployment notes below are historical and superseded by these links and the latest owner instruction.
+
 ## Customer tab: viewport panels, continuous loading and live filters — 2026-11-24
 
 Owner requested full-height panels, consistent layout/action alignment, continuous scrolling, removal of loaded-count/empty-pet messages and all filter submit/reset buttons, substring search, matching-owner filtering and matching pets within the selected owner. Implemented on `fix/customer-viewport-panels`, stacked above `chore/automatic-production-releases` (signed local base commit `87c669a`). These directions supersede the older paging/prefix UI notes and close the earlier Rows per page report by replacing paging in this tab. Financial/activity tables retain pagination.
