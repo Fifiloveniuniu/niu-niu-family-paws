@@ -253,7 +253,6 @@ export default function BoardingStatement({
                     </p>
                     {filtered && (
                       <Button
-                        icon="reset"
                         variant="secondary"
                         className="hc-manage"
                         onClick={() => setFilters({ ...emptyStatementFilters })}
@@ -360,7 +359,7 @@ export function StatementFilterPanel({
           disabled={!filtered}
           onClick={() => setFilters({ ...emptyStatementFilters })}
         >
-          <Icon name="reset" />
+          <Icon name="close" />
         </button>
       </div>
       <div>

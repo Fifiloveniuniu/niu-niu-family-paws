@@ -193,7 +193,7 @@ export default function Rooms({
         {error && !editor && (
           <>
             <p role="alert">{label(error)}</p>
-            <Button icon="reset" variant="secondary" onClick={() => void load()}>
+            <Button variant="secondary" onClick={() => void load()}>
               {label('retry')}
             </Button>
           </>
@@ -235,7 +235,7 @@ export default function Rooms({
             <p role="alert">
               {!addressReady ? uiText('ui.houses.addressMissing') : label(error || 'empty')}
             </p>
-            <Button icon="reset" variant="secondary" onClick={() => void load()}>
+            <Button variant="secondary" onClick={() => void load()}>
               {label('retry')}
             </Button>
           </>

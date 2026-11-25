@@ -63,7 +63,7 @@ function PetPhoto({ pet }: { pet: Pet }) {
       ) : failed ? (
         <div>
           <p>{labels.photoError}</p>
-          <Button icon="reset" variant="secondary" onClick={() => setRetry((value) => value + 1)}>
+          <Button variant="secondary" onClick={() => setRetry((value) => value + 1)}>
             {labels.photoRetry}
           </Button>
         </div>

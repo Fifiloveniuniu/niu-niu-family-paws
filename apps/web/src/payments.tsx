@@ -185,7 +185,7 @@ export default function Payments({ data }: { data: WorkspaceData }) {
       {(error || saveError) && (
         <div role="alert">
           <p>{uiText('ui.workspace.loadError')}</p>
-          <Button variant="secondary" icon="reset" onClick={() => setRevision((v) => v + 1)}>
+          <Button variant="secondary" onClick={() => setRevision((v) => v + 1)}>
             {uiText('ui.workspace.retry')}
           </Button>
         </div>

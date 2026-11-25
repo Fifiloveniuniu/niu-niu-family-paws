@@ -500,7 +500,7 @@ export default function HouseCalendar({
                       });
                     }}
                   >
-                    <Icon name="reset" />
+                    <Icon name="close" />
                   </button>
                 </div>
                 <div className="hc-filter-fields">

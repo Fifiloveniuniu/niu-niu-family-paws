@@ -1,3 +1,9 @@
+## Pages without refresh controls — 2026-11-25
+
+Pages load when opened and update after changes or filter selections. Metrics and Access no longer have routine Refresh buttons. Booking payment review offers **Try again** only when its quote fails to load; changed quotes are still recovered automatically. Other failed reads retain their contextual retry actions.
+
+页面打开时自动加载，并在保存或筛选后更新。经营指标和权限页面不再显示常驻“刷新”按钮。预约付款核对仅在报价加载失败时显示“重试”；报价发生变化时仍自动重新核对。其他读取失败也保留对应的重试操作。
+
 ## Browsing records consistently — 2026-11-25
 
 Scroll down to see more balances, activity, payments, accounts, invitations or change history, just as you do with customers and pets. Lists start with up to 25 records. Choose **Load more** to append the next batch; scrolling alone does not load more. If loading fails, the records already on screen stay available; choose **Try again**. On a computer, scroll inside the list while filters stay visible. On a phone, scroll the page normally. Pet booking/activity dialogs work the same way inside the dialog. Exports still include every matching record, including records you have not scrolled to.

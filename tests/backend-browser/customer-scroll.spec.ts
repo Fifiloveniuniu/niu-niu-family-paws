@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test('scroll loading ignores a late batch after search and does not duplicate in-flight requests', async ({
+test('explicit loading ignores a late batch after search and does not duplicate in-flight requests', async ({
   page,
   request,
 }) => {
@@ -38,7 +38,11 @@ test('scroll loading ignores a late batch after search and does not duplicate in
   await scroller.evaluate((node) => {
     node.scrollTop = node.scrollHeight;
   });
+  const more = page.getByRole('button', { name: 'Load more customers', exact: true });
+  await more.click();
   await started;
+  await expect(more).toHaveAttribute('aria-disabled', 'true');
+  await more.dispatchEvent('click');
   await scroller.evaluate((node) => {
     node.dispatchEvent(new Event('scroll'));
     node.dispatchEvent(new Event('scroll'));

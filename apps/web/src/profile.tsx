@@ -248,7 +248,6 @@ export default function Profile({
       )}
       {(error === 'error' || error === 'conflict') && !uncertain && (
         <Button
-          icon="reset"
           variant="secondary"
           disabled={loading || saving || uncertain}
           onClick={() => {

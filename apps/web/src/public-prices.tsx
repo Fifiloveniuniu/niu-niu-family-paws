@@ -65,7 +65,7 @@ export default function PublicPrices() {
       {status === 'error' && (
         <p role="alert">
           {t('unavailable')}{' '}
-          <Button icon="reset" variant="secondary" onClick={retry}>
+          <Button variant="secondary" onClick={retry}>
             {uiText('ui.workspace.retry')}
           </Button>
         </p>

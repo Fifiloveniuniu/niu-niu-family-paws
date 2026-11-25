@@ -151,7 +151,7 @@ export function AdminAccountLink({
                 {messages.cancel}
               </Button>
             )}
-            <Button icon="reset" variant="secondary" disabled={busy} onClick={() => void run(load)}>
+            <Button variant="secondary" disabled={busy} onClick={() => void run(load)}>
               {messages.refresh}
             </Button>
           </div>
@@ -242,7 +242,7 @@ export function AccountLinkRequest({
           </form>
         )
       )}
-      <Button icon="reset" variant="secondary" disabled={busy} onClick={() => void run()}>
+      <Button variant="secondary" disabled={busy} onClick={() => void run()}>
         {busy ? messages.busy : messages.refresh}
       </Button>
     </section>

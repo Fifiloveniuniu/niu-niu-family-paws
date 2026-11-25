@@ -305,9 +305,6 @@ export default function IdentityAccess() {
           <p>{text('intro')}</p>
         </div>
         <div className="iam-actions">
-          <Button variant="secondary" icon="reset" onClick={refresh}>
-            {text('refresh')}
-          </Button>
           <Button icon="plus" disabled={!ready} onClick={() => setInviting(true)}>
             {text('invite')}
           </Button>

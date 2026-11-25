@@ -1,6 +1,5 @@
 import SegmentedTabs from './segmented-tabs';
 import Button from './button';
-import IconButton from './icon-button';
 import MetricChart from './metric-chart';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -101,14 +100,6 @@ export default function BusinessMetrics({
           <h1 id="business-metrics-title">{text('title')}</h1>
           <p>{text('intro')}</p>
         </div>
-        <IconButton
-          aria-label={text('refresh')}
-          title={text('refresh')}
-          disabled={loading}
-          onClick={() => setRevision((v) => v + 1)}
-        >
-          <Icon name="reset" />
-        </IconButton>
       </div>
       <div className="business-period">
         <div className="business-period-lookback">
@@ -169,7 +160,7 @@ export default function BusinessMetrics({
       {error && (
         <div role="alert" className="business-metrics-error">
           <p>{text('error')}</p>
-          <Button icon="reset" variant="secondary" onClick={() => setRevision((v) => v + 1)}>
+          <Button variant="secondary" onClick={() => setRevision((v) => v + 1)}>
             {text('retry')}
           </Button>
         </div>

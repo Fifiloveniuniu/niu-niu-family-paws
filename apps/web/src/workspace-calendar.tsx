@@ -215,7 +215,7 @@ export default function WorkspaceCalendar({
                 })
               }
             >
-              <Icon name="reset" />
+              <Icon name="close" />
             </IconButton>
             <IconButton
               type="button"

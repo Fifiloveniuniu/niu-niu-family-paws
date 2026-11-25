@@ -363,7 +363,7 @@ export default function SavedWorkspace({
                             : 'loadError',
                         )}
                       </p>
-                      <Button icon="reset" variant="secondary" onClick={() => void refresh(true)}>
+                      <Button variant="secondary" onClick={() => void refresh(true)}>
                         {t('retry')}
                       </Button>
                       <a href="/app/calendar/">{t('resetView')}</a>

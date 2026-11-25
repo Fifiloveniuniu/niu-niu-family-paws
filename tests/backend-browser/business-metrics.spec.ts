@@ -67,12 +67,8 @@ for (const [width, lang, palette] of [
     await page.route('**/api/business-metrics?**', (route) =>
       route.fulfill({ status: 503, json: { code: 'unavailable' } }),
     );
-    await page
-      .getByRole('button', {
-        name: lang === 'en' ? 'Refresh metrics' : '刷新经营数据',
-        exact: true,
-      })
-      .click();
+    await expect(page.getByRole('button', { name: /Refresh|刷新/ })).toHaveCount(0);
+    await page.locator('.business-period-presets button').nth(1).click();
     await expect(page.locator('.business-metrics-error')).toBeVisible();
     await expect(
       page.locator('[data-metric="customers"] dd:not(.business-metric-hint)'),
@@ -83,7 +79,7 @@ for (const [width, lang, palette] of [
       page.locator('[data-metric="customers"] dd:not(.business-metric-hint)'),
     ).toHaveText(/\d+/);
     await page.reload();
-    await expect(page.locator('.business-period-presets button').first()).toHaveAttribute(
+    await expect(page.locator('.business-period-presets button').nth(1)).toHaveAttribute(
       'aria-pressed',
       'true',
     );

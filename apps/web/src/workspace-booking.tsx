@@ -657,12 +657,7 @@ export default function WorkspaceBooking({
           />
           {loading && <p role="status">{t('loading')}</p>}
           {!loading && error === 'loadError' && (
-            <Button
-              icon="reset"
-              type="button"
-              variant="secondary"
-              onClick={() => void loadAvailability()}
-            >
+            <Button type="button" variant="secondary" onClick={() => void loadAvailability()}>
               {t('retry')}
             </Button>
           )}
@@ -894,14 +889,15 @@ export default function WorkspaceBooking({
                   {t(fundingError ? 'loadError' : 'loading')}
                 </p>
               )}
-              <Button
-                type="button"
-                variant="secondary"
-                icon="reset"
-                onClick={() => setFundingRevision((v) => v + 1)}
-              >
-                {uiText('ui.payments.retryQuote')}
-              </Button>
+              {fundingError && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setFundingRevision((v) => v + 1)}
+                >
+                  {uiText('ui.workspace.retry')}
+                </Button>
+              )}
             </section>
           ) : (
             !data.admin && <p className="hc-review-note">{t('customerBookingPending')}</p>

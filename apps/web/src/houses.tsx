@@ -255,7 +255,7 @@ export default function Houses({
             ))}
         </ul>
         {error === 'error' && !editor && (
-          <Button icon="reset" variant="secondary" disabled={loading} onClick={() => void load()}>
+          <Button variant="secondary" disabled={loading} onClick={() => void load()}>
             {labels.retry}
           </Button>
         )}
@@ -267,7 +267,7 @@ export default function Houses({
         ) : (
           <>
             <p role="alert">{error ? labels[error] : labels.empty}</p>
-            <Button icon="reset" variant="secondary" onClick={() => void load()}>
+            <Button variant="secondary" onClick={() => void load()}>
               {labels.retry}
             </Button>
           </>
