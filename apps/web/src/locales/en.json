@@ -1354,7 +1354,7 @@
   "ui.balanceView.validity": "Validity dates",
   "ui.balanceView.noBalance": "No saved balance",
   "ui.balanceView.petActivity": "View activity",
-  "ui.balanceView.pageSummary": "Changes on this page",
+  "ui.balanceView.pageSummary": "Changes in loaded records",
   "ui.balanceView.daysUnit": "boarding days",
   "ui.balanceView.reason": "Note",
   "ui.balanceView.allBalances": "Back to all balances",
@@ -1611,5 +1611,6 @@
   "ui.identityAccess.acceptHelp": "Paste the code shared by your administrator. You must be signed in with the Google email named on the invitation.",
   "ui.identityAccess.copy": "Copy code",
   "ui.identityAccess.copied": "Copied",
-  "ui.identityAccess.done": "Done"
+  "ui.identityAccess.done": "Done",
+  "ui.records.more": "Load more"
 }

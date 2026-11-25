@@ -1,9 +1,12 @@
 import { test, expect } from '@playwright/test';
-test('balances and history page on the server, preserve filters and export the whole filtered statement', async ({
+test('balances and history append server batches, preserve filters and export the whole filtered statement', async ({
   page,
   request,
 }) => {
   test.setTimeout(90000);
+  await page.addInitScript(() => {
+    delete (window as any).IntersectionObserver;
+  });
   const fixture = await (await request.get('/__test-fixture')).json();
   const directoryResponses: { url: string; count: number }[] = [];
   page.on('response', async (response) => {
@@ -22,25 +25,18 @@ test('balances and history page on the server, preserve filters and export the w
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   const accounts = page.locator('#balances-panel .workspace-table tbody tr');
-  const paging = page.getByRole('navigation', { name: 'Balance pages', exact: true });
+  const paging = page.locator('#balances-panel .record-list-scroll');
   await expect(accounts).toHaveCount(25);
   const first = await accounts.allTextContents();
-  await expect(paging.getByRole('button', { name: 'Previous page', exact: true })).toBeDisabled();
+  await expect(page.getByRole('combobox', { name: 'Rows per page', exact: true })).toHaveCount(0);
   expect(directoryResponses.length).toBeGreaterThan(0);
-  expect(
-    directoryResponses.every(
-      (item) => item.count <= 25 && !new URL(item.url).searchParams.has('cursor'),
-    ),
-  ).toBeTruthy();
-  await paging.getByRole('button', { name: 'Next page', exact: true }).click();
-  await expect(paging).toContainText('Page 2');
-  await expect(accounts).toHaveCount(25);
-  expect(await accounts.allTextContents()).not.toEqual(first);
-  await paging.getByRole('button', { name: 'Previous page', exact: true }).click();
-  await expect(accounts).toHaveText(first);
-  await paging.getByRole('combobox', { name: 'Rows per page', exact: true }).click();
-  await page.getByRole('option', { name: '50', exact: true }).click();
+  expect(directoryResponses.every((item) => item.count <= 25)).toBeTruthy();
+  await paging.getByRole('button', { name: 'Load more', exact: true }).click();
   await expect(accounts).toHaveCount(50);
+  expect((await accounts.allTextContents()).slice(0, 25)).toEqual(first);
+  expect(
+    directoryResponses.some((item) => new URL(item.url).searchParams.has('cursor')),
+  ).toBeTruthy();
   const target = await page.evaluate(async (cid) => {
     // @ts-ignore Test module.
     const { auth } = await import('/apps/web/src/auth-client.ts');
@@ -74,15 +70,14 @@ test('balances and history page on the server, preserve filters and export the w
   );
   await expect(accounts).toHaveCount(1);
   await page.getByRole('tab', { name: 'Activity', exact: true }).click();
-  const history = page.getByRole('navigation', { name: 'History pages', exact: true });
+  const history = page.locator('#activity-panel .record-list-scroll');
   const entries = page.locator('.workspace-statement tbody tr');
   await expect(entries).toHaveCount(25);
-  await history.getByRole('button', { name: 'Next page', exact: true }).click();
-  await expect(history).toContainText('Page 2');
-  await expect(entries).toHaveCount(25);
-  await history.getByRole('button', { name: 'Next page', exact: true }).click();
-  await expect(entries).toHaveCount(5);
-  await expect(history.getByRole('button', { name: 'Next page', exact: true })).toBeDisabled();
+  const initialEntries = await entries.allTextContents();
+  await history.getByRole('button', { name: 'Load more', exact: true }).click();
+  await expect(entries).toHaveCount(50);
+  expect((await entries.allTextContents()).slice(0, 25)).toEqual(initialEntries);
+  // Export must include the final batch even before the user loads it.
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
   const file = await download;
@@ -92,17 +87,17 @@ test('balances and history page on the server, preserve filters and export the w
   expect(csv.trim().split('\n')).toHaveLength(56);
   await page.getByRole('combobox', { name: 'Activity', exact: true }).click();
   await page.getByRole('option', { name: 'Correction', exact: true }).click();
-  await expect(history).toContainText('Page 1');
+  await expect(history.getByRole('button', { name: 'Load more', exact: true })).toHaveCount(0);
   await expect(entries).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/app/balances/?lang=zh');
-  await expect(page.getByRole('navigation', { name: '余额分页', exact: true })).toBeVisible();
+  await expect(page.locator('#balances-panel .record-list-scroll')).toBeVisible();
   await expect(accounts).toHaveCount(25);
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
     .toBeTruthy();
   await page.screenshot({
-    path: 'test-results-backend/balance-pagination-phone-zh.png',
+    path: 'test-results-backend/balance-continuous-phone-zh.png',
     fullPage: true,
   });
 });

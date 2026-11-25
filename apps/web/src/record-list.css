@@ -1,0 +1,61 @@
+.record-list-scroll {
+  min-width: 0;
+  min-height: 0;
+  overflow-anchor: none;
+}
+.record-list-scroll:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: -2px;
+}
+.record-list-scroll .list-load-more {
+  margin-top: 0;
+}
+.record-list-scroll :is(.workspace-table-scroll, .payments-table) {
+  overflow: visible;
+}
+@media (min-width: 761px) and (min-height: 800px) {
+  .record-workspace {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - var(--marketing-header-height, 65px) - 64px);
+    min-height: 0;
+  }
+  .record-workspace > :not([role='tabpanel']):not(.record-list-scroll) {
+    flex-shrink: 0;
+  }
+  .record-workspace > [role='tabpanel']:not([hidden]) {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .record-workspace > [role='tabpanel'] > :not(.record-list-scroll) {
+    flex-shrink: 0;
+  }
+  .record-workspace .record-list-scroll {
+    flex: 1;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .record-workspace > .iam-guide[open] {
+    max-height: 20dvh;
+    overflow: auto;
+  }
+  .record-list-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--md-surface);
+  }
+}
+@media (max-width: 760px), (max-height: 799px) {
+  .record-list-scroll:has(table) {
+    overflow-x: auto;
+  }
+}
+.pet-details-dialog .record-list-scroll {
+  max-height: 52dvh;
+  overflow: auto;
+  overscroll-behavior: contain;
+}

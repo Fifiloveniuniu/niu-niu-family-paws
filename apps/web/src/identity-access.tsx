@@ -11,7 +11,7 @@ import CustomSelect from './custom-select';
 import SegmentedTabs from './segmented-tabs';
 import { useDialogState } from './dialog-routing';
 import { currentRoute, updateQuery } from './routing';
-import { Pagination, useCursorPage } from './pagination';
+import { useRecordList, RecordList } from './record-list';
 import UnsavedChanges, { confirmDiscardChanges, markFormSaved } from './unsaved-changes';
 import type {
   AccessAccount,
@@ -244,17 +244,17 @@ export default function IdentityAccess() {
   if (query.trim()) queryParams.set('search', query.trim());
   if (filter) queryParams.set('role', filter);
   if (status) queryParams.set('status', status);
-  const accounts = useCursorPage<AccessAccount>(
+  const accounts = useRecordList<AccessAccount>(
     '/access/accounts?' + queryParams,
     revision,
     section === 'accounts',
   );
-  const invitations = useCursorPage<AccessInvitation>(
+  const invitations = useRecordList<AccessInvitation>(
     '/access/invitations',
     revision,
     section === 'invitations',
   );
-  const history = useCursorPage<AccessHistory>('/access/history', revision, section === 'history');
+  const history = useRecordList<AccessHistory>('/access/history', revision, section === 'history');
   const [editing, setEditing] = useDialogState<AccessAccount | null>('access-edit', null, {
     encode: (value) => value?.uid ?? null,
     decode: (uid, signal) => apiJson('/access/accounts/' + encodeURIComponent(uid), { signal }),
@@ -297,10 +297,8 @@ export default function IdentityAccess() {
       setNotice(text('loadError'));
     }
   };
-  const activePage =
-    section === 'accounts' ? accounts : section === 'invitations' ? invitations : history;
   return (
-    <section className="identity-access">
+    <section className="identity-access record-workspace">
       <header className="iam-heading">
         <div>
           <h1>{text('title')}</h1>
@@ -384,137 +382,152 @@ export default function IdentityAccess() {
                 </Button>
               )}
             </div>
-            <div className="iam-accounts">
-              {accounts.items.map((account) => (
-                <article className="iam-account" key={account.uid}>
-                  <div className="iam-person">
-                    <span className="iam-avatar" aria-hidden="true">
-                      <Icon name="account" />
-                    </span>
-                    <div>
-                      <h3>{account.name || account.email}</h3>
-                      <p>{account.email}</p>
-                      {account.uid === auth.currentUser?.uid && <small>{text('you')}</small>}
+            <RecordList list={accounts} label={text('accounts')} resetKey={queryParams.toString()}>
+              <div className="iam-accounts">
+                {accounts.items.map((account) => (
+                  <article className="iam-account" key={account.uid}>
+                    <div className="iam-person">
+                      <span className="iam-avatar" aria-hidden="true">
+                        <Icon name="account" />
+                      </span>
+                      <div>
+                        <h3>{account.name || account.email}</h3>
+                        <p>{account.email}</p>
+                        {account.uid === auth.currentUser?.uid && <small>{text('you')}</small>}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <span className="iam-field-label">{text('roles')}</span>
-                    <RoleBadges value={account} />
-                    <p className={'iam-state iam-state-' + account.status}>
-                      {text(account.status)}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="iam-field-label">{text('houses')}</span>
-                    <p>
-                      <Scope value={account} houses={houses} />
-                    </p>
-                  </div>
-                  <div className="iam-row-actions">
-                    <Button
-                      variant="secondary"
-                      icon="edit"
-                      disabled={!ready || account.status === 'disabled'}
-                      onClick={() => void open(account)}
-                    >
-                      {text('edit')}
-                    </Button>
-                    {account.uid !== auth.currentUser?.uid && account.status !== 'disabled' && (
-                      <Button variant="secondary" onClick={() => void open(account, true)}>
-                        {text(account.status === 'active' ? 'suspend' : 'restore')}
+                    <div>
+                      <span className="iam-field-label">{text('roles')}</span>
+                      <RoleBadges value={account} />
+                      <p className={'iam-state iam-state-' + account.status}>
+                        {text(account.status)}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="iam-field-label">{text('houses')}</span>
+                      <p>
+                        <Scope value={account} houses={houses} />
+                      </p>
+                    </div>
+                    <div className="iam-row-actions">
+                      <Button
+                        variant="secondary"
+                        icon="edit"
+                        disabled={!ready || account.status === 'disabled'}
+                        onClick={() => void open(account)}
+                      >
+                        {text('edit')}
+                      </Button>
+                      {account.uid !== auth.currentUser?.uid && account.status !== 'disabled' && (
+                        <Button variant="secondary" onClick={() => void open(account, true)}>
+                          {text(account.status === 'active' ? 'suspend' : 'restore')}
+                        </Button>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+              {!accounts.loading &&
+                !accounts.error &&
+                !accounts.nextCursor &&
+                !accounts.items.length && (
+                  <div className="iam-empty">
+                    <p>{text('empty')}</p>
+                    {(query || filter || status) && (
+                      <Button variant="secondary" onClick={clear}>
+                        {text('clear')}
                       </Button>
                     )}
                   </div>
-                </article>
-              ))}
-            </div>
-            {!accounts.loading && !accounts.error && !accounts.items.length && (
-              <div className="iam-empty">
-                <p>{text('empty')}</p>
-                {(query || filter || status) && (
-                  <Button variant="secondary" onClick={clear}>
-                    {text('clear')}
-                  </Button>
                 )}
-              </div>
-            )}
+            </RecordList>
           </>
         )}
         {section === 'invitations' && (
-          <section className="iam-invitations">
+          <>
             <h2>{text('invitations')}</h2>
             <p>{text('inviteHelp')}</p>
-            {!invitations.loading && !invitations.error && !invitations.items.length && (
-              <p className="iam-empty">{text('noInvites')}</p>
-            )}
-            {invitations.items.map((invitation) => (
-              <article className="iam-invite" key={invitation.id}>
-                <div>
-                  <h3>{invitation.email}</h3>
-                  <p>
-                    {text(invitation.status)} · {text('expires')}{' '}
-                    {new Date(invitation.expiresAt).toLocaleString(localeFor())}
-                  </p>
-                  <RoleBadges value={invitation} />
-                  <p>
-                    <Scope value={invitation} houses={houses} />
-                  </p>
-                </div>
-                {invitation.status === 'pending' && (
-                  <Button variant="secondary" onClick={() => setCancel(invitation)}>
-                    {text('cancelInvite')}
-                  </Button>
-                )}
-              </article>
-            ))}
-          </section>
+            <RecordList list={invitations} label={text('invitations')}>
+              <section className="iam-invitations">
+                {!invitations.loading &&
+                  !invitations.error &&
+                  !invitations.nextCursor &&
+                  !invitations.items.length && <p className="iam-empty">{text('noInvites')}</p>}
+                {invitations.items.map((invitation) => (
+                  <article className="iam-invite" key={invitation.id}>
+                    <div>
+                      <h3>{invitation.email}</h3>
+                      <p>
+                        {text(invitation.status)} · {text('expires')}{' '}
+                        {new Date(invitation.expiresAt).toLocaleString(localeFor())}
+                      </p>
+                      <RoleBadges value={invitation} />
+                      <p>
+                        <Scope value={invitation} houses={houses} />
+                      </p>
+                    </div>
+                    {invitation.status === 'pending' && (
+                      <Button variant="secondary" onClick={() => setCancel(invitation)}>
+                        {text('cancelInvite')}
+                      </Button>
+                    )}
+                  </article>
+                ))}
+              </section>
+            </RecordList>
+          </>
         )}
         {section === 'history' && (
-          <section className="iam-history">
+          <>
             <h2>{text('history')}</h2>
-            {!history.loading && !history.error && !history.items.length && (
-              <p className="iam-empty">{text('noHistory')}</p>
-            )}
-            {history.items.map((entry) => (
-              <article key={entry.id}>
-                <div className="iam-history-heading">
-                  <strong>{text(entry.action)}</strong>
-                  <time dateTime={entry.at}>{new Date(entry.at).toLocaleString(localeFor())}</time>
-                </div>
-                <p>
-                  {entry.email} · {entry.actorEmail}
-                </p>
-                <div className="iam-history-diff">
-                  {(
-                    [
-                      ['before', entry.before],
-                      ['after', entry.after],
-                    ] as const
-                  ).map(
-                    ([label, value]) =>
-                      value && (
-                        <div key={label}>
-                          <strong>{text(label)}</strong>
-                          <p>{text(value.status)}</p>
-                          <RoleBadges value={value} />
-                          <p>
-                            <Scope value={value} houses={houses} />
-                          </p>
-                        </div>
-                      ),
-                  )}
-                </div>
-                {entry.reason && (
-                  <p>
-                    {text('reason')}: {entry.reason}
-                  </p>
-                )}
-              </article>
-            ))}
-          </section>
+            <RecordList list={history} label={text('history')}>
+              <section className="iam-history">
+                {!history.loading &&
+                  !history.error &&
+                  !history.nextCursor &&
+                  !history.items.length && <p className="iam-empty">{text('noHistory')}</p>}
+                {history.items.map((entry) => (
+                  <article key={entry.id}>
+                    <div className="iam-history-heading">
+                      <strong>{text(entry.action)}</strong>
+                      <time dateTime={entry.at}>
+                        {new Date(entry.at).toLocaleString(localeFor())}
+                      </time>
+                    </div>
+                    <p>
+                      {entry.email} · {entry.actorEmail}
+                    </p>
+                    <div className="iam-history-diff">
+                      {(
+                        [
+                          ['before', entry.before],
+                          ['after', entry.after],
+                        ] as const
+                      ).map(
+                        ([label, value]) =>
+                          value && (
+                            <div key={label}>
+                              <strong>{text(label)}</strong>
+                              <p>{text(value.status)}</p>
+                              <RoleBadges value={value} />
+                              <p>
+                                <Scope value={value} houses={houses} />
+                              </p>
+                            </div>
+                          ),
+                      )}
+                    </div>
+                    {entry.reason && (
+                      <p>
+                        {text('reason')}: {entry.reason}
+                      </p>
+                    )}
+                  </article>
+                ))}
+              </section>
+            </RecordList>
+          </>
         )}
-        {activePage.loading && <p role="status">{text('loading')}</p>}
-        <Pagination page={activePage} label={text(section)} />
       </div>
       <details className="iam-guide">
         <summary>{text('permissions')}</summary>

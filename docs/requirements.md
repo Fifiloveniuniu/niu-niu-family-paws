@@ -1,3 +1,7 @@
+## Consistent continuous record browsing — 2026-11-24
+
+Owner approved the continuous-loading recommendation across Customers/pets, Balances/Activity, Payments, Access accounts/invitations/history and pet-dialog bookings/activity. Replace numbered page controls and Rows per page in record lists with automatic bounded cursor appends plus a keyboard-accessible Load more/retry fallback. Desktop lists use available viewport space with persistent filters/headings and sticky table headers; phones use natural document scrolling, while dialogs retain their own content scroll. Keep loaded rows on continuation errors, ignore stale filter responses, deduplicate canonical identities, retain records/scroll when returning from detail dialogs and apply filters automatically. Exports include every permitted matching record, regardless of loaded batches. Calendar retains date navigation; Pricing and Metrics retain ordinary scrolling. Preserve the approved Customers experience and EN/zh/es support. This supersedes older numbered-page presentation directions, without changing server cursor bounds, authorization or financial rules.
+
 ## Latest customer-tab direction — 2026-11-24
 
 - Fill the remaining viewport with aligned customer/pet panels and independent scrolling; preserve phone list/detail and very-short-screen access.

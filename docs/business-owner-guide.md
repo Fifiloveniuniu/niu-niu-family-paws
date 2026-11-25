@@ -1,3 +1,9 @@
+## Browsing records consistently — 2026-11-24
+
+Scroll down to see more balances, activity, payments, accounts, invitations or change history, just as you do with customers and pets. More records load automatically; you can also choose **Load more**. If loading fails, the records already on screen stay available; choose **Try again**. On a computer, scroll inside the list while filters stay visible. On a phone, scroll the page normally. Pet booking/activity dialogs work the same way inside the dialog. Exports still include every matching record, including records you have not scrolled to.
+
+余额、活动、付款、账号、邀请和更改历史现在与客户、宠物列表使用相同的浏览方式：向下滚动会自动加载后续记录，也可点击“加载更多”。加载失败时，已显示的记录会保留，可点击“重试”。电脑上在列表内滚动，筛选条件保持可见；手机上正常滚动页面。宠物弹窗中的预约和活动也使用同样方式。导出仍包含所有符合筛选条件的记录，不受当前已加载数量限制。
+
 ## Finding customers and pets — 2026-11-24
 
 In Customers, type any part of a customer's name/email or a pet's name. Results update automatically; using both fields narrows the results together. The customer list shows owners of matching pets, and selecting an owner shows only their matching pets. Clear a field to widen the search again. Scroll within either panel to see more; Load more is also available when needed. View balance and edit actions stay aligned on pet rows.
@@ -548,13 +554,13 @@ My profile shows the roles attached to your signed-in Google account: Admin, Emp
 
 Administrators can open **Pricing** to review the supplied rates and edit prices, packages or holiday dates in a dialog. A package uses its fixed USD price and boarding-day quantity; optional regular-band/weight comparison shows savings. These changes update displayed prices without changing past bookings or statements. Customers do not see price-editing controls. The public site now shows the supplied prices and no longer offers daycare.
 
-Use **Previous page / Next page** and **Rows per page** in Customers, Pets and Balances. Statement export includes all matching permitted entries, even when only one page is displayed. Pet/customer choices can load further results.
+Record lists load more as you scroll, with **Load more** available when needed. Statement export includes all matching permitted entries, even when only one page is displayed. Pet/customer choices can load further results.
 
 Assigned employees can use **House operations** to record arrival/pickup, verify weight during a stay, and correct actual handoff times. Planned times and original values remain in history. Their house assignment does not permit balance or price changes. To assign an existing employee, open Calendar → Manage houses & rooms → Employee house access, find their verified Google sign-in email, select houses and save. Clearing all houses removes their operational access. This does not create an employee account or role. Payment collection and boarding-day expiry are still unconfigured. All of this remains local and unpublished.
 
 管理员可在“价格管理”中核对海报价格，并通过弹窗修改价格、寄养天数套餐及节假日。套餐使用固定美元价格与天数；可选择常规体重区间及比较体重，展示节省金额。修改不会重写历史预约或账单。客户无法编辑价格。公开网站现展示所提供的价格，不再提供日间托管。
 
-客户、宠物及余额列表支持“上一页／下一页”和“每页条数”。账单导出包含所有符合筛选条件且有权查看的记录，不仅是当前页。宠物与客户选项可继续加载。
+客户、宠物及余额列表会随滚动加载后续记录，必要时也可点击“加载更多”。账单导出包含所有符合筛选条件且有权查看的记录，不仅是当前页。宠物与客户选项可继续加载。
 
 已分配房屋的员工可在“房屋运营”中记录实际送达、接回，在照护期间核实体重，并更正交接时间；计划时间与原始数值保留在历史中。房屋权限不包含财务或价格管理权限，不会自动授权员工。管理员可在“日历 → 管理房屋与房间 → 员工房屋权限”中，通过已核实的 Google 登录邮箱查找已有员工，选择房屋并保存；取消全部选择会移除运营权限。本功能不会创建员工账号或授予员工角色。收款方式与寄养天数有效期仍待确认。以上为本地预览，尚未上线。
 

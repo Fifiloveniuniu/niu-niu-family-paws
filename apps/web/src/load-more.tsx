@@ -29,7 +29,9 @@ export default function LoadMore({
     if (!('IntersectionObserver' in window)) return;
     // An unconstrained pet list uses normal document scrolling instead.
     const scrollRoot = root.current;
-    const constrained = ['auto', 'scroll'].includes(getComputedStyle(scrollRoot).overflowY);
+    const constrained =
+      ['auto', 'scroll'].includes(getComputedStyle(scrollRoot).overflowY) &&
+      scrollRoot.scrollHeight > scrollRoot.clientHeight + 1;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) onLoad();
