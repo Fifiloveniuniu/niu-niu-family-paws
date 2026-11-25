@@ -538,7 +538,7 @@ export default function AdminPricing() {
         <p role="alert">
           {t(error)}{' '}
           {error !== 'denied' && (
-            <Button icon="reset" variant="secondary" onClick={reload}>
+            <Button variant="secondary" onClick={reload}>
               {uiText('ui.workspace.retry')}
             </Button>
           )}

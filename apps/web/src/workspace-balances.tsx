@@ -481,7 +481,7 @@ export default function WorkspaceBalances({
             title={t('clearFilters')}
             onClick={() => onSelect('')}
           >
-            <Icon name="reset" />
+            <Icon name="close" />
           </IconButton>
         )}
         {data.admin && (
@@ -659,7 +659,7 @@ export default function WorkspaceBalances({
             disabled={!kind && !from && !through}
             onClick={() => onFilters({ kind: '', from: '', through: '' })}
           >
-            <Icon name="reset" />
+            <Icon name="close" />
           </IconButton>
         </div>
         {!valid && <p role="alert">{t('invalidDates')}</p>}

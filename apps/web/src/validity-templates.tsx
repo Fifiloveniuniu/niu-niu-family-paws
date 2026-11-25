@@ -75,7 +75,7 @@ export function TemplatePicker({
       {error && (
         <p role="alert">
           {t('loadError')}{' '}
-          <Button icon="reset" type="button" variant="secondary" onClick={reload}>
+          <Button type="button" variant="secondary" onClick={reload}>
             {t('retry')}
           </Button>
         </p>
@@ -260,7 +260,7 @@ export default function ValidityTemplates({ onClose }: { onClose: () => void }) 
       {error && (
         <p role="alert">
           {t('loadError')}{' '}
-          <Button icon="reset" variant="secondary" onClick={reload}>
+          <Button variant="secondary" onClick={reload}>
             {t('retry')}
           </Button>
         </p>

@@ -97,7 +97,7 @@ export default function AppearanceControl() {
             </a>
           </p>
           <div className="appearance-actions">
-            <Button icon="reset" type="button" variant="secondary" onClick={resetAppearance}>
+            <Button type="button" variant="secondary" onClick={resetAppearance}>
               {t('reset')}
             </Button>
             <Button icon="check" type="button" variant="primary" onClick={() => setOpen(false)}>

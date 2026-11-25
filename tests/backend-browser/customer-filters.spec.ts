@@ -21,7 +21,25 @@ for (const [width, lang] of [
     const rows = page.locator('.customer-directory-panel .customer-list > li');
     await expect(rows).toHaveCount(25);
     await expect(page.locator('.customer-filters button')).toHaveCount(0);
+    const filtered = page.waitForResponse((response) => {
+      const url = new URL(response.url());
+      return (
+        url.pathname.endsWith('/api/customers') &&
+        url.searchParams.get('petSearch') === 'ICE pEt 0' &&
+        response.ok()
+      );
+    });
     await page.locator('.pet-search input').fill('ICE pEt 0');
+    await filtered;
+    // Pet-owner searches can return an empty bounded scan window. Continue explicitly.
+    const more = page.locator('.customer-directory-panel .list-load-more button');
+    const expectMatchingCustomer = async () => {
+      await expect(async () => {
+        if ((await rows.count()) === 0 && (await more.isVisible())) await more.click();
+        await expect(rows).toHaveCount(1, { timeout: 500 });
+      }).toPass({ timeout: 15000 });
+    };
+    await expectMatchingCustomer();
     await expect(rows).toHaveCount(1);
     await expect(rows).toContainText('[TEST] Alice');
     await rows.getByRole('button', { name: '[TEST] Alice', exact: true }).click();
@@ -30,7 +48,8 @@ for (const [width, lang] of [
     await expect(cards).toContainText('[TEST] Alice pet 0');
     if (width < 800) await page.locator('.back-to-customers').click();
     await page.locator('#customer-search').fill('lic');
-    await expect(rows).toHaveCount(1);
+    await expect(page).toHaveURL(/customerSearch=lic/);
+    await expectMatchingCustomer();
     await page.locator('.pet-search input').fill('no-pet-can-match-this');
     await expect(rows).toHaveCount(0);
     await expect(page.locator('.admin-pets .selected-customer-heading')).toHaveCount(0);

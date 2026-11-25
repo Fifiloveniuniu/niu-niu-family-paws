@@ -46,9 +46,22 @@ for (const [language, width] of [
       expect(Math.abs(own.y + own.height / 2 - first.y - first.height / 2)).toBeLessThan(2);
     }
     const actionBeforeSearch = (await add.boundingBox())!;
+    const filtered = page.waitForResponse((response) => {
+      const url = new URL(response.url());
+      return (
+        url.pathname === '/api/customers' &&
+        url.searchParams.get('petSearch') === 'ice pet 0' &&
+        response.ok()
+      );
+    });
     await page.locator('.pet-search input').fill('ice pet 0');
+    await filtered;
     const matching = page.locator('.customer-directory-panel .customer-list > li');
-    await expect(matching).toHaveCount(1);
+    const more = page.locator('.customer-directory-panel .list-load-more button');
+    await expect(async () => {
+      if ((await matching.count()) === 0 && (await more.isVisible())) await more.click();
+      await expect(matching).toHaveCount(1, { timeout: 500 });
+    }).toPass({ timeout: 15000 });
     await expect(matching).toContainText('[TEST] Alice');
     expect(Math.abs((await add.boundingBox())!.y - actionBeforeSearch.y)).toBeLessThan(2);
     const row = page.locator('.customer-directory-panel .customer-list > li').first();

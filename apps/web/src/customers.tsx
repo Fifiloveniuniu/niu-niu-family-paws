@@ -458,7 +458,7 @@ export default function Customers({
         {ownError && (
           <p role="alert">
             {uiText('ui.customers.couldNotLoadYourProfileTryAgain')}
-            <Button icon="reset" variant="secondary" onClick={() => void setOwnershipFilter(true)}>
+            <Button variant="secondary" onClick={() => void setOwnershipFilter(true)}>
               {labels.reload}
             </Button>
           </p>
@@ -618,12 +618,7 @@ export default function Customers({
                   : ''}
             </p>
             {(error === 'error' || error === 'conflict') && !uncertain && (
-              <Button
-                icon="reset"
-                variant="secondary"
-                disabled={loading || saving}
-                onClick={() => void load()}
-              >
+              <Button variant="secondary" disabled={loading || saving} onClick={() => void load()}>
                 {labels.reload}
               </Button>
             )}
