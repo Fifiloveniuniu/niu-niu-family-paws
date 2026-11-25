@@ -10,7 +10,7 @@ test('saved validity templates fill reviewed dates and cancellation stays an edi
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   await expect(page.getByRole('link', { name: 'Settings', exact: true })).toHaveCount(0);

@@ -1,3 +1,5 @@
+import { holidayCatalogStore } from '../../apps/api/src/holiday-catalog.ts';
+import holidayReference from '../../packages/pricing/reference-holidays.json' with { type: 'json' };
 import { accessManagementStore } from '../../apps/api/src/access-management.ts';
 import { businessMetricsStore } from '../../apps/api/src/business-metrics.ts';
 import { employeeAssignmentStore } from '../../apps/api/src/employee-assignments.ts';
@@ -27,6 +29,9 @@ if (
 const app = initializeApp({ projectId: 'demo-niu-niu' });
 const db = getFirestore(app, 'integration-browser-' + randomUUID());
 const auth = getAuth(app);
+await db.doc('configuration/holidayCatalog').set({ years: holidayReference.years });
+for (const catalog of holidayReference.catalogs)
+  await db.doc('configuration/holidayCatalog/years/' + catalog.year).set(catalog);
 const createdIdentities = [];
 async function identity(admin = false, employee = false) {
   const sub = randomUUID();
@@ -68,6 +73,7 @@ const administrator = await identity(true, true),
   employee = await identity(false, true);
 const photos = new Map();
 const api = buildApp({
+  holidayCatalog: holidayCatalogStore(db),
   businessMetrics: businessMetricsStore(db),
   verify: firebaseIdentity(auth, db),
   accessManagement: accessManagementStore(db, auth),

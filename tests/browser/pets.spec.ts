@@ -73,8 +73,7 @@ test('customer manages multiple pets, adds a private photo later and retries the
   await page.evaluate(
     async ({ email }) => {
       const { auth } = await import('/apps/web/src/auth-client.ts');
-      const { signInWithEmailAndPassword } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+      const { signInWithEmailAndPassword } = await import('/tests/helpers/browser-auth.ts');
       await signInWithEmailAndPassword(auth, email, 'emulator-only-password');
     },
     { email },

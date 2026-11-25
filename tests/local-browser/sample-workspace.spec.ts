@@ -15,7 +15,7 @@ test('populated local app has white content, clear controls and available practi
       throw Error('Demo emulator required');
     // @ts-ignore Local Vite dependency.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     const jwt =
       [
         { alg: 'none', typ: 'JWT' },

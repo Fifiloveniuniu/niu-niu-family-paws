@@ -18,7 +18,7 @@ test('balances and history page on the server, preserve filters and export the w
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   const accounts = page.locator('#balances-panel .workspace-table tbody tr');
@@ -118,7 +118,7 @@ test('a searched customer remains readable after reopening the balance picker', 
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   await expect(page.locator('#balances-panel .workspace-table tbody tr')).toHaveCount(25);

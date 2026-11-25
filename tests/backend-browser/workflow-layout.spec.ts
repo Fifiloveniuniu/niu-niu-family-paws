@@ -30,26 +30,31 @@ for (const [language, width, palette] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test module.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     const viewport = page.locator('.calendar-timeline-viewport');
     await expect(page.locator('.saved-calendar-grid .hc-house').first()).toBeVisible();
-    // Force a small scrollport to exercise the actual normal-calendar ancestor chain.
+    // Vertical scrolling belongs to the document, not the horizontal calendar viewport.
     await viewport.evaluate((node) => {
-      node.style.maxHeight = '180px';
-      node.scrollTop = 150;
       node.scrollLeft = 100;
+      const header = document.querySelector('.marketing-header')!;
+      const boundary = header.getBoundingClientRect().bottom;
+      window.scrollBy(0, node.getBoundingClientRect().top - boundary + 150);
     });
     await expect
       .poll(async () =>
         Math.abs(
           (await page.locator('.calendar-timeline-axis').boundingBox())!.y -
-            (await viewport.boundingBox())!.y,
+            (await page.locator('.marketing-header').boundingBox())!.y -
+            (await page.locator('.marketing-header').boundingBox())!.height -
+            1,
         ),
       )
       .toBeLessThan(2);
-    expect(await viewport.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+    expect(await viewport.evaluate((node) => node.scrollTop)).toBe(0);
+    await page.evaluate(() => window.scrollTo(0, 0));
     async function checkDialog() {
       const modal = page.locator('dialog:modal');
       await expect(modal).toBeVisible();

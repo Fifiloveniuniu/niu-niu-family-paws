@@ -68,7 +68,7 @@ for (const [width, language] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test-only Vite dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await page.getByRole('button', { name: t('addBooking'), exact: true }).click();
@@ -213,14 +213,23 @@ for (const [width, language] of [
     const calendar = dialog.locator('.hc-schedule-scroll');
     expect(
       await calendar.evaluate((node) => node.scrollHeight - node.clientHeight),
-    ).toBeGreaterThan(1);
-    await calendar.evaluate((node) => {
-      node.scrollTop = 280;
+    ).toBeLessThanOrEqual(1);
+    await dialog.evaluate((node) => {
+      const axis = node.querySelector('.calendar-timeline-axis')!,
+        header = node.querySelector('.dialog-fixed-header')!;
+      node.scrollTop +=
+        axis.getBoundingClientRect().top - header.getBoundingClientRect().bottom + 180;
     });
-    const sticky = await dialog.locator('.calendar-timeline-axis').boundingBox();
-    const viewport = await calendar.boundingBox();
-    expect(Math.abs(sticky!.y - viewport!.y)).toBeLessThan(2);
-    await calendar.evaluate((node) => {
+    await expect
+      .poll(async () => {
+        const axis = (await dialog.locator('.calendar-timeline-axis').boundingBox())!,
+          headerBox = (await header.boundingBox())!;
+        return Math.abs(axis.y - headerBox.y - headerBox.height - 1);
+      })
+      .toBeLessThan(2);
+    expect(await dialog.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+    expect(await calendar.evaluate((node) => node.scrollTop)).toBe(0);
+    await dialog.evaluate((node) => {
       node.scrollTop = 0;
     });
     await dialog.locator('.hc-range-room-name').first().scrollIntoViewIfNeeded();
@@ -249,7 +258,7 @@ for (const [width, language] of [
     await dialog.evaluate((node) => {
       node.scrollTop = 200;
     });
-    // Aim at the sticky dialog header, outside the calendar's separate scrollport.
+    // Wheel events on the sticky header still scroll the owning dialog.
     const headerBox = (await header.boundingBox())!;
     await page.mouse.move(headerBox.x + 20, headerBox.y + 20);
     const calendarBefore = await calendar.evaluate((node) => node.scrollTop);
@@ -281,7 +290,7 @@ test('shared calendar keeps all views aligned and distinguishes repeated DST hou
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test-only Vite dependency.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   for (const [view, count] of [

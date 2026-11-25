@@ -27,7 +27,7 @@ for (const [language, width] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test-only dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await expect(page.locator('.saved-workspace')).toBeVisible();
@@ -157,7 +157,7 @@ test('Now advances without navigation and customer Busy responses expose room sp
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   const marker = page.locator('.workspace-now-marker time');
@@ -192,7 +192,7 @@ test('customer view shows Busy without personal details, and saved/cancelled boo
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(f.administrator.jwt));
     const headers = {
       Authorization: 'Bearer ' + (await auth.currentUser.getIdToken()),
@@ -278,7 +278,7 @@ test('customer view shows Busy without personal details, and saved/cancelled boo
   await expect(rows.first()).toContainText('Cancelled');
   await expect(rows.nth(1)).toContainText('Booking');
   await expect(rows.first().locator('.activity-running-balance')).toHaveCount(0);
-  await expect(rows.first()).toContainText('Staff plan');
+  await expect(rows.first()).not.toContainText('Staff plan');
   await page.screenshot({
     path: testInfo.outputPath('booking-cancel-activity.png'),
     fullPage: true,

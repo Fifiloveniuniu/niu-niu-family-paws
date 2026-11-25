@@ -32,7 +32,7 @@ for (const [lang, width, palette] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test-only Vite dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     const charts = page.locator('.metric-chart');
@@ -59,19 +59,24 @@ for (const [lang, width, palette] of [
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     ).toBeTruthy();
-    const clippedDates = await page.locator('.business-period-fields input').evaluateAll(
-      (inputs) =>
-        inputs.filter((input) => {
-          const element = input as HTMLInputElement,
-            style = getComputedStyle(element);
-          const context = document.createElement('canvas').getContext('2d')!;
-          context.font = style.font;
-          return (
-            context.measureText(element.value).width >
-            element.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) + 1
-          );
-        }).length,
-    );
+    const clippedDates = await page
+      .locator('.business-period-fields .custom-date-field > input')
+      .evaluateAll(
+        (inputs) =>
+          inputs.filter((input) => {
+            const element = input as HTMLInputElement,
+              style = getComputedStyle(element);
+            const context = document.createElement('canvas').getContext('2d')!;
+            context.font = style.font;
+            return (
+              context.measureText(element.value).width >
+              element.clientWidth -
+                parseFloat(style.paddingLeft) -
+                parseFloat(style.paddingRight) +
+                1
+            );
+          }).length,
+      );
     expect(clippedDates).toBe(0);
     if (width < 400)
       await expect(

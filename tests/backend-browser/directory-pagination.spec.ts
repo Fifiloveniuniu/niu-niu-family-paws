@@ -10,7 +10,7 @@ test('customer pages apply search before paging and retain page size', async ({
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   const rows = page.locator('.customer-list > li');
@@ -49,7 +49,7 @@ test('pet pages discover saved deep links and preserve private photos across pag
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(fixture.administrator.jwt));
     const headers = {
       Authorization: 'Bearer ' + (await auth.currentUser!.getIdToken()),

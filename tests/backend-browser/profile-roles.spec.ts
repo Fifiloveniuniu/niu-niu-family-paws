@@ -12,7 +12,7 @@ for (const language of ['en', 'zh']) {
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Local test-only dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     const roles = page.getByLabel(
@@ -47,7 +47,7 @@ test('customer roles never expose administrator permissions and verification fai
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Local test-only dependency.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.owner.jwt);
   await expect(
