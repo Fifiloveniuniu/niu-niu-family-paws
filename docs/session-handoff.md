@@ -1,3 +1,7 @@
+## Customer/pet redesign PR — 2026-11-24
+
+Submitted the compact customer/pet redesign as [PR #201](https://github.com/Fifiloveniuniu/niu-niu-family-paws/pull/201), targeting main through `gh stack`. Code commit `4456f8a` has a valid verified GitHub signature. Build CI and checked merge are the delivery gate; no production workflow dispatch is part of this UI change. Repository auto-merge remains disabled and the connected account is not an administrator, so use the previously authorized normal checked merge after CI/signature verification. Final design keeps the owner's Undo (previous customer selection colors), and includes the subsequently requested right-panel and pet-row fixes described below. Screenshots and validation are in this PR. Review/merge status on GitHub is authoritative.
+
 ## Customer and pet UI finalized — local branch, 2026-11-24
 
 Final scope on `feat/customer-workspace-redesign`: compact desktop filters and directory; canonical customer header with grouped actions/contact/language; compact right-hand pet list and pagination. Pet rows align avatar/name/species/weight with a separate edit action, full-row detail target and explicit opening chevron. Photo credits and existing demo balance shortcuts have their own supporting row. Avatar/photo hit areas share 52px dimensions and 8px corners; whole-row keyboard focus matches hover/selection. The owner's **Undo** restored the previous customer-selection colors and left stripe; do not reapply the rejected solid background/white-text experiment without another request.
