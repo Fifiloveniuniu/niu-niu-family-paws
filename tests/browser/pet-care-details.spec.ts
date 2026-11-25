@@ -51,8 +51,7 @@ test('pet type and weight remain editable in clean bilingual dialogs', async ({
   await page.goto('/app/sign-in/?lang=en');
   await page.evaluate(async (email) => {
     const { auth } = await import('/apps/web/src/auth-client.ts');
-    const { signInWithEmailAndPassword } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+    const { signInWithEmailAndPassword } = await import('/tests/helpers/browser-auth.ts');
     await signInWithEmailAndPassword(auth, email, 'emulator-only-password');
   }, email);
   await page.goto('/app/account/profile/?lang=en');

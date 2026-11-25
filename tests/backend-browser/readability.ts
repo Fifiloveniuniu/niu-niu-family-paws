@@ -26,10 +26,13 @@ export async function expectReadableText(page: Page, scope = 'main') {
         if (
           !(element instanceof HTMLElement) ||
           !element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) ||
-          element.closest('svg,[aria-hidden="true"],canvas')
+          element.closest('svg,canvas') ||
+          (element.closest('[aria-hidden="true"]') && !element.closest('.custom-select-rich-value'))
         )
           continue;
         if (getComputedStyle(element).clipPath === 'inset(50%)') continue;
+        // Rich combobox text is painted by the sibling overlay, checked below in its own colors.
+        if (element instanceof HTMLInputElement && element.hasAttribute('data-rich')) continue;
         let text = [...element.childNodes]
           .filter((n) => n.nodeType === Node.TEXT_NODE)
           .map((n) => n.textContent)

@@ -31,7 +31,7 @@ for (const [palette, language, width] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Local dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await expect(page.locator('.saved-workspace')).toBeVisible();

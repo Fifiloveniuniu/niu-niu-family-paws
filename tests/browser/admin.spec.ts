@@ -36,8 +36,7 @@ test('only verified admins see dashboard; sign-out clears access', async ({ page
     async ({ email }) => {
       // The development server exposes modules only in this isolated test mode.
       const { auth } = await import('/apps/web/src/auth-client.ts');
-      const { signInWithEmailAndPassword } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+      const { signInWithEmailAndPassword } = await import('/tests/helpers/browser-auth.ts');
       await signInWithEmailAndPassword(auth, email, 'emulator-only-password');
     },
     { email },
@@ -132,8 +131,7 @@ test('administrator can add, edit and search customers in both languages on mobi
   await page.evaluate(
     async ({ email }) => {
       const { auth } = await import('/apps/web/src/auth-client.ts');
-      const { signInWithEmailAndPassword } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+      const { signInWithEmailAndPassword } = await import('/tests/helpers/browser-auth.ts');
       await signInWithEmailAndPassword(auth, email, 'emulator-only-password');
     },
     { email },

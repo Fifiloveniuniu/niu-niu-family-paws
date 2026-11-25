@@ -32,15 +32,15 @@ for (const [language, width, palette] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test module.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await page.getByRole('tab', { name: catalog['ui.pricingAdmin.service'], exact: true }).click();
     await page.getByRole('button', { name: catalog['ui.pricingAdmin.add'], exact: true }).click();
     const modal = page.locator('dialog:modal'),
       editor = modal.locator('.price-name-editor');
-    await expect(editor.locator('input')).toHaveCount(1);
-    await expect(editor.locator('input')).toHaveAttribute(
+    await expect(editor.getByRole('textbox')).toHaveCount(1);
+    await expect(editor.getByRole('textbox')).toHaveAttribute(
       'lang',
       language === 'zh' ? 'zh-Hans' : language,
     );
@@ -82,7 +82,7 @@ for (const [language, width, palette] of [
     await editor.getByLabel('Español', { exact: true }).fill('  ');
     await editor.getByLabel('Español', { exact: true }).press('Enter');
     await expect(editor.locator('.price-name-list li')).toHaveCount(2);
-    const fieldBox = (await editor.locator('input').boundingBox())!;
+    const fieldBox = (await editor.getByRole('textbox').boundingBox())!;
     expect(fieldBox.width).toBeGreaterThan(width < 640 ? 200 : 250);
     if (width > 640) {
       const choiceBox = (await editor

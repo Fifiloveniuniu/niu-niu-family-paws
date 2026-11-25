@@ -12,7 +12,7 @@ for (const width of [390, 1280])
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test module.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await expect(page.locator('#balances-panel .workspace-table tbody tr')).toHaveCount(25);
@@ -95,7 +95,7 @@ test('closing a nested native dialog keeps the underlying modal and page locked'
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   await page.getByRole('button', { name: 'Add balance', exact: true }).click();
@@ -152,7 +152,7 @@ test('phone touch swipes scroll the modal without moving the background', async 
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test module.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await page.getByRole('button', { name: 'Add balance', exact: true }).click();

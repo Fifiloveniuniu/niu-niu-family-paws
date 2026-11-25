@@ -21,7 +21,7 @@ for (const palette of ['apple', 'vscode-light'] as const) {
         const { auth } = await import('/apps/web/src/auth-client.ts');
         // @ts-ignore Test-only Vite dependency.
         const { GoogleAuthProvider, signInWithCredential } =
-          await import('/node_modules/.vite/deps/firebase_auth.js');
+          await import('/tests/helpers/browser-auth.ts');
         await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
       }, fixture.administrator.jwt);
       for (const route of ['calendar', 'pricing', 'balances']) {

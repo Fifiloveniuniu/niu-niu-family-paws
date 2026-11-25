@@ -53,8 +53,7 @@ test('administrator switches to own profile and pets without losing drafts or by
   await page.evaluate(
     async ({ email }) => {
       const { auth } = await import('/apps/web/src/auth-client.ts');
-      const { signInWithEmailAndPassword } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+      const { signInWithEmailAndPassword } = await import('/tests/helpers/browser-auth.ts');
       await signInWithEmailAndPassword(auth, email, 'emulator-only-password');
     },
     { email },

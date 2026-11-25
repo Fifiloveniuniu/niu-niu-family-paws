@@ -13,7 +13,7 @@ async function sign(page, email) {
     if (auth.app.options.projectId !== 'demo-niu-niu' || auth.emulatorConfig?.port !== 9099)
       throw Error('Demo only');
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     const jwt =
       [
         { alg: 'none', typ: 'JWT' },

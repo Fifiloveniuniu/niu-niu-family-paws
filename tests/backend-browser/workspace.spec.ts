@@ -18,7 +18,7 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
     await auth.authStateReady();
     // @ts-ignore Test-only Vite dependency import.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   await expect(
@@ -35,7 +35,10 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
   ).toBeVisible();
   await page.getByRole('option', { name: 'Dog', exact: true }).click();
   await expect(
-    page.getByRole('combobox', { name: 'Pet type', exact: true }).locator('.pet-type-icon'),
+    page
+      .getByRole('combobox', { name: 'Pet type', exact: true })
+      .locator('..')
+      .locator('.pet-type-icon'),
   ).toBeVisible();
   await page.getByRole('button', { name: 'Clear filters', exact: true }).click();
   await page.getByRole('button', { name: 'Add booking', exact: true }).click();
@@ -163,8 +166,17 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
   await dialog.getByRole('combobox', { name: 'Arrival', exact: true }).fill('2030-11-05T10:00');
   await dialog.getByRole('combobox', { name: 'Pickup', exact: true }).fill('2030-11-07T10:00');
   await dialog.getByRole('button', { name: 'Choose', exact: true }).click();
-  await expect(dialog.locator('.hc-time-request').first()).toBeVisible();
-  await dialog.locator('.hc-time-request').first().click();
+  await expect(
+    dialog
+      .locator('.hc-range-room')
+      .filter({ has: page.getByText('[TEST] Practice room', { exact: true }) })
+      .locator('.hc-time-request'),
+  ).toBeVisible();
+  await dialog
+    .locator('.hc-range-room')
+    .filter({ has: page.getByText('[TEST] Practice room', { exact: true }) })
+    .locator('.hc-time-request')
+    .click();
   await dialog.getByRole('button', { name: 'Review booking', exact: true }).click();
   await expect(dialog).toContainText('[TEST] Practice room');
   await dialog.getByRole('button', { name: 'Save booking', exact: true }).click();
@@ -199,7 +211,11 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
   await expect(dialog.getByRole('combobox', { name: 'Pet', exact: true })).toBeDisabled();
   await dialog.getByRole('combobox', { name: 'Pickup', exact: true }).fill('2030-11-08T10:00');
   await dialog.getByRole('button', { name: 'Choose', exact: true }).click();
-  await dialog.locator('.hc-time-request').first().click();
+  await dialog
+    .locator('.hc-range-room')
+    .filter({ has: page.getByText('[TEST] Practice room', { exact: true }) })
+    .locator('.hc-time-request')
+    .click();
   await dialog.getByRole('button', { name: 'Review booking', exact: true }).click();
   await dialog.getByRole('button', { name: 'Save booking', exact: true }).click();
   await expect(dialog).toHaveCount(0);
@@ -238,7 +254,7 @@ test('real saved workspace scopes all three tabs and persists manual credits', a
     await auth.authStateReady();
     // @ts-ignore Test-only Vite dependency import.
     const { GoogleAuthProvider, signInWithCredential, signOut } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signOut(auth);
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.owner.jwt);
@@ -275,7 +291,7 @@ test('actual handoffs and cancellation persist without changing manual credits',
     await auth.authStateReady();
     // @ts-ignore Test-only Vite dependency.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   const cat = await page.evaluate(async (fixture) => {

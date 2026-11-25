@@ -15,7 +15,7 @@ for (const [language, width] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Vite dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     for (const route of [
@@ -70,7 +70,7 @@ test('employee accounts retain profile access after the operations page is remov
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Vite dependency.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.employee.jwt);
   await expect(page).toHaveURL(/\/app\/account\/profile\//);

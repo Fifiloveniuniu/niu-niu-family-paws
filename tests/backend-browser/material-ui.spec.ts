@@ -28,7 +28,7 @@ for (const width of [390, 1440])
         const { auth } = await import('/apps/web/src/auth-client.ts');
         // @ts-ignore Test-only Vite dependency.
         const { GoogleAuthProvider, signInWithCredential } =
-          await import('/node_modules/.vite/deps/firebase_auth.js');
+          await import('/tests/helpers/browser-auth.ts');
         await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
       }, fixture.administrator.jwt);
       await expect(page.locator('.hc-toolbar')).toBeVisible();

@@ -11,7 +11,7 @@ test('administrator edits source pricing, packages and holidays with persisted b
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test-only module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
   await expect(page.getByRole('link', { name: 'Pricing', exact: true })).toHaveAttribute(
@@ -46,7 +46,10 @@ test('administrator edits source pricing, packages and holidays with persisted b
   await page.getByRole('tab', { name: 'Boarding-day packages', exact: true }).click();
   await expect(page.locator('.admin-pricing')).toContainText('[TEST] Thirty days');
   await page.getByRole('button', { name: 'Holiday dates & surcharge', exact: true }).click();
-  await dialog.getByRole('checkbox', { name: 'Christmas Day 2026-12-25', exact: true }).check();
+  await dialog
+    .getByRole('region', { name: 'United States', exact: true })
+    .getByRole('checkbox', { name: 'Christmas Day 2026-12-25', exact: true })
+    .check();
   await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expect(page.locator('.admin-pricing')).toContainText('Configured holiday dates: 1');

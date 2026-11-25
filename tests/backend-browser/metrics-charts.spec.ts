@@ -17,7 +17,7 @@ for (const [width, lang] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test-only Vite dependency.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     // Populate only this run's named emulator database through the real authorized API.
@@ -152,7 +152,7 @@ for (const [width, lang] of [
     await expectReadableText(page);
     await page.screenshot({ path: testInfo.outputPath('metrics.png'), fullPage: true });
     if (width > 800)
-      await expect(page.locator('.app-header-nav a').first()).toHaveText(
+      await expect(page.locator('.app-header-nav a[href*="/metrics/"]')).toHaveText(
         lang === 'en' ? 'Metrics' : '指标',
       );
     await page.goto(`/app/balances/?lang=${lang}`);

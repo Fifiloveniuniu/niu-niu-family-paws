@@ -24,7 +24,7 @@ for (const [width, lang, palette] of [
       const { auth } = await import('/apps/web/src/auth-client.ts');
       // @ts-ignore Test module.
       const { GoogleAuthProvider, signInWithCredential } =
-        await import('/node_modules/.vite/deps/firebase_auth.js');
+        await import('/tests/helpers/browser-auth.ts');
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     await expect(
@@ -100,7 +100,7 @@ test('customers cannot open business metrics or select another customer to gain 
     const { auth } = await import('/apps/web/src/auth-client.ts');
     // @ts-ignore Test module.
     const { GoogleAuthProvider, signInWithCredential } =
-      await import('/node_modules/.vite/deps/firebase_auth.js');
+      await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.owner.jwt);
   await expect(page.locator('.saved-workspace')).toBeVisible();
