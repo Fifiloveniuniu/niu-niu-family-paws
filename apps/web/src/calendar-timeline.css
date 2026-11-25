@@ -588,3 +588,19 @@ html[data-ui-style] .hc .calendar-time-controls .hc-range > .calendar-today {
   height: 18px;
   margin: 0;
 }
+
+.hc .app-dialog.hc-booking-dialog .booking-availability-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: fit-content;
+  margin-block: 0;
+  font-size: 14px;
+}
+.hc .app-dialog.hc-booking-dialog .booking-availability-filter > input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}

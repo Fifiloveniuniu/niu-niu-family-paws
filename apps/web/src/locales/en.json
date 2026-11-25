@@ -1252,6 +1252,8 @@
   "ui.workspace.nextWeek": "Next week",
   "ui.workspace.selected": "Selected",
   "ui.workspace.choose": "Choose",
+  "ui.workspace.hideUnavailableRooms": "Hide unavailable rooms",
+  "ui.workspace.noAvailableRooms": "No rooms are available for this stay. Try different dates or show unavailable rooms.",
   "ui.workspace.noRooms": "No rooms are configured yet.",
   "ui.workspace.customerBookingPending": "Online booking is not available yet. Your balance is unchanged.",
   "ui.workspace.balance": "Boarding balance",

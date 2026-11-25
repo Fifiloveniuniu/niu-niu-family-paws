@@ -175,6 +175,7 @@ export default function WorkspaceBooking({
   const [view, setView] = React.useState<CalendarView>('week');
   const [calendarDate, setCalendarDate] = React.useState('');
   const [available, setAvailable] = React.useState<Available | null>(null);
+  const [hideUnavailable, setHideUnavailable] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [uncertain, setUncertain] = React.useState(false);
@@ -204,6 +205,12 @@ export default function WorkspaceBooking({
   const inCare = existing?.status === 'in_care';
   const chosen = available?.rooms.find(
     (room) => roomKey(room.houseId, room.roomId) === selected && room.available,
+  );
+  const visibleRooms = (available?.rooms ?? []).filter(
+    (room) =>
+      (!inCare ||
+        roomKey(room.houseId, room.roomId) === roomKey(existing!.houseId, existing!.roomId)) &&
+      (!hideUnavailable || room.available),
   );
   const [testBilling, setTestBilling] = React.useState<boolean | null>(null);
   const [funding, setFunding] = React.useState<{ key: string; quote: FundingQuote } | null>(null);
@@ -647,13 +654,24 @@ export default function WorkspaceBooking({
                 ))}
               </CustomSelect>
             }
-          />
+          >
+            <label className="booking-availability-filter">
+              <input
+                type="checkbox"
+                className="custom-checkbox"
+                checked={hideUnavailable}
+                onChange={(event) => setHideUnavailable(event.target.checked)}
+              />
+              {t('hideUnavailableRooms')}
+            </label>
+          </CalendarControls>
           {loading && <p role="status">{t('loading')}</p>}
           {!loading && error === 'loadError' && (
             <Button type="button" variant="secondary" onClick={() => void loadAvailability()}>
               {t('retry')}
             </Button>
           )}
+
           <ul className="booking-calendar-legend" aria-label={t('calendarLegend')}>
             <li>
               <span className="booking-calendar-swatch unavailable" aria-hidden="true" />
@@ -691,97 +709,92 @@ export default function WorkspaceBooking({
               )}
 
               {available &&
-                available.rooms
-                  .filter(
-                    (room) =>
-                      !inCare ||
-                      roomKey(room.houseId, room.roomId) ===
-                        roomKey(existing!.houseId, existing!.roomId),
-                  )
-                  .map((room, roomIndex, rooms) => {
-                    const viewFrom = Date.parse(available.from),
-                      viewTo = Date.parse(available.through);
-                    const spanStyle = (from: number, through: number) =>
-                      timelineSpan(from, through, available.from, available.through);
-                    const picked = selected === roomKey(room.houseId, room.roomId);
-                    return (
-                      <React.Fragment key={roomKey(room.houseId, room.roomId)}>
-                        {(roomIndex === 0 || rooms[roomIndex - 1].houseId !== room.houseId) && (
-                          <div className="hc-range-house">
-                            <LocationLabel
-                              kind="house"
-                              name={`${room.houseName} · ${room.timezone}`}
-                            />
-                          </div>
-                        )}
-                        <div className="hc-range-room" data-selected={picked}>
-                          <div className="hc-range-room-name">
-                            <LocationLabel kind="room" name={room.roomName} />
-                            {room.available && (
+                visibleRooms.map((room, roomIndex, rooms) => {
+                  const viewFrom = Date.parse(available.from),
+                    viewTo = Date.parse(available.through);
+                  const spanStyle = (from: number, through: number) =>
+                    timelineSpan(from, through, available.from, available.through);
+                  const picked = selected === roomKey(room.houseId, room.roomId);
+                  return (
+                    <React.Fragment key={roomKey(room.houseId, room.roomId)}>
+                      {(roomIndex === 0 || rooms[roomIndex - 1].houseId !== room.houseId) && (
+                        <div className="hc-range-house">
+                          <LocationLabel
+                            kind="house"
+                            name={`${room.houseName} · ${room.timezone}`}
+                          />
+                        </div>
+                      )}
+                      <div className="hc-range-room" data-selected={picked}>
+                        <div className="hc-range-room-name">
+                          <LocationLabel kind="room" name={room.roomName} />
+                          {room.available && (
+                            <button
+                              type="button"
+                              disabled={!room.available || loading || blocked}
+                              className="booking-room-choice"
+                              aria-pressed={picked}
+                              aria-label={`${t('choose')} ${room.houseName} · ${room.roomName}`}
+                              onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
+                            >
+                              <Icon name="check" />
+                              {picked ? t('selected') : t('choose')}
+                            </button>
+                          )}
+                          {room.issue && <small>{t('issue.' + room.issue)}</small>}
+                        </div>
+                        <CalendarTrack
+                          from={available.from}
+                          through={available.through}
+                          ticks={ticks}
+                          className="hc-time-track"
+                          gridOverContent
+                        >
+                          {room.blocked.map((span, index) => {
+                            const style = spanStyle(
+                              Date.parse(span.from),
+                              Date.parse(span.through),
+                            );
+                            return (
+                              style && (
+                                <span
+                                  key={index}
+                                  className="hc-time-unavailable"
+                                  style={style}
+                                  title={t('issue.' + span.issue)}
+                                  role="img"
+                                  aria-label={t('blockedSpace') + ': ' + t('issue.' + span.issue)}
+                                />
+                              )
+                            );
+                          })}
+                          {valid &&
+                            room.available &&
+                            Date.parse(pickup) > viewFrom &&
+                            Date.parse(arrival) < viewTo && (
                               <button
                                 type="button"
-                                disabled={!room.available || loading || blocked}
-                                className="booking-room-choice"
+                                className={'hc-time-request' + (picked ? ' picked' : '')}
+                                disabled={!room.available || loading || blocked || inCare}
+                                style={spanStyle(Date.parse(arrival), Date.parse(pickup))!}
+                                aria-label={`${t('choose')} ${room.houseName} · ${room.roomName} · ${formatInstant(arrival, zone, locale)}`}
+                                title={`${t('requestedStay')}: ${formatInstant(arrival, zone, locale)} – ${formatInstant(pickup, zone, locale)}`}
                                 aria-pressed={picked}
-                                aria-label={`${t('choose')} ${room.houseName} · ${room.roomName}`}
                                 onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
                               >
-                                <Icon name="check" />
-                                {picked ? t('selected') : t('choose')}
+                                <span className="calendar-span-label">{t('requestedStay')}</span>
                               </button>
                             )}
-                            {room.issue && <small>{t('issue.' + room.issue)}</small>}
-                          </div>
-                          <CalendarTrack
-                            from={available.from}
-                            through={available.through}
-                            ticks={ticks}
-                            className="hc-time-track"
-                            gridOverContent
-                          >
-                            {room.blocked.map((span, index) => {
-                              const style = spanStyle(
-                                Date.parse(span.from),
-                                Date.parse(span.through),
-                              );
-                              return (
-                                style && (
-                                  <span
-                                    key={index}
-                                    className="hc-time-unavailable"
-                                    style={style}
-                                    title={t('issue.' + span.issue)}
-                                    role="img"
-                                    aria-label={t('blockedSpace') + ': ' + t('issue.' + span.issue)}
-                                  />
-                                )
-                              );
-                            })}
-                            {valid &&
-                              room.available &&
-                              Date.parse(pickup) > viewFrom &&
-                              Date.parse(arrival) < viewTo && (
-                                <button
-                                  type="button"
-                                  className={'hc-time-request' + (picked ? ' picked' : '')}
-                                  disabled={!room.available || loading || blocked || inCare}
-                                  style={spanStyle(Date.parse(arrival), Date.parse(pickup))!}
-                                  aria-label={`${t('choose')} ${room.houseName} · ${room.roomName} · ${formatInstant(arrival, zone, locale)}`}
-                                  title={`${t('requestedStay')}: ${formatInstant(arrival, zone, locale)} – ${formatInstant(pickup, zone, locale)}`}
-                                  aria-pressed={picked}
-                                  onClick={() => setSelected(roomKey(room.houseId, room.roomId))}
-                                >
-                                  <span className="calendar-span-label">{t('requestedStay')}</span>
-                                </button>
-                              )}
-                          </CalendarTrack>
-                        </div>
-                      </React.Fragment>
-                    );
-                  })}
+                        </CalendarTrack>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
             </CalendarFrame>
           </CalendarViewport>
-          {available && !available.rooms.length && <p>{t('noRooms')}</p>}
+          {available && !loading && !visibleRooms.length && (
+            <p role="status">{t(hideUnavailable ? 'noAvailableRooms' : 'noRooms')}</p>
+          )}
         </section>
         <section
           className="hc-wizard-step"

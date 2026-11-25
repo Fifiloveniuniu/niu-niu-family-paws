@@ -1252,6 +1252,8 @@
   "ui.workspace.nextWeek": "Semana siguiente",
   "ui.workspace.selected": "Seleccionado",
   "ui.workspace.choose": "Elegir",
+  "ui.workspace.hideUnavailableRooms": "Ocultar habitaciones no disponibles",
+  "ui.workspace.noAvailableRooms": "No hay habitaciones disponibles para esta estancia. Prueba otras fechas o muestra las habitaciones no disponibles.",
   "ui.workspace.noRooms": "Aún no hay habitaciones configuradas.",
   "ui.workspace.customerBookingPending": "Las reservas por internet aún no están disponibles. Tu saldo no cambia.",
   "ui.workspace.balance": "Saldo de alojamiento",
