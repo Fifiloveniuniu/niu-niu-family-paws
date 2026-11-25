@@ -1246,6 +1246,8 @@
   "ui.workspace.nextWeek": "下一周",
   "ui.workspace.selected": "已选择",
   "ui.workspace.choose": "选择",
+  "ui.workspace.hideUnavailableRooms": "隐藏不可用房间",
+  "ui.workspace.noAvailableRooms": "本次住宿时段没有可用房间。请尝试其他日期，或取消隐藏以查看不可用房间。",
   "ui.workspace.noRooms": "尚未配置房间。",
   "ui.workspace.customerBookingPending": "在线预约暂未开放，您的余额未变动。",
   "ui.workspace.balance": "寄养余额",

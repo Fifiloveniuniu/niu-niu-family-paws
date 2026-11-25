@@ -1,3 +1,15 @@
+## Booking calendar controls — 2026-11-25
+
+In Add booking → Choose a room, **Hide unavailable rooms** is checked by default in the control row, after the timezone. Uncheck it to see unavailable rooms and their houses again. Your available selected room stays selected. The checkbox supports Tab and Space. Calendar corners remain rounded while scrolling, and the dates stay visible.
+
+在“添加预约 → 选择房间”中，时区后方控制栏里的**隐藏不可用房间**默认已勾选。取消勾选即可查看不可用房间及对应房屋，已选中的可用房间会保留。可使用 Tab 和空格键操作。滚动日历时，边框保持圆角，日期表头保持可见。
+
+## Show only available rooms — local preview, 2026-11-25
+
+In Add booking → Choose a room, check **Hide unavailable rooms** to show only rooms available for the requested stay. Houses with no available rooms disappear too. Uncheck it to see the complete calendar again; your available selected room stays selected. This does not change your dates or make a booking. Currently available in the local preview.
+
+在“添加预约 → 选择房间”中，勾选**隐藏不可用房间**，即可只查看本次住宿时段可用的房间。没有可用房间的房屋也会隐藏。取消勾选可恢复完整日历，已选中的可用房间会保留。此操作不会更改日期或保存预约。目前仅在本地预览中提供。
+
 ## Simpler tabs and payment filters — 2026-11-25
 
 Tabs no longer repeat their names as page headings or show generic introductions. Customer and Access filters share their desktop row with Add customer / Invite person; smaller screens wrap the controls. Rounded table borders contain their content and headings stay visible while scrolling.

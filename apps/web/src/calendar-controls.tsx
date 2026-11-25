@@ -12,6 +12,7 @@ export default function CalendarControls({
   onToday,
   onView,
   timezone,
+  children,
   disabled = false,
 }: {
   title: string;
@@ -20,6 +21,7 @@ export default function CalendarControls({
   onToday: () => void;
   onView: (view: CalendarView) => void;
   timezone?: React.ReactNode;
+  children?: React.ReactNode;
   disabled?: boolean;
 }) {
   const t = useWorkspaceText();
@@ -71,6 +73,7 @@ export default function CalendarControls({
         }))}
       />
       {timezone}
+      {children}
     </div>
   );
 }

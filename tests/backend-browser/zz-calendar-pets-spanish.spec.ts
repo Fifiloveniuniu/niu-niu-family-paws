@@ -49,6 +49,8 @@ for (const [language, width] of [
             ...room,
             roomId: 'unavailable-' + i,
             roomName: '[TEST] Unavailable ' + i,
+            houseId: 'unavailable-house',
+            houseName: '[TEST] Unavailable house',
             available: false,
             issue: 'capacity',
             blocked: [{ from: data.from, through: data.through, issue: 'capacity' }],
@@ -72,6 +74,26 @@ for (const [language, width] of [
       .fill('2034-07-10T10:00');
     await dialog.getByRole('combobox', { name: t('pickup'), exact: true }).fill('2034-07-12T10:00');
     await dialog.getByRole('button', { name: t('choose'), exact: true }).click();
+    const availabilityFilter = dialog
+      .locator('.calendar-time-controls')
+      .getByRole('checkbox', { name: t('hideUnavailableRooms'), exact: true });
+    await expect(availabilityFilter).toBeChecked();
+    await expect(availabilityFilter).toHaveCSS('appearance', 'none');
+    await expect(dialog.locator('.hc-range-room')).toHaveCount(1);
+    await expect(dialog.locator('.hc-range-house')).toHaveCount(1);
+    await dialog.locator('.booking-room-choice').first().click();
+    await availabilityFilter.focus();
+    await page.keyboard.press('Space');
+    await expect(availabilityFilter).not.toBeChecked();
+    await expect(dialog.locator('.hc-range-room')).toHaveCount(13);
+    await expect(dialog.locator('.hc-range-house')).toHaveCount(2);
+    await availabilityFilter.check();
+    await expect(dialog.locator('.hc-range-room')).toHaveCount(1);
+    await expect(dialog.locator('.booking-room-choice').first()).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await availabilityFilter.uncheck();
     await expect(dialog.locator('.hc-range-room')).toHaveCount(13);
     await expect(dialog.locator('.booking-calendar-legend li')).toHaveCount(2);
     await expect(dialog.locator('.hc-time-available')).toHaveCount(0);
@@ -87,9 +109,13 @@ for (const [language, width] of [
       node.scrollTop = 250;
       node.scrollLeft = 130;
     });
-    const axis = await dialog.locator('.calendar-timeline-axis').boundingBox(),
-      box = await viewport.boundingBox();
-    expect(Math.abs(axis!.y - box!.y)).toBeLessThan(2);
+    await expect
+      .poll(async () => {
+        const axis = await dialog.locator('.calendar-timeline-axis').boundingBox(),
+          box = await viewport.boundingBox();
+        return Math.abs(axis!.y - box!.y);
+      })
+      .toBeLessThan(2);
     await viewport.evaluate((node) => {
       node.scrollTop = 0;
       node.scrollLeft = 0;

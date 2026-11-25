@@ -1146,3 +1146,62 @@ html[data-ui-style]
 html[data-ui-style] .marketing-header .language-menu-options button:focus-visible {
   outline-color: var(--md-focus);
 }
+
+/* Native checkbox behavior with the same surface, corners and focus as our fields. */
+html[data-ui-style] input.custom-checkbox {
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--md-field-outline);
+  border-radius: var(--component-radius);
+  background: var(--md-surface);
+  color: var(--md-on-primary);
+  cursor: pointer;
+}
+html[data-ui-style] input.custom-checkbox::before {
+  color: var(--md-on-primary);
+  content: '';
+  width: 8px;
+  height: 4px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-1px) rotate(-45deg);
+  visibility: hidden;
+}
+html[data-ui-style] input.custom-checkbox:checked {
+  border-color: var(--md-primary);
+  background: var(--md-primary);
+}
+html[data-ui-style] input.custom-checkbox:checked::before {
+  visibility: visible;
+}
+html[data-ui-style] input.custom-checkbox:hover:not(:disabled) {
+  border-color: var(--md-primary);
+  box-shadow: 0 0 0 3px var(--md-primary-container);
+}
+html[data-ui-style] input.custom-checkbox:focus-visible {
+  outline: 2px solid var(--md-focus);
+  outline-offset: 2px;
+}
+html[data-ui-style] input.custom-checkbox:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+@media (forced-colors: active) {
+  html[data-ui-style] input.custom-checkbox {
+    appearance: auto;
+  }
+  html[data-ui-style] input.custom-checkbox::before {
+    content: none;
+  }
+}
+
+/* Dialog text-field sizing must not stretch the checkbox. */
+html[data-ui-style] .hc .app-dialog input.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0;
+}
