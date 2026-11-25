@@ -15,7 +15,7 @@
 .payments-notice {
   padding: 14px 16px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   color: var(--md-on-surface-variant);
 }
 .payments-card {
@@ -24,7 +24,7 @@
   width: min(100%, 380px);
   box-sizing: border-box;
   padding: 24px;
-  border-radius: 18px;
+  border-radius: var(--component-radius);
   border: 1px solid var(--md-primary-outline);
   background: var(--md-primary-container);
   color: var(--md-on-primary-container);
@@ -137,7 +137,7 @@
 }
 .payments-card-badge {
   border: 1px solid currentColor;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   padding: 4px 7px;
   font-size: 10px;
   font-weight: 700;

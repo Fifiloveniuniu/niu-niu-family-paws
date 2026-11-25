@@ -2,6 +2,7 @@
   min-width: 0;
   min-height: 0;
   overflow-anchor: none;
+  border-radius: var(--component-radius);
 }
 .record-list-scroll:focus-visible {
   outline: 2px solid var(--md-primary);
@@ -65,4 +66,17 @@
   max-height: 52dvh;
   overflow: auto;
   overscroll-behavior: contain;
+}
+
+/* The frame belongs to the viewport, so its border cannot scroll away with rows. */
+@media (min-width: 761px) and (min-height: 800px) {
+  .record-workspace .record-list-scroll:has(.iam-accounts, .workspace-table-scroll) {
+    border: 1px solid var(--md-outline-variant);
+    border-radius: var(--component-radius);
+    clip-path: inset(0 round var(--component-radius));
+  }
+  .record-workspace .record-list-scroll > :is(.iam-accounts, .workspace-table-scroll) {
+    border: 0;
+    border-radius: 0;
+  }
 }

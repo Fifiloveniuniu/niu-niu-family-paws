@@ -59,7 +59,7 @@ html .saved-workspace .hc-room > .location-label-room {
 }
 .house-list h3 .location-label-house {
   padding: 12px;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-house-container);
   color: var(--md-on-primary-container);
 }

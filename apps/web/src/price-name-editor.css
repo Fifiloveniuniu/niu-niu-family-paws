@@ -120,7 +120,7 @@ html[data-ui-style] .hc .app-dialog.pricing-editor-dialog .unsaved-notice {
   gap: 16px;
   padding: 10px 12px;
   background: var(--md-surface-container);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 .price-name-list li > span {
   display: grid;

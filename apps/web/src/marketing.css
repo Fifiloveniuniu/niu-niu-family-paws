@@ -52,7 +52,7 @@
   line-height: 1.8;
 }
 .home-story .button {
-  border-radius: 28px;
+  border-radius: var(--component-radius);
   gap: 24px;
   padding: 15px 24px;
 }
@@ -91,7 +91,7 @@
   background: #fffdf8;
   box-shadow: 0 8px 32px #3148380b;
   border: 1px solid #e8dfd0;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   font:
     italic 13px Georgia,
     'Songti SC',
@@ -124,7 +124,7 @@
   color: var(--muted);
 }
 .experience-scene {
-  border-radius: 28px;
+  border-radius: var(--component-radius);
   background: #edf0e7;
 }
 .experience-stage {
@@ -249,7 +249,7 @@
 .home-services {
   padding: 80px 48px;
   background: #f2e9df;
-  border-radius: 28px;
+  border-radius: var(--component-radius);
 }
 .home-services > .home-section-intro {
   max-width: 620px;
@@ -311,7 +311,7 @@
 .home-contact {
   text-align: center;
   padding: 80px 32px;
-  border-radius: 28px;
+  border-radius: var(--component-radius);
   background: #294d40;
   color: #faf8f2;
 }
@@ -325,7 +325,7 @@
   display: inline-block;
   padding: 10px 20px;
   border: 1px solid #839c89;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   font-size: 12px;
 }
 /* No transitions, springs or timers: the current progress defines the exact pose. */
@@ -569,7 +569,7 @@
     gap: 8px;
   }
   header.marketing-header .sign-in-link {
-    border-radius: 24px;
+    border-radius: var(--component-radius);
     text-align: center;
   }
   .experience-steps {
@@ -619,7 +619,7 @@ header.marketing-header {
   display: inline-block;
   padding: 9px 14px;
   border: 1px solid #b9c8b3;
-  border-radius: 30px;
+  border-radius: var(--component-radius);
   color: #42634b;
   background: #edf1e7;
   font-size: 9px;
@@ -689,7 +689,7 @@ header.marketing-header {
 }
 .home-story .world-note {
   z-index: 4;
-  border-radius: 4px 22px 22px;
+  border-radius: var(--component-radius);
   bottom: -15px;
   right: -15px;
   border-color: #d8c0a8;
@@ -807,7 +807,7 @@ header.marketing-header {
 .home-story .trust-symbol {
   background: #e2ead8;
   color: #496d46;
-  border-radius: 18px 18px 18px 2px;
+  border-radius: var(--component-radius);
   width: 54px;
   height: 54px;
 }
@@ -1089,7 +1089,7 @@ header.marketing-header .header-actions {
 header.marketing-header .sign-in-link {
   padding: 8px 18px;
   font-size: 13px;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
 }
 header.marketing-header .language-selector {
   min-width: 112px;
@@ -1102,7 +1102,7 @@ header.marketing-header .language-selector > span {
   clip-path: inset(50%);
 }
 header.marketing-header .language-selector :is(select, .custom-select-trigger) {
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   background: transparent;
   font-size: 12px;
 }
@@ -1118,7 +1118,7 @@ header.marketing-header .language-selector :is(select, .custom-select-trigger) {
 .marketing-site.public-page .public-policy-terms article {
   background: #fdfaf4;
   border-color: #ddcbb8;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
 }
 .marketing-site.public-page .service-1 {
   background: #e7eddf;
@@ -1139,7 +1139,7 @@ header.marketing-header .language-selector :is(select, .custom-select-trigger) {
 }
 .home-story .world-note {
   box-shadow: 0 6px 24px #2446380a;
-  border-radius: 20px;
+  border-radius: var(--component-radius);
 }
 .home-story .experience-pet {
   box-shadow: none;
@@ -1147,7 +1147,7 @@ header.marketing-header .language-selector :is(select, .custom-select-trigger) {
 .home-story .service-path {
   background: #fdf8f0;
   border-color: #d8c8b7;
-  border-radius: 32px;
+  border-radius: var(--component-radius);
 }
 .home-story .service-path:nth-of-type(2) {
   background: #e7eddf;

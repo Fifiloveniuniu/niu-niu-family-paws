@@ -124,7 +124,7 @@ header.marketing-header nav {
   min-width: 230px;
   padding: 12px 20px;
   border: 1px solid #dedfce;
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: #faf8f2;
   box-shadow: 0 12px 30px #293f3510;
 }
@@ -398,7 +398,7 @@ header.marketing-header nav {
   padding: 48px;
   margin: 48px 0;
   background: #e7eddf;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
 }
 @media (prefers-reduced-motion: no-preference) {
   .marketing-header a,
@@ -418,7 +418,7 @@ header.marketing-header nav {
     min-height: 44px;
     padding: 0 16px;
     border: 1px solid #c5cdbd;
-    border-radius: 24px;
+    border-radius: var(--component-radius);
     background: transparent;
     color: inherit;
   }
@@ -520,7 +520,7 @@ header.marketing-header nav {
   .package-note,
   .student-stories {
     padding: 28px 24px;
-    border-radius: 32px;
+    border-radius: var(--component-radius);
   }
   .policy-number {
     font-size: 70px;
@@ -603,7 +603,7 @@ header.marketing-header nav {
 .photo-dialog {
   padding: 0;
   border: 0;
-  border-radius: 20px;
+  border-radius: var(--component-radius);
   background: #faf8f2;
   color: #293f35;
   max-width: min(92vw, 900px);
@@ -628,7 +628,7 @@ header.marketing-header nav {
   display: block;
   margin: 0 0 16px auto;
   border: 1px solid #c5cdbd;
-  border-radius: 22px;
+  border-radius: var(--component-radius);
   padding: 10px 20px;
   background: transparent;
   color: inherit;
@@ -773,7 +773,7 @@ header.marketing-header nav {
   gap: 20px 28px;
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-services .service-path {
-  border-radius: 28px;
+  border-radius: var(--component-radius);
   padding: 20px 24px;
   gap: 16px;
   display: grid;
@@ -868,7 +868,7 @@ header.marketing-header nav {
     align-items: flex-start;
     padding: 14px 12px;
     gap: 6px;
-    border-radius: 22px;
+    border-radius: var(--component-radius);
   }
   .home-story.cinematic-story[data-cinema-enabled] .home-services .service-path-icon {
     width: 36px;
@@ -1115,7 +1115,7 @@ header.marketing-header nav {
   min-height: 44px;
   padding: 8px 12px;
   border: 1px solid #b6c2b0;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   color: inherit;
   background: transparent;
   font: inherit;
@@ -1144,7 +1144,7 @@ header.marketing-header nav {
   width: 100%;
   padding: 6px;
   border: 1px solid #c5cdbd;
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: #faf8f2;
   box-shadow: 0 12px 30px #293f351a;
 }
@@ -1156,7 +1156,7 @@ header.marketing-header nav {
   min-height: 44px;
   padding: 8px 12px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: transparent;
   color: inherit;
   font: inherit;
@@ -1198,7 +1198,7 @@ header.marketing-header nav {
 }
 .marketing-header .nav-submenu a {
   padding-inline: 12px;
-  border-radius: 9px;
+  border-radius: var(--component-radius);
 }
 .marketing-header .nav-submenu a:hover {
   background: #e7eee3;
@@ -1222,7 +1222,7 @@ header.marketing-header nav {
 .marketing-sign-in {
   width: min(440px, calc(100vw - 32px));
   padding: 28px;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   font-family: 'Paws Nunito', 'PingFang SC', sans-serif;
   text-align: center;
 }
@@ -1270,7 +1270,7 @@ header.marketing-header nav {
     margin: 0;
     padding: 8px;
     border: 1px solid #dedfce;
-    border-radius: 16px;
+    border-radius: var(--component-radius);
     box-shadow: 0 12px 30px #293f3520;
   }
   .marketing-header .nav-dropdown:nth-child(odd) > .nav-submenu {
@@ -1314,7 +1314,7 @@ header.marketing-header nav {
   .home-story[data-cinema-enabled] .home-spaces .home-photo-pair img {
     height: auto;
     max-height: clamp(125px, calc((100svh - 460px) / 2), 200px);
-    border-radius: 12px;
+    border-radius: var(--component-radius);
     object-fit: contain;
   }
   .home-story.cinematic-story[data-cinema-enabled] .home-spaces {
@@ -1481,7 +1481,7 @@ header.marketing-header nav {
   align-items: center;
   gap: 20px;
   padding: 14px 64px 14px 20px;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
 }
 .home-story.cinematic-story[data-cinema-enabled] .home-services .service-path-icon {
   width: 48px;
@@ -1526,7 +1526,7 @@ header.marketing-header nav {
     padding: 10px 44px 10px 12px;
     gap: 12px;
     min-height: 80px;
-    border-radius: 18px;
+    border-radius: var(--component-radius);
   }
   .home-story.cinematic-story[data-cinema-enabled] .home-services .service-path-icon {
     width: 36px;
@@ -1619,7 +1619,7 @@ header.marketing-header nav {
 
 /* Consistent corners and readable photo captions across the public site. */
 .marketing-site {
-  --paws-panel-radius: 24px;
+  --paws-panel-radius: var(--component-radius);
 }
 .marketing-site :is(.home-photo-pair img, .photo-open, .stay-planning, .package-note),
 .marketing-site .home-story.cinematic-story .home-services .service-path[href] {
@@ -1923,7 +1923,7 @@ header.marketing-header nav {
 .public-source-prices > section {
   padding: clamp(18px, 3vw, 32px);
   border: 1px solid #d9e1d4;
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   background: #fffdf7;
   box-shadow: 0 8px 28px #183d2910;
 }

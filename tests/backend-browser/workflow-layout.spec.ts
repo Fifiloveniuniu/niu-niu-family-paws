@@ -35,25 +35,33 @@ for (const [language, width, palette] of [
     }, fixture.administrator.jwt);
     const viewport = page.locator('.calendar-timeline-viewport');
     await expect(page.locator('.saved-calendar-grid .hc-house').first()).toBeVisible();
-    // Vertical scrolling belongs to the document, not the horizontal calendar viewport.
+    // Desktop scrolls rows inside the fixed frame; phones retain document scrolling.
     await viewport.evaluate((node) => {
       node.scrollLeft = 100;
-      const header = document.querySelector('.marketing-header')!;
-      const boundary = header.getBoundingClientRect().bottom;
-      window.scrollBy(0, node.getBoundingClientRect().top - boundary + 150);
+      if (innerWidth > 760) {
+        node.scrollTop = 200;
+      } else {
+        const header = document.querySelector('.marketing-header')!;
+        const boundary = header.getBoundingClientRect().bottom;
+        window.scrollBy(0, node.getBoundingClientRect().top - boundary + 150);
+      }
     });
     await expect
-      .poll(async () =>
-        Math.abs(
-          (await page.locator('.calendar-timeline-axis').boundingBox())!.y -
-            (await page.locator('.marketing-header').boundingBox())!.y -
-            (await page.locator('.marketing-header').boundingBox())!.height -
-            1,
-        ),
-      )
+      .poll(async () => {
+        const axis = (await page.locator('.calendar-timeline-axis').boundingBox())!;
+        const frame = (await viewport.boundingBox())!;
+        const header = (await page.locator('.marketing-header').boundingBox())!;
+        const boundary = Math.max(frame.y, header.y + header.height);
+        return Math.abs(axis.y - boundary - 1);
+      })
       .toBeLessThan(2);
-    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
-    expect(await viewport.evaluate((node) => node.scrollTop)).toBe(0);
+    if (width > 760) {
+      await expect(viewport).toHaveCSS('overflow-y', 'auto');
+      await expect(viewport).toHaveCSS('clip-path', 'inset(0px round 8px)');
+    } else {
+      expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+      expect(await viewport.evaluate((node) => node.scrollTop)).toBe(0);
+    }
     await page.evaluate(() => window.scrollTo(0, 0));
     async function checkDialog() {
       const modal = page.locator('dialog:modal');

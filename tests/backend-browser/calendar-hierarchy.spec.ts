@@ -56,6 +56,11 @@ for (const [width, language, palette] of [
       await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
     }, fixture.administrator.jwt);
     const grid = page.locator('.saved-calendar-grid');
+    const nowLabel = grid.locator('.workspace-now-marker > span');
+    await expect(nowLabel).toHaveCSS('border-top-left-radius', '0px');
+    await expect(nowLabel).toHaveCSS('border-bottom-left-radius', '0px');
+    await expect(nowLabel).toHaveCSS('border-top-right-radius', '8px');
+    await expect(nowLabel).toHaveCSS('border-bottom-right-radius', '8px');
     const room = grid.locator(`.hc-room[data-room-id="${fixture.rid}"]`);
     const pet = grid.locator(`.hc-pet[data-room-id="${fixture.rid}"]`);
     await expect(pet).toHaveCount(1);

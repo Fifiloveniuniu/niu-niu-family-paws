@@ -47,7 +47,7 @@ for (const [width, language] of [
       await dialog.getByRole('radio', { name: t(palette), exact: true }).check();
       await expect(page.locator('html')).toHaveAttribute('data-color-theme', palette);
       await expect(page.locator('html')).toHaveAttribute('data-ui-style', palette);
-      await expect(dialog).toHaveCSS('border-top-left-radius', `${preset.radius + 2}px`);
+      await expect(dialog).toHaveCSS('border-top-left-radius', '8px');
       expect(await dialog.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
       await expect(page.locator('html')).toHaveCSS('overflow-y', 'hidden');
       const hex = preset.primary.slice(1);
@@ -108,7 +108,7 @@ for (const [width, language] of [
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-color-theme', 'vscode-dark');
     await expect(page.locator('html')).toHaveAttribute('data-ui-style', 'vscode-dark');
-    await expect(page.locator('.hc-apply').first()).toHaveCSS('border-top-left-radius', '4px');
+    await expect(page.locator('.hc-apply').first()).toHaveCSS('border-top-left-radius', '8px');
     await expect(
       page.locator('.saved-calendar-grid .hc-house .location-label-house'),
     ).toBeVisible();
@@ -117,7 +117,7 @@ for (const [width, language] of [
     const w = (key: string) => catalog['ui.workspace.' + key];
     await page.getByRole('button', { name: w('addBooking'), exact: true }).click();
     const booking = page.getByRole('dialog');
-    await expect(booking).toHaveCSS('border-top-left-radius', '6px');
+    await expect(booking).toHaveCSS('border-top-left-radius', '8px');
     await booking.getByRole('combobox', { name: w('pet'), exact: true }).click();
     await page.getByRole('option').filter({ hasText: '[TEST] Alice pet 0' }).click();
     await booking

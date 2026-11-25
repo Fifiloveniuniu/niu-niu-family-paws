@@ -40,6 +40,16 @@ for (const [palette, language, width] of [
       await page
         .getByRole('button', { name: language === 'en' ? 'Menu' : '菜单', exact: true })
         .click();
+    const navLink = page.locator('.app-header-nav a:not([aria-current="page"])').first();
+    await page.mouse.move(0, 0);
+    const restingNav = await navLink.evaluate((node) => getComputedStyle(node).backgroundColor);
+    await navLink.hover();
+    await expect(navLink).not.toHaveCSS('background-color', restingNav);
+    await expect(navLink).toHaveCSS('border-top-left-radius', '8px');
+    await page.keyboard.press('Tab');
+    await navLink.focus();
+    await expect(navLink).toHaveCSS('outline-style', 'solid');
+    await page.mouse.move(0, 0);
     await trigger.click();
     const selected = page.locator('.language-menu-options [aria-checked="true"]');
     const colors = await selected.evaluate((node) => {

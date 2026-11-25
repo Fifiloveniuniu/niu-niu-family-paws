@@ -198,8 +198,14 @@ export function CalendarViewport({
       const context = !dialog && document.querySelector('.workspace-context');
       const top = context ? Math.max(boundary, context.getBoundingClientRect().bottom) : boundary;
       // Keep the axis in its original flow until it reaches the toolbar, then
-      // translate within the horizontally pannable frame until its last row.
-      const offset = Math.max(0, Math.min(top - bounds.top, bounds.height - axis.offsetHeight));
+      // translate within the pannable frame, including its own vertical scroll.
+      const offset = Math.max(
+        0,
+        Math.min(
+          viewport.scrollTop + Math.max(0, top - bounds.top),
+          viewport.scrollHeight - axis.offsetHeight,
+        ),
+      );
       viewport.style.setProperty('--calendar-axis-offset', `${offset}px`);
       const marker = viewport.querySelector<HTMLElement>('.workspace-now-marker');
       const dates = axis.querySelector<HTMLElement>('.calendar-timeline-axis-track');

@@ -39,7 +39,7 @@ html .appearance-dialog {
   min-width: 0;
   min-height: 80px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   cursor: pointer;
@@ -135,7 +135,7 @@ html .appearance-actions .language {
   background: var(--md-surface-container-low);
   color: var(--md-on-surface);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   margin-top: 4px;
 }
 .appearance-preview-bar {
@@ -156,7 +156,7 @@ html .appearance-actions .language {
   align-items: center;
   gap: 8px;
   padding: 5px 7px;
-  border-radius: 3px;
+  border-radius: var(--component-radius);
 }
 .appearance-preview-house {
   background: var(--md-house-container);
@@ -174,7 +174,7 @@ html .appearance-actions .language {
 .appearance-preview-room > i {
   height: 3px;
   width: 28%;
-  border-radius: 2px;
+  border-radius: var(--component-radius);
   background: var(--md-on-surface-variant);
   opacity: 0.55;
 }
@@ -184,7 +184,7 @@ html .appearance-actions .language {
   margin-left: auto;
   background: var(--md-primary-container);
   border-left: 2px solid var(--md-primary);
-  border-radius: 2px;
+  border-radius: var(--component-radius);
 }
 .appearance-preview-room + .appearance-preview-room > b {
   width: 38%;
@@ -201,7 +201,7 @@ html .appearance-actions .language {
 .appearance-preview-footer > b {
   width: 25px;
   height: 10px;
-  border-radius: 5px;
+  border-radius: var(--component-radius);
   border: 1px solid var(--md-primary-outline);
 }
 .appearance-preview-footer > b {

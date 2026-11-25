@@ -45,11 +45,11 @@
   --md-action-shadow: none;
   --md-scrim: #00000066;
   --md-media-scrim: #00000099;
-  --ui-action-radius: 24px;
-  --ui-field-radius: 8px;
-  --ui-icon-radius: 12px;
-  --ui-card-radius: 24px;
-  --ui-dialog-radius: 26px;
+  --ui-action-radius: var(--component-radius);
+  --ui-field-radius: var(--component-radius);
+  --ui-icon-radius: var(--component-radius);
+  --ui-card-radius: var(--component-radius);
+  --ui-dialog-radius: var(--component-radius);
   color-scheme: light;
 }
 :root[data-color-theme='apple'],
@@ -99,11 +99,11 @@
   --md-action-shadow: none;
   --md-scrim: #00000066;
   --md-media-scrim: #00000099;
-  --ui-action-radius: 8px;
-  --ui-field-radius: 8px;
-  --ui-icon-radius: 8px;
-  --ui-card-radius: 8px;
-  --ui-dialog-radius: 10px;
+  --ui-action-radius: var(--component-radius);
+  --ui-field-radius: var(--component-radius);
+  --ui-icon-radius: var(--component-radius);
+  --ui-card-radius: var(--component-radius);
+  --ui-dialog-radius: var(--component-radius);
   color-scheme: light;
 }
 /* Named upstream themes: direct source colors, with per-preset component geometry. */
@@ -154,11 +154,11 @@
   --md-action-shadow: none;
   --md-scrim: #00000080;
   --md-media-scrim: #000000b3;
-  --ui-action-radius: 4px;
-  --ui-field-radius: 4px;
-  --ui-icon-radius: 4px;
-  --ui-card-radius: 4px;
-  --ui-dialog-radius: 6px;
+  --ui-action-radius: var(--component-radius);
+  --ui-field-radius: var(--component-radius);
+  --ui-icon-radius: var(--component-radius);
+  --ui-card-radius: var(--component-radius);
+  --ui-dialog-radius: var(--component-radius);
   color-scheme: light;
 }
 :root[data-color-theme='vscode-dark'],
@@ -208,11 +208,11 @@
   --md-action-shadow: none;
   --md-scrim: #00000080;
   --md-media-scrim: #000000b3;
-  --ui-action-radius: 4px;
-  --ui-field-radius: 4px;
-  --ui-icon-radius: 4px;
-  --ui-card-radius: 4px;
-  --ui-dialog-radius: 6px;
+  --ui-action-radius: var(--component-radius);
+  --ui-field-radius: var(--component-radius);
+  --ui-icon-radius: var(--component-radius);
+  --ui-card-radius: var(--component-radius);
+  --ui-dialog-radius: var(--component-radius);
   color-scheme: dark;
 }
 html[data-ui-style]
@@ -339,11 +339,11 @@ html[data-ui-style] .marketing-header .language-menu-options button:hover {
 }
 /* Familiar app component treatments accompany the named palettes. */
 :root[data-color-theme='google'] {
-  --ui-dialog-radius: 26px;
-  --ui-action-radius: 24px;
+  --ui-dialog-radius: var(--component-radius);
+  --ui-action-radius: var(--component-radius);
 }
 :root[data-color-theme='apple'] {
-  --ui-dialog-radius: 10px;
+  --ui-dialog-radius: var(--component-radius);
 }
 html[data-color-theme='apple'] .hc :is(.hc-tabs, .hc-range) {
   font-variant-numeric: tabular-nums;
@@ -352,14 +352,14 @@ html[data-color-theme='apple'] .hc-wizard-progress li[data-step-state='current']
   border-radius: 50%;
 }
 html[data-ui-style] .appearance-palette-choice[data-preset='google'] {
-  border-radius: 16px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] .appearance-palette-choice[data-preset='apple'] {
-  border-radius: 8px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style]
   .appearance-palette-choice:not([data-preset='google']):not([data-preset='gmail']):not(
     [data-preset='apple']
   ) {
-  border-radius: 4px;
+  border-radius: var(--component-radius);
 }

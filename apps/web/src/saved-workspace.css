@@ -44,7 +44,7 @@
   background: var(--md-primary-soft);
   border: 1px solid var(--md-outline-variant);
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   margin-bottom: 18px;
 }
 .workspace-filters {
@@ -61,7 +61,7 @@
   min-height: 44px;
   padding: 10px 12px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   color: inherit;
   background: var(--md-surface);
   font: inherit;
@@ -80,14 +80,14 @@
 .workspace-form-error {
   background: var(--md-warning-container);
   padding: 12px 16px;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   color: var(--md-warning-ink);
 }
 .saved-calendar-grid {
   --label: 235px;
   min-width: 1050px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   overflow: clip;
 }
 .saved-calendar-grid .hc-axis {
@@ -235,7 +235,7 @@
   margin: 0;
   padding: 22px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   box-shadow: 0 12px 40px #263e3524;
@@ -271,7 +271,7 @@
   max-width: 100%;
   overflow: auto;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   margin: 16px 0;
 }
 .workspace-table {
@@ -320,7 +320,7 @@
   flex-wrap: wrap;
   padding: 14px 18px;
   background: var(--md-primary-soft);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .workspace-metrics p {
   margin: 0;
@@ -333,7 +333,7 @@
 .workspace-current-balance {
   background: var(--md-primary-soft);
   padding: 12px;
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 .workspace-zoned-field {
   display: grid;
@@ -448,7 +448,7 @@
   min-width: 36px;
   padding: 6px 10px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-primary-container);
   font: inherit;
@@ -496,7 +496,7 @@
   top: 0;
   left: 3px;
   padding: 2px 5px;
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 var(--component-radius) var(--component-radius);
   font-size: 11px;
   color: var(--md-on-primary-container);
   background: var(--md-primary-soft);
@@ -552,7 +552,7 @@
 .saved-workspace .workspace-context {
   padding: 10px 14px;
   background: var(--md-surface-container);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   font-size: 14px;
 }
 .saved-workspace .workspace-context .language {
@@ -572,7 +572,7 @@
 .saved-workspace .custom-select-trigger {
   min-height: 42px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   font-size: 15px;
@@ -589,7 +589,7 @@
 .saved-workspace :is(.hc-apply, .button) {
   min-height: 38px;
   padding: 8px 15px;
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   background: var(--md-primary);
   color: var(--md-on-primary);
   font-size: 14px;
@@ -605,7 +605,7 @@
   border: 1px solid var(--md-outline-variant);
   background: var(--md-surface);
   color: var(--md-on-primary-container);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   font-size: 14px;
   min-height: 38px;
   padding: 7px 12px;
@@ -621,10 +621,10 @@
   border-color: var(--md-outline-variant);
   background: var(--md-surface);
   color: var(--md-on-primary-container);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
 }
 .saved-workspace .saved-calendar-grid {
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .saved-workspace .saved-calendar-grid .hc-axis,
@@ -653,7 +653,7 @@
   border: 1px solid var(--md-outline-variant);
   background: var(--md-primary-soft);
   color: var(--md-on-primary-container);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   box-shadow: none;
 }
 .saved-workspace .saved-calendar-grid .hc-stay.in {
@@ -716,7 +716,7 @@
 .saved-workspace .app-dialog {
   background: var(--md-surface);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   box-shadow: 0 24px 80px #18342524;
   color: var(--md-on-surface);
 }
@@ -754,13 +754,13 @@
 }
 .saved-workspace .hc-review-card {
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .saved-workspace .pet-card {
   background: var(--md-surface);
   border-color: var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   box-shadow: none;
 }
 .saved-workspace .customer-list {
@@ -801,7 +801,7 @@
 .saved-workspace .hc-policy-cards article {
   border: 1px solid var(--md-outline-variant);
   background: var(--md-surface);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   box-shadow: none;
 }
 .saved-workspace .hc-policy-cards article > strong {
@@ -811,7 +811,7 @@
 .saved-workspace .hc-policy-details {
   background: var(--md-surface);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .saved-workspace .hc-draft-badge {
   background: var(--md-primary-soft);
@@ -861,7 +861,7 @@
 }
 .operations-cards article {
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   padding: 20px;
   min-width: 0;
 }
@@ -1036,7 +1036,7 @@
   padding: 18px;
   margin-bottom: 24px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: var(--ui-radius, 12px);
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .calendar-filter-heading {

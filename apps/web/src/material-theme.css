@@ -78,7 +78,7 @@ html[data-ui-style]
   :is(.button, .hc-apply) {
   min-height: 44px;
   border: 1px solid var(--md-primary);
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   background: var(--md-primary);
   color: var(--md-on-primary);
   padding: 10px 20px;
@@ -99,7 +99,7 @@ html[data-ui-style]
 html[data-ui-style] :is(.portal, .saved-workspace) :is(.language, .hc-manage) {
   min-height: 44px;
   border-color: var(--md-outline-variant);
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-link);
   line-height: 1.4;
@@ -108,7 +108,7 @@ html[data-ui-style] :is(.portal, .saved-workspace, .marketing-header) .icon-butt
   min-width: 44px;
   min-height: 44px;
   border-color: var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface-variant);
 }
@@ -134,7 +134,7 @@ html[data-ui-style] :is(.portal, .saved-workspace) .custom-autocomplete > input,
 html[data-ui-style] :is(.portal, .saved-workspace, .hc) .custom-select > .custom-select-trigger {
   min-height: 44px;
   border-color: var(--md-field-outline);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface);
   font-size: 16px;
@@ -188,7 +188,7 @@ html[data-ui-style]
 html[data-ui-style] :is(.portal, .saved-workspace) [role='alert'] {
   padding: 12px 16px;
   border: 1px solid var(--md-error-outline);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-error-container);
   color: var(--md-error-ink);
   font-size: 14px;
@@ -202,7 +202,7 @@ html[data-ui-style] :is(.portal, .saved-workspace) dialog.app-dialog {
   background: var(--md-surface);
   color: var(--md-on-surface);
   border-color: var(--md-outline-variant);
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   box-shadow: var(--md-shadow);
   overscroll-behavior: contain;
 }
@@ -275,7 +275,7 @@ html[data-ui-style] .custom-select-options [role='option'][aria-selected='true']
 html[data-ui-style] :is(.portal, .saved-workspace) :is(.portal-card, .pet-card, .customer-list) {
   background: var(--md-surface);
   border-color: var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
 }
 html[data-ui-style] :is(.portal, .saved-workspace) .saved-calendar-grid .hc-house {
   background: var(--md-surface-container);
@@ -326,7 +326,7 @@ html[data-ui-style] .custom-date-options button:hover:not(:disabled) {
 html[data-ui-style] dialog.photo-dialog {
   background: var(--md-surface);
   color: var(--md-on-surface);
-  border-radius: 24px;
+  border-radius: var(--component-radius);
   box-shadow: var(--md-shadow);
 }
 html[data-ui-style] dialog.photo-dialog::backdrop {

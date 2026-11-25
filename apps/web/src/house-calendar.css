@@ -147,7 +147,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   padding: 11px 16px;
   min-height: 42px;
   font-size: 12px !important;
@@ -193,7 +193,7 @@
   flex-shrink: 0;
   padding: 0;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   background: transparent;
   color: var(--md-on-surface-variant);
 }
@@ -220,7 +220,7 @@
   margin: 0 0 18px;
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
 }
 .hc-filters-heading {
   display: flex;
@@ -242,7 +242,7 @@
   height: 34px;
   border: 0;
   background: none;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   color: var(--md-on-surface-variant);
   padding: 6px;
 }
@@ -280,7 +280,7 @@
   min-height: 40px;
   padding: 9px 11px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-primary-container);
   font: inherit;
@@ -301,7 +301,7 @@
 .hc-calendar {
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   overflow: hidden;
   box-shadow: 0 3px 12px #264a3510;
 }
@@ -333,22 +333,22 @@
   font-size: 12px;
 }
 .hc-range > div:first-child button:first-child {
-  border-radius: 7px 0 0 7px;
+  border-radius: var(--component-radius) 0 0 var(--component-radius);
 }
 .hc-range > div:first-child button:last-child {
-  border-radius: 0 7px 7px 0;
+  border-radius: 0 var(--component-radius) var(--component-radius) 0;
   border-right: 1px solid var(--line);
 }
 .hc-scales {
   display: flex;
   background: var(--md-secondary-container);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   padding: 4px;
   gap: 2px;
 }
 .hc-scales [role='tab'] {
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--component-radius);
   background: none;
   color: var(--md-on-surface-variant);
   padding: 8px 15px;
@@ -525,7 +525,7 @@
   height: 32px;
   margin-left: auto;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   background: none;
   color: var(--md-on-surface-variant);
   padding: 5px;
@@ -547,7 +547,7 @@
   height: 34px;
   min-width: 5px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   padding: 7px 11px;
   text-align: left;
   white-space: nowrap;
@@ -600,7 +600,7 @@
   top: 0;
   left: -1px;
   transform: translateX(-50%);
-  border-radius: 4px;
+  border-radius: var(--component-radius);
   background: var(--md-warning-container);
   color: white;
   font-size: 9px;
@@ -628,7 +628,7 @@
 .hc-legend i {
   width: 10px;
   height: 8px;
-  border-radius: 2px;
+  border-radius: var(--component-radius);
   border: 1px solid var(--md-outline-variant);
   background: var(--md-primary-soft);
 }
@@ -666,7 +666,7 @@
   padding: 11px 14px;
   font-size: 12px;
   background: var(--md-primary-soft);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   color: var(--md-on-surface-variant);
 }
 /* Shared settings and stay details. */
@@ -674,7 +674,7 @@
   width: min(640px, calc(100vw - 32px));
   max-width: 640px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   padding: 26px;
   box-shadow: 0 20px 80px #173c3430;
@@ -697,7 +697,7 @@
 }
 .hc .dialog-heading .icon-button {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   width: 34px;
   height: 34px;
   min-height: 34px;
@@ -755,7 +755,7 @@
   padding: 9px 13px;
   font-size: 12px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   background: var(--md-surface-container);
   color: var(--md-warning-ink);
 }
@@ -782,7 +782,7 @@
 .hc-dialog {
   width: min(440px, calc(100vw - 32px));
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   padding: 26px;
   color: var(--ink);
   background: var(--md-surface);
@@ -797,7 +797,7 @@
 .hc-dialog-title button {
   border: 0;
   background: var(--md-secondary-container);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   width: 32px;
   height: 32px;
   font-size: 22px;
@@ -911,7 +911,7 @@
   align-items: center;
   background: var(--md-surface-container);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   padding: 13px 16px;
 }
 .hc-guest-avatar {
@@ -946,7 +946,7 @@
 }
 .hc-review-card {
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   padding: 20px;
   background: var(--md-surface);
 }
@@ -1014,7 +1014,7 @@
 /* Room timeline: precise gray intervals, with accessible alternate controls. */
 .hc-schedule-picker {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   overflow: hidden;
   background: var(--md-surface);
   min-width: 0;
@@ -1043,7 +1043,7 @@
   width: 30px;
   height: 30px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--md-on-surface-variant);
   font-size: 17px;
@@ -1184,7 +1184,7 @@
   height: 34px;
   min-width: 4px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 5px;
+  border-radius: var(--component-radius);
   background: var(--md-primary-soft);
   color: var(--md-on-surface-variant);
   overflow: hidden;
@@ -1219,7 +1219,7 @@
   width: 10px;
   height: 10px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 2px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .hc-schedule-legend i.unavailable {
@@ -1241,7 +1241,7 @@
   padding: 10px 14px;
   margin: 0;
   background: var(--md-primary-soft);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
 }
 .hc-placement-options {
   border-top: 1px solid var(--line);
@@ -1433,7 +1433,7 @@
   .hc .app-dialog {
     width: calc(100vw - 24px);
     padding: 20px;
-    border-radius: 14px;
+    border-radius: var(--component-radius);
   }
   .hc .app-dialog.hc-assignment-dialog {
     width: calc(100vw - 20px);
@@ -1608,7 +1608,7 @@
   min-width: 0;
   padding: 9px;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   color: var(--md-on-surface-variant);
   font-size: 11px;
   background: var(--md-surface);
@@ -1627,7 +1627,7 @@
   gap: 9px;
   padding: 10px 8px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   text-align: left;
   color: var(--md-on-surface-variant);
@@ -1678,7 +1678,7 @@
   gap: 3px;
   padding: 3px;
   background: var(--md-primary-soft);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   margin-top: 18px;
   width: max-content;
 }
@@ -1687,7 +1687,7 @@
   color: var(--md-on-surface-variant);
   padding: 8px 14px;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--component-radius);
   background: transparent;
 }
 .hc-balance-services button[aria-pressed='true'] {
@@ -1705,7 +1705,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   margin: 18px 0;
   overflow: hidden;
   background: var(--md-surface);
@@ -1858,7 +1858,7 @@
 }
 .hc-coverage-card {
   border: 1px solid var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface-container);
   padding: 18px;
 }
@@ -2067,7 +2067,7 @@
 }
 .hc-balance-policy {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   padding: 14px 16px;
 }
 .hc-balance-policy summary {
@@ -2133,7 +2133,7 @@
 .hc-photo-access {
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   margin-bottom: 12px;
 }
@@ -2185,7 +2185,7 @@
   gap: 20px;
   padding: 24px 28px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   margin-bottom: 20px;
 }
@@ -2204,7 +2204,7 @@
   padding: 5px 9px;
   background: var(--md-warning-container);
   color: var(--md-warning-ink);
-  border-radius: 5px;
+  border-radius: var(--component-radius);
   font-size: 10px;
 }
 .hc-policy-cards {
@@ -2215,7 +2215,7 @@
 .hc-policy-cards article {
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   padding: 28px;
 }
 .hc-policy-cards small {
@@ -2257,7 +2257,7 @@
   margin-top: 32px;
   padding: 26px 28px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .hc-policy-details h2 {
@@ -2337,7 +2337,7 @@
 }
 .hc-statement-filters {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   padding: 16px 20px;
 }
@@ -2359,7 +2359,7 @@
   width: 100%;
   min-width: 0;
   border: 1px solid var(--md-outline-variant);
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   padding: 10px;
   color: var(--md-on-primary-container);
@@ -2373,7 +2373,7 @@
 }
 .hc-statement-totals > div {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   padding: 22px;
 }
@@ -2395,7 +2395,7 @@
 .hc-statement-table-wrap {
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   overflow: hidden;
 }
 .hc-statement-table-title {
@@ -2465,7 +2465,7 @@
   display: inline-block;
   font-size: 10px;
   padding: 5px 8px;
-  border-radius: 5px;
+  border-radius: var(--component-radius);
   background: var(--md-primary-soft);
   color: var(--md-on-surface-variant);
 }
@@ -2703,7 +2703,7 @@
 .hc-balance-page {
   background: var(--md-surface);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   overflow: hidden;
 }
 .hc-balance-page .hc-balance-layout {
@@ -2718,7 +2718,7 @@
   padding: 24px;
   background: var(--md-surface);
   border: 1px solid var(--md-outline-variant);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
 }
 .hc-settings-cards h2 {
   font-size: 20px;
@@ -2784,7 +2784,7 @@
   font-size: 12px;
   color: var(--md-on-surface-variant);
   background: var(--md-secondary-container);
-  border-radius: 20px;
+  border-radius: var(--component-radius);
   padding: 3px 9px;
 }
 .hc-balance-page .hc-balance-sidebar > label {
@@ -2864,7 +2864,7 @@
   width: 56px;
   height: 56px;
   flex-shrink: 0;
-  border-radius: 14px;
+  border-radius: var(--component-radius);
   overflow: hidden;
   background: var(--md-primary-soft);
   color: var(--md-on-surface-variant);
@@ -2929,7 +2929,7 @@
 .hc-balance-page .hc-balance-empty {
   padding: 32px 24px;
   border: 1px dashed var(--md-outline-variant);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   text-align: center;
 }
@@ -3054,7 +3054,7 @@
   .hc-balance-selected-photo {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: var(--component-radius);
   }
   .hc-balance-page .hc-balance-title h3 {
     font-size: 24px;
@@ -3106,7 +3106,7 @@
   padding: 4px;
   margin: 0 0 24px;
   background: var(--md-primary-soft);
-  border-radius: 9px;
+  border-radius: var(--component-radius);
   font-size: 13px;
 }
 .hc-balance-views a {
@@ -3115,7 +3115,7 @@
   justify-content: center;
   min-height: 40px;
   padding: 9px 20px;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   color: var(--md-on-surface-variant);
 }
 .hc-balance-views a[aria-current='page'] {
@@ -3180,7 +3180,7 @@
   font-size: 14px;
   font-weight: 500;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   color: var(--md-on-surface-variant);
 }
 .hc-work-nav a[aria-current='page'] {
@@ -3208,7 +3208,7 @@
   min-height: 40px;
   padding: 8px 12px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--ink);
   list-style: none;
@@ -3224,7 +3224,7 @@
   padding: 12px;
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--component-radius);
   box-shadow: 0 12px 35px #213c381c;
   display: grid;
   gap: 4px;
@@ -3244,7 +3244,7 @@
   padding: 11px 10px;
   font: inherit;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   background: transparent;
   text-align: left;
   color: var(--ink);
@@ -3262,7 +3262,7 @@
   padding: 28px;
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   margin-top: 24px;
 }
 .hc .profile-section h1,
@@ -3280,7 +3280,7 @@
   font: inherit;
   min-height: 44px;
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   padding: 10px 12px;
   color: var(--ink);
 }
@@ -3288,7 +3288,7 @@
   margin-top: 0;
   background: var(--brand);
   border: 1px solid var(--brand);
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   min-height: 44px;
   padding: 11px 18px;
   gap: 8px;
@@ -3296,7 +3296,7 @@
   font-size: 13px;
 }
 .hc .language {
-  border-radius: 7px;
+  border-radius: var(--component-radius);
   min-height: 40px;
   font-size: 12px;
 }
@@ -3353,7 +3353,7 @@
     min-height: 58px;
     font-size: 11px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--component-radius);
     line-height: 1.4;
   }
   .hc-work-nav a svg {
@@ -3400,7 +3400,7 @@
 .hc-all-balances {
   padding: 24px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
 }
 .hc-all-balances h2 {
@@ -3425,7 +3425,7 @@
   text-align: left;
   background: var(--md-surface);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   color: var(--ink);
 }
 .hc-balance-pick:hover {
@@ -3470,7 +3470,7 @@
     width: 100%;
     height: auto;
     max-height: 90dvh;
-    border-radius: 16px 16px 0 0;
+    border-radius: var(--component-radius) var(--component-radius) 0 0;
     padding: 24px;
   }
 }
@@ -3631,7 +3631,7 @@
   max-width: 200px;
   padding: 6px 8px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--component-radius);
   background: var(--md-surface);
   color: var(--ink);
   font: inherit;
@@ -3846,7 +3846,7 @@
 
 .hc-account-menu > div {
   border-color: var(--md-outline-variant);
-  border-radius: 16px;
+  border-radius: var(--component-radius);
   background: var(--md-surface-container);
   box-shadow: 0 12px 30px #293f351a;
 }
@@ -3861,7 +3861,7 @@
   margin: auto;
   padding: 24px 28px 0;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: var(--component-radius);
 }
 .hc .app-dialog.hc-assignment-dialog[open] {
   display: flex;
@@ -3894,7 +3894,7 @@
 @media (max-width: 700px) {
   .hc .app-dialog.hc-assignment-dialog {
     --booking-edge: 12px;
-    border-radius: 16px;
+    border-radius: var(--component-radius);
     padding: 16px 16px 0;
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -4078,7 +4078,7 @@
   margin: 0;
   padding: 6px;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--component-radius);
   background: var(--md-success-soft);
   color: var(--md-link);
   font: inherit;
