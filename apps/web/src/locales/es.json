@@ -1354,7 +1354,7 @@
   "ui.balanceView.validity": "Fechas de validez",
   "ui.balanceView.noBalance": "Sin saldo guardado",
   "ui.balanceView.petActivity": "Ver actividad",
-  "ui.balanceView.pageSummary": "Cambios de esta página",
+  "ui.balanceView.pageSummary": "Cambios en los registros cargados",
   "ui.balanceView.daysUnit": "días de alojamiento",
   "ui.balanceView.reason": "Nota",
   "ui.balanceView.allBalances": "Volver a todos los saldos",
@@ -1611,5 +1611,6 @@
   "ui.identityAccess.acceptHelp": "Pega el código del administrador. Debes usar el correo de Google indicado en la invitación.",
   "ui.identityAccess.copy": "Copiar código",
   "ui.identityAccess.copied": "Copiado",
-  "ui.identityAccess.done": "Listo"
+  "ui.identityAccess.done": "Listo",
+  "ui.records.more": "Cargar más"
 }

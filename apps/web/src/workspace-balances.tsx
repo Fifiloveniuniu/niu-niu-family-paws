@@ -4,7 +4,7 @@ import IconButton from './icon-button';
 import SegmentedTabs from './segmented-tabs';
 import './workspace-views.css';
 import { CustomerPicker, PetPicker } from './workspace-pickers';
-import { useCursorPage, Pagination } from './pagination';
+import { useRecordList, RecordList } from './record-list';
 import ValidityTemplates, { TemplatePicker } from './validity-templates';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -318,7 +318,11 @@ export default function WorkspaceBalances({
     }
     return result;
   }, [customerFilter, chosen?.customer.id, chosen?.pet.id, kind, from, through, zone]);
-  const history = useCursorPage<EventRow>('/workspace/events?' + params, data.rows, valid);
+  const history = useRecordList<EventRow>(
+    '/workspace/events?' + params,
+    data.rows,
+    valid && activity,
+  );
   const events = history.items,
     loading = history.loading;
   const balanceParams = new URLSearchParams();
@@ -327,7 +331,11 @@ export default function WorkspaceBalances({
     balanceParams.set('customerId', chosen.customer.id);
     balanceParams.set('petId', chosen.pet.id);
   }
-  const balances = useCursorPage<PetRow>('/workspace/pets?' + balanceParams, data.rows, valid);
+  const balances = useRecordList<PetRow>(
+    '/workspace/pets?' + balanceParams,
+    data.rows,
+    valid && !activity,
+  );
   const entries = (rows: EventRow[]): StatementEntry[] =>
     rows
       .filter((row) => !row.event.bookingId)
@@ -421,7 +429,7 @@ export default function WorkspaceBalances({
   }
   const rows = balances.items;
   return (
-    <section className="saved-balances">
+    <section className="saved-balances record-workspace">
       <div className="workspace-view-heading">
         <h1>{t('balances')}</h1>
         <p>{b('intro')}</p>
@@ -507,86 +515,91 @@ export default function WorkspaceBalances({
       </div>
       <section id="balances-panel" role="tabpanel" aria-labelledby="balances-tab" hidden={activity}>
         <p className="workspace-view-hint">{b('currentHint')}</p>
-        <div className="workspace-table-scroll">
-          <table className="workspace-table">
-            <caption className="sr-only">{t('balances')}</caption>
-            <thead>
-              <tr>
-                <th>{t('pet')}</th>
-                {!data.customer && <th>{t('customer')}</th>}
-                <th>{t('balance')}</th>
-                <th>{b('validity')}</th>
-                <th>
-                  <span className="sr-only">{b('petActivity')}</span>
-                </th>
-                {data.admin && (
+        <RecordList list={balances} label={t('balances')} resetKey={balanceParams.toString()}>
+          <div className="workspace-table-scroll">
+            <table className="workspace-table">
+              <caption className="sr-only">{t('balances')}</caption>
+              <thead>
+                <tr>
+                  <th>{t('pet')}</th>
+                  {!data.customer && <th>{t('customer')}</th>}
+                  <th>{t('balance')}</th>
+                  <th>{b('validity')}</th>
                   <th>
-                    <span className="sr-only">{t('editBalance')}</span>
+                    <span className="sr-only">{b('petActivity')}</span>
                   </th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={petKey(row.customer.id, row.pet.id)}>
-                  <td className="balance-pet-cell">
-                    <span className="workspace-table-pet">
-                      <PetInfo row={row} scope={scope} />
-                      <strong>{row.pet.name}</strong>
-                    </span>
-                  </td>
-                  {!data.customer && <td className="balance-customer-cell">{row.customer.name}</td>}
-                  <td className="balance-days-cell">
-                    {row.account ? (
-                      <strong className="balance-days">
-                        {row.account.days} <small>{t('days')}</small>
-                      </strong>
-                    ) : (
-                      <span className="workspace-muted">{b('noBalance')}</span>
-                    )}
-                  </td>
-                  <td className="balance-validity-cell">
-                    {row.account ? (
-                      <span className="balance-validity">
-                        <span>{row.account.validFrom}</span>
-                        <span>– {row.account.validThrough}</span>
-                      </span>
-                    ) : (
-                      <span className="workspace-muted">{b('noBalance')}</span>
-                    )}
-                  </td>
-                  <td className="balance-history-cell">
-                    <IconButton
-                      type="button"
-
-                      title={b('petActivity')}
-                      aria-label={`${b('petActivity')}: ${row.pet.name}`}
-                      onClick={() =>
-                        onFilters({ pet: petKey(row.customer.id, row.pet.id), panel: 'activity' })
-                      }
-                    >
-                      <Icon name="clock" />
-                    </IconButton>
-                  </td>
                   {data.admin && (
-                    <td className="balance-edit-cell">
-                      <IconButton
-                        title={t('editBalance')}
-                        aria-label={`${t('editBalance')}: ${row.pet.name}`}
-                        onClick={() => onAdjust(row)}
-                      >
-                        <Icon name="edit" />
-                      </IconButton>
-                    </td>
+                    <th>
+                      <span className="sr-only">{t('editBalance')}</span>
+                    </th>
                   )}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {balances.loading && <p role="status">{t('loading')}</p>}
-        <Pagination page={balances} label={uiText('ui.pagination.balances')} />
-        {!balances.loading && !balances.error && !rows.length && <p>{t('emptyMatches')}</p>}
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={petKey(row.customer.id, row.pet.id)}>
+                    <td className="balance-pet-cell">
+                      <span className="workspace-table-pet">
+                        <PetInfo row={row} scope={scope} />
+                        <strong>{row.pet.name}</strong>
+                      </span>
+                    </td>
+                    {!data.customer && (
+                      <td className="balance-customer-cell">{row.customer.name}</td>
+                    )}
+                    <td className="balance-days-cell">
+                      {row.account ? (
+                        <strong className="balance-days">
+                          {row.account.days} <small>{t('days')}</small>
+                        </strong>
+                      ) : (
+                        <span className="workspace-muted">{b('noBalance')}</span>
+                      )}
+                    </td>
+                    <td className="balance-validity-cell">
+                      {row.account ? (
+                        <span className="balance-validity">
+                          <span>{row.account.validFrom}</span>
+                          <span>– {row.account.validThrough}</span>
+                        </span>
+                      ) : (
+                        <span className="workspace-muted">{b('noBalance')}</span>
+                      )}
+                    </td>
+                    <td className="balance-history-cell">
+                      <IconButton
+                        type="button"
+
+                        title={b('petActivity')}
+                        aria-label={`${b('petActivity')}: ${row.pet.name}`}
+                        onClick={() =>
+                          onFilters({ pet: petKey(row.customer.id, row.pet.id), panel: 'activity' })
+                        }
+                      >
+                        <Icon name="clock" />
+                      </IconButton>
+                    </td>
+                    {data.admin && (
+                      <td className="balance-edit-cell">
+                        <IconButton
+                          title={t('editBalance')}
+                          aria-label={`${t('editBalance')}: ${row.pet.name}`}
+                          onClick={() => onAdjust(row)}
+                        >
+                          <Icon name="edit" />
+                        </IconButton>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {!balances.loading && !balances.error && !balances.nextCursor && !rows.length && (
+            <p>{t('emptyMatches')}</p>
+          )}
+        </RecordList>
       </section>
       <section
         id="activity-panel"
@@ -653,118 +666,124 @@ export default function WorkspaceBalances({
         {error && (
           <p role="alert">
             {t('loadError')}{' '}
-            <Button icon="reset" variant="secondary" onClick={history.reload}>
+            <Button variant="secondary" onClick={() => void exportCsv()}>
               {t('retry')}
             </Button>
           </p>
         )}
-        {loading && <p role="status">{t('loading')}</p>}
-        <div className="activity-page-summary" aria-label={b('pageSummary')}>
-          <span>{b('pageSummary')}</span>
-          <span>
-            <Icon name="plus" />
-            {t('shownAdded')} <strong>{valid ? totals.added : '—'}</strong>
-          </span>
-          <span>
-            <Icon name="edit" />
-            {t('shownRemoved')} <strong>{valid ? totals.removed : '—'}</strong>
-          </span>
-          <span>
-            {b('netChange')}{' '}
-            <strong>{valid ? (totals.net > 0 ? '+' : '') + totals.net : '—'}</strong>
-          </span>
-        </div>
-        {!loading && !error && valid && !events.length && (
-          <div className="activity-empty">
-            <Icon name="clock" />
-            <p>{t('emptyActivity')}</p>
+        <RecordList list={history} label={t('history')} resetKey={params.toString()}>
+          <div className="activity-page-summary" aria-label={b('pageSummary')}>
+            <span>{b('pageSummary')}</span>
+            <span>
+              <Icon name="plus" />
+              {t('shownAdded')} <strong>{valid ? totals.added : '—'}</strong>
+            </span>
+            <span>
+              <Icon name="edit" />
+              {t('shownRemoved')} <strong>{valid ? totals.removed : '—'}</strong>
+            </span>
+            <span>
+              {b('netChange')}{' '}
+              <strong>{valid ? (totals.net > 0 ? '+' : '') + totals.net : '—'}</strong>
+            </span>
           </div>
-        )}
-        <div className="workspace-table-scroll" hidden={!events.length}>
-          <table className="workspace-table">
-            <caption className="sr-only">{t('history')}</caption>
-            <thead>
-              <tr>
-                <th>{t('date')}</th>
-                <th>{t('pet')}</th>
-                <th>{t('activity')}</th>
-                <th>{t('change')}</th>
-                <th>
-                  <span className="sr-only">{t('entryDetails')}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((row) => (
-                <tr key={(row.event.kind ?? 'balance') + ':' + row.event.id}>
-                  <td className="activity-date-cell">{formatter.format(new Date(row.event.at))}</td>
-                  <td className="activity-pet-cell">
-                    <span className="activity-identity">
-                      <WorkspaceAvatar
-                        row={{ customer: row.customer, pet: row.pet, account: null }}
-                      />
-                      <strong>{row.pet.name}</strong>
-                    </span>
-                    {!data.customer && (
-                      <small className="activity-customer">{row.customer.name}</small>
-                    )}
-                  </td>
-                  <td className="activity-kind-cell">
-                    <span className="activity-event-kind">
-                      <Icon
-                        name={
-                          row.event.delta > 0 ? 'plus' : row.event.delta < 0 ? 'edit' : 'calendar'
-                        }
-                      />
-                      {t(
-                        row.event.kind ??
-                          (row.event.delta > 0
-                            ? 'added'
-                            : row.event.delta < 0
-                              ? 'correction'
-                              : 'terms'),
-                      )}
-                    </span>
-                    {row.event.bookingId && (
-                      <small className="activity-note">
-                        {formatter.format(new Date(row.event.arrival!))} –{' '}
-                        {formatter.format(new Date(row.event.pickup!))}
-                      </small>
-                    )}
-                    <small className="activity-note">
-                      {row.event.reason ||
-                        (row.event.delta === 0 && !row.event.bookingId
-                          ? `${row.event.validFrom} – ${row.event.validThrough}`
-                          : '')}
-                    </small>
-                  </td>
-                  <td className="activity-delta-cell">
-                    <strong
-                      className="activity-change"
-                      data-direction={
-                        row.event.delta > 0 ? 'added' : row.event.delta < 0 ? 'removed' : 'terms'
-                      }
-                    >
-                      {row.event.delta > 0 ? '+' : ''}
-                      {row.event.delta} <small>{t('days')}</small>
-                    </strong>
-                  </td>
-                  <td className="activity-detail-cell">
-                    <IconButton
-                      title={t('entryDetails')}
-                      aria-label={`${t('entryDetails')}: ${row.pet.name} · ${row.event.at}`}
-                      onClick={() => setDetail(row)}
-                    >
-                      <Icon name="search" />
-                    </IconButton>
-                  </td>
+          {!loading &&
+            !history.error &&
+            !history.nextCursor &&
+            !error &&
+            valid &&
+            !events.length && (
+              <div className="activity-empty">
+                <Icon name="clock" />
+                <p>{t('emptyActivity')}</p>
+              </div>
+            )}
+          <div className="workspace-table-scroll" hidden={!events.length}>
+            <table className="workspace-table">
+              <caption className="sr-only">{t('history')}</caption>
+              <thead>
+                <tr>
+                  <th>{t('date')}</th>
+                  <th>{t('pet')}</th>
+                  <th>{t('activity')}</th>
+                  <th>{t('change')}</th>
+                  <th>
+                    <span className="sr-only">{t('entryDetails')}</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p>{t('shown', { count: events.length })}</p>
-        <Pagination page={history} label={uiText('ui.pagination.history')} />
+              </thead>
+              <tbody>
+                {events.map((row) => (
+                  <tr key={(row.event.kind ?? 'balance') + ':' + row.event.id}>
+                    <td className="activity-date-cell">
+                      {formatter.format(new Date(row.event.at))}
+                    </td>
+                    <td className="activity-pet-cell">
+                      <span className="activity-identity">
+                        <WorkspaceAvatar
+                          row={{ customer: row.customer, pet: row.pet, account: null }}
+                        />
+                        <strong>{row.pet.name}</strong>
+                      </span>
+                      {!data.customer && (
+                        <small className="activity-customer">{row.customer.name}</small>
+                      )}
+                    </td>
+                    <td className="activity-kind-cell">
+                      <span className="activity-event-kind">
+                        <Icon
+                          name={
+                            row.event.delta > 0 ? 'plus' : row.event.delta < 0 ? 'edit' : 'calendar'
+                          }
+                        />
+                        {t(
+                          row.event.kind ??
+                            (row.event.delta > 0
+                              ? 'added'
+                              : row.event.delta < 0
+                                ? 'correction'
+                                : 'terms'),
+                        )}
+                      </span>
+                      {row.event.bookingId && (
+                        <small className="activity-note">
+                          {formatter.format(new Date(row.event.arrival!))} –{' '}
+                          {formatter.format(new Date(row.event.pickup!))}
+                        </small>
+                      )}
+                      <small className="activity-note">
+                        {row.event.reason ||
+                          (row.event.delta === 0 && !row.event.bookingId
+                            ? `${row.event.validFrom} – ${row.event.validThrough}`
+                            : '')}
+                      </small>
+                    </td>
+                    <td className="activity-delta-cell">
+                      <strong
+                        className="activity-change"
+                        data-direction={
+                          row.event.delta > 0 ? 'added' : row.event.delta < 0 ? 'removed' : 'terms'
+                        }
+                      >
+                        {row.event.delta > 0 ? '+' : ''}
+                        {row.event.delta} <small>{t('days')}</small>
+                      </strong>
+                    </td>
+                    <td className="activity-detail-cell">
+                      <IconButton
+                        title={t('entryDetails')}
+                        aria-label={`${t('entryDetails')}: ${row.pet.name} · ${row.event.at}`}
+                        onClick={() => setDetail(row)}
+                      >
+                        <Icon name="search" />
+                      </IconButton>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </RecordList>
       </section>
       {detail && (
         <Modal title={t('history')} onClose={() => setDetail(null)}>

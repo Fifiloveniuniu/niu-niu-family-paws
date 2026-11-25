@@ -119,11 +119,11 @@ for (const [language, width] of [
     await expect(pet).toBeVisible();
     await expect(pet).toContainText(weight);
     await pet.getByRole('tab', { name: t('bookings'), exact: true }).click();
-    await expect(pet.getByRole('navigation')).toBeVisible();
+    await expect(pet.getByRole('region', { name: t('bookings'), exact: true })).toBeVisible();
     await pet.getByRole('tab', { name: t('balance'), exact: true }).click();
     await expect(pet.locator('.workspace-details')).toBeVisible();
     await pet.getByRole('tab', { name: t('activity'), exact: true }).click();
-    await expect(pet.getByRole('navigation')).toBeVisible();
+    await expect(pet.getByRole('region', { name: t('activity'), exact: true })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath('pet-activity.png') });
     await page.keyboard.press('Escape');
     await page.goto(`/app/customers/?lang=${language}&asCustomer=${fixture.cid}`);

@@ -1348,7 +1348,7 @@
   "ui.balanceView.validity": "有效日期",
   "ui.balanceView.noBalance": "尚无余额记录",
   "ui.balanceView.petActivity": "查看变动记录",
-  "ui.balanceView.pageSummary": "本页变动",
+  "ui.balanceView.pageSummary": "已加载记录中的变更",
   "ui.balanceView.daysUnit": "寄养天数",
   "ui.balanceView.reason": "备注",
   "ui.balanceView.allBalances": "返回全部余额",
@@ -1605,5 +1605,6 @@
   "ui.identityAccess.acceptHelp": "粘贴管理员私下提供的邀请码，登录的 Google 邮箱必须与邀请指定邮箱一致。",
   "ui.identityAccess.copy": "复制邀请码",
   "ui.identityAccess.copied": "已复制",
-  "ui.identityAccess.done": "完成"
+  "ui.identityAccess.done": "完成",
+  "ui.records.more": "加载更多"
 }

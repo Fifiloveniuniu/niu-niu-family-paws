@@ -7,7 +7,7 @@ import Icon from './icons';
 import { PetTypeIcon } from './pet-type';
 import { WorkspaceAvatar } from './workspace-photos';
 import { apiJson } from './api-client';
-import { Pagination, useCursorPage } from './pagination';
+import { useRecordList, RecordList } from './record-list';
 import { useWorkspaceText } from './workspace-text';
 import { localeFor, uiText, speciesText } from './i18n';
 import type { Booking, PetRow, EventRow } from './workspace-data';
@@ -47,8 +47,8 @@ export default function PetDetails({
       });
     return () => abort.abort();
   }, [customerId, petId]);
-  const bookings = useCursorPage<Booking>('/bookings?' + params, undefined, tab === 'bookings');
-  const activity = useCursorPage<EventRow>(
+  const bookings = useRecordList<Booking>('/bookings?' + params, undefined, tab === 'bookings');
+  const activity = useRecordList<EventRow>(
     '/workspace/events?' + params,
     undefined,
     tab === 'activity',
@@ -138,12 +138,11 @@ export default function PetDetails({
             </dl>
           )}
           {tab === 'bookings' && (
-            <section aria-label={t('bookings')}>
-              {bookings.loading ? (
-                <p role="status">{t('loading')}</p>
-              ) : bookings.error ? (
-                <p role="alert">{t('loadError')}</p>
-              ) : !bookings.items.length ? (
+            <RecordList list={bookings} label={t('bookings')} resetKey={customerId + petId}>
+              {!bookings.items.length &&
+              !bookings.loading &&
+              !bookings.error &&
+              !bookings.nextCursor ? (
                 <p>{t('emptyBookings')}</p>
               ) : (
                 <ul className="pet-detail-events">
@@ -160,16 +159,14 @@ export default function PetDetails({
                   ))}
                 </ul>
               )}
-              <Pagination page={bookings} label={t('bookings')} />
-            </section>
+            </RecordList>
           )}
           {tab === 'activity' && (
-            <section aria-label={t('activity')}>
-              {activity.loading ? (
-                <p role="status">{t('loading')}</p>
-              ) : activity.error ? (
-                <p role="alert">{t('loadError')}</p>
-              ) : !activity.items.length ? (
+            <RecordList list={activity} label={t('activity')} resetKey={customerId + petId}>
+              {!activity.items.length &&
+              !activity.loading &&
+              !activity.error &&
+              !activity.nextCursor ? (
                 <p>{t('emptyActivity')}</p>
               ) : (
                 <ul className="pet-detail-events">
@@ -199,8 +196,7 @@ export default function PetDetails({
                   ))}
                 </ul>
               )}
-              <Pagination page={activity} label={t('activity')} />
-            </section>
+            </RecordList>
           )}
         </>
       )}

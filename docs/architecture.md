@@ -1,3 +1,9 @@
+## Shared continuous record lists — 2026-11-24
+
+`record-list.tsx` owns the shared bounded 25-record cursor loader for balances/activity, Access, Payments and pet-dialog history. Its query/refresh scope isolates responses, aborts stale requests, retains rows on continuation failure, ignores duplicate canonical IDs and rejects repeated continuations. `record-list-state.ts` includes owner/pet/event-kind scope in identities; Access uses immutable UIDs. Successful batches remain in component memory when a subsection pauses. Scroll positions are per query scope. Payment reads adapt their existing charge/card envelope without changing the test-payment API or enabling collection.
+
+`RecordList` and existing `LoadMore` share IntersectionObserver loading, keyboard/manual fallback and localized retry. Observer roots must actually constrain vertical content: horizontal-only phone table overflow must not cause the entire cursor sequence to drain before scrolling. Desktop record workspaces retain headings/filters outside the scrolling list and sticky table headers; phones use document scrolling and dialogs use constrained lists. Existing customer/pet implementations stay intact. Exports continue traversing the complete server-filtered result independently. No backend, persisted-data, permission or business-rule changes.
+
 ## Customer directory substring filtering and continuous lists — 2026-11-24
 
 Customers and pets append fixed cursor batches within independent viewport scrollports. A keyboard Load more fallback, generation checks, authoritative next-cursor references and ID deduplication preserve records through retries and filter changes. Saved pet links continue scanning batches until their canonical pet is found. Customer detail validation uses a customerId-scoped administrator read under the same combined filters; filtered-out selections are cleared.
