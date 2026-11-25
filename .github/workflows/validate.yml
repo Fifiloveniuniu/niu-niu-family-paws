@@ -1,8 +1,15 @@
-name: Release main
+name: Validate and release
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: Publish the final reviewed release to production
+        type: boolean
+        required: false
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -10,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -20,8 +27,12 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run check:api
+      - run: npm test
+      - run: npm run format:check
       - run: npm run build
       - run: node scripts/release-manifest.mjs "$GITHUB_SHA"
+        if: github.ref == 'refs/heads/main'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: web-${{ github.sha }}
@@ -33,7 +44,7 @@ jobs:
       group: production-release
       cancel-in-progress: false
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.deploy
     runs-on: ubuntu-latest
     timeout-minutes: 45
     permissions:
