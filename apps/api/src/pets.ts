@@ -101,17 +101,38 @@ export function petStore(database: Firestore, photos: Photos) {
     return customer;
   }
   return {
-    async list(identity: Identity, customerId: string, cursor?: string, pageSize?: string) {
+    async list(
+      identity: Identity,
+      customerId: string,
+      cursor?: string,
+      pageSize?: string,
+      search?: string,
+    ) {
       await authorize(identity, customerId);
       const size = Number(pageSize ?? 50);
+      const term = search?.trim().toLowerCase();
       let query = customerRef(customerId)
         .collection('pets')
         .orderBy(FieldPath.documentId())
-        .limit(size + 1);
+        .limit(term ? 251 : size + 1);
       if (cursor) query = query.startAfter(cursor);
       const result = await query.get();
-      const items = result.docs.slice(0, size).map((doc) => projectPet(doc.data()));
-      return { items, nextCursor: result.size > size ? items.at(-1)!.id : null };
+      const window = result.docs.slice(0, term ? 250 : size + 1);
+      const matches = window.filter(
+        (doc) =>
+          !term ||
+          (typeof doc.data().name === 'string' && doc.data().name.toLowerCase().includes(term)),
+      );
+      const docs = matches.slice(0, size);
+      return {
+        items: docs.map((doc) => projectPet(doc.data())),
+        nextCursor:
+          matches.length > size
+            ? docs.at(-1)!.id
+            : term && result.size > 250
+              ? window.at(-1)!.id
+              : null,
+      };
     },
     async save(identity: Identity, customerId: string, id: string, input: PetWrite) {
       // Authorize before decoding or storing a file; repeat inside the transaction.
@@ -244,7 +265,10 @@ export function petRoutes(api: FastifyInstance, store: PetStore) {
     required: ['customerId', 'id'],
     properties: { customerId: uuidSchema, id: uuidSchema },
   };
-  api.get<{ Params: { customerId: string }; Querystring: { cursor?: string; pageSize?: string } }>(
+  api.get<{
+    Params: { customerId: string };
+    Querystring: { cursor?: string; pageSize?: string; search?: string };
+  }>(
     '/customers/:customerId/pets',
     {
       schema: {
@@ -253,6 +277,7 @@ export function petRoutes(api: FastifyInstance, store: PetStore) {
           ...emptyObjectSchema,
           properties: {
             cursor: uuidSchema,
+            search: { type: 'string', maxLength: 120 },
             pageSize: { type: 'string', enum: ['25', '50', '100'] },
           },
         },
@@ -264,6 +289,7 @@ export function petRoutes(api: FastifyInstance, store: PetStore) {
         request.params.customerId,
         request.query.cursor,
         request.query.pageSize,
+        request.query.search?.trim().toLowerCase(),
       ),
   );
   api.put<{ Params: { customerId: string; id: string }; Body: PetWrite }>(

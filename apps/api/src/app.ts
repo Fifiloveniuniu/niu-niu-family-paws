@@ -39,6 +39,8 @@ export interface CustomerStore {
     cursor?: string,
     search?: string,
     pageSize?: string,
+    petSearch?: string,
+    customerId?: string,
   ): Promise<{ items: Customer[]; nextCursor: string | null }>;
   save(id: string, input: CustomerWrite, actor: string): Promise<Customer>;
   profile(identity: ProfileIdentity): Promise<Customer | null>;
@@ -197,7 +199,15 @@ export function buildApp(deps: {
             },
             async (request) => deps.businessMetrics!.read(metricsRange(request.query)),
           );
-        admin.get<{ Querystring: { cursor?: string; search?: string; pageSize?: string } }>(
+        admin.get<{
+          Querystring: {
+            cursor?: string;
+            search?: string;
+            pageSize?: string;
+            petSearch?: string;
+            customerId?: string;
+          };
+        }>(
           '/customers',
           {
             schema: {
@@ -205,7 +215,14 @@ export function buildApp(deps: {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
-                  cursor: uuidSchema,
+                  cursor: {
+                    anyOf: [
+                      uuidSchema,
+                      { type: 'string', pattern: '^eyJ[A-Za-z0-9_-]{20,1020}$', maxLength: 1024 },
+                    ],
+                  },
+                  petSearch: { type: 'string', maxLength: 120 },
+                  customerId: uuidSchema,
                   search: { type: 'string', maxLength: 254 },
                   pageSize: { type: 'string', enum: ['25', '50', '100'] },
                 },
@@ -217,6 +234,8 @@ export function buildApp(deps: {
               request.query.cursor,
               request.query.search?.trim().toLowerCase(),
               request.query.pageSize,
+              request.query.petSearch?.trim().toLowerCase(),
+              request.query.customerId,
             ),
         );
         admin.put<{ Params: { id: string }; Body: CustomerWrite }>(

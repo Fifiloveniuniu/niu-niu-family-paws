@@ -117,9 +117,17 @@ test('customer search is normalized, bounded, and applied with pagination by the
   const search = (url) =>
     app.inject({ method: 'GET', url, headers: { authorization: 'Bearer admin' } });
   assert.equal((await search('/api/customers?search=%20ALICE%20&cursor=' + id)).statusCode, 200);
-  assert.deepEqual(received, [id, 'alice', undefined]);
+  assert.deepEqual(received, [id, 'alice', undefined, undefined, undefined]);
   assert.equal((await search('/api/customers?pageSize=50')).statusCode, 200);
-  assert.deepEqual(received, [undefined, undefined, '50']);
+  assert.deepEqual(received, [undefined, undefined, '50', undefined, undefined]);
+  assert.equal(
+    (await search('/api/customers?search=%20Alice%20&petSearch=%20sNoW%20&customerId=' + id))
+      .statusCode,
+    200,
+  );
+  assert.deepEqual(received, [undefined, 'alice', undefined, 'snow', id]);
+  assert.equal((await search('/api/customers?petSearch=' + 'x'.repeat(121))).statusCode, 400);
+  assert.equal((await search('/api/customers?customerId=forged')).statusCode, 400);
   assert.equal((await search('/api/customers?pageSize=26')).statusCode, 400);
   assert.equal((await search('/api/customers?search=' + 'x'.repeat(255))).statusCode, 400);
   assert.equal((await search('/api/customers?cursor=invalid')).statusCode, 400);

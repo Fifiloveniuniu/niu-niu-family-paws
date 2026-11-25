@@ -1,3 +1,12 @@
+## Latest customer-tab direction — 2026-11-24
+
+- Fill the remaining viewport with aligned customer/pet panels and independent scrolling; preserve phone list/detail and very-short-screen access.
+- Use continuous loading with a Load more fallback instead of Rows per page/previous/next in customer/pet lists. Keep financial pagination.
+- Live customer and pet filters update as typed, match anywhere case-insensitively, and combine. Remove their search/reset buttons.
+- A pet filter shows only owners with matching pets; the selected owner's pet panel also shows only matching pets. Show no customer when no owner matches.
+- Keep a matching selection and clear an excluded selection. No Loaded / All loaded messages and no No matching pets message.
+- Align View balance, edit actions, labels and fields consistently on desktop/phone and preserve all themes and EN/zh/es.
+
 ## Searchable dropdowns and quiet draft protection — 2026-11-20
 
 Find a pet is a dropdown of authorized saved pets. Dropdown text fields accept typing to filter choices. Keep selected values until a choice is committed, retain keyboard access and explicit all choices. Do not show unsaved-changes banners; preserve discard confirmation when leaving an edited form.

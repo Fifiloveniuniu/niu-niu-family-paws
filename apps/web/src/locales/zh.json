@@ -626,7 +626,7 @@
     "retry": "重试保存",
     "noContact": "尚未填写联系方式",
     "search": "搜索客户",
-    "searchHint": "输入姓名或邮箱的开头",
+    "searchHint": "客户姓名或邮箱",
     "noMatches": "没有找到匹配的客户。",
     "loginEmail": "Google 登录邮箱"
   },
@@ -993,7 +993,7 @@
     "photoRetry": "重新加载照片",
     "selected": "已选好新照片，点击“保存宠物”后才会上传。",
     "search": "搜索宠物名字",
-    "searchHint": "输入宠物名字的开头",
+    "searchHint": "宠物名字",
     "noMatches": "没有找到符合条件的宠物。",
     "customer": "客户",
     "manage": "管理这些宠物"

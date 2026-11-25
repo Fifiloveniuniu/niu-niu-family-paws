@@ -632,7 +632,7 @@
     "retry": "Reintentar guardado",
     "noContact": "Sin datos de contacto",
     "search": "Buscar clientes",
-    "searchHint": "Nombre o correo del cliente (empieza por)",
+    "searchHint": "Nombre o correo del cliente",
     "noMatches": "No hay clientes coincidentes.",
     "loginEmail": "Correo de acceso a Google"
   },
@@ -999,7 +999,7 @@
     "photoRetry": "Reintentar foto",
     "selected": "Foto nueva seleccionada. Guarda la mascota para subirla.",
     "search": "Buscar nombres de mascotas",
-    "searchHint": "Inicio del nombre de la mascota",
+    "searchHint": "Nombre de la mascota",
     "noMatches": "No hay mascotas coincidentes.",
     "customer": "Cliente",
     "manage": "Gestionar estas mascotas"

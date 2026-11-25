@@ -632,7 +632,7 @@
     "retry": "Retry save",
     "noContact": "No contact details added",
     "search": "Search customers",
-    "searchHint": "Customer name or email (starts with)",
+    "searchHint": "Customer name or email",
     "noMatches": "No matching customers.",
     "loginEmail": "Google sign-in email"
   },
@@ -999,7 +999,7 @@
     "photoRetry": "Retry photo",
     "selected": "New photo selected. Save the pet to upload it.",
     "search": "Search pet names",
-    "searchHint": "Start of pet name",
+    "searchHint": "Pet name",
     "noMatches": "No matching pets.",
     "customer": "Customer",
     "manage": "Manage these pets"

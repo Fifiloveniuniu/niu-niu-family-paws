@@ -4,7 +4,7 @@ import Button from './button';
 import SearchInput from './search-input';
 import IconButton from './icon-button';
 import './customer-workspace.css';
-import { Pagination } from './pagination';
+import LoadMore from './load-more';
 import { withoutLanguage } from './language-url.ts';
 import {
   englishCatalog,
@@ -19,10 +19,10 @@ import CustomSelect from './custom-select';
 import { findCustomerById, findPetCustomer } from './customer-lookup';
 import { ApiError, apiJson, apiOptionalJson } from './api-client';
 import React from 'react';
-import { currentRoute, routeUrl, navigate, updateQuery } from './routing';
+import { currentRoute, routeUrl, navigate } from './routing';
 import { useTranslation } from 'react-i18next';
 import { auth } from './auth-client';
-import Pets, { PetSearch } from './pets';
+import Pets from './pets';
 import Modal from './modal';
 import Icon from './icons';
 import UnsavedChanges, { confirmDiscardChanges } from './unsaved-changes';
@@ -47,16 +47,17 @@ export default function Customers({
   const { i18n } = useTranslation();
 
   const labels = uiValue('ui.customers.labels', i18n.language);
+  const petLabels = uiValue('ui.pets.labels', i18n.language);
+  const petSearchId = React.useId();
   const [onlyMine, setOnlyMine] = React.useState(false);
   const [ownCustomer, setOwnCustomer] = React.useState<Customer | null>(null);
   const [ownLoading, setOwnLoading] = React.useState(false);
   const [ownError, setOwnError] = React.useState(false);
-  const [filterReset, setFilterReset] = React.useState(0);
   const ownGeneration = React.useRef(0);
   const [items, setItems] = React.useState<Customer[]>([]);
-  const [pageSize, setPageSize] = React.useState('25');
-  const [pageIndex, setPageIndex] = React.useState(0);
-  const cursors = React.useRef<string[]>(['']);
+  const listScroll = React.useRef<HTMLDivElement>(null);
+  const loadingRequest = React.useRef(false);
+  const nextCursor = React.useRef<string | null>(null);
   const [cursor, setCursor] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -96,6 +97,12 @@ export default function Customers({
   );
   const [activeSearch, setActiveSearch] = React.useState(
     () => new URLSearchParams(location.search).get('customerSearch') || '',
+  );
+  const [petSearch, setPetSearch] = React.useState(
+    () => new URLSearchParams(location.search).get('petSearch') || '',
+  );
+  const [activePetSearch, setActivePetSearch] = React.useState(
+    () => new URLSearchParams(location.search).get('petSearch') || '',
   );
   const [petCustomer, setPetCustomer] = React.useState<
     (Pick<Customer, 'id' | 'name' | 'loginEmail'> & Partial<Customer>) | null
@@ -146,30 +153,55 @@ export default function Customers({
             : 'error',
     );
   }
-  async function load(next?: string, query = activeSearch, index = 0, size = pageSize) {
+  async function load(next?: string, query = activeSearch, petQuery = activePetSearch) {
+    if (!alive.current) return;
+    if (onlyMine && !ownCustomer) {
+      ++request.current;
+      loadingRequest.current = false;
+      nextCursor.current = null;
+      setItems([]);
+      setCursor(null);
+      setLoading(false);
+      return;
+    }
+    if (next && (loadingRequest.current || next !== nextCursor.current)) return;
+    loadingRequest.current = true;
     const generation = ++request.current;
     setLoading(true);
-    setItems([]);
-    setPageIndex(index);
-    if (index === 0) cursors.current = [''];
+    if (!next) {
+      setItems([]);
+      nextCursor.current = null;
+      setCursor(null);
+      listScroll.current?.scrollTo({ top: 0 });
+    }
     setError(null);
     try {
       const params = new URLSearchParams();
-      params.set('pageSize', size);
+      params.set('pageSize', '25');
       if (next) params.set('cursor', next);
       if (query.trim()) params.set('search', query.trim());
+      if (petQuery.trim()) params.set('petSearch', petQuery.trim());
+      if (onlyMine && ownCustomer) params.set('customerId', ownCustomer.id);
       const page = await customerRequest<components['schemas']['CustomerPage']>('?' + params);
       if (!alive.current || generation !== request.current) return;
-      setItems(page.items);
+      setItems((previous) =>
+        next
+          ? [...new Map([...previous, ...page.items].map((item) => [item.id, item])).values()]
+          : page.items,
+      );
       setPetCustomer((previous) =>
         previous ? (page.items.find((item) => item.id === previous.id) ?? previous) : previous,
       );
+      nextCursor.current = page.nextCursor;
       setCursor(page.nextCursor);
       setLoaded(true);
     } catch (error) {
       if (alive.current && generation === request.current) report(error);
     } finally {
-      if (alive.current && generation === request.current) setLoading(false);
+      if (alive.current && generation === request.current) {
+        loadingRequest.current = false;
+        setLoading(false);
+      }
     }
   }
   React.useEffect(() => {
@@ -179,7 +211,7 @@ export default function Customers({
       alive.current = false;
       ++request.current;
     };
-  }, [refreshKey]);
+  }, [refreshKey, onlyMine, ownCustomer?.id]);
   function open(customer?: Customer) {
     if (!confirmDiscardChanges(i18n.language, form.current)) return;
     setError(null);
@@ -274,7 +306,6 @@ export default function Customers({
       const own = await apiOptionalJson<Customer>('/profile');
       if (alive.current && generation === ownGeneration.current) {
         setOwnCustomer(own);
-        setPetCustomer(own);
       }
     } catch {
       if (alive.current && generation === ownGeneration.current) setOwnError(true);
@@ -286,36 +317,81 @@ export default function Customers({
     if (parsedRoute.kind !== 'customers') return;
     const queryParameters = new URLSearchParams(parsedRoute.search);
     const query = queryParameters.get('customerSearch') || '';
-    if (query !== activeSearch) {
+    const petQuery = queryParameters.get('petSearch') || '';
+    if (query !== activeSearch || petQuery !== activePetSearch) {
       setSearch(query);
+      setPetSearch(petQuery);
       setActiveSearch(query);
-      void load(undefined, query);
+      setActivePetSearch(petQuery);
+      void load(undefined, query, petQuery);
     }
     if ((queryParameters.get('ownership') === 'mine') !== onlyMine)
       void setOwnershipFilter(queryParameters.get('ownership') === 'mine');
   }, [parsedRoute.kind, parsedRoute.search]);
-  const visibleItems = onlyMine
-    ? ownCustomer &&
-      (!activeSearch.trim() ||
-        [ownCustomer.name, ownCustomer.email, ownCustomer.loginEmail || ''].some((value) =>
-          value.toLowerCase().startsWith(activeSearch.trim().toLowerCase()),
-        ))
-      ? [ownCustomer]
-      : []
-    : items;
-  function resetFilters() {
-    if (!confirmDiscardChanges(i18n.language, petsPanel.current)) return;
-    ++ownGeneration.current;
-    setOwnLoading(false);
-    setOwnError(false);
-    setOnlyMine(false);
-    setSearch('');
-    setActiveSearch('');
-    setPetCustomer(null);
-    setFilterReset((value) => value + 1);
-    navigate('/app/customers/', true);
-    void load(undefined, '');
-  }
+  React.useEffect(() => {
+    const query = search.trim();
+    const petQuery = petSearch.trim();
+    if (query === activeSearch && petQuery === activePetSearch) return;
+    const timer = window.setTimeout(() => {
+      setActiveSearch(query);
+      setActivePetSearch(petQuery);
+      const params = new URLSearchParams(location.search);
+      if (query) params.set('customerSearch', query);
+      else params.delete('customerSearch');
+      if (petQuery) params.set('petSearch', petQuery);
+      else params.delete('petSearch');
+      navigate(location.pathname + (params.size ? '?' + params : ''), true);
+      void load(undefined, query, petQuery);
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [search, petSearch, activeSearch, activePetSearch]);
+  React.useEffect(() => {
+    if (onlyMine && ownCustomer && !loading && !error && !items.length && cursor) void load(cursor);
+  }, [onlyMine, ownCustomer?.id, loading, error, items.length, cursor]);
+  React.useEffect(() => {
+    if (!petCustomer || (!activeSearch && !activePetSearch)) return;
+    const selectedId = petCustomer.id;
+    const controller = new AbortController();
+    let current = true;
+    void (async () => {
+      try {
+        let cursor: string | null = null;
+        do {
+          const params = new URLSearchParams({ customerId: selectedId, pageSize: '25' });
+          if (activeSearch) params.set('search', activeSearch);
+          if (activePetSearch) params.set('petSearch', activePetSearch);
+          if (cursor) params.set('cursor', cursor);
+          const page = await apiJson<components['schemas']['CustomerPage']>(
+            '/customers?' + params,
+            { signal: controller.signal },
+          );
+          if (!current) return;
+          const selected = page.items.find((item) => item.id === selectedId);
+          if (selected) {
+            setPetCustomer(selected);
+            return;
+          }
+          cursor = page.nextCursor;
+        } while (cursor);
+        if (current) {
+          setPetCustomer(null);
+          const params = new URLSearchParams(location.search);
+          for (const key of ['customer', 'pet', 'lookup']) params.delete(key);
+          navigate('/app/customers/' + (params.size ? '?' + params : ''), true);
+        }
+      } catch (error) {
+        if (current) {
+          setPetCustomer(null);
+          report(error);
+        }
+      }
+    })();
+    return () => {
+      current = false;
+      controller.abort();
+    };
+  }, [activeSearch, activePetSearch, petCustomer?.id]);
+  const visibleItems = onlyMine ? items.filter((item) => item.id === ownCustomer?.id) : items;
   return (
     <section
       className="customer-section customer-workspace"
@@ -337,12 +413,7 @@ export default function Customers({
             <form
               className="customer-search"
               role="search"
-              onSubmit={(event) => {
-                event.preventDefault();
-                setActiveSearch(search);
-                updateQuery({ customerSearch: search.trim() || null });
-                void load(undefined, search);
-              }}
+              onSubmit={(event) => event.preventDefault()}
             >
               <label htmlFor="customer-search">{labels.searchHint}</label>
               <div className="portal-actions">
@@ -354,30 +425,25 @@ export default function Customers({
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                 />
-                <IconButton
-                  title={labels.search}
-                  aria-label={labels.search}
-                  disabled={loading || saving}
-                  type="submit"
-                >
-                  <Icon name="search" />
-                </IconButton>
               </div>
             </form>
-            <PetSearch
-              key={filterReset}
-              onChoose={choosePets}
-              customerScope={onlyMine ? ownCustomer?.id || 'none' : undefined}
-            />
-          </div>
-          <div className="customer-filter-actions">
-            <IconButton
-              title={uiText('ui.customers.clearCustomerFilters')}
-              aria-label={uiText('ui.customers.clearCustomerFilters')}
-              onClick={resetFilters}
-            >
-              <Icon name="reset" />
-            </IconButton>
+            <div className="pet-search">
+              <form
+                className="customer-search"
+                role="search"
+                onSubmit={(event) => event.preventDefault()}
+              >
+                <label htmlFor={petSearchId}>{petLabels.searchHint}</label>
+                <div className="portal-actions">
+                  <SearchInput
+                    id={petSearchId}
+                    maxLength={120}
+                    value={petSearch}
+                    onChange={(event) => setPetSearch(event.target.value)}
+                  />
+                </div>
+              </form>
+            </div>
           </div>
         </div>
         <label className="customer-ownership-filter">
@@ -543,7 +609,7 @@ export default function Customers({
         >
           <div className="customer-heading directory-toolbar">
             <p>
-              {loaded && !visibleItems.length && !loading
+              {loaded && !visibleItems.length && !loading && !cursor
                 ? activeSearch.trim()
                   ? labels.noMatches
                   : labels.empty
@@ -562,74 +628,61 @@ export default function Customers({
               </Button>
             )}
           </div>
-          <ul className="customer-list">
-            {visibleItems.map((customer) => (
-              <li
-                key={customer.id}
-                className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}
-              >
-                <div>
-                  <h3>
-                    <button
-                      className="customer-select"
-                      aria-label={customer.name}
-                      aria-pressed={petCustomer?.id === customer.id}
-                      onClick={() => choosePets(customer)}
-                    >
-                      <span className="customer-name">{customer.name}</span>
-                    </button>
-                  </h3>
-                  <p>
-                    {customer.email || customer.phone
-                      ? [customer.email, customer.phone].filter(Boolean).join(' · ')
-                      : labels.noContact}
-                  </p>
-                  {customer.loginEmail && (
+          <div ref={listScroll} className="customer-list-scroll">
+            <ul className="customer-list">
+              {visibleItems.map((customer) => (
+                <li
+                  key={customer.id}
+                  className={petCustomer?.id === customer.id ? 'selected-customer' : undefined}
+                >
+                  <div>
+                    <h3>
+                      <button
+                        className="customer-select"
+                        aria-label={customer.name}
+                        aria-pressed={petCustomer?.id === customer.id}
+                        onClick={() => choosePets(customer)}
+                      >
+                        <span className="customer-name">{customer.name}</span>
+                      </button>
+                    </h3>
                     <p>
-                      {labels.loginEmail}: {customer.loginEmail}
+                      {customer.email || customer.phone
+                        ? [customer.email, customer.phone].filter(Boolean).join(' · ')
+                        : labels.noContact}
                     </p>
-                  )}
-                  <span
-                    className="customer-language"
-                    lang={customer.language}
-                    title={labels.language}
-                  >
-                    {languageName(customer.language)}
-                  </span>
-                </div>
-                <Icon name="chevron-right" className="customer-row-chevron" />
-              </li>
-            ))}
-          </ul>
+                    {customer.loginEmail && (
+                      <p>
+                        {labels.loginEmail}: {customer.loginEmail}
+                      </p>
+                    )}
+                    <span
+                      className="customer-language"
+                      lang={customer.language}
+                      title={labels.language}
+                    >
+                      {languageName(customer.language)}
+                    </span>
+                  </div>
+                  <Icon name="chevron-right" className="customer-row-chevron" />
+                </li>
+              ))}
+            </ul>
 
-          {loading && <p role="status">{labels.loading}</p>}
-          {!onlyMine && (
-            <Pagination
-              label={uiText('ui.pagination.customers')}
-              page={{
-                items,
-                index: pageIndex,
-                size: pageSize,
-                loading: loading || saving,
-                error: !!error,
-                nextCursor: cursor,
-                reload: () => void load(cursors.current[pageIndex], activeSearch, pageIndex),
-                reset: () => void load(),
-                previous: () =>
-                  void load(cursors.current[pageIndex - 1], activeSearch, pageIndex - 1),
-                next: () => {
-                  if (cursor) {
-                    cursors.current = [...cursors.current.slice(0, pageIndex + 1), cursor];
-                    void load(cursor, activeSearch, pageIndex + 1);
-                  }
-                },
-                setSize: (size) => {
-                  setPageSize(size);
-                  void load(undefined, activeSearch, 0, size);
-                },
-              }}
-            />
-          )}
+            {!onlyMine && (
+              <LoadMore
+                root={listScroll}
+                hasMore={!!cursor}
+                loading={loading}
+                error={!!error && !editor}
+                disabled={saving || uncertain || !!editor || !!linkCustomer}
+                label={labels.more}
+                loadingLabel={labels.loading}
+                retryLabel={labels.reload}
+                onLoad={() => void load(cursor ?? undefined)}
+              />
+            )}
+          </div>
         </div>
         <div
           ref={petsPanel}
@@ -722,6 +775,7 @@ export default function Customers({
                 }
                 key={petCustomer.id}
                 customerId={petCustomer.id}
+                nameFilter={activePetSearch}
                 onReady={revealPets}
                 title={uiText('ui.customers.customerSPets')}
               />

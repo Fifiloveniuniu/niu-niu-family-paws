@@ -3,13 +3,11 @@ import { dialogPet } from './dialog-records';
 import PetDetails from './pet-details';
 import { PetTypeIcon } from './pet-type';
 import Button from './button';
-import SearchInput from './search-input';
 import IconButton from './icon-button';
-import { Pagination } from './pagination';
+import LoadMore from './load-more';
 import { englishCatalog, uiText, uiValue, speciesText, localeFor } from './i18n.ts';
 import { ApiError, apiJson, apiBlob } from './api-client';
 import React from 'react';
-import { updateQuery } from './routing';
 import { useTranslation } from 'react-i18next';
 import Modal from './modal';
 import { DemoBalanceLink } from './calendar-pet-photos';
@@ -82,11 +80,13 @@ export default function Pets({
   onChanged,
   selectedPetId,
   routable = false,
+  nameFilter = '',
 }: {
   customerId: string;
   title?: string;
   selectedPetId?: string;
   routable?: boolean;
+  nameFilter?: string;
   onReady?: () => void;
   onChanged?: () => void;
 }) {
@@ -98,9 +98,11 @@ export default function Pets({
     decode: (raw, signal) => dialogPet(customerId, raw, signal),
   });
   const [items, setItems] = React.useState<Pet[]>([]);
-  const [pageSize, setPageSize] = React.useState('25');
-  const [pageIndex, setPageIndex] = React.useState(0);
-  const cursors = React.useRef<string[]>(['']);
+  const listScroll = React.useRef<HTMLDivElement>(null);
+  const loadingRequest = React.useRef(false);
+  const nextCursor = React.useRef<string | null>(null);
+  const ready = React.useRef(false);
+  const selectedCard = React.useRef<HTMLElement>(null);
   const target = React.useRef({ id: selectedPetId, found: false });
   if (target.current.id !== selectedPetId) target.current = { id: selectedPetId, found: false };
   const [cursor, setCursor] = React.useState<string | null>(null);
@@ -145,42 +147,71 @@ export default function Pets({
             : 'error',
     );
   }
-  async function load(next?: string, index = 0, size = pageSize) {
+  async function load(next?: string) {
+    if (!alive.current) return;
+    if (next && (loadingRequest.current || next !== nextCursor.current)) return;
+    loadingRequest.current = true;
     const version = ++generation.current;
-    setItems([]);
-    setPageIndex(index);
-    if (index === 0) cursors.current = [''];
+    if (!next) {
+      setItems([]);
+      nextCursor.current = null;
+      setCursor(null);
+      listScroll.current?.scrollTo({ top: 0 });
+    }
     setLoading(true);
     setError(null);
     try {
       const page: components['schemas']['PetPage'] = await apiJson<
         components['schemas']['PetPage']
-      >(path + '?' + new URLSearchParams({ pageSize: size, ...(next ? { cursor: next } : {}) }));
+      >(
+        path +
+          '?' +
+          new URLSearchParams({
+            pageSize: '25',
+            ...(next ? { cursor: next } : {}),
+            ...(nameFilter.trim() ? { search: nameFilter.trim() } : {}),
+          }),
+      );
       if (!alive.current || version !== generation.current) return;
-      setItems(page.items);
+      setItems((previous) =>
+        next
+          ? [...new Map([...previous, ...page.items].map((item) => [item.id, item])).values()]
+          : page.items,
+      );
+      nextCursor.current = page.nextCursor;
       setCursor(page.nextCursor);
     } catch (e) {
       if (alive.current && version === generation.current) report(e);
     } finally {
-      if (alive.current && version === generation.current) setLoading(false);
+      if (alive.current && version === generation.current) {
+        loadingRequest.current = false;
+        setLoading(false);
+      }
     }
   }
   React.useEffect(() => {
     alive.current = true;
+    ready.current = false;
+    target.current = { id: selectedPetId, found: false };
     void load();
     return () => {
       alive.current = false;
       ++generation.current;
     };
-  }, [customerId]);
+  }, [customerId, nameFilter]);
   React.useEffect(() => {
-    if (!loading) onReady?.();
+    if (!loading && !ready.current) {
+      ready.current = true;
+      onReady?.();
+    }
   }, [loading, onReady]);
   React.useEffect(() => {
-    if (items.some((p) => p.id === selectedPetId)) target.current.found = true;
+    if (items.some((p) => p.id === selectedPetId) && !target.current.found) {
+      target.current.found = true;
+      selectedCard.current?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    }
     if (selectedPetId && !target.current.found && !loading && !error && cursor) {
-      cursors.current = [...cursors.current.slice(0, pageIndex + 1), cursor];
-      void load(cursor, pageIndex + 1);
+      void load(cursor);
     }
   }, [selectedPetId, loading, error, cursor, items]);
   function open(pet?: Pet) {
@@ -388,241 +419,97 @@ export default function Pets({
           onClose={() => setDetail(null)}
         />
       )}
-      <div className="pet-grid">
-        {items.map((pet) => (
-          <article
-            className={'pet-card' + (pet.id === selectedPetId ? ' pet-card-selected' : '')}
-            key={pet.id}
-          >
-            <button
-              type="button"
-              className="pet-photo-button"
-              aria-label={uiText('ui.calendarPetPhotos.viewPetDetails') + ': ' + pet.name}
-              onClick={() => setDetail(pet)}
+      <div ref={listScroll} className="pet-list-scroll">
+        <div className="pet-grid">
+          {items.map((pet) => (
+            <article
+              className={'pet-card' + (pet.id === selectedPetId ? ' pet-card-selected' : '')}
+              key={pet.id}
+              ref={pet.id === selectedPetId ? selectedCard : undefined}
             >
-              <PetPhoto pet={pet} />
-            </button>
-            <div className="pet-card-info">
-              <h4>
-                <a
-                  href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}
-                  className="pet-name-button"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setDetail(pet);
-                  }}
-                >
-                  {pet.name}
-                  <Icon name="chevron-right" className="pet-card-open-icon" />
-                </a>
-              </h4>
-              <p>
-                <PetTypeIcon species={pet.species ?? ''} />
-                {pet.species ? speciesText(pet.species) : uiText('common.notAvailable')} ·{' '}
-                {pet.weightKg == null
-                  ? uiText('common.notAvailable')
-                  : uiText('ui.pets.weightValue', {
-                      weight: new Intl.NumberFormat(localeFor(i18n.language)).format(pet.weightKg),
-                    })}
-              </p>
-            </div>
-            <IconButton
-              title={labels.edit}
-              aria-label={`${labels.edit}: ${pet.name}`}
-              disabled={blocked}
-              onClick={() => open(pet)}
-            >
-              <Icon name="edit" />
-            </IconButton>
-            <div className="pet-card-footer">
-              {pet.photoCredit && (
-                <p className="pet-photo-credit">
-                  {uiText('ui.pets.testPhoto', {}, i18n.language)} · {pet.photoCredit.creator} ·{' '}
-                  <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">
-                    {uiText('ui.pets.source', {}, i18n.language)}
-                  </a>{' '}
-                  ·{' '}
-                  <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">
-                    {pet.photoCredit.license}
-                  </a>
-                </p>
-              )}
-              <DemoBalanceLink customerId={pet.customerId} petId={pet.id} />
-            </div>
-          </article>
-        ))}
-      </div>
-      {selectedPetId &&
-        !loading &&
-        !cursor &&
-        !error &&
-        !items.some((p) => p.id === selectedPetId) && (
-          <p role="alert">{uiText('ui.pets.petNotFound', {}, i18n.language)}</p>
-        )}
-      {loading ? (
-        <p role="status">{labels.loading}</p>
-      ) : !items.length && !error ? (
-        <p>{labels.empty}</p>
-      ) : null}
-      {(((error === 'error' || error === 'conflict') && !uncertain) || cursor) && (
-        <div className="portal-actions">
-          {(error === 'error' || error === 'conflict') && !uncertain && (
-            <Button
-              icon="reset"
-              variant="secondary"
-              disabled={blocked || loading}
-              onClick={() => void load()}
-            >
-              {labels.reload}
-            </Button>
-          )}
-        </div>
-      )}
-      <Pagination
-        label={uiText('ui.pagination.pets')}
-        page={{
-          items,
-          index: pageIndex,
-          size: pageSize,
-          loading: loading || blocked,
-          error: !!error,
-          nextCursor: cursor,
-          reload: () => void load(cursors.current[pageIndex], pageIndex),
-          reset: () => void load(),
-          previous: () => {
-            target.current.found = true;
-            void load(cursors.current[pageIndex - 1], pageIndex - 1);
-          },
-          next: () => {
-            if (cursor) {
-              cursors.current = [...cursors.current.slice(0, pageIndex + 1), cursor];
-              void load(cursor, pageIndex + 1);
-            }
-          },
-          setSize: (size) => {
-            target.current.found = true;
-            setPageSize(size);
-            void load(undefined, 0, size);
-          },
-        }}
-      />
-    </section>
-  );
-}
-export function PetSearch({
-  onChoose,
-  customerScope,
-}: {
-  customerScope?: string;
-  onChoose: (customer: { id: string; name: string; loginEmail: string | null }) => void;
-}) {
-  const { i18n } = useTranslation();
-  const labels = uiValue('ui.pets.labels', i18n.language);
-  const [search, setSearch] = React.useState(
-    () => new URLSearchParams(location.search).get('petSearch') || '',
-  );
-  const [active, setActive] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(false);
-  const [page, setPage] = React.useState<components['schemas']['PetSearchPage'] | null>(null);
-  const generation = React.useRef(0);
-  React.useEffect(
-    () => () => {
-      ++generation.current;
-    },
-    [],
-  );
-  async function load(query: string, cursor?: string) {
-    const current = ++generation.current;
-    setLoading(true);
-    setError(false);
-    setActive(query);
-    try {
-      const next: components['schemas']['PetSearchPage'] = await apiJson<
-        components['schemas']['PetSearchPage']
-      >('/pet-search?' + new URLSearchParams({ search: query, ...(cursor ? { cursor } : {}) }));
-      if (current === generation.current)
-        setPage((previous) => ({
-          ...next,
-          items: cursor ? [...(previous?.items ?? []), ...next.items] : next.items,
-        }));
-    } catch {
-      if (current === generation.current) setError(true);
-    } finally {
-      if (current === generation.current) setLoading(false);
-    }
-  }
-  React.useEffect(() => {
-    const query = new URLSearchParams(location.search).get('petSearch');
-    if (query) void load(query);
-  }, []);
-  const matches = page?.items.filter(
-    (item) => !customerScope || item.customer.id === customerScope,
-  );
-  return (
-    <div className="pet-search">
-      <form
-        className="customer-search"
-        role="search"
-        onSubmit={(event) => {
-          event.preventDefault();
-          updateQuery({ petSearch: search.trim() });
-          void load(search.trim());
-        }}
-      >
-        <label>
-          {labels.searchHint}
-          <SearchInput
-            required
-            maxLength={120}
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </label>
-        <IconButton
-          type="submit"
-          aria-label={labels.search}
-          title={labels.search}
-          disabled={loading || !search.trim()}
-        >
-          <Icon name="search" />
-        </IconButton>
-      </form>
-      {error && <p role="alert">{labels.error}</p>}
-      {loading && <p role="status">{labels.loading}</p>}
-      {page && !loading && !matches?.length && <p>{labels.noMatches}</p>}
-      <ul className="customer-list">
-        {matches?.map(({ pet, customer }) => (
-          <li key={pet.customerId + '/' + pet.id}>
-            <div>
-              <h4>
-                {
-                  <a href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}>
+              <button
+                type="button"
+                className="pet-photo-button"
+                aria-label={uiText('ui.calendarPetPreview.viewPetDetails') + ': ' + pet.name}
+                onClick={() => setDetail(pet)}
+              >
+                <PetPhoto pet={pet} />
+              </button>
+              <div className="pet-card-info">
+                <h4>
+                  <a
+                    href={'/app/customers/' + pet.customerId + '/pets/' + pet.id + '/'}
+                    className="pet-name-button"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setDetail(pet);
+                    }}
+                  >
                     {pet.name}
+                    <Icon name="chevron-right" className="pet-card-open-icon" />
                   </a>
-                }
-              </h4>
-              <p>
-                {labels.customer}: {customer.name}
-              </p>
-              {customer.loginEmail && <p>{customer.loginEmail}</p>}
-            </div>
-            <Button icon="customers" variant="secondary" onClick={() => onChoose(customer)}>
-              {labels.manage}
-            </Button>
-          </li>
-        ))}
-      </ul>
-      {page?.nextCursor && (
-        <Button
-          icon="chevron-down"
-          variant="secondary"
-          disabled={loading}
-          onClick={() => void load(active, page.nextCursor!)}
-        >
-          {labels.more}
-        </Button>
-      )}
-    </div>
+                </h4>
+                <p>
+                  <PetTypeIcon species={pet.species ?? ''} />
+                  {pet.species ? speciesText(pet.species) : uiText('common.notAvailable')} ·{' '}
+                  {pet.weightKg == null
+                    ? uiText('common.notAvailable')
+                    : uiText('ui.pets.weightValue', {
+                        weight: new Intl.NumberFormat(localeFor(i18n.language)).format(
+                          pet.weightKg,
+                        ),
+                      })}
+                </p>
+              </div>
+              <div className="pet-card-actions">
+                <DemoBalanceLink customerId={pet.customerId} petId={pet.id} />
+                <IconButton
+                  title={labels.edit}
+                  aria-label={`${labels.edit}: ${pet.name}`}
+                  disabled={blocked}
+                  onClick={() => open(pet)}
+                >
+                  <Icon name="edit" />
+                </IconButton>
+              </div>
+              <div className="pet-card-footer">
+                {pet.photoCredit && (
+                  <p className="pet-photo-credit">
+                    {uiText('ui.pets.testPhoto', {}, i18n.language)} · {pet.photoCredit.creator} ·{' '}
+                    <a href={pet.photoCredit.sourcePage} target="_blank" rel="noopener noreferrer">
+                      {uiText('ui.pets.source', {}, i18n.language)}
+                    </a>{' '}
+                    ·{' '}
+                    <a href={pet.photoCredit.licenseUrl} target="_blank" rel="noopener noreferrer">
+                      {pet.photoCredit.license}
+                    </a>
+                  </p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+        {selectedPetId &&
+          !loading &&
+          !cursor &&
+          !error &&
+          !nameFilter &&
+          !items.some((p) => p.id === selectedPetId) && (
+            <p role="alert">{uiText('ui.pets.petNotFound', {}, i18n.language)}</p>
+          )}
+        {!loading && !items.length && !error && !cursor && !nameFilter && <p>{labels.empty}</p>}
+        <LoadMore
+          root={listScroll}
+          hasMore={!!cursor}
+          loading={loading}
+          error={!!error && !editor}
+          disabled={blocked || !!editor || !!detail}
+          label={labels.more}
+          loadingLabel={labels.loading}
+          retryLabel={labels.reload}
+          onLoad={() => void load(cursor ?? undefined)}
+        />
+      </div>
+    </section>
   );
 }

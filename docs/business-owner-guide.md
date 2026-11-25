@@ -1,3 +1,9 @@
+## Finding customers and pets — 2026-11-24
+
+In Customers, type any part of a customer's name/email or a pet's name. Results update automatically; using both fields narrows the results together. The customer list shows owners of matching pets, and selecting an owner shows only their matching pets. Clear a field to widen the search again. Scroll within either panel to see more; Load more is also available when needed. View balance and edit actions stay aligned on pet rows.
+
+在“客户”中输入姓名、邮箱或宠物名字的任意部分，结果会自动更新。两个输入框会同时筛选：客户列表只显示拥有匹配宠物的客户，选中客户后，右侧也只显示匹配的宠物。清空输入框可扩大搜索范围。可分别滚动两个面板查看后续内容，必要时也可点击“加载更多”。宠物行中的余额和编辑操作保持对齐。
+
 ## Automatic website updates — 2026-11-24
 
 After a reviewed change is merged and its checks pass, the app publishes automatically. A green validation check means the code passed its checks; the deployment must also finish successfully before the hosted version is updated. We handle implementation, review, release and live verification for you.

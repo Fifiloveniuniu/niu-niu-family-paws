@@ -319,7 +319,10 @@ export function DemoBalanceLink({ customerId, petId }: { customerId: string; pet
     };
   }, [customerId, petId]);
   return alias ? (
-    <a className="language" href={'/app/balances/?pet=' + encodeURIComponent(alias)}>
+    <a
+      className="language pet-balance-link"
+      href={'/app/balances/?pet=' + encodeURIComponent(alias)}
+    >
       {uiText('ui.calendarPetPhotos.viewBalance', {}, i18n.language)}
     </a>
   ) : null;
