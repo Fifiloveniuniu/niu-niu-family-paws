@@ -1,5 +1,6 @@
 import { useDialogState } from './dialog-routing';
 import { dialogBooking, dialogCustomer, dialogHouse, dialogPetRow } from './dialog-records';
+import IdentityAccess from './identity-access';
 import Payments from './payments';
 import Button from './button';
 import IconButton from './icon-button';
@@ -283,6 +284,7 @@ export default function SavedWorkspace({
                     ]
                   : []),
                 ['/app/payments/', 'payments', 'balance'],
+                ...(admin && !scope ? [['/app/access/', 'identity-access', 'customers']] : []),
               ].map(([path, label, icon]) => (
                 <a
                   key={path}
@@ -301,7 +303,9 @@ export default function SavedWorkspace({
                   }
                 >
                   <Icon name={icon as 'calendar' | 'balance' | 'customers' | 'metrics'} />
-                  <span>{t(label)}</span>
+                  <span>
+                    {label === 'identity-access' ? uiText('ui.identityAccess.tab') : t(label)}
+                  </span>
                 </a>
               ))}
             </nav>
@@ -335,6 +339,8 @@ export default function SavedWorkspace({
                 <Profile onSaved={changed} />
               </div>
             )}
+            {view === 'identity-access' &&
+              (admin && !scope ? <IdentityAccess /> : <p role="alert">{t('denied')}</p>)}
             {view === 'admin-pricing' &&
               (admin && !scope ? <AdminPricing /> : <p role="alert">{t('denied')}</p>)}
             {view === 'business-metrics' &&
@@ -343,164 +349,167 @@ export default function SavedWorkspace({
               ) : (
                 <p role="alert">{t('denied')}</p>
               ))}
-            {view !== 'personal' && view !== 'admin-pricing' && view !== 'business-metrics' && (
-              <>
-                {error && (
-                  <div className="workspace-error" role="alert">
-                    <p>
-                      {t(
-                        error instanceof ApiError && [401, 403].includes(error.status)
-                          ? 'denied'
-                          : 'loadError',
-                      )}
-                    </p>
-                    <Button icon="reset" variant="secondary" onClick={() => void refresh(true)}>
-                      {t('retry')}
-                    </Button>
-                    <a href="/app/calendar/">{t('resetView')}</a>
-                  </div>
-                )}
-                {!data && loading && <p role="status">{t('loading')}</p>}
-                {data && (
-                  <>
-                    {!data.admin && !data.customer ? (
-                      <div data-retained-workspace>
-                        <Profile onSaved={changed} />
-                      </div>
-                    ) : (
-                      <>
-                        {data.admin && !data.customer && visitedCustomers.current && (
-                          <div
-                            data-retained-workspace
-                            data-customer-workspace
-                            hidden={view !== 'customers'}
-                          >
-                            <Customers
-                              refreshKey={directoryRevision}
-                              onChanged={changed}
-                              onViewAs={(customer) =>
-                                navigate(scopedUrl('/app/calendar/', customer.id))
-                              }
-                            />
-                          </div>
+            {view !== 'personal' &&
+              view !== 'admin-pricing' &&
+              view !== 'business-metrics' &&
+              view !== 'identity-access' && (
+                <>
+                  {error && (
+                    <div className="workspace-error" role="alert">
+                      <p>
+                        {t(
+                          error instanceof ApiError && [401, 403].includes(error.status)
+                            ? 'denied'
+                            : 'loadError',
                         )}
-                        {view === 'customers' && data.customer && (
-                          <>
-                            {showScopedPets ? (
-                              <section className="workspace-customer-record">
-                                <div className="customer-heading">
-                                  <div>
-                                    <h2>{data.customer.name}</h2>
-                                    <p>
-                                      {[data.customer.email, data.customer.phone]
-                                        .filter(Boolean)
-                                        .join(' · ') || uiText('common.notAvailable')}
-                                    </p>
+                      </p>
+                      <Button icon="reset" variant="secondary" onClick={() => void refresh(true)}>
+                        {t('retry')}
+                      </Button>
+                      <a href="/app/calendar/">{t('resetView')}</a>
+                    </div>
+                  )}
+                  {!data && loading && <p role="status">{t('loading')}</p>}
+                  {data && (
+                    <>
+                      {!data.admin && !data.customer ? (
+                        <div data-retained-workspace>
+                          <Profile onSaved={changed} />
+                        </div>
+                      ) : (
+                        <>
+                          {data.admin && !data.customer && visitedCustomers.current && (
+                            <div
+                              data-retained-workspace
+                              data-customer-workspace
+                              hidden={view !== 'customers'}
+                            >
+                              <Customers
+                                refreshKey={directoryRevision}
+                                onChanged={changed}
+                                onViewAs={(customer) =>
+                                  navigate(scopedUrl('/app/calendar/', customer.id))
+                                }
+                              />
+                            </div>
+                          )}
+                          {view === 'customers' && data.customer && (
+                            <>
+                              {showScopedPets ? (
+                                <section className="workspace-customer-record">
+                                  <div className="customer-heading">
+                                    <div>
+                                      <h2>{data.customer.name}</h2>
+                                      <p>
+                                        {[data.customer.email, data.customer.phone]
+                                          .filter(Boolean)
+                                          .join(' · ') || uiText('common.notAvailable')}
+                                      </p>
+                                    </div>
+                                    <IconButton
+                                      title={t(data.admin ? 'editCustomer' : 'editProfile')}
+                                      aria-label={t(data.admin ? 'editCustomer' : 'editProfile')}
+                                      onClick={() =>
+                                        data.admin ? setContact(data.customer) : setOwnEditor(true)
+                                      }
+                                    >
+                                      <Icon name="edit" />
+                                    </IconButton>
                                   </div>
-                                  <IconButton
-                                    title={t(data.admin ? 'editCustomer' : 'editProfile')}
-                                    aria-label={t(data.admin ? 'editCustomer' : 'editProfile')}
-                                    onClick={() =>
-                                      data.admin ? setContact(data.customer) : setOwnEditor(true)
+                                  <Pets
+                                    customerId={data.customer.id}
+                                    selectedPetId={route.petId}
+                                    title={t('pets')}
+                                    onChanged={changed}
+                                  />
+                                </section>
+                              ) : (
+                                <p role="alert">{t('notFound')}</p>
+                              )}
+                            </>
+                          )}
+                          {view === 'calendar' &&
+                            (range.valid ? (
+                              <WorkspaceCalendar
+                                timeZoneControl={
+                                  <WorkspaceClock
+                                    zone={zone}
+                                    onChange={(nextZone) =>
+                                      updateQuery({
+                                        zone: nextZone,
+                                        date:
+                                          date === wallDateKey(wallNow(zone))
+                                            ? wallDateKey(wallNow(nextZone))
+                                            : date,
+                                      })
                                     }
-                                  >
-                                    <Icon name="edit" />
-                                  </IconButton>
-                                </div>
-                                <Pets
-                                  customerId={data.customer.id}
-                                  selectedPetId={route.petId}
-                                  title={t('pets')}
-                                  onChanged={changed}
-                                />
-                              </section>
+                                  />
+                                }
+                                filterCustomer={
+                                  data.admin && !data.customer ? (
+                                    <label>
+                                      {t('customer')}
+                                      <CustomerPicker
+                                        allowAll
+                                        label={t('allCustomers')}
+                                        value={params.get('customer') ?? ''}
+                                        initial={data.customers}
+                                        onChange={(value) => {
+                                          updateQuery({
+                                            customer: value,
+                                            pet: '',
+                                            q: '',
+                                            locations: value ? 'matching' : 'all-locations',
+                                          });
+                                        }}
+                                      />
+                                    </label>
+                                  ) : undefined
+                                }
+                                data={data}
+                                scope={scope}
+                                range={range}
+                                params={params}
+                                onQuery={(values) => updateQuery(values)}
+                                onBooking={showBooking}
+                                onAdd={(room) => setAdding(room)}
+                                onAddress={setAddress}
+                                onManage={setManageLocation}
+                                loading={loading}
+                              />
                             ) : (
-                              <p role="alert">{t('notFound')}</p>
-                            )}
-                          </>
-                        )}
-                        {view === 'calendar' &&
-                          (range.valid ? (
-                            <WorkspaceCalendar
-                              timeZoneControl={
-                                <WorkspaceClock
-                                  zone={zone}
-                                  onChange={(nextZone) =>
-                                    updateQuery({
-                                      zone: nextZone,
-                                      date:
-                                        date === wallDateKey(wallNow(zone))
-                                          ? wallDateKey(wallNow(nextZone))
-                                          : date,
-                                    })
-                                  }
-                                />
-                              }
-                              filterCustomer={
-                                data.admin && !data.customer ? (
-                                  <label>
-                                    {t('customer')}
-                                    <CustomerPicker
-                                      allowAll
-                                      label={t('allCustomers')}
-                                      value={params.get('customer') ?? ''}
-                                      initial={data.customers}
-                                      onChange={(value) => {
-                                        updateQuery({
-                                          customer: value,
-                                          pet: '',
-                                          q: '',
-                                          locations: value ? 'matching' : 'all-locations',
-                                        });
-                                      }}
-                                    />
-                                  </label>
-                                ) : undefined
-                              }
+                              <section>
+                                <label>
+                                  {t('period')}
+                                  <CustomDateInput
+                                    value={date}
+                                    onChange={(value) => updateQuery({ date: value })}
+                                  />
+                                </label>
+                                <p role="alert">{t('invalidDates')}</p>
+                              </section>
+                            ))}
+                          {view === 'payments' && <Payments key={scope ?? 'admin'} data={data} />}
+                          {view === 'balances' && (
+                            <WorkspaceBalances
                               data={data}
                               scope={scope}
-                              range={range}
-                              params={params}
-                              onQuery={(values) => updateQuery(values)}
-                              onBooking={showBooking}
-                              onAdd={(room) => setAdding(room)}
-                              onAddress={setAddress}
-                              onManage={setManageLocation}
-                              loading={loading}
+                              selected={selected}
+                              search={params}
+                              onFilters={(values) => updateQuery(values)}
+                              onSelect={(key) => updateQuery({ pet: key })}
+                              onCustomer={(id) => navigate(scopedUrl('/app/balances/', id))}
+                              onAdjust={(row) => setBalance(row)}
                             />
-                          ) : (
-                            <section>
-                              <label>
-                                {t('period')}
-                                <CustomDateInput
-                                  value={date}
-                                  onChange={(value) => updateQuery({ date: value })}
-                                />
-                              </label>
-                              <p role="alert">{t('invalidDates')}</p>
-                            </section>
-                          ))}
-                        {view === 'payments' && <Payments key={scope ?? 'admin'} data={data} />}
-                        {view === 'balances' && (
-                          <WorkspaceBalances
-                            data={data}
-                            scope={scope}
-                            selected={selected}
-                            search={params}
-                            onFilters={(values) => updateQuery(values)}
-                            onSelect={(key) => updateQuery({ pet: key })}
-                            onCustomer={(id) => navigate(scopedUrl('/app/balances/', id))}
-                            onAdjust={(row) => setBalance(row)}
-                          />
-                        )}
-                        {view === 'settings' &&
-                          (data.admin ? <SavedCancellationPolicy /> : <p>{t('denied')}</p>)}
-                      </>
-                    )}
-                  </>
-                )}
-              </>
-            )}
+                          )}
+                          {view === 'settings' &&
+                            (data.admin ? <SavedCancellationPolicy /> : <p>{t('denied')}</p>)}
+                        </>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
             {data && adding !== false && (
               <WorkspaceBooking
                 key={JSON.stringify(adding) ?? 'new'}

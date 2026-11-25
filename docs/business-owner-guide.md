@@ -1,3 +1,47 @@
+## Searchable choices — local preview
+
+Click Find a pet to choose a saved pet, or type in the field to narrow the list. Choose All pets to clear the pet filter. Other dropdown fields also accept typing to filter their choices. Select a matching option to apply it; unmatched text is not saved as a value. Unsaved-changes banners are removed; leaving an edited form still asks whether to discard edits.
+
+点击“查找宠物”可选择已保存的宠物，也可直接输入以筛选选项。选择“所有宠物”清除筛选。其他下拉框也支持输入筛选，选择具体选项后才应用；不会保存未匹配的文字。已移除未保存提示横幅，离开已修改表单时仍会确认是否放弃修改。
+
+## Dialog links, customer filters and country holidays — local preview
+
+Dialogs now have their own URLs. Copy the address to reopen that task; refreshing loads the saved record again. Browser Back closes the dialog and Forward reopens it. Unsaved text is never placed in a link; leaving an edited form asks whether to discard changes. Text-field focus outlines remain inside the field so the modal cannot cut them off.
+
+Calendar and Balances customer filters include **All customers**. Opening a dropdown keeps the chosen customer's name visible; choosing All customers clears the filter while keeping administrator access.
+
+Under Pricing → Holiday dates & surcharge, reference dates are grouped into **United States**, **China** and **India**. Choose only the dates your business uses. Merely opening a country group does not activate fees. Custom dates remain available. Some regional/movable dates, particularly India 2028, are explicitly unavailable until verified; do not assume the list is every regional public holiday. Reference data and your selected fee dates are stored separately in the database.
+
+弹窗现在有独立网址，可复制链接重新打开；刷新后重新读取已保存记录。浏览器后退关闭弹窗，前进重新打开。未保存内容不会写入链接；离开已修改表单前会询问是否放弃。输入框聚焦边框已改为内侧显示，避免被弹窗裁切。
+
+日历和余额的客户筛选包含“所有客户”。打开下拉框时保留当前客户名称；选择“所有客户”清除筛选，仍保持管理员权限。价格设置中的节假日按美国、中国、印度分组，仅勾选的日期才应用附加费，自定义日期保留。未核实的地区性或浮动节日会明确提示，不会猜测日期。
+
+All changes are local; no commit, PR or deployment has been made.
+
+## Calendar filters and booking order — local preview
+
+In Calendar, choose a customer to see only locations with their matching pets in the displayed dates. Administrators remain in admin view. Turn off **Only locations with matching pets** to show all houses/rooms again. Pet name, type, status and location filters work together. The Customer & pet and Location headings have been removed.
+
+In Add booking, enter fields in whichever order is convenient. You can enter dates first or select a pet first; selecting a pet fills its customer. Continue to room selection once a pet and valid stay times are present, then choose an available room before review. Nothing is saved until final confirmation.
+
+在日历中选择客户后，只显示所选日期内有匹配宠物的房屋和房间；管理员仍保留管理员视图。取消勾选“仅显示有匹配宠物的房屋和房间”可恢复全部地点。宠物名称、类型、状态及地点筛选可组合使用，分组标题已移除。
+
+添加预约时可按任意顺序填写，可先输入日期或先选宠物；选宠物后自动填入其客户。选定宠物并填写有效的入住时间后进入选择房间，再选可用房间进入核对。最终确认前不会保存。
+
+## Test cards and staff booking payments — local preview
+
+Open http://localhost:4180/app/payments/ . In **Payments**, choose a customer and **Add test card**. In the dialog choose a successful or declined test payment; you can also remove the test card. These cards use no real bank details or money. The page lists saved test charges and links to their bookings.
+
+When staff review a booking, the payment section shows required boarding days, days covered by that pet’s valid balance, uncovered days, the test card amount and the remaining balance. Enough valid days are deducted when you save. If the balance is insufficient and there is no card, saving is blocked. With a card, the remaining base amount and separate holiday fee are simulated. A declined card leaves the booking and balance unchanged. Keep the same save attempt when retrying a connection failure to avoid duplicate operations.
+
+Charged bookings can change rooms without charging again when dates/timezone stay the same. Date changes and cancellation refunds still need approved rules and are currently unavailable for charged bookings. Existing unbilled plans remain available. This is local test functionality, not a hosted update or real payment service.
+
+打开 http://localhost:4180/app/payments/ 。在“付款”中选择客户，点击“添加测试卡”，选择模拟成功或失败，也可移除测试卡。不使用真实银行卡资料或资金。页面可查看测试扣款记录并打开对应预约。
+
+员工核对预约时，可看到所需寄养天数、有效余额支付天数、测试卡支付部分及预约后余额。有效余额充足时保存预约会扣除天数；余额不足且无卡时无法保存；有测试卡时模拟支付不足部分及单独的节假日费用。模拟付款失败不会保存预约或扣除余额。
+
+已扣款预约可在日期及时区不变时更换房间，不会重复扣款。日期变更及取消退款规则尚待确认，目前无法用于已扣款预约。原有未扣款预约功能保留。以上仅供本地测试，尚未发布，也未接入真实付款。
+
 ## Cleaner controls and customer-view banner — local, 2026-11-20
 
 Add balance, Add/Edit customer and Add price dialogs no longer have an extra border around their contents. Common actions have icons alongside their labels and react to hovering. Language menus match the selected app theme. Customers search and Add customer align together; row hover backgrounds leave space around dividers. Pricing keeps Holidays and Add price together, with Add price at the right.
@@ -532,3 +576,11 @@ In Add/Edit price, choose a language, type its category name and press **Enter**
 In Holiday dates & surcharge, choose the year and check the named dates you want to apply the holiday fee to. Presets use actual US calendar holidays, not substitute office weekdays. Check the selected-date list before saving. Use **Add another date** for custom dates. Nothing is selected automatically.
 
 新增／编辑价格时，选择语言，输入分类名称并按**回车**，名称会加入下方列表。点击名称旁的删除按钮仅清空该语言；输入新名称后按回车即可替换。请先添加正在输入的名称再保存。英文和简体中文仍为必填，西班牙语为选填。节假日设置中，选择年份并勾选需要加收费用的节日；列表显示美国节日实际日期，不含补休日期。可通过“添加其他日期”保留自定义设置。不会自动勾选节日。
+
+## Access page — interactive local preview
+
+Open http://localhost:4180/app/access/?lang=en and choose **Access** in the app bar. Accounts lets you search names/emails, filter roles/status, and edit example access. The dialog explains each role and shows the resulting permissions. Employee access includes house choices. Use Suspend access / Restore access with a reason. Invitations saves or cancels an invitation draft; Change history shows what you tried. The reset icon asks before clearing all preview changes. Your example owner account keeps administrator access.
+
+This is a UI preview: accounts/houses are fictional, invitations are not sent and real permissions are unchanged. Changes reset when you leave or reload.
+
+打开 http://localhost:4180/app/access/?lang=zh，点击“权限”。可搜索示例账号、按角色或状态筛选，在弹窗中编辑角色与员工房屋权限。停用或恢复需填写原因；“邀请”仅保存或取消草稿；“更改历史”展示预览操作。重置前会要求确认。示例店主的管理员权限受到保护。此处全部为虚构预览，不发送邀请，不改变真实权限，离开或刷新后会重置。

@@ -15,6 +15,7 @@ export type RouteKind =
   | 'balances'
   | 'settings'
   | 'business-metrics'
+  | 'identity-access'
   | 'admin-pricing'
   | 'personal'
   | 'not-found';
@@ -106,6 +107,7 @@ export function parseRoute(input: string): AppRoute {
     '/app/balances/': 'balances',
     '/app/payments/': 'payments',
     '/app/pricing/': 'admin-pricing',
+    '/app/access/': 'identity-access',
     '/app/metrics/': 'business-metrics',
     '/app/account/profile/': 'personal',
   };

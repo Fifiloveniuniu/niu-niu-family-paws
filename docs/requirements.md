@@ -1,3 +1,33 @@
+## Searchable dropdowns and quiet draft protection — 2026-11-20
+
+Find a pet is a dropdown of authorized saved pets. Dropdown text fields accept typing to filter choices. Keep selected values until a choice is committed, retain keyboard access and explicit all choices. Do not show unsaved-changes banners; preserve discard confirmation when leaving an edited form.
+
+## Routable dialogs, visible field focus and country holidays — 2026-11-20
+
+All pages and focused dialogs need stable links that restore the correct authorized record on refresh and support browser Back/Forward. Keep unsaved drafts out of URLs and preserve discard confirmation. Text-field focus outlines must remain visible inside every scrolling modal across themes and phone/desktop layouts. Customer filters offer an explicit All customers option; opening a dropdown preserves the selected customer text. All customers is a filter, not customer impersonation.
+
+Holiday reference choices are grouped as United States, China and India, with English, Simplified Chinese and Spanish names. Reference dates come from the database, preserve manually configured dates, and never automatically enable holiday fees. Use actual festival dates rather than observed substitute weekdays; disclose unavailable regional/movable dates rather than invent them. Active instruction: local development only, no commits, pushes, PRs or deployment.
+
+## Calendar matching locations and booking field order — 2026-11-20
+
+Calendar needs a filter that shows only houses/rooms containing the customer’s matching pets in the displayed period, including a given customer selected by an administrator. Remove visible Customer & pet and Location group labels. Add booking fields must be enterable in any order; dependencies belong between steps, with coherent customer/pet ownership, valid times before room availability, a room before review, and current validation/payment checks before confirmation. Preserve authorization and existing charged/in-care editing boundaries. All changes stay local under the active no-commit/no-PR instruction.
+
+## Test Payments implementation scope — 2026-11-20
+
+Owner clarified that the requested virtual credit card is a test credit card. Implement locally: Payments tab, per-customer saved test method and success/decline scenarios, history, and staff balance-first test booking charges under the confirmed insufficient-balance rule. Preserve all prior local UI changes and do not commit, push, open PRs or deploy. No real card processing or sensitive card details.
+
+Charged booking changes/refunds need explicit lifecycle handling; outstanding questions concern mixed-payment refund allocation and validity of restored days. Keep those actions explicit and blocked until resolved, while preserving room-only moves, handoffs and legacy unbilled workflows. Simulator validation is not authorization to publish a real paid-booking workflow.
+
+## Staff balance-first payment rule and Payments tab — owner clarification, 2026-11-20
+
+At staff booking confirmation: if valid balance is sufficient, deduct the required boarding days. If insufficient and no payment method exists, reject the booking with no deduction or reservation. If insufficient and a payment method exists, use balance first and charge the uncovered remainder; confirmation requires payment success and must not double charge/deduct on retries. Owner also requested a Payments tab with a virtual credit card. Clarification pending: simulated local test card versus real virtual card/payment processing. No provider is connected. Do not treat a client-supplied card flag as verified payment or store raw card numbers/CVV. Mixed-rate date allocation and refund/shortening questions remain pending.
+
+## Staff booking balance charges — owner request, 2026-11-20
+
+Staff-created boarding bookings must also charge the selected pet’s boarding-day balance. This supersedes the prior staff-unbilled exemption for the requested implementation. Deduction must be server-calculated and atomic with booking/capacity confirmation, actor-audited, and idempotent so retries cannot charge twice. Show required days and resulting balance before saving. Preserve customer/pet isolation, house-local inclusive calendar-date counting, existing records and bilingual/Spanish support. Do not retroactively charge existing unbilled plans without an explicit decision.
+
+Business questions sent to owner before implementing financial behavior: whether insufficient/expired days block staff confirmation or permit an unpaid remainder; how staff handle separate holiday fees before card integration; whether cancellations/shortening use explicit staff-entered restoration or automatic policy refunds. No financial code has been activated while these decisions are pending. Local-only delivery; no commits or PRs.
+
 ## Calendar/dialog and pricing-entry follow-up — 2026-11-20
 
 Normal-calendar date headers must remain sticky inside their owning scrollport. Focused balance, validity-template and pricing dialogs keep title/actions visible with a scrolling form body; template lists adapt to cards on phones. Category translations are explicitly added with Enter and removed per language, retaining English/Chinese requirements and optional Spanish fallback. Holiday configuration offers named US actual-calendar-date presets with manual selection by year, preserves custom dates, and never automatically enables holidays or substitutes observed office weekdays. Existing pricing/date-only API schemas and cancellation draft/financial boundaries are unchanged.
@@ -413,3 +443,11 @@ Latest owner direction: main navbar items open their dedicated pages in order Ho
 ## Latest service/quotation clarification — 2026-11-18
 
 Users supply pet weight and booking dates for an automatic itemized boarding quote, or select a service and grooming-store appointment for an itemized service/add-on quote. Printed boarding ranges are prorated by weight (for example8–15lb maps proportionally from$52 to$58 within that band). Currency/balance are USD. See the consolidated booking/billing specification for full source tables, latest rules and remaining boundary/rounding questions. Owner requested Markdown updates only—no coding.
+
+## Access management UI preview — 2026-11-24
+
+Use Access as the tab name. Make account identity, role permissions and active/suspended status clear. Provide search/role/status filters, combined-role and employee-house editing, invitation drafting/cancellation, suspension/restoration with reasons, change history and reset confirmation. Keep current/last administrator protection and dirty-form discard behavior. This iteration remains an explicitly labeled fictional UI preview; real authorization, invitations and durable audit require a separate backend implementation. Preserve EN/zh/es, phone/desktop and theme support.
+
+## Workspace navigation priority — 2026-11-24
+
+Latest order: Calendar / Balances / Customers / Pricing / Metrics / Payments / Access. Daily workflows come first, configuration/reporting next, and supporting administration last. Use the same order in desktop and phone navigation while preserving authorized customer/role visibility. This supersedes previous navigation ordering; no change to default entry routes is implied.
