@@ -1,3 +1,5 @@
+import { useDialogState } from './dialog-routing';
+import { dialogPet } from './dialog-records';
 import PetDetails from './pet-details';
 import { PetTypeIcon } from './pet-type';
 import Button from './button';
@@ -91,7 +93,10 @@ export default function Pets({
   const { i18n } = useTranslation();
   const labels = uiValue('ui.pets.labels', i18n.language);
   const headingId = React.useId();
-  const [detail, setDetail] = React.useState<Pet | null>(null);
+  const [detail, setDetail] = useDialogState<Pet | null>('pet-view', null, {
+    encode: (value) => value?.id ?? null,
+    decode: (raw, signal) => dialogPet(customerId, raw, signal),
+  });
   const [items, setItems] = React.useState<Pet[]>([]);
   const [pageSize, setPageSize] = React.useState('25');
   const [pageIndex, setPageIndex] = React.useState(0);
@@ -105,11 +110,24 @@ export default function Pets({
   const [error, setError] = React.useState<keyof typeof englishMessages | null>(null);
   const [saved, setSaved] = React.useState(false);
   const [uncertain, setUncertain] = React.useState(false);
-  const [editor, setEditor] = React.useState<{
+  const [editor, setEditor] = useDialogState<{
     id: string;
     input: PetWrite;
     preview: string;
-  } | null>(null);
+  } | null>('pet-edit', null, {
+    encode: (value) => (value ? (value.input.version ? value.id : 'new') : null),
+    decode: async (raw, signal) => {
+      const pet = raw === 'new' ? null : await dialogPet(customerId, raw, signal);
+      const input: PetWrite = {
+        name: pet?.name ?? '',
+        species: pet?.species ?? null,
+        weightKg: pet?.weightKg ?? null,
+        version: pet?.version ?? 0,
+      };
+      baseline.current = JSON.stringify(input);
+      return { id: pet?.id ?? crypto.randomUUID(), input, preview: '' };
+    },
+  });
   const alive = React.useRef(true);
   const generation = React.useRef(0);
   const path = `/customers/${customerId}/pets`;

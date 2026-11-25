@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import { localeFor, localizedText, publicText, uiText } from './i18n.ts';
 import { marketingPreview } from './marketing-preview';
 import { useId, useState } from 'react';
@@ -30,7 +31,20 @@ export function PhotoGallery({ student = false }: { student?: boolean }) {
     actual.length
       ? actual.map((photo) => ({ ...photo, sample: false }))
       : suppliedPhotos.map((photo) => ({ ...photo, sample: false }));
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useDialogState<number | null>(
+    student ? 'student-photo' : 'photo',
+    null,
+    {
+      encode: (value) => (value === null ? null : String(value)),
+      decode: (raw) => {
+        const index = Number(raw);
+        if (!Number.isInteger(index) || index < 0 || index >= entries.length)
+          throw Error('Photo unavailable');
+        return index;
+      },
+    },
+    [entries.length],
+  );
   const title = useId();
   const close = () => {
     setSelected(null);

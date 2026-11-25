@@ -1,3 +1,4 @@
+import { useDialogState, DIALOG_PENDING } from './dialog-routing';
 import Button from './button';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -220,10 +221,25 @@ function TemplateEditor({
 export default function ValidityTemplates({ onClose }: { onClose: () => void }) {
   const t = useText();
   const { items, error, loading, reload } = useValidityTemplates();
-  const [editing, setEditing] = React.useState<ValidityTemplate | undefined | false>(false);
+  const [editing, setEditing] = useDialogState<ValidityTemplate | undefined | false>(
+    'validity-template-edit',
+    false,
+    {
+      encode: (value) => (value === false ? null : (value?.id ?? 'new')),
+      decode: (raw) => {
+        if (raw === 'new') return undefined;
+        if (loading) return DIALOG_PENDING;
+        const item = items.find((item) => item.id === raw);
+        if (!item) throw Error('Template unavailable');
+        return item;
+      },
+    },
+    [items, loading],
+  );
   if (editing !== false)
     return (
       <TemplateEditor
+        key={editing?.id ?? 'new'}
         existing={editing}
         onClose={() => setEditing(false)}
         onSaved={() => {

@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import CustomDateInput from './custom-date-input';
 import { localeFor, uiText } from './i18n.ts';
@@ -55,7 +56,7 @@ export default function PetBalances({
   );
   const [pet, setPet] = React.useState(initial?.pet || pets[0]?.name || '');
   const [service] = React.useState<BalanceService>('boarding');
-  const [editing, setEditing] = React.useState(false);
+  const [editing, setEditing] = useDialogState('preview-balance-edit', false);
   const [mode, setMode] = React.useState('add');
   const [amount, setAmount] = React.useState('');
   const [reason, setReason] = React.useState('');

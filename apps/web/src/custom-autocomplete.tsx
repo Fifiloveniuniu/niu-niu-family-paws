@@ -43,6 +43,7 @@ export default function CustomAutocomplete({
 }: Props) {
   const [open, setOpen] = useDropdownState(false);
   const [query, setQuery] = React.useState('');
+  const [typing, setTyping] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const root = React.useRef<HTMLSpanElement>(null);
   const input = React.useRef<HTMLInputElement>(null);
@@ -75,8 +76,15 @@ export default function CustomAutocomplete({
   function reveal() {
     if (disabled) return;
     setQuery('');
+    setTyping(false);
+    requestAnimationFrame(() => input.current?.select());
     onQueryChange?.('');
-    setActive(0);
+    setActive(
+      Math.max(
+        0,
+        options.findIndex((option) => option.value === value),
+      ),
+    );
     setOpen(true);
   }
   function choose(index: number) {
@@ -113,12 +121,13 @@ export default function CustomAutocomplete({
         autoComplete="off"
         placeholder={placeholder ?? label}
         data-value={value}
-        value={open ? query : (selected?.label ?? '')}
+        value={open && typing ? query : (selected?.label ?? '')}
         onClick={() => {
           if (!open) reveal();
         }}
         onChange={(e) => {
           if (!open) setOpen(true);
+          setTyping(true);
           setQuery(e.target.value);
           onQueryChange?.(e.target.value);
           setActive(0);

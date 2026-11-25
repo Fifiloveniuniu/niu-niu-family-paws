@@ -1,5 +1,5 @@
 import Button from './button';
-import SearchInput from './search-input';
+import CustomAutocomplete from './custom-autocomplete';
 import IconButton from './icon-button';
 import CalendarControls from './calendar-controls';
 import LocationLabel from './location-label';
@@ -134,11 +134,18 @@ export default function WorkspaceCalendar({
     room = params.get('room') ?? '',
     type = params.get('species') ?? '',
     status = params.get('status') ?? '',
-    query = params.get('q') ?? '';
+    query = params.get('q') ?? '',
+    pet = params.get('pet') ?? '';
+  const customer = data.customer?.id ?? params.get('customer') ?? '';
+  const matchingLocations =
+    params.get('locations') === 'matching' ||
+    (!!customer && !['all', 'all-locations'].includes(params.get('locations') ?? ''));
   const visible = data.bookings.filter((booking) => {
     const row = rows.get(petKey(booking.customerId, booking.petId));
     return (
       row &&
+      (!customer || booking.customerId === customer) &&
+      (!pet || petKey(booking.customerId, booking.petId) === pet) &&
       (!house || booking.houseId === house) &&
       (!room || roomKey(booking.houseId, booking.roomId) === room) &&
       (!type || row.pet.species === type) &&
@@ -147,13 +154,29 @@ export default function WorkspaceCalendar({
     );
   });
   const position = (at: number) => timelinePosition(at, range.from, range.through);
-  const locations = data.locations.filter(
-    (item) =>
-      (!house || item.house.id === house) &&
-      (!room || item.rooms.some((candidate) => roomKey(item.house.id, candidate.id) === room)),
-  );
+  const occupiedRooms = new Set(visible.map((booking) => roomKey(booking.houseId, booking.roomId)));
+  const locations = data.locations
+    .filter((item) => !house || item.house.id === house)
+    .map((item) => ({
+      ...item,
+      rooms: item.rooms.filter(
+        (candidate) =>
+          (!room || roomKey(item.house.id, candidate.id) === room) &&
+          (!matchingLocations || occupiedRooms.has(roomKey(item.house.id, candidate.id))),
+      ),
+    }))
+    .filter((item) => (!room && !matchingLocations) || item.rooms.length > 0);
   const title = timelineRangeLabel(range.from, range.through, range.zone, locale);
-  const filtered = !!(house || room || type || status || query);
+  const filtered = !!(
+    house ||
+    room ||
+    type ||
+    status ||
+    query ||
+    pet ||
+    params.get('customer') ||
+    matchingLocations
+  );
   const shift = (direction: number) => {
     const date = parseWallInput(range.date, false)!.date;
     if (range.view === 'year') date.setUTCFullYear(date.getUTCFullYear() + direction);
@@ -179,7 +202,18 @@ export default function WorkspaceCalendar({
               title={t('clearFilters')}
               aria-label={t('clearFilters')}
               disabled={!filtered}
-              onClick={() => onQuery({ house: '', room: '', species: '', status: '', q: '' })}
+              onClick={() =>
+                onQuery({
+                  house: '',
+                  room: '',
+                  species: '',
+                  status: '',
+                  q: '',
+                  pet: '',
+                  customer: '',
+                  locations: 'all-locations',
+                })
+              }
             >
               <Icon name="reset" />
             </IconButton>
@@ -203,12 +237,24 @@ export default function WorkspaceCalendar({
           className="workspace-filters calendar-filter-groups"
           hidden={!filtersOpen}
         >
-          <fieldset>
-            <legend>{uiText('ui.calendarFilters.people')}</legend>
+          <fieldset aria-label={uiText('ui.calendarFilters.people')}>
             {filterCustomer}{' '}
             <label className="workspace-search">
               {t('searchPets')}
-              <SearchInput value={query} onChange={(event) => onQuery({ q: event.target.value })} />
+              <CustomAutocomplete
+                label={t('searchPets')}
+                value={pet}
+                options={[
+                  { value: '', label: t('allPets') },
+                  ...data.rows
+                    .filter((row) => !customer || row.customer.id === customer)
+                    .map((row) => ({
+                      value: petKey(row.customer.id, row.pet.id),
+                      label: row.pet.name + (customer ? '' : ' · ' + row.customer.name),
+                    })),
+                ]}
+                onChange={(value) => onQuery({ pet: value, q: '' })}
+              />
             </label>
             <label>
               {t('type')}
@@ -240,8 +286,7 @@ export default function WorkspaceCalendar({
               </CustomSelect>
             </label>
           </fieldset>
-          <fieldset>
-            <legend>{uiText('ui.calendarFilters.location')}</legend>{' '}
+          <fieldset aria-label={uiText('ui.calendarFilters.location')}>
             <label>
               {t('house')}
               <CustomSelect
@@ -278,6 +323,16 @@ export default function WorkspaceCalendar({
               </CustomSelect>
             </label>
           </fieldset>
+          <label className="calendar-location-toggle">
+            <input
+              type="checkbox"
+              checked={matchingLocations}
+              onChange={(event) =>
+                onQuery({ locations: event.target.checked ? 'matching' : 'all-locations' })
+              }
+            />
+            {t('matchingLocations')}
+          </label>
         </div>
       </section>
       <section className="calendar-results" aria-label={t('calendar')}>
@@ -527,7 +582,9 @@ export default function WorkspaceCalendar({
             ))}
           </CalendarFrame>
         </CalendarViewport>
-        {!locations.length && !loading && <p className="hc-empty">{t('noRooms')}</p>}
+        {!locations.length && !loading && (
+          <p className="hc-empty">{t(matchingLocations ? 'noMatchingLocations' : 'noRooms')}</p>
+        )}
       </section>
     </section>
   );

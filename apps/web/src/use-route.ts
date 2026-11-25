@@ -17,6 +17,16 @@ export default function useRoute(language: string, initialPath = '/') {
     const canNavigate = (nextUrl: string) => {
       if (withoutLanguage(nextUrl) === withoutLanguage(previousUrl)) return true;
       if (!previousUrl.startsWith('/app/')) return true;
+      const beforeDialogs = [...new URL(previousUrl, location.origin).searchParams].filter(
+        ([key]) => key.startsWith('dialog.'),
+      );
+      const nextDialogs = [...new URL(nextUrl, location.origin).searchParams].filter(([key]) =>
+        key.startsWith('dialog.'),
+      );
+      if (JSON.stringify(beforeDialogs) !== JSON.stringify(nextDialogs)) {
+        const dialog = document.querySelector('dialog[open]');
+        if (dialog) return confirmDiscardChanges(language, dialog);
+      }
       const retainWorkspaceDrafts =
         nextUrl.startsWith('/app/') && !nextUrl.startsWith('/app/sign-in/');
       const target = parseRoute(nextUrl);
@@ -37,6 +47,7 @@ export default function useRoute(language: string, initialPath = '/') {
       previousUrl = canonicalUrl(routeUrl());
       historyIndex = Number(history.state?.familyPawsIndex) || 0;
       setRoute(parseRoute(previousUrl));
+      window.dispatchEvent(new Event('family-paws:route-accepted'));
     };
     const handleHistoryNavigation = () => {
       if (isRevertingHistory) {

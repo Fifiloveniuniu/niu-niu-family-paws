@@ -1,3 +1,5 @@
+import { useDialogState } from './dialog-routing';
+import { dialogBooking, dialogCustomer, dialogHouse, dialogPetRow } from './dialog-records';
 import Button from './button';
 import IconButton from './icon-button';
 import BusinessMetrics from './business-metrics';
@@ -111,24 +113,74 @@ export default function SavedWorkspace({
   if (scope && data?.customer?.id === scope) customerNames.current.set(scope, data.customer.name);
   const viewingName = scope ? customerNames.current.get(scope) : undefined;
 
-  const [adding, setAdding] = React.useState<
+  const [adding, setAdding] = useDialogState<
     false | { houseId: string; roomId: string } | undefined
-  >(false);
-  const [editing, setEditing] = React.useState<Booking | null>(null);
-  const [balance, setBalance] = React.useState<false | PetRow | undefined>(false);
-  const [manageLocation, setManageLocation] = React.useState<{
+  >('booking-add', false, {
+    encode: (value) => (value === false ? null : value ? JSON.stringify(value) : 'new'),
+    decode: (raw) => (raw === 'new' ? undefined : JSON.parse(raw)),
+  });
+  const [editing, setEditing] = useDialogState<Booking | null>('booking-edit', null, {
+    encode: (value) => value?.id ?? null,
+    decode: (raw, signal) => {
+      if (!admin) throw Error('Administrator required');
+      return dialogBooking(raw, signal);
+    },
+  });
+  const [balance, setBalance] = useDialogState<false | PetRow | undefined>('balance-edit', false, {
+    encode: (value) =>
+      value === false ? null : value ? value.customer.id + '/' + value.pet.id : 'new',
+    decode: (raw, signal) => {
+      if (!admin) throw Error('Administrator required');
+      return raw === 'new' ? undefined : dialogPetRow(raw, signal);
+    },
+  });
+  const [manageLocation, setManageLocation] = useDialogState<{
     houseId: string;
     roomId?: string;
     addRoom?: boolean;
-  } | null>(null);
+  } | null>('location-edit', null, {
+    decode: (raw) => {
+      if (!admin) throw Error('Administrator required');
+      const value = JSON.parse(raw);
+      if (!value || typeof value.houseId !== 'string' || !/^[A-Za-z0-9_-]+$/.test(value.houseId))
+        throw Error('Invalid house');
+      if (value.roomId && !/^[A-Za-z0-9_-]+$/.test(value.roomId)) throw Error('Invalid room');
+      return {
+        houseId: value.houseId,
+        ...(value.roomId ? { roomId: value.roomId } : {}),
+        ...(value.addRoom ? { addRoom: true } : {}),
+      };
+    },
+  });
   const managementRoot = React.useRef<HTMLDivElement>(null);
   const [locationBusy, setLocationBusy] = React.useState(false);
-  const [address, setAddress] = React.useState<LocationRow['house'] | null>(null);
-  const [contact, setContact] = React.useState<Customer | null>(null);
-  const [ownEditor, setOwnEditor] = React.useState(false);
+  const [address, setAddress] = useDialogState<LocationRow['house'] | null>('house-address', null, {
+    encode: (value) => value?.id ?? null,
+    decode: dialogHouse,
+  });
+  const [contact, setContact] = useDialogState<Customer | null>('customer-contact', null, {
+    encode: (value) => value?.id ?? null,
+    decode: (raw, signal) => {
+      if (!admin) throw Error('Administrator required');
+      return dialogCustomer(raw, signal);
+    },
+  });
+  const [ownEditor, setOwnEditor] = useDialogState('own-profile-edit', false);
   const [detail, setDetail] = React.useState<Booking | null>(null);
   const [detailError, setDetailError] = React.useState(false);
-  const [action, setAction] = React.useState<'check_in' | 'check_out' | 'cancel' | null>(null);
+  const [action, setAction] = useDialogState<'check_in' | 'check_out' | 'cancel' | null>(
+    'booking-action',
+    null,
+    {
+      decode: (raw) => {
+        if (!admin) throw Error('Administrator required');
+        const value = JSON.parse(raw);
+        if (!['check_in', 'check_out', 'cancel'].includes(value))
+          throw Error('Invalid booking action');
+        return value;
+      },
+    },
+  );
   const [notice, setNotice] = React.useState('');
   const [directoryRevision, setDirectoryRevision] = React.useState(0);
   const visitedCustomers = React.useRef(view === 'customers');
@@ -150,7 +202,11 @@ export default function SavedWorkspace({
     }
     return scopedUrl(path, scope);
   };
+  const initialDialogScope = React.useRef(identityKey + ':' + (scope ?? ''));
   React.useEffect(() => {
+    const key = identityKey + ':' + (scope ?? '');
+    if (initialDialogScope.current === key) return;
+    initialDialogScope.current = key;
     setAdding(false);
     setEditing(null);
     setBalance(false);
@@ -216,11 +272,15 @@ export default function SavedWorkspace({
           navigation={
             <nav className="app-header-nav" aria-label={uiText('ui.houseCalendar.workspace')}>
               {[
-                ...(admin && !scope ? [['/app/metrics/', 'businessMetrics', 'metrics']] : []),
                 ['/app/calendar/', 'calendar', 'calendar'],
                 ['/app/balances/', 'balances', 'balance'],
                 ['/app/customers/', data?.customer || !admin ? 'pets' : 'customers', 'customers'],
-                ...(admin && !scope ? [['/app/pricing/', 'pricing', 'balance']] : []),
+                ...(admin && !scope
+                  ? [
+                      ['/app/pricing/', 'pricing', 'balance'],
+                      ['/app/metrics/', 'businessMetrics', 'metrics'],
+                    ]
+                  : []),
               ].map(([path, label, icon]) => (
                 <a
                   key={path}
@@ -379,11 +439,17 @@ export default function SavedWorkspace({
                                   <label>
                                     {t('customer')}
                                     <CustomerPicker
+                                      allowAll
                                       label={t('allCustomers')}
-                                      value=""
+                                      value={params.get('customer') ?? ''}
                                       initial={data.customers}
                                       onChange={(value) => {
-                                        if (value) navigate(scopedUrl('/app/calendar/', value));
+                                        updateQuery({
+                                          customer: value,
+                                          pet: '',
+                                          q: '',
+                                          locations: value ? 'matching' : 'all-locations',
+                                        });
                                       }}
                                     />
                                   </label>
@@ -434,6 +500,7 @@ export default function SavedWorkspace({
             )}
             {data && adding !== false && (
               <WorkspaceBooking
+                key={JSON.stringify(adding) ?? 'new'}
                 data={data}
                 initialRoom={adding}
                 onClose={() => setAdding(false)}
@@ -451,6 +518,7 @@ export default function SavedWorkspace({
             )}
             {data && balance !== false && (
               <BalanceEditor
+                key={balance ? petKey(balance.customer.id, balance.pet.id) : 'new'}
                 data={data}
                 initial={balance}
                 onClose={() => setBalance(false)}
@@ -463,6 +531,7 @@ export default function SavedWorkspace({
             )}
             {contact && (
               <CustomerEditor
+                key={contact.id}
                 customer={contact}
                 onClose={() => setContact(null)}
                 onSaved={() => {
@@ -511,7 +580,7 @@ export default function SavedWorkspace({
                     setManageLocation(null);
                 }}
               >
-                <div ref={managementRoot}>
+                <div key={JSON.stringify(manageLocation)} ref={managementRoot}>
                   {manageLocation.roomId || manageLocation.addRoom ? (
                     <Rooms
                       houseId={manageLocation.houseId}
@@ -574,6 +643,7 @@ export default function SavedWorkspace({
             )}
             {detail && detailRow && action && (
               <BookingAction
+                key={detail.id + ':' + action}
                 booking={detail}
                 row={detailRow}
                 action={action}

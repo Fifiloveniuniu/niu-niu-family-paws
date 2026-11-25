@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import IconButton from './icon-button';
 import { useState } from 'react';
@@ -11,7 +12,7 @@ import './appearance.css';
 export default function AppearanceControl() {
   const { i18n } = useTranslation();
   const t = (key: string) => uiText('ui.appearance.' + key, {}, i18n.language);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useDialogState('appearance', false);
   const value = useAppearance();
   return (
     <>

@@ -1,3 +1,4 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import { ApiError } from './api-client';
 import { uiText } from './i18n.ts';
@@ -32,7 +33,7 @@ export default function CancellationPolicyPage({
 }) {
   const { i18n } = useTranslation();
 
-  const [editing, setEditing] = React.useState(false);
+  const [editing, setEditing] = useDialogState('cancellation-policy-edit', false);
   const [draft, setDraft] = React.useState(policy);
   const [error, setError] = React.useState('');
   const [saved, setSaved] = React.useState(false);

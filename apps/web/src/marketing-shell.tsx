@@ -214,7 +214,7 @@ export function MarketingHeader({
         <div className="header-actions">
           <MarketingLanguageMenu onChange={onLanguageChange} />
           {page === 'app' && <AppearanceControl />}
-          {account ?? <SiteAccountLink />}
+          {account ?? <SiteAccountLink app={page === 'app'} />}
         </div>
       </div>
     </header>

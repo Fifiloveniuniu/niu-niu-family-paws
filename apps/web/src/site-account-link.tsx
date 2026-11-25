@@ -1,12 +1,13 @@
+import { useDialogState } from './dialog-routing';
 import Button from './button';
 import { uiText } from './i18n.ts';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import Modal from './modal';
 import { useTranslation } from 'react-i18next';
-export default function SiteAccountLink() {
+export default function SiteAccountLink({ app = false }: { app?: boolean }) {
   const { i18n } = useTranslation();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useDialogState(app ? 'app-sign-in' : 'sign-in', false);
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState('');
 
