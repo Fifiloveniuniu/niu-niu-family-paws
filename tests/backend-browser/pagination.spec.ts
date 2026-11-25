@@ -4,9 +4,6 @@ test('balances and history append server batches, preserve filters and export th
   request,
 }) => {
   test.setTimeout(90000);
-  await page.addInitScript(() => {
-    delete (window as any).IntersectionObserver;
-  });
   const fixture = await (await request.get('/__test-fixture')).json();
   const directoryResponses: { url: string; count: number }[] = [];
   page.on('response', async (response) => {

@@ -499,7 +499,6 @@ export default function Pets({
           )}
         {!loading && !items.length && !error && !cursor && !nameFilter && <p>{labels.empty}</p>}
         <LoadMore
-          root={listScroll}
           hasMore={!!cursor}
           loading={loading}
           error={!!error && !editor}

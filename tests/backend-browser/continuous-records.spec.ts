@@ -14,9 +14,6 @@ test('balance continuation retries preserve rows and scroll; dialogs and tabs re
   page,
   request,
 }) => {
-  await page.addInitScript(() => {
-    delete (window as any).IntersectionObserver;
-  });
   const fixture = await (await request.get('/__test-fixture')).json();
   await signIn(page, fixture.administrator.jwt, '/app/balances/?lang=en');
   const list = page.locator('#balances-panel .record-list-scroll');
@@ -52,7 +49,7 @@ for (const [width, height] of [
   [390, 900],
   [1280, 600],
 ]) {
-  test(`automatic loading waits for scrolling and appends within the intended scroll surface (${width} × ${height})`, async ({
+  test(`scrolling keeps the current batch until Load more is activated (${width} × ${height})`, async ({
     page,
     request,
   }) => {
@@ -73,7 +70,14 @@ for (const [width, height] of [
       expect(await list.evaluate((e) => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
       await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     }
-    await expect.poll(() => rows.count()).toBeGreaterThan(25);
+    // Let any scroll/observer-triggered request complete before asserting deliberate loading.
+    await page.waitForTimeout(300);
+    await expect(rows).toHaveCount(25);
+    const more = list.getByRole('button', { name: 'Load more', exact: true });
+    await more.focus();
+    await page.keyboard.press('Enter');
+    await expect(rows).toHaveCount(50);
+    await expect(more).toBeFocused();
     expect(await rows.first().textContent()).toBe(first);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
@@ -81,9 +85,6 @@ for (const [width, height] of [
   });
 }
 test('Access preserves each loaded section when switching tabs', async ({ page, request }) => {
-  await page.addInitScript(() => {
-    delete (window as any).IntersectionObserver;
-  });
   const fixture = await (await request.get('/__test-fixture')).json();
   await signIn(page, fixture.administrator.jwt, '/app/access/?lang=en');
   const accounts = page.locator('.iam-account');
@@ -106,9 +107,6 @@ test('Payments appends charges, retains the card and retries failed continuation
   page,
   request,
 }) => {
-  await page.addInitScript(() => {
-    delete (window as any).IntersectionObserver;
-  });
   const fixture = await (await request.get('/__test-fixture')).json();
   await page.route('**/api/payment-capabilities', (route) =>
     route.fulfill({ json: { testMode: true } }),
@@ -153,9 +151,6 @@ test('live Access filters discard delayed results and traverse empty windows wit
   page,
   request,
 }) => {
-  await page.addInitScript(() => {
-    delete (window as any).IntersectionObserver;
-  });
   const fixture = await (await request.get('/__test-fixture')).json();
   await signIn(page, fixture.administrator.jwt, '/app/access/?lang=en');
   await expect(page.locator('.iam-account')).toHaveCount(25);
