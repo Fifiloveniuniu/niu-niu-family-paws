@@ -33,41 +33,25 @@ for (const [language, width] of [
       messages['ui.customers.labels'].add,
     );
     await expect(add.locator('.paws-icon')).toHaveCount(1);
+    await expect(page.locator('.customer-filters button')).toHaveCount(0);
     if (width >= 1200) {
-      const action = (await page.locator('.customer-filter-actions button').boundingBox())!;
-      for (const input of await page.locator('.customer-filter-fields input').all()) {
+      const inputs = await page.locator('.customer-filter-fields input').all();
+      const first = (await inputs[0].boundingBox())!;
+      for (const input of inputs) {
         const box = (await input.boundingBox())!;
-        expect(Math.abs(box.y + box.height - action.y - action.height)).toBeLessThan(2);
+        expect(Math.abs(box.y - first.y)).toBeLessThan(2);
+        expect(box.height).toBe(44);
       }
+      const own = (await page.locator('.customer-ownership-filter').boundingBox())!;
+      expect(Math.abs(own.y + own.height / 2 - first.y - first.height / 2)).toBeLessThan(2);
     }
     const actionBeforeSearch = (await add.boundingBox())!;
-    // A read-only visual fixture isolates result layout from direct-seed search indexing.
-    await page.route('**/api/pet-search?**', (route) =>
-      route.fulfill({
-        json: {
-          items: [
-            {
-              pet: {
-                id: fixture.pid,
-                customerId: fixture.cid,
-                name: '[TEST] Search layout pet',
-                species: 'dog',
-                version: 1,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              },
-              customer: { id: fixture.cid, name: '[TEST] Alice', loginEmail: null },
-            },
-          ],
-          nextCursor: null,
-        },
-      }),
-    );
-    await page.locator('.pet-search input').fill('[TEST] Alice');
-    await page.locator('.pet-search form button[type="submit"]').click();
-    await expect(page.locator('.pet-search .customer-list > li').first()).toBeVisible();
+    await page.locator('.pet-search input').fill('ice pet 0');
+    const matching = page.locator('.customer-directory-panel .customer-list > li');
+    await expect(matching).toHaveCount(1);
+    await expect(matching).toContainText('[TEST] Alice');
     expect(Math.abs((await add.boundingBox())!.y - actionBeforeSearch.y)).toBeLessThan(2);
-    const row = page.locator('.customer-directory-panel > .customer-list > li').first();
+    const row = page.locator('.customer-directory-panel .customer-list > li').first();
     await expect(row).toBeVisible();
     await row.hover();
     const rowShape = await row.evaluate((node) => ({
@@ -84,6 +68,9 @@ for (const [language, width] of [
       true,
     );
     await page.screenshot({ path: testInfo.outputPath('customers-aligned.png'), fullPage: true });
+    await page.locator('.pet-search input').fill('');
+    await expect(page.locator('.customer-directory-panel .customer-list > li')).toHaveCount(25);
+    await expect(page.locator('.customer-filters button')).toHaveCount(0);
     await page.goto(`/app/pricing/?lang=${language}`);
     const priceAdd = page.getByRole('button', {
       name: messages['ui.pricingAdmin.add'],

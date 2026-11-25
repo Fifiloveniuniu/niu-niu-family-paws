@@ -2173,6 +2173,8 @@ export interface operations {
             query?: {
                 cursor?: string;
                 pageSize?: "25" | "50" | "100";
+                /** @description Case-insensitive pet-name substring, applied before pagination. */
+                search?: string;
             };
             header?: never;
             path: {
@@ -2412,9 +2414,13 @@ export interface operations {
         parameters: {
             query?: {
                 cursor?: string;
-                /** @description Case-insensitive prefix of customer name, contact email, or server-maintained Google login email. Applied before pagination. */
+                /** @description Case-insensitive substring of customer name, contact email, or server-maintained Google login email. Combined with petSearch before pagination. */
                 search?: string;
                 pageSize?: "25" | "50" | "100";
+                /** @description Case-insensitive substring of a canonical pet name; returns only customers with a matching pet. Combined with search before pagination. */
+                petSearch?: string;
+                /** @description Optional canonical customer filter, including the administrator own-profile filter. */
+                customerId?: string;
             };
             header?: never;
             path?: never;

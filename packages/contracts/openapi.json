@@ -1564,6 +1564,15 @@
                 "100"
               ]
             }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Case-insensitive pet-name substring, applied before pagination.",
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            }
           }
         ],
         "responses": {
@@ -1633,13 +1642,13 @@
             "name": "cursor",
             "schema": {
               "type": "string",
-              "format": "uuid"
+              "maxLength": 1024
             }
           },
           {
             "in": "query",
             "name": "search",
-            "description": "Case-insensitive prefix of customer name, contact email, or server-maintained Google login email. Applied before pagination.",
+            "description": "Case-insensitive substring of customer name, contact email, or server-maintained Google login email. Combined with petSearch before pagination.",
             "schema": {
               "type": "string",
               "maxLength": 254
@@ -1655,6 +1664,24 @@
                 "50",
                 "100"
               ]
+            }
+          },
+          {
+            "name": "petSearch",
+            "in": "query",
+            "description": "Case-insensitive substring of a canonical pet name; returns only customers with a matching pet. Combined with search before pagination.",
+            "schema": {
+              "type": "string",
+              "maxLength": 120
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "description": "Optional canonical customer filter, including the administrator own-profile filter.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],

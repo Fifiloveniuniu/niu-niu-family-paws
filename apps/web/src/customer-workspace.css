@@ -676,3 +676,335 @@ html[data-ui-style]
     margin-top: 25px;
   }
 }
+
+/* The lists use the space left below the page heading and filters. */
+html[data-ui-style] .hc .hc-content:has(> [data-customer-workspace]:not([hidden])) {
+  padding-block: 16px;
+}
+html[data-ui-style] .hc .customer-workspace {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--marketing-header-height, 65px) - 32px);
+  min-height: 0;
+}
+.customer-workspace > :not(.customer-pet-layout) {
+  flex-shrink: 0;
+}
+html[data-ui-style] .hc .customer-workspace .customer-pet-layout {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+html[data-ui-style] .hc .customer-workspace :is(.customer-directory-panel, .admin-pets) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+html[data-ui-style] .hc .customer-workspace .customer-directory-panel > .customer-list {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+html[data-ui-style] .hc .customer-workspace .admin-pets > .pets-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+html[data-ui-style] .hc .customer-workspace .admin-pets .pet-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-content: start;
+  padding: 2px;
+}
+.customer-workspace :is(.directory-toolbar, .selected-customer-heading, .workspace-pagination),
+.customer-workspace .pets-section > :not(.pet-grid) {
+  flex-shrink: 0;
+}
+.customer-workspace .pet-selection-empty {
+  flex: 1;
+  min-height: 0;
+}
+@media (max-height: 540px) {
+  html[data-ui-style] .hc .customer-workspace {
+    height: auto;
+    min-height: calc(100dvh - var(--marketing-header-height, 65px) - 32px);
+  }
+  html[data-ui-style] .hc .customer-workspace .customer-pet-layout {
+    min-height: 320px;
+    height: 320px;
+    flex: none;
+  }
+}
+
+.customer-list-scroll,
+.pet-list-scroll {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+html[data-ui-style] .hc .customer-workspace :is(.customer-list-scroll, .pet-list-scroll) {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+html[data-ui-style] .hc .customer-workspace .customer-list-scroll > .customer-list {
+  flex: none;
+  max-height: none;
+  overflow: visible;
+}
+html[data-ui-style] .hc .customer-workspace .pet-list-scroll > .pet-grid {
+  flex: none;
+  overflow: visible;
+}
+.list-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 12px 2px;
+  font-size: 12px;
+  color: var(--md-on-surface-variant);
+}
+.list-load-more .button {
+  font-size: 12px;
+}
+
+/* Give both panels a shared, calm surface within the workspace. */
+html[data-ui-style] .hc .customer-workspace .customer-pet-layout {
+  gap: 16px;
+}
+html[data-ui-style] .hc .customer-workspace :is(.customer-directory-panel, .admin-pets) {
+  padding: 14px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 14px;
+  background: var(--md-surface);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--md-on-surface) 6%, transparent);
+}
+html[data-ui-style] .hc .customer-workspace .directory-toolbar {
+  padding: 2px 4px 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+html[data-ui-style] .hc .customer-workspace .directory-toolbar p {
+  font-weight: 600;
+}
+html[data-ui-style] .hc .customer-workspace .selected-customer-heading {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+}
+.customer-workspace .customer-profile-avatar {
+  background: var(--md-primary-soft);
+  color: var(--md-primary);
+}
+html[data-ui-style] .hc .customer-workspace .customer-list > li {
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+.customer-workspace .customer-select::after {
+  border-radius: 10px;
+}
+html[data-ui-style] .hc .customer-workspace .admin-pets .pet-card {
+  border-radius: 12px;
+}
+html[data-ui-style] .hc .customer-workspace .pet-card .pet-name-button::after {
+  border-radius: 12px;
+}
+@media (max-width: 800px) {
+  html[data-ui-style] .hc .customer-workspace :is(.customer-directory-panel, .admin-pets) {
+    padding: 12px;
+  }
+  html[data-ui-style] .hc .customer-workspace .customer-profile-actions {
+    gap: 4px;
+  }
+}
+
+/* Filter fields and their actions share one grid and one control surface. */
+html[data-ui-style] .hc .customer-workspace .customer-filters {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px auto;
+  align-items: end;
+  gap: 12px;
+}
+.customer-workspace :is(.customer-filter-toolbar, .customer-filter-fields),
+.customer-workspace .customer-filter-fields .pet-search {
+  display: contents;
+}
+html[data-ui-style] .hc .customer-workspace .customer-filter-fields .customer-search,
+html[data-ui-style] .hc .customer-workspace .customer-filter-fields .pet-search > .customer-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  align-items: end;
+}
+.customer-workspace .customer-filter-fields > .customer-search {
+  grid-column: 1;
+  grid-row: 1;
+}
+.customer-workspace .pet-search > .customer-search {
+  grid-column: 2;
+  grid-row: 1;
+}
+.customer-workspace .customer-filter-actions {
+  grid-column: 3;
+  grid-row: 1;
+  padding: 0;
+}
+html[data-ui-style] .hc .customer-workspace .customer-ownership-filter {
+  grid-column: 4;
+  grid-row: 1;
+  align-self: end;
+  margin: 0;
+  min-height: 44px;
+}
+html[data-ui-style] .hc .customer-workspace .customer-filter-fields .customer-search > label {
+  margin: 0;
+  line-height: 18px;
+}
+html[data-ui-style] .hc .customer-workspace .customer-search .portal-actions {
+  margin: 0;
+  gap: 8px;
+}
+html[data-ui-style] .hc .customer-workspace .customer-filters input[type='search'] {
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+}
+html[data-ui-style] .hc .customer-workspace .customer-filters .icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: 8px;
+  background: var(--md-surface);
+  color: var(--md-on-surface-variant);
+}
+.customer-workspace .pet-search > :is(p, ul, button) {
+  grid-column: 1 / -1;
+}
+.customer-workspace .pet-search > ul:empty {
+  display: none;
+}
+
+/* Pet actions align independently of credit length and pet metadata. */
+html[data-ui-style] .hc .pets-section .pet-card {
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+}
+html[data-ui-style] .hc .pets-section .pet-card > .pet-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 8px;
+  padding: 0;
+  grid-column: 3;
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+}
+html[data-ui-style] .hc .pets-section .pet-card .pet-card-actions > .icon-button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+}
+html[data-ui-style] .hc .pets-section .pet-card-actions .pet-balance-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 14px;
+  white-space: nowrap;
+}
+html[data-ui-style] .hc .pets-section .pet-card > .pet-card-footer {
+  grid-column: 2;
+  grid-row: 2;
+}
+@media (max-width: 1000px) {
+  html[data-ui-style] .hc .customer-workspace .customer-filters {
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+  .customer-workspace .customer-filter-fields > .customer-search {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .customer-workspace .pet-search > .customer-search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .customer-workspace .customer-filter-actions {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  html[data-ui-style] .hc .customer-workspace .customer-ownership-filter {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}
+@media (max-width: 800px) {
+  html[data-ui-style] .hc .pets-section .pet-card {
+    grid-template-columns: 52px minmax(0, 1fr) 44px;
+  }
+  html[data-ui-style] .hc .pets-section .pet-card > .pet-card-actions {
+    display: contents;
+  }
+  html[data-ui-style] .hc .pets-section .pet-card .pet-card-actions > .icon-button {
+    grid-column: 3;
+    grid-row: 1;
+    position: relative;
+    z-index: 1;
+  }
+  html[data-ui-style] .hc .pets-section .pet-card-actions .pet-balance-link {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    justify-self: start;
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  html[data-ui-style] .hc .pets-section .pet-card > .pet-card-footer {
+    grid-column: 2 / -1;
+    grid-row: 3;
+  }
+}
+
+html[data-ui-style] .hc .customer-workspace .customer-filters .pet-search > .customer-list {
+  max-height: 180px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* Live search needs no submit/reset controls. */
+html[data-ui-style] .hc .customer-workspace .customer-filters {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 16px;
+}
+html[data-ui-style] .hc .customer-workspace .customer-ownership-filter {
+  grid-column: 3;
+  margin: 0;
+}
+@media (max-width: 1000px) {
+  html[data-ui-style] .hc .customer-workspace .customer-filters {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  html[data-ui-style] .hc .customer-workspace .customer-ownership-filter {
+    grid-column: 1;
+    grid-row: 3;
+  }
+}

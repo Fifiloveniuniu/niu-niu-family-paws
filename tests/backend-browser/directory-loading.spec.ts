@@ -1,43 +1,54 @@
 import { test, expect } from '@playwright/test';
-test('customer pages apply search before paging and retain page size', async ({
+test('customer lists append batches, retry without losing rows and reset on search', async ({
   page,
   request,
 }) => {
+  await page.addInitScript(() => {
+    delete (window as any).IntersectionObserver;
+  });
   const fixture = await (await request.get('/__test-fixture')).json();
   await page.goto('/app/customers/?lang=en');
   await page.evaluate(async (jwt) => {
-    // @ts-ignore Test module.
+    // @ts-ignore Test-only Vite module.
     const { auth } = await import('/apps/web/src/auth-client.ts');
-    // @ts-ignore Test module.
+    // @ts-ignore Test-only Vite dependency.
     const { GoogleAuthProvider, signInWithCredential } =
       await import('/tests/helpers/browser-auth.ts');
     await signInWithCredential(auth, GoogleAuthProvider.credential(jwt));
   }, fixture.administrator.jwt);
-  const rows = page.locator('.customer-list > li');
-  const paging = page.getByRole('navigation', { name: 'Customer pages', exact: true });
+  const rows = page.locator('.customer-directory-panel .customer-list > li');
+  const footer = page.locator('.customer-list-scroll .list-load-more');
   await expect(rows).toHaveCount(25);
   const first = await rows.allTextContents();
-  await paging.getByRole('button', { name: 'Next page', exact: true }).click();
-  await expect(paging).toContainText('Page 2');
-  await expect(rows).toHaveCount(25);
-  expect(await rows.allTextContents()).not.toEqual(first);
-  await paging.getByRole('button', { name: 'Previous page', exact: true }).click();
-  await expect(rows).toHaveText(first);
-  await paging.getByRole('combobox', { name: 'Rows per page', exact: true }).click();
-  await page.getByRole('option', { name: '50', exact: true }).click();
+  await footer.getByRole('button', { name: 'Load more customers', exact: true }).click();
   await expect(rows).toHaveCount(50);
-  const search = page.locator('input[type="search"]').first();
+  expect((await rows.allTextContents()).slice(0, 25)).toEqual(first);
+  await page.route(
+    (url) => url.pathname === '/api/customers' && url.searchParams.has('cursor'),
+    (route) => route.fulfill({ status: 503, json: { code: 'unavailable' } }),
+    { times: 1 },
+  );
+  await footer.getByRole('button', { name: 'Load more customers', exact: true }).click();
+  await expect(footer.getByRole('button', { name: 'Try again', exact: true })).toBeVisible();
+  await expect(rows).toHaveCount(50);
+  await footer.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(rows).toHaveCount(75);
+  expect((await rows.allTextContents()).slice(0, 25)).toEqual(first);
+  const search = page.locator('#customer-search');
   await search.fill('[TEST] Customer 09');
-  await search.press('Enter');
   await expect(rows).toHaveCount(10);
-  await expect(paging).toContainText('Page 1');
+  await expect(footer).toHaveCount(0);
+  await expect(page.getByRole('combobox', { name: 'Rows per page', exact: true })).toHaveCount(0);
+  const names = await rows.locator('.customer-name').allTextContents();
+  expect(names.every((name) => name.startsWith('[TEST] Customer 09'))).toBe(true);
+  await search.fill('');
+  await expect(rows).toHaveCount(25);
   await expect(
-    paging.getByRole('combobox', { name: 'Rows per page', exact: true }),
-  ).toHaveAttribute('data-value', '50');
-  await expect(paging.getByRole('button', { name: 'Next page', exact: true })).toBeDisabled();
+    footer.getByRole('button', { name: 'Load more customers', exact: true }),
+  ).toBeVisible();
 });
 
-test('pet pages discover saved deep links and preserve private photos across pages', async ({
+test('pet batches retain earlier rows, discover saved deep links and preserve private photos', async ({
   page,
   request,
 }) => {
@@ -80,19 +91,21 @@ test('pet pages discover saved deep links and preserve private photos across pag
     return cid;
   }, fixture);
   await page.goto(`/app/customers/${customerId}/?lang=en`);
-  const paging = page.getByRole('navigation', { name: 'Pet pages', exact: true }),
-    cards = page.locator('.pet-grid > .pet-card');
+  const cards = page.locator('.pet-grid > .pet-card');
   await expect(cards).toHaveCount(25);
-  await paging.getByRole('button', { name: 'Next page', exact: true }).click();
-  await expect(cards).toHaveCount(5);
-  await expect(paging).toContainText('Page 2');
-  const deep = await cards.last().getByRole('link').getAttribute('href');
-  await paging.getByRole('button', { name: 'Previous page', exact: true }).click();
-  await expect(cards).toHaveCount(25);
+  const first = await cards.locator('.pet-name-button').allTextContents();
+  await page.getByRole('button', { name: 'Load more pets', exact: true }).click();
+  await expect(cards).toHaveCount(30);
+  expect((await cards.locator('.pet-name-button').allTextContents()).slice(0, 25)).toEqual(first);
+  const deep = await cards
+    .filter({ hasText: '[TEST] Page pet ' })
+    .last()
+    .getByRole('link')
+    .getAttribute('href');
   await page.goto(deep! + '?lang=en');
   await expect(page.locator('.pet-card-selected')).toBeVisible();
-  await expect(paging).toContainText('Page 2');
-  await paging.getByRole('combobox', { name: 'Rows per page', exact: true }).click();
-  await page.getByRole('option', { name: '50', exact: true }).click();
   await expect(cards).toHaveCount(30);
+  await expect(page.getByRole('button', { name: 'Load more pets', exact: true })).toHaveCount(0);
+  const photo = page.locator('.pet-card-selected .pet-photo img');
+  await expect(photo).toBeVisible();
 });
