@@ -50,6 +50,18 @@ for (const [palette, language, width] of [
     await navLink.focus();
     await expect(navLink).toHaveCSS('outline-style', 'solid');
     await page.mouse.move(0, 0);
+    const activeNav = page.locator('.app-header-nav a[aria-current="page"]');
+    const selectedNavStyle = await activeNav.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return [style.backgroundColor, style.color, style.boxShadow];
+    });
+    await activeNav.hover();
+    expect(
+      await activeNav.evaluate((node) => {
+        const style = getComputedStyle(node);
+        return [style.backgroundColor, style.color, style.boxShadow];
+      }),
+    ).toEqual(selectedNavStyle);
     await trigger.click();
     const selected = page.locator('.language-menu-options [aria-checked="true"]');
     const colors = await selected.evaluate((node) => {
